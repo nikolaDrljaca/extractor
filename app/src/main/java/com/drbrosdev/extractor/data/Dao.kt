@@ -16,8 +16,11 @@ interface ImageDataDao {
     fun findByLabel(query: String): Flow<List<ImageDataEntity>>
 
     @Insert
-    fun insert(vararg items: ImageDataEntity)
+    suspend fun insert(vararg items: ImageDataEntity)
 
     @Delete
-    fun delete(value: ImageDataEntity)
+    suspend fun delete(value: ImageDataEntity)
+
+    @Query("delete from image_data_entity where media_store_id=:mediaStoreId")
+    suspend fun deleteByMediaId(mediaStoreId: Long)
 }

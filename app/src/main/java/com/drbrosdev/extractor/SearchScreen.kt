@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,7 +40,7 @@ fun SearchScreen(
     onNavigateToPager: () -> Unit
 ) {
     val context = LocalContext.current
-    val viewModel = viewModel<MainViewModel>()
+    val viewModel = koinViewModel<MainViewModel>()
     val extractor = Extractor(context = context)
     val persistentExtractor = PersistentExtractor(extractor, context.contentResolver)
 
@@ -96,6 +97,12 @@ fun SearchScreen(
                 item {
                     Button(onClick = onNavigateToPager) {
                         Text(text = "Navigate to pager")
+                    }
+                }
+
+                item {
+                    Button(onClick = { viewModel.spawnWorkRequest() }) {
+                        Text(text = "Run Worker")
                     }
                 }
                 items(images) {

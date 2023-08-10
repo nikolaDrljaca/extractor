@@ -1,15 +1,34 @@
 package com.drbrosdev.extractor
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.drbrosdev.extractor.domain.usecase.BulkExtractor
+import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class WorkRunner(private val context: Context) {
+
+    private val manager = WorkManager.getInstance(context)
+
+    fun run() {
+        val extractorWorkRequest = OneTimeWorkRequestBuilder<ExtractorWorker>()
+            .build()
+        manager.enqueue(extractorWorkRequest)
+    }
+}
+
+class MainViewModel(
+    private val runner: WorkRunner
+) : ViewModel() {
     var permissionGranted = mutableStateOf(false)
         private set
 
@@ -27,6 +46,10 @@ class MainViewModel : ViewModel() {
             println(out)
             println("---Finished")
         }
+    }
+
+    fun spawnWorkRequest() {
+        runner.run()
     }
 
     fun performSearch(term: String) {

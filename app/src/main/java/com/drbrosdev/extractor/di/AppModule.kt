@@ -1,8 +1,11 @@
 package com.drbrosdev.extractor.di
 
+import com.drbrosdev.extractor.MainViewModel
+import com.drbrosdev.extractor.WorkRunner
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.domain.usecase.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultInputImageProvider
 import com.drbrosdev.extractor.domain.usecase.Extractor
@@ -11,10 +14,14 @@ import com.drbrosdev.extractor.domain.usecase.InputImageProvider
 import com.drbrosdev.extractor.domain.usecase.MLKitImageLabelExtractor
 import com.drbrosdev.extractor.domain.usecase.MlKitTextExtractor
 import com.drbrosdev.extractor.domain.usecase.TextExtractor
-import com.drbrosdev.extractor.domain.worker.OneTimeSyncWorker
+import com.drbrosdev.extractor.domain.worker.ExtractorWorker
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.androidx.workmanager.dsl.worker
+import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -32,20 +39,36 @@ private val coroutineModule = module {
 
 private val dataModule = module {
     single { ExtractorDatabase.createExtractorDatabase(androidContext()) }
+    single { get<ExtractorDatabase>().imageDataDao() }
 }
 
 private val domainModule = module {
     factory { DefaultInputImageProvider(androidContext()) } bind InputImageProvider::class
     factory { MLKitImageLabelExtractor(get(named(CoroutineModuleName.Default))) } bind ImageLabelExtractor::class
     factory { MlKitTextExtractor(get(named(CoroutineModuleName.Default))) } bind TextExtractor::class
-    factoryOf(::DefaultExtractor) bind Extractor::class
+    factory {
+        DefaultExtractor(
+            labelExtractor = get(),
+            textExtractor = get(),
+            provider = get(),
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            imageDataDao = get()
+        )
+    } bind Extractor::class
+
     factory { DefaultMediaImageRepository(androidContext().contentResolver) } bind MediaImageRepository::class
+    factory { BulkExtractor(get(), get(), get()) }
+    factory { WorkRunner(androidContext()) }
 }
 
 private val workerModule = module {
     worker {
-        OneTimeSyncWorker(get(), get(), get<DefaultExtractor>(), get())
+        ExtractorWorker(androidContext(), get(), get())
     }
 }
 
-val allKoinModules = listOf(dataModule, domainModule, coroutineModule, workerModule)
+private val uiModule = module {
+    viewModel { MainViewModel(get()) }
+}
+
+val allKoinModules = listOf(dataModule, domainModule, coroutineModule, workerModule, uiModule)
