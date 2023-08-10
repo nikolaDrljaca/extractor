@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "image_data_entity")
 data class ImageDataEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "media_store_id") val mediaStoreId: Long,
     val uri: String,
     val labels: String,
