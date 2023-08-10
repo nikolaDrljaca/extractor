@@ -1,8 +1,8 @@
 package com.drbrosdev.extractor.domain.usecase
 
-import com.drbrosdev.extractor.Image
 import com.drbrosdev.extractor.data.ImageDataDao
 import com.drbrosdev.extractor.data.ImageDataEntity
+import com.drbrosdev.extractor.domain.model.MediaImage
 import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
@@ -10,7 +10,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 
 interface Extractor {
-    suspend fun run(image: Image)
+    suspend fun run(mediaImage: MediaImage)
 }
 
 class DefaultExtractor(
@@ -20,9 +20,9 @@ class DefaultExtractor(
     private val dispatcher: CoroutineDispatcher,
     private val imageDataDao: ImageDataDao
 ) : Extractor {
-    override suspend fun run(image: Image) {
+    override suspend fun run(mediaImage: MediaImage) {
         withContext(dispatcher) {
-            val inputImage = provider.create(InputImageType.UriInputImage(image.uri))
+            val inputImage = provider.create(InputImageType.UriInputImage(mediaImage.uri))
             val text = async { textExtractor.run(inputImage) }
             val labels = async { labelExtractor.run(inputImage) }
 
@@ -31,8 +31,8 @@ class DefaultExtractor(
                 .lowercase()
 
             val imageEntity = ImageDataEntity(
-                mediaStoreId = image.id,
-                uri = image.uri.toString(),
+                mediaStoreId = mediaImage.id,
+                uri = mediaImage.uri.toString(),
                 labels = result
             )
 

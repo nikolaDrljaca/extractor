@@ -1,10 +1,11 @@
-package com.drbrosdev.extractor
+package com.drbrosdev.extractor.domain
 
 import android.content.ContentResolver
 import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import com.drbrosdev.extractor.domain.model.MediaImage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -20,8 +21,8 @@ fun ContentResolver.mediaImagesFlow() = observe(
 
 suspend fun ContentResolver.runImageQuery(
     dispatcher: CoroutineDispatcher = Dispatchers.Default
-): List<Image> = withContext(dispatcher) {
-    val images = mutableListOf<Image>()
+): List<MediaImage> = withContext(dispatcher) {
+    val mediaImages = mutableListOf<MediaImage>()
     val projection = arrayOf(
         MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA
     )
@@ -34,16 +35,15 @@ suspend fun ContentResolver.runImageQuery(
         MediaStore.Images.Media.DATE_ADDED + " DESC"
     )?.use { cursor ->
         while (cursor.moveToNext()) {
-            images.add(cursor.toImage())
+            mediaImages.add(cursor.toImage())
         }
     }
 
-    images
+    mediaImages
 }
 
-data class Image(val id: Long, val path: String, val uri: Uri)
 
-private fun Cursor.toImage(): Image {
+private fun Cursor.toImage(): MediaImage {
     val idColumn = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
     val pathColumn = getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
 
@@ -53,7 +53,7 @@ private fun Cursor.toImage(): Image {
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
         id.toString()
     )
-    return Image(id, path, uri)
+    return MediaImage(id, path, uri)
 }
 
 private fun ContentResolver.observe(uri: Uri) = callbackFlow {

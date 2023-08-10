@@ -1,9 +1,10 @@
 package com.drbrosdev.extractor
 
 import android.app.Application
-import com.drbrosdev.extractor.di.dataModule
+import com.drbrosdev.extractor.di.allKoinModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.startKoin
 
 class ExtractorApplication : Application() {
@@ -13,7 +14,8 @@ class ExtractorApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@ExtractorApplication)
-            modules(dataModule)
+            workManagerFactory()
+            modules(allKoinModules)
         }
     }
 }
