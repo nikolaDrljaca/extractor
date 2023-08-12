@@ -26,7 +26,7 @@ class WorkRunner(private val context: Context) {
 }
 
 class MainViewModel(
-    private val runner: WorkRunner,
+    private val workManager: WorkManager,
     private val extractor: Extractor
 ) : ViewModel() {
     var permissionGranted = mutableStateOf(false)
@@ -48,7 +48,9 @@ class MainViewModel(
     }
 
     fun spawnWorkRequest() {
-        runner.run()
+        val extractorWorkRequest = OneTimeWorkRequestBuilder<ExtractorWorker>()
+            .build()
+        workManager.enqueue(extractorWorkRequest)
     }
 
     fun performSearch(term: String) {
@@ -56,6 +58,7 @@ class MainViewModel(
             it.filter { item -> item.labels.contains(term) }.copy()
         }
     }
+
     private fun <T> List<T>.copy(): List<T> {
         val inner = mutableListOf<T>()
         inner.addAll(this)

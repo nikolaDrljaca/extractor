@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.di
 
+import androidx.work.WorkManager
 import com.drbrosdev.extractor.MainViewModel
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
@@ -31,13 +32,14 @@ private val workerModule = module {
     worker {
         ExtractorWorker(androidContext(), get(), get())
     }
+    single { WorkManager.getInstance(androidContext()) }
 }
 
 private val uiModule = module {
     viewModel {
         MainViewModel(
             extractor = get<DefaultExtractor>(),
-            runner = get()
+            workManager = get()
         )
     }
 }

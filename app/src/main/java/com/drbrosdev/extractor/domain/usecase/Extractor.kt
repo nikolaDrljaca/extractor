@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.domain.usecase
 import com.drbrosdev.extractor.data.ImageDataDao
 import com.drbrosdev.extractor.data.ImageDataEntity
 import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.util.runCatching
 import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
@@ -38,7 +39,7 @@ class DefaultExtractor(
                 labels = result
             )
 
-            imageDataDao.insert(imageEntity)
+            runCatching { imageDataDao.insert(imageEntity) }
         }
     }
 }
