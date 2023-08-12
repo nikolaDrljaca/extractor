@@ -27,7 +27,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-private object CoroutineModuleName {
+object CoroutineModuleName {
     const val IO = "IODispatcher"
     const val Default = "DefaultDispatcher"
 }
@@ -42,24 +42,6 @@ private val dataModule = module {
     single { get<ExtractorDatabase>().imageDataDao() }
 }
 
-private val domainModule = module {
-    factory { DefaultInputImageProvider(androidContext()) } bind InputImageProvider::class
-    factory { MLKitImageLabelExtractor(get(named(CoroutineModuleName.Default))) } bind ImageLabelExtractor::class
-    factory { MlKitTextExtractor(get(named(CoroutineModuleName.Default))) } bind TextExtractor::class
-    factory {
-        DefaultExtractor(
-            labelExtractor = get(),
-            textExtractor = get(),
-            provider = get(),
-            dispatcher = get(named(CoroutineModuleName.Default)),
-            imageDataDao = get()
-        )
-    } bind Extractor::class
-
-    factory { DefaultMediaImageRepository(androidContext().contentResolver) } bind MediaImageRepository::class
-    factory { BulkExtractor(get(), get(), get()) }
-    factory { WorkRunner(androidContext()) }
-}
 
 private val workerModule = module {
     worker {

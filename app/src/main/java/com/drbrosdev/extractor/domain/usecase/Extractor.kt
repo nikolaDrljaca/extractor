@@ -14,12 +14,13 @@ interface Extractor {
 }
 
 class DefaultExtractor(
+    private val dispatcher: CoroutineDispatcher,
     private val labelExtractor: ImageLabelExtractor<InputImage>,
     private val textExtractor: TextExtractor<InputImage>,
     private val provider: InputImageProvider,
-    private val dispatcher: CoroutineDispatcher,
     private val imageDataDao: ImageDataDao
 ) : Extractor {
+
     override suspend fun run(mediaImage: MediaImage) {
         withContext(dispatcher) {
             val inputImage = provider.create(InputImageType.UriInputImage(mediaImage.uri))
