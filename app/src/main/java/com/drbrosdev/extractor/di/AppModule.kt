@@ -1,30 +1,14 @@
 package com.drbrosdev.extractor.di
 
 import com.drbrosdev.extractor.MainViewModel
-import com.drbrosdev.extractor.WorkRunner
 import com.drbrosdev.extractor.data.ExtractorDatabase
-import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
-import com.drbrosdev.extractor.domain.usecase.DefaultInputImageProvider
-import com.drbrosdev.extractor.domain.usecase.Extractor
-import com.drbrosdev.extractor.domain.usecase.ImageLabelExtractor
-import com.drbrosdev.extractor.domain.usecase.InputImageProvider
-import com.drbrosdev.extractor.domain.usecase.MLKitImageLabelExtractor
-import com.drbrosdev.extractor.domain.usecase.MlKitTextExtractor
-import com.drbrosdev.extractor.domain.usecase.TextExtractor
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.androidx.workmanager.dsl.worker
-import org.koin.androidx.workmanager.dsl.workerOf
-import org.koin.core.module.dsl.factoryOf
 import org.koin.core.qualifier.named
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
 object CoroutineModuleName {
@@ -50,7 +34,12 @@ private val workerModule = module {
 }
 
 private val uiModule = module {
-    viewModel { MainViewModel(get()) }
+    viewModel {
+        MainViewModel(
+            extractor = get<DefaultExtractor>(),
+            runner = get()
+        )
+    }
 }
 
 val allKoinModules = listOf(dataModule, domainModule, coroutineModule, workerModule, uiModule)

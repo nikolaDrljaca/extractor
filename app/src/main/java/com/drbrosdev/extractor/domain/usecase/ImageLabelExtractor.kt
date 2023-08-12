@@ -4,12 +4,11 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 interface ImageLabelExtractor<T> {
-    suspend fun run(image: T): String
+    suspend fun execute(image: T): String
 }
 
 class MLKitImageLabelExtractor(
@@ -22,7 +21,7 @@ class MLKitImageLabelExtractor(
 
     private val labeler = ImageLabeling.getClient(options)
 
-    override suspend fun run(inputImage: InputImage): String {
+    override suspend fun execute(inputImage: InputImage): String {
         return withContext(dispatcher) {
             labeler.process(inputImage).await()
                 .joinToString(" ") { it.text }

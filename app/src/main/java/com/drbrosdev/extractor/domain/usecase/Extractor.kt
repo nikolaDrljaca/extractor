@@ -10,7 +10,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 
 interface Extractor {
-    suspend fun run(mediaImage: MediaImage)
+    suspend fun execute(mediaImage: MediaImage)
 }
 
 class DefaultExtractor(
@@ -21,15 +21,16 @@ class DefaultExtractor(
     private val imageDataDao: ImageDataDao
 ) : Extractor {
 
-    override suspend fun run(mediaImage: MediaImage) {
+    override suspend fun execute(mediaImage: MediaImage) {
         withContext(dispatcher) {
             val inputImage = provider.create(InputImageType.UriInputImage(mediaImage.uri))
-            val text = async { textExtractor.run(inputImage) }
-            val labels = async { labelExtractor.run(inputImage) }
+            val text = async { textExtractor.execute(inputImage) }
+            val labels = async { labelExtractor.execute(inputImage) }
 
-            val result = awaitAll(text, labels)
-                .joinToString { " " }
-                .lowercase()
+            val outText = text.await()
+            val outLabel = labels.await()
+
+            val result = "$outText $outLabel"
 
             val imageEntity = ImageDataEntity(
                 mediaStoreId = mediaImage.id,

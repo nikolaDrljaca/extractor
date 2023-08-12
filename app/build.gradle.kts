@@ -79,7 +79,7 @@ dependencies {
     //ML Kit
     implementation("com.google.mlkit:image-labeling:17.0.7")
     implementation("com.google.mlkit:text-recognition:16.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
 
     //Appyx
     val appyxVersion = "2.0.0-alpha01"

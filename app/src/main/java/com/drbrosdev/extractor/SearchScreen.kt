@@ -27,9 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.drbrosdev.extractor.domain.mediaImagesFlow
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -39,10 +39,8 @@ fun SearchScreen(
     onOpenAppSettings: () -> Unit,
     onNavigateToPager: () -> Unit
 ) {
-    val context = LocalContext.current
     val viewModel = koinViewModel<MainViewModel>()
-    val extractor = Extractor(context = context)
-    val persistentExtractor = PersistentExtractor(extractor, context.contentResolver)
+    val context = LocalContext.current
 
     val imagePermissionResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -66,14 +64,12 @@ fun SearchScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         if (viewModel.permissionGranted.value) {
-            val images by viewModel.images.collectAsState()
+//            val images by viewModel.images.collectAsState()
+            val images by context.contentResolver.mediaImagesFlow().collectAsState(initial = emptyList())
             val (text, setText) = remember {
                 mutableStateOf("")
             }
 
-            LaunchedEffect(key1 = Unit) {
-//                viewModel.runExtraction(persistentExtractor)
-            }
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -108,10 +104,10 @@ fun SearchScreen(
                 items(images) {
                     Column(
                         modifier = Modifier.clickable {
-                            viewModel.runExtraction(it.uri, extractor)
+                            viewModel.runExtraction(it)
                         }
                     ) {
-                        Text(text = it.mediaStoreId.toString())
+                        Text(text = it.id.toString())
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(it.uri)

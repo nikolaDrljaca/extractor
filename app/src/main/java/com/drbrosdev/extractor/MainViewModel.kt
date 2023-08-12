@@ -1,14 +1,13 @@
 package com.drbrosdev.extractor
 
 import android.content.Context
-import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.drbrosdev.extractor.domain.usecase.BulkExtractor
+import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.domain.usecase.Extractor
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,7 +26,8 @@ class WorkRunner(private val context: Context) {
 }
 
 class MainViewModel(
-    private val runner: WorkRunner
+    private val runner: WorkRunner,
+    private val extractor: Extractor
 ) : ViewModel() {
     var permissionGranted = mutableStateOf(false)
         private set
@@ -39,12 +39,11 @@ class MainViewModel(
         permissionGranted.value = isGranted
     }
 
-    fun runExtraction(uri: Uri, extractor: Extractor) {
+    fun runExtraction(mediaImage: MediaImage) {
         viewModelScope.launch {
-            println("---Loading extraction...")
-            val out = extractor.run(uri)
-            println(out)
-            println("---Finished")
+            println("--- Running extraction on single image")
+            extractor.execute(mediaImage)
+            println("--- Finished")
         }
     }
 

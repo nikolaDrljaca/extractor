@@ -11,7 +11,7 @@ class BulkExtractor(
     private val imageDataDao: ImageDataDao,
     private val extractor: Extractor
 ) {
-    suspend fun run() {
+    suspend fun execute() {
         val storedImages = imageDataDao.getAll().first()
         val deviceImages = mediaImageRepository.getAll()
 
@@ -28,7 +28,7 @@ class BulkExtractor(
                 //For each image only on device, I need to run extraction
                 isOnDevice.forEach {
                     val mediaImage = deviceImages.find { img -> img.id == it }!!
-                    extractor.run(mediaImage)
+                    extractor.execute(mediaImage)
                 }
             }
 
