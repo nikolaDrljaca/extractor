@@ -1,13 +1,14 @@
 package com.drbrosdev.extractor.di
 
-import com.drbrosdev.extractor.WorkRunner
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
+import com.drbrosdev.extractor.domain.usecase.DefaultImageSearch
 import com.drbrosdev.extractor.domain.usecase.DefaultInputImageProvider
 import com.drbrosdev.extractor.domain.usecase.Extractor
 import com.drbrosdev.extractor.domain.usecase.ImageLabelExtractor
+import com.drbrosdev.extractor.domain.usecase.ImageSearch
 import com.drbrosdev.extractor.domain.usecase.InputImageProvider
 import com.drbrosdev.extractor.domain.usecase.MLKitImageLabelExtractor
 import com.drbrosdev.extractor.domain.usecase.MlKitTextExtractor
@@ -54,5 +55,12 @@ val domainModule = module {
         )
     }
 
-    factory { WorkRunner(context = androidContext()) }
+    factory {
+        DefaultImageSearch(
+            dispatcher = get(named(CoroutineModuleName.IO)),
+            imageDataDao = get(),
+            mediaImageRepository = get()
+        )
+    } bind ImageSearch::class
+
 }

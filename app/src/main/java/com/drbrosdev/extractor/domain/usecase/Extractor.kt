@@ -25,8 +25,8 @@ class DefaultExtractor(
     override suspend fun execute(mediaImage: MediaImage) {
         withContext(dispatcher) {
             val inputImage = provider.create(InputImageType.UriInputImage(mediaImage.uri))
-            val text = async { textExtractor.execute(inputImage) }
-            val labels = async { labelExtractor.execute(inputImage) }
+            val text = async { textExtractor.execute(inputImage).lowercase() }
+            val labels = async { labelExtractor.execute(inputImage).lowercase() }
 
             val outText = text.await()
             val outLabel = labels.await()

@@ -39,7 +39,8 @@ private val uiModule = module {
     viewModel {
         MainViewModel(
             extractor = get<DefaultExtractor>(),
-            workManager = get()
+            workManager = get(),
+            imageSearch = get()
         )
     }
 }

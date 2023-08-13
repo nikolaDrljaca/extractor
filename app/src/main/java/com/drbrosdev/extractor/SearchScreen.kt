@@ -64,8 +64,7 @@ fun SearchScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         if (viewModel.permissionGranted.value) {
-//            val images by viewModel.images.collectAsState()
-            val images by context.contentResolver.mediaImagesFlow().collectAsState(initial = emptyList())
+            val images by viewModel.images.collectAsState()
             val (text, setText) = remember {
                 mutableStateOf("")
             }
@@ -103,11 +102,9 @@ fun SearchScreen(
                 }
                 items(images) {
                     Column(
-                        modifier = Modifier.clickable {
-                            viewModel.runExtraction(it)
-                        }
+                        modifier = Modifier.clickable {  }
                     ) {
-                        Text(text = it.id.toString())
+                        Text(text = it.mediaStoreId.toString())
                         AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(it.uri)

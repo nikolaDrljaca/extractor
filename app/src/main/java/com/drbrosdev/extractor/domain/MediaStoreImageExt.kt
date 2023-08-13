@@ -20,7 +20,8 @@ fun ContentResolver.mediaImagesFlow() = observe(
 
 
 suspend fun ContentResolver.runImageQuery(
-    dispatcher: CoroutineDispatcher = Dispatchers.Default
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    selection: String? = null
 ): List<MediaImage> = withContext(dispatcher) {
     val mediaImages = mutableListOf<MediaImage>()
     val projection = arrayOf(
@@ -30,7 +31,7 @@ suspend fun ContentResolver.runImageQuery(
     query(
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
         projection,
-        null,
+        selection,
         null,
         MediaStore.Images.Media.DATE_ADDED + " DESC"
     )?.use { cursor ->
