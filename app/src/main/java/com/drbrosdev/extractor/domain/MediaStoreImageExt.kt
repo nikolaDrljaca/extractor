@@ -43,6 +43,24 @@ suspend fun ContentResolver.runImageQuery(
     mediaImages
 }
 
+suspend fun ContentResolver.getCount(
+    dispatcher: CoroutineDispatcher = Dispatchers.Default
+): Int = withContext(dispatcher) {
+    val projection = arrayOf(MediaStore.Images.Media._ID)
+
+    query(
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        projection,
+        null,
+        null,
+        null
+    )?.use { cursor ->
+        return@withContext cursor.count
+    }
+
+    0
+}
+
 
 private fun Cursor.toImage(): MediaImage {
     val idColumn = getColumnIndexOrThrow(MediaStore.Images.Media._ID)

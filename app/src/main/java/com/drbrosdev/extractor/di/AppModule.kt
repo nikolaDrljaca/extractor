@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.di
 import androidx.work.WorkManager
 import com.drbrosdev.extractor.MainViewModel
 import com.drbrosdev.extractor.data.ExtractorDatabase
+import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,13 @@ private val dataModule = module {
 
 private val workerModule = module {
     worker {
-        ExtractorWorker(androidContext(), get(), get())
+        ExtractorWorker(
+            context = androidContext(),
+            workerParameters = get(),
+            extractor = get(),
+            mediaImageRepository = get<DefaultMediaImageRepository>(),
+            imageDataDao = get()
+        )
     }
     single { WorkManager.getInstance(androidContext()) }
 }

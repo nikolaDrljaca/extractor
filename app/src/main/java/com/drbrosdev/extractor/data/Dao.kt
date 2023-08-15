@@ -23,4 +23,7 @@ interface ImageDataDao {
 
     @Query("delete from image_data_entity where media_store_id=:mediaStoreId")
     suspend fun deleteByMediaId(mediaStoreId: Long)
+
+    @Query("select count(*) from image_data_entity")
+    suspend fun getCount(): Int
 }

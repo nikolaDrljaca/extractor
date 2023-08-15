@@ -104,4 +104,7 @@ dependencies {
     //WorkManager
     val workVersion = "2.8.1"
     implementation("androidx.work:work-runtime-ktx:$workVersion")
+
+    //LiveData to Flow
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
 }

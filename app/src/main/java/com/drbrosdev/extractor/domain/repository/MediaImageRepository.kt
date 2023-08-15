@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.domain.repository
 
 import android.content.ContentResolver
 import android.provider.MediaStore
+import com.drbrosdev.extractor.domain.getCount
 import com.drbrosdev.extractor.domain.mediaImagesFlow
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.runImageQuery
@@ -12,6 +13,8 @@ interface MediaImageRepository {
     suspend fun getAll(): List<MediaImage>
 
     suspend fun getAllById(ids: List<Long>): List<MediaImage>
+
+    suspend fun getCount(): Int
 }
 
 class DefaultMediaImageRepository(
@@ -27,5 +30,9 @@ class DefaultMediaImageRepository(
             selection = "${MediaStore.Images.Media._ID} IN (${ids.joinToString(", ")})"
         )
         return out
+    }
+
+    override suspend fun getCount(): Int {
+        return contentResolver.getCount()
     }
 }
