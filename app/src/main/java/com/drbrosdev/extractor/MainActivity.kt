@@ -28,7 +28,7 @@ class MainActivity : ComponentNodeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ExtractorTheme {
+            ExtractorTheme(dynamicColor = false) {
                 NodeHost(integrationPoint = appyxV2IntegrationPoint) {
                     RootNode(it)
                 }

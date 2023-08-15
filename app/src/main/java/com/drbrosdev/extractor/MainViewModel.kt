@@ -31,7 +31,7 @@ class MainViewModel(
     var permissionGranted = mutableStateOf(false)
         private set
 
-    private val _imageDescFlow = MutableStateFlow<List<ImageDescription>>(emptyList())
+    private val _imageDescFlow = MutableStateFlow<List<MediaImage>>(emptyList())
     val images = _imageDescFlow.asStateFlow()
 
     val isWorkRunning = workManager
@@ -69,13 +69,7 @@ class MainViewModel(
         viewModelScope.launch {
             val out = imageSearch.execute(term)
             _imageDescFlow.update {
-                out.map { img ->
-                    ImageDescription(
-                        mediaStoreId = img.id,
-                        uri = img.uri,
-                        labels = img.path
-                    )
-                }
+                out
             }
         }
     }
