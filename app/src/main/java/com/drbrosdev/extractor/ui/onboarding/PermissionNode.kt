@@ -21,9 +21,11 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.findActivity
 import com.drbrosdev.extractor.openAppSettings
 import com.drbrosdev.extractor.ui.components.OnboardingCard
+import com.drbrosdev.extractor.ui.components.OnboardingCardHeadline
 
 class PermissionNode(
-    buildContext: BuildContext
+    buildContext: BuildContext,
+    private val onBackPressed: () -> Unit
 ) : Node(buildContext) {
 
     @Composable
@@ -48,8 +50,15 @@ class PermissionNode(
         val activity = LocalContext.current.findActivity()
 
         OnboardingCard(
-            headline = "Permissions",
             body = stringResource(id = R.string.lorem),
+            headline = {
+                OnboardingCardHeadline(
+                    headline = "Permission",
+                    onBack = {
+                        onBackPressed()
+                    }
+                )
+            },
             actionButton = {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

@@ -20,6 +20,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.BackStackModel
 import com.bumble.appyx.components.backstack.operation.pop
+import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.components.backstack.ui.stack3d.BackStack3D
 import com.bumble.appyx.interactions.core.model.backpresshandlerstrategies.DontHandleBackPress
 import com.bumble.appyx.navigation.composable.AppyxComponent
@@ -125,9 +126,20 @@ class OnboardingNode(
     override fun resolve(interactionTarget: OnboardingRoutes, buildContext: BuildContext): Node {
         return when (interactionTarget) {
             OnboardingRoutes.WelcomeScreen -> WelcomeNode(buildContext)
-            OnboardingRoutes.PrivacyNoteScreen -> PrivacyNoteNode(buildContext)
-            OnboardingRoutes.PermissionScreen -> PermissionNode(buildContext)
-            OnboardingRoutes.StartWorkerScreen -> StartWorkerNode(buildContext)
+            OnboardingRoutes.PrivacyNoteScreen -> PrivacyNoteNode(
+                buildContext = buildContext,
+                onBackPressed = { backstack.push(OnboardingRoutes.WelcomeScreen) }
+            )
+
+            OnboardingRoutes.PermissionScreen -> PermissionNode(
+                buildContext = buildContext,
+                onBackPressed = { backstack.push(OnboardingRoutes.PrivacyNoteScreen) }
+            )
+
+            OnboardingRoutes.StartWorkerScreen -> StartWorkerNode(
+                buildContext = buildContext,
+                onBackPressed = { backstack.push(OnboardingRoutes.PermissionScreen) }
+            )
         }
     }
 }

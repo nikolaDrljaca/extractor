@@ -10,6 +10,7 @@ import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.OnboardingCard
+import com.drbrosdev.extractor.ui.components.OnboardingCardHeadline
 
 class WelcomeNode(
     buildContext: BuildContext,
@@ -19,8 +20,10 @@ class WelcomeNode(
     override fun View(modifier: Modifier) {
 
         OnboardingCard(
-            headline = "What is <app_name>?",
             body = stringResource(id = R.string.lorem),
+            headline = {
+                OnboardingCardHeadline(headline = "What is <app name>?")
+            },
             actionButton = {
                 Button(onClick = {
                     //do things

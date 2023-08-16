@@ -2,15 +2,20 @@ package com.drbrosdev.extractor.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,26 +31,24 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @Composable
 fun OnboardingCard(
     modifier: Modifier = Modifier,
-    headline: String,
     body: String,
-    actionButton: (@Composable () -> Unit)? = null
+    headline: (@Composable () -> Unit)? = null,
+    actionButton: (@Composable () -> Unit)? = null,
 ) {
     Card(
-        modifier = Modifier
-            .then(modifier),
+        modifier = Modifier.then(modifier),
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.elevatedCardElevation()
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(
-                12.dp,
-                alignment = Alignment.CenterVertically
+                12.dp, alignment = Alignment.CenterVertically
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(24.dp))
-            Text(text = headline, style = MaterialTheme.typography.headlineSmall)
+            headline?.invoke()
             Text(text = body)
 
             actionButton?.let {
@@ -56,11 +59,35 @@ fun OnboardingCard(
     }
 }
 
+@Composable
+fun OnboardingCardHeadline(
+    modifier: Modifier = Modifier,
+    headline: String,
+    onBack: (() -> Unit)? = null
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        onBack?.let {
+            IconButton(onClick = it) {
+                Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = null)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+        }
+
+        Text(text = headline, style = MaterialTheme.typography.headlineSmall)
+    }
+}
+
 @Preview
 @Composable
 private fun OnboardingCardPreview() {
     ExtractorTheme {
-        OnboardingCard(headline = "Headline", body = stringResource(id = R.string.lorem)) {
+        OnboardingCard(body = stringResource(id = R.string.lorem),
+            headline = { OnboardingCardHeadline(headline = "A note ", onBack = {}) }) {
             Button(onClick = { /*TODO*/ }) {
                 Text(text = "Sample Action")
             }

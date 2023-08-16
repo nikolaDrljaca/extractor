@@ -12,6 +12,7 @@ import com.bumble.appyx.components.backstack.BackStackModel
 import com.bumble.appyx.components.backstack.operation.pop
 import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.components.backstack.ui.fader.BackStackFader
+import com.bumble.appyx.interactions.core.model.backpresshandlerstrategies.DontHandleBackPress
 import com.bumble.appyx.navigation.composable.AppyxComponent
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
@@ -44,7 +45,8 @@ class RootNode(
             initialTarget = RootRoutes.Main,
             savedStateMap = buildContext.savedStateMap
         ),
-        motionController = { BackStackFader(it) }
+        motionController = { BackStackFader(it) },
+        backPressStrategy = DontHandleBackPress()
     )
 ) : ParentNode<RootRoutes>(
     buildContext = buildContext,
