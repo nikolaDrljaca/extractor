@@ -9,13 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,8 +26,9 @@ import com.bumble.appyx.navigation.composable.AppyxComponent
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
-import com.bumble.appyx.navigation.node.node
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerNode
+import com.drbrosdev.extractor.util.adaptiveIconPainterResource
 import kotlinx.parcelize.Parcelize
 
 sealed interface OnboardingRoutes : Parcelable {
@@ -76,7 +74,7 @@ class OnboardingNode(
                 .padding(horizontal = 24.dp)
                 .systemBarsPadding(),
         ) {
-            val topGuideline = createGuidelineFromTop(0.15f)
+            val topGuideline = createGuidelineFromTop(0.05f)
             val (header, cards) = createRefs()
 
             Column(
@@ -88,8 +86,12 @@ class OnboardingNode(
                         }
                     )
                     .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                Icon(
+                    painter = adaptiveIconPainterResource(id = R.mipmap.ic_launcher),
+                    contentDescription = "App Icon"
+                )
+                Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = stringResource(id = R.string.app_name),
                     style = MaterialTheme.typography.displaySmall,
@@ -105,7 +107,7 @@ class OnboardingNode(
             AppyxComponent(
                 appyxComponent = backstack,
                 modifier = modifier.constrainAs(cards) {
-                    top.linkTo(header.bottom, margin = 12.dp)
+                    top.linkTo(header.bottom, margin = 8.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
@@ -114,6 +116,9 @@ class OnboardingNode(
     }
 
     override fun onChildFinished(child: Node) {
+        if (backstack.elements.value.all.size == 1) {
+            finish()
+        }
         backstack.pop()
     }
 

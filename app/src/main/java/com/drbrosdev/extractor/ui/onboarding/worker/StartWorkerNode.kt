@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.onboarding
+package com.drbrosdev.extractor.ui.onboarding.worker
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -9,6 +9,7 @@ import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.OnboardingCard
+import org.koin.androidx.compose.koinViewModel
 
 class StartWorkerNode(
     buildContext: BuildContext
@@ -16,12 +17,14 @@ class StartWorkerNode(
 
     @Composable
     override fun View(modifier: Modifier) {
+        val viewModel = koinViewModel<StartWorkerViewModel>()
+
         OnboardingCard(
             headline = "Start Extracting!",
             body = stringResource(id = R.string.lorem),
             actionButton = {
                 Button(onClick = {
-                    //do something
+                    viewModel.spawnWorkRequest()
                     finish()
                 }) {
                     Text(text = "Begin")

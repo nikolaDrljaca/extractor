@@ -13,8 +13,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.Surface
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +26,9 @@ import androidx.core.view.WindowCompat
 import com.bumble.appyx.navigation.integration.NodeHost
 import com.drbrosdev.extractor.ui.components.TransparentSystemBars
 import com.drbrosdev.extractor.ui.onboarding.OnboardingNode
+import com.drbrosdev.extractor.ui.root.RootNode
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.ComponentNodeActivity
 
 class MainActivity : ComponentNodeActivity() {
 
@@ -47,8 +47,7 @@ class MainActivity : ComponentNodeActivity() {
                     NodeHost(
                         integrationPoint = appyxV2IntegrationPoint,
                     ) {
-//                    RootNode(it)
-                        OnboardingNode(it)
+                        RootNode(it)
                     }
                 }
             }

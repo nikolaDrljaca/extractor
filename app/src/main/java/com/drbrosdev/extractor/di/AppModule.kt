@@ -6,6 +6,7 @@ import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
+import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -48,6 +49,12 @@ private val uiModule = module {
             extractor = get<DefaultExtractor>(),
             workManager = get(),
             imageSearch = get()
+        )
+    }
+
+    viewModel {
+        StartWorkerViewModel(
+            workManager = get(),
         )
     }
 }
