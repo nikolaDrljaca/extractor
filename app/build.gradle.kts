@@ -109,4 +109,7 @@ dependencies {
 
     //LiveData to Flow
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+
+    //DataStore Preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }
