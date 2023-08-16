@@ -71,7 +71,9 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    //Jetpack
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha12")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
