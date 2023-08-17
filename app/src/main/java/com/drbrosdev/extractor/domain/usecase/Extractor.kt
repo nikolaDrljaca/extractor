@@ -6,6 +6,7 @@ import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.util.runCatching
 import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
@@ -25,13 +26,26 @@ class DefaultExtractor(
     override suspend fun execute(mediaImage: MediaImage) {
         withContext(dispatcher) {
             val inputImage = provider.create(InputImageType.UriInputImage(mediaImage.uri))
-            val text = async { textExtractor.execute(inputImage).lowercase() }
-            val labels = async { labelExtractor.execute(inputImage).lowercase() }
+            val text: Deferred<Result<String>> = async {
+                runCatching {
+                    textExtractor.execute(inputImage).lowercase()
+                }
+            }
+            val labels: Deferred<Result<String>> = async {
+                runCatching {
+                    labelExtractor.execute(inputImage).lowercase()
+                }
+            }
 
             val outText = text.await()
             val outLabel = labels.await()
 
-            val result = "$outText $outLabel"
+            val result = buildString {
+                if (outText.isFailure && outLabel.isFailure) return@withContext
+                append(outText.getOrDefault(""))
+                append(" ")
+                append(outLabel.getOrDefault(""))
+            }
 
             val imageEntity = ImageDataEntity(
                 mediaStoreId = mediaImage.id,

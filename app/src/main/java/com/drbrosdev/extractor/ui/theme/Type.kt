@@ -123,7 +123,7 @@ val Typography = Typography(
     ),
     labelSmall = TextStyle(
         fontFamily = BricolageFontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Light,
         fontSize = 11.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
