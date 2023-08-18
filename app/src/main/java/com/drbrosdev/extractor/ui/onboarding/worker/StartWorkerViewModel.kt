@@ -26,8 +26,7 @@ class StartWorkerViewModel(
         )
 
         viewModelScope.launch {
-            //TODO Remove comment here
-            //datastore.finishOnboarding()
+            datastore.finishOnboarding()
         }
     }
 }
