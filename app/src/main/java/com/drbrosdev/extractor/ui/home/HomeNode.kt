@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.search
+package com.drbrosdev.extractor.ui.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -8,16 +8,19 @@ import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import org.koin.androidx.compose.koinViewModel
 
-class SearchNode(
+class HomeNode(
     buildContext: BuildContext
 ) : Node(buildContext) {
 
     @Composable
     override fun View(modifier: Modifier) {
-        val viewModel: SearchViewModel = koinViewModel()
-        val syncStatus by viewModel.syncStatus.collectAsState()
+        val viewModel: HomeViewModel = koinViewModel()
+        val state by viewModel.state.collectAsState()
 
-        SearchScreen(syncStatus)
+        HomeScreen(
+            state = state,
+            onEvent = { }
+        )
     }
 }
 

@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.search
+package com.drbrosdev.extractor.ui.home
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,8 +17,9 @@ import com.drbrosdev.extractor.ui.components.SearchTopBar
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
-fun SearchScreen(
-    syncStatus: SyncStatus
+fun HomeScreen(
+    state: HomeScreenState,
+    onEvent: (HomeScreenEvents) -> Unit
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -39,7 +40,8 @@ fun SearchScreen(
                         top.linkTo(topGuideline)
                         width = Dimension.fillToConstraints
                     }
-                )
+                ),
+            onDone = { onEvent(HomeScreenEvents.PerformSearch(it)) }
         )
 
         SearchTopBar(
@@ -54,8 +56,8 @@ fun SearchScreen(
                 .fillMaxWidth(),
             onClick = {},
             onAboutClick = {},
-            localCount = syncStatus.localCount,
-            deviceCount = syncStatus.deviceCount
+            localCount = state.syncStatus.localCount,
+            deviceCount = state.syncStatus.deviceCount
         )
 
 
@@ -91,7 +93,7 @@ fun SearchScreen(
 private fun SearchScreenPreview() {
     ExtractorTheme {
         Surface {
-            SearchScreen(SyncStatus())
+            HomeScreen(HomeScreenState()) {}
         }
     }
 }

@@ -20,6 +20,8 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -107,15 +109,26 @@ fun SearchTopBar(
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
+    initialQuery: String = "",
+    onDone: (String) -> Unit
 ) {
+    val (text, setText) = rememberSaveable {
+        mutableStateOf(initialQuery)
+    }
+
     Row(
         modifier = Modifier
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ExtractorTextField(onChange = {}, modifier = Modifier.weight(1f))
+        ExtractorTextField(
+            modifier = Modifier.weight(1f),
+            text = text,
+            onChange = { setText(it) },
+            onDoneSubmit = { onDone(text) }
+        )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onDone(text) },
             shape = RoundedCornerShape(8.dp),
         ) {
             Icon(
