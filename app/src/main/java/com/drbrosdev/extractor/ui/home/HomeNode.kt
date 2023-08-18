@@ -19,7 +19,7 @@ class HomeNode(
 
         HomeScreen(
             state = state,
-            onEvent = { }
+            onEvent = viewModel::consumeEvent
         )
     }
 }
