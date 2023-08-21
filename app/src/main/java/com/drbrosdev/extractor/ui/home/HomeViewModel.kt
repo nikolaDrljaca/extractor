@@ -23,19 +23,20 @@ class HomeViewModel(
 
     private val syncStatus = flow {
         while (true) {
-            delay(1000L)
             val localCount = imageDataDao.getCount()
             val deviceCount = mediaImageRepository.getCount()
             emit(SyncStatus(localCount, deviceCount))
+            delay(5000L)
         }
     }
 
     private val imagesFlow = MutableStateFlow<List<MediaImage>>(emptyList())
+    private val loadingFlow = MutableStateFlow(false)
 
-    val state = combine(syncStatus, imagesFlow) { sync, images ->
-        HomeScreenState(sync, images)
+    val state = combine(syncStatus, imagesFlow, loadingFlow) { sync, images, loading ->
+        HomeUiState(sync, images, loading)
     }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), HomeScreenState())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), HomeUiState())
 
     fun consumeEvent(event: HomeScreenEvents) {
         when (event) {
@@ -45,23 +46,10 @@ class HomeViewModel(
 
     private fun performSearch(query: String) {
         viewModelScope.launch {
+            loadingFlow.update { true }
             val result = imageSearch.execute(query)
             imagesFlow.update { result }
+            loadingFlow.update { false }
         }
     }
-}
-
-data class SyncStatus(
-    val localCount: Int = 0,
-    val deviceCount: Int = 0
-)
-
-data class HomeScreenState(
-    val syncStatus: SyncStatus = SyncStatus(),
-    val images: List<MediaImage> = emptyList()
-)
-
-sealed interface HomeScreenEvents {
-    data class PerformSearch(val query: String) : HomeScreenEvents
-
 }

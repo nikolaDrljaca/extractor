@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.BackStackModel
 import com.bumble.appyx.components.backstack.operation.pop
@@ -107,9 +108,11 @@ class OnboardingNode(
             AppyxComponent(
                 appyxComponent = backstack,
                 modifier = modifier.constrainAs(cards) {
-                    top.linkTo(header.bottom, margin = 8.dp)
+                    top.linkTo(header.bottom, margin = 2.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom, margin = 8.dp)
+                    height = Dimension.fillToConstraints
                 }
             )
         }
