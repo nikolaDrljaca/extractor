@@ -21,9 +21,9 @@ class MLKitImageLabelExtractor(
 
     private val labeler = ImageLabeling.getClient(options)
 
-    override suspend fun execute(inputImage: InputImage): String {
+    override suspend fun execute(image: InputImage): String {
         return withContext(dispatcher) {
-            labeler.process(inputImage).await()
+            labeler.process(image).await()
                 .joinToString(" ") { it.text }
         }
     }

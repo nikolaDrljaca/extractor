@@ -13,24 +13,42 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Surface
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import com.bumble.appyx.navigation.integration.NodeHost
+import com.drbrosdev.extractor.ui.components.TransparentSystemBars
+import com.drbrosdev.extractor.ui.onboarding.OnboardingNode
+import com.drbrosdev.extractor.ui.root.RootNode
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.ComponentNodeActivity
 
 class MainActivity : ComponentNodeActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             ExtractorTheme(dynamicColor = false) {
-                NodeHost(integrationPoint = appyxV2IntegrationPoint) {
-                    RootNode(it)
+                TransparentSystemBars()
+
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    NodeHost(
+                        integrationPoint = appyxV2IntegrationPoint,
+                    ) {
+                        RootNode(it)
+                    }
                 }
             }
         }
@@ -83,7 +101,7 @@ fun Context.checkAndRequestPermission(
 
 fun Context.findActivity(): Activity {
     var context = this
-    while(context is ContextWrapper) {
+    while (context is ContextWrapper) {
         if (context is Activity) return context
         context = context.baseContext
     }

@@ -2,10 +2,15 @@ package com.drbrosdev.extractor.di
 
 import androidx.work.WorkManager
 import com.drbrosdev.extractor.MainViewModel
+import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.ExtractorDatabase
+import com.drbrosdev.extractor.data.datastore
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
+import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
+import com.drbrosdev.extractor.ui.root.RootViewModel
+import com.drbrosdev.extractor.ui.search.SearchViewModel
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -26,6 +31,9 @@ private val coroutineModule = module {
 private val dataModule = module {
     single { ExtractorDatabase.createExtractorDatabase(androidContext()) }
     single { get<ExtractorDatabase>().imageDataDao() }
+    factory {
+        ExtractorDataStore(androidContext().datastore)
+    }
 }
 
 
@@ -48,6 +56,26 @@ private val uiModule = module {
             extractor = get<DefaultExtractor>(),
             workManager = get(),
             imageSearch = get()
+        )
+    }
+
+    viewModel {
+        StartWorkerViewModel(
+            workManager = get(),
+            datastore = get()
+        )
+    }
+
+    viewModel {
+        RootViewModel(
+            datastore = get()
+        )
+    }
+
+    viewModel {
+        SearchViewModel(
+            imageDataDao = get(),
+            mediaImageRepository = get<DefaultMediaImageRepository>()
         )
     }
 }

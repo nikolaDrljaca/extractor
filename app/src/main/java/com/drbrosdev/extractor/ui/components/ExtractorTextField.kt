@@ -1,0 +1,86 @@
+package com.drbrosdev.extractor.ui.components
+
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExtractorTextField(
+    modifier: Modifier = Modifier,
+    initialValue: String = "",
+    onDoneSubmit: () -> Unit = {},
+    onChange: (String) -> Unit,
+) {
+    val (text, setText) = rememberSaveable {
+        mutableStateOf(initialValue)
+    }
+
+    val textStyle = MaterialTheme.typography.headlineMedium
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
+
+    BasicTextField(
+        value = text,
+        onValueChange = {
+            setText(it)
+            onChange(it)
+        },
+        modifier = Modifier
+            .then(modifier),
+        minLines = 1,
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions(
+            autoCorrect = false,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { onDoneSubmit() }
+        ),
+        textStyle = textStyle.copy(color = MaterialTheme.colorScheme.onBackground),
+        decorationBox = {
+            TextFieldDefaults.DecorationBox(
+                value = text,
+                innerTextField = it,
+                enabled = true,
+                singleLine = true,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = interactionSource,
+                contentPadding = PaddingValues(0.dp),
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    errorContainerColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                ),
+                placeholder = {
+                    Text(
+                        text = "Search here...",
+                        style = textStyle,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                    )
+                },
+            )
+        }
+    )
+}
