@@ -6,14 +6,12 @@ import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.BackStackModel
 import com.bumble.appyx.components.backstack.ui.fader.BackStackFader
-import com.bumble.appyx.components.backstack.ui.stack3d.BackStack3D
-import com.bumble.appyx.interactions.core.model.backpresshandlerstrategies.DontHandleBackPress
 import com.bumble.appyx.navigation.composable.AppyxComponent
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.navigation.node.node
-import com.drbrosdev.extractor.ui.search.SearchNode
+import com.drbrosdev.extractor.ui.home.HomeNode
 import kotlinx.parcelize.Parcelize
 
 sealed interface MainRoutes : Parcelable {
@@ -52,7 +50,7 @@ class MainNode(
         return when(interactionTarget) {
             MainRoutes.AboutRoute -> node(buildContext) { }
             MainRoutes.ImageDetailRoute -> node(buildContext) {}
-            MainRoutes.SearchRoute -> SearchNode(buildContext)
+            MainRoutes.SearchRoute -> HomeNode(buildContext)
         }
     }
 }
