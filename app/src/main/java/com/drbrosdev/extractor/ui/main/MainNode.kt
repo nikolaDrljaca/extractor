@@ -1,7 +1,5 @@
 package com.drbrosdev.extractor.ui.main
 
-import android.net.Uri
-import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
@@ -15,22 +13,7 @@ import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.navigation.node.node
 import com.drbrosdev.extractor.ui.home.HomeNode
 import com.drbrosdev.extractor.ui.image.ImageNode
-import kotlinx.parcelize.Parcelize
 
-sealed interface MainRoutes : Parcelable {
-
-    @Parcelize
-    data object SearchRoute : MainRoutes
-
-    @Parcelize
-    data class ImageDetailRoute(
-        val images: List<Uri>,
-        val initialIndex: Int
-    ) : MainRoutes
-
-    @Parcelize
-    data object AboutRoute : MainRoutes
-}
 
 class MainNode(
     buildContext: BuildContext,
@@ -40,12 +23,11 @@ class MainNode(
             savedStateMap = buildContext.savedStateMap
         ),
         motionController = { BackStackFader(it) },
-//        backPressStrategy = DontHandleBackPress()
     ),
 ) : ParentNode<MainRoutes>(
     buildContext = buildContext,
     appyxComponent = backstack
-) {
+), MainNavigator {
 
     @Composable
     override fun View(modifier: Modifier) {
@@ -61,14 +43,16 @@ class MainNode(
                 buildContext = buildContext
             )
 
-            MainRoutes.SearchRoute -> HomeNode(buildContext) {
-                backstack.push(
-                    MainRoutes.ImageDetailRoute(
-                        images = it.images,
-                        initialIndex = it.initialIndex
-                    )
-                )
-            }
+            MainRoutes.SearchRoute -> HomeNode(buildContext, this)
         }
+    }
+
+    override fun toImageDetailRoute(args: NavToImageNodeArgs) {
+        backstack.push(
+            MainRoutes.ImageDetailRoute(
+                images = args.images,
+                initialIndex = args.initialIndex
+            )
+        )
     }
 }

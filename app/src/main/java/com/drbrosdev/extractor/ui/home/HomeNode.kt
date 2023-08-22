@@ -1,17 +1,18 @@
 package com.drbrosdev.extractor.ui.home
 
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
+import com.drbrosdev.extractor.ui.main.MainNavigator
+import com.drbrosdev.extractor.ui.main.NavToImageNodeArgs
 import org.koin.androidx.compose.koinViewModel
 
 class HomeNode(
     buildContext: BuildContext,
-    private val onImageClick: (NavToImageNodePayload) -> Unit
+    private val navigator: MainNavigator
 ) : Node(buildContext) {
 
     @Composable
@@ -23,18 +24,14 @@ class HomeNode(
             state = state,
             onEvent = viewModel::consumeEvent,
             onNavToImageNode = { images, index ->
-                val payload = NavToImageNodePayload(
+                val args = NavToImageNodeArgs(
                     images = images.map { it.uri },
                     initialIndex = index
                 )
-                onImageClick(payload)
+                navigator.toImageDetailRoute(args)
             }
         )
     }
 }
 
 
-data class NavToImageNodePayload(
-    val images: List<Uri>,
-    val initialIndex: Int
-)
