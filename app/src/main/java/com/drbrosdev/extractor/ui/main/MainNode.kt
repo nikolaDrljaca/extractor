@@ -1,10 +1,12 @@
 package com.drbrosdev.extractor.ui.main
 
+import android.net.Uri
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.BackStackModel
+import com.bumble.appyx.components.backstack.operation.push
 import com.bumble.appyx.components.backstack.ui.fader.BackStackFader
 import com.bumble.appyx.navigation.composable.AppyxComponent
 import com.bumble.appyx.navigation.modality.BuildContext
@@ -12,6 +14,7 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.bumble.appyx.navigation.node.node
 import com.drbrosdev.extractor.ui.home.HomeNode
+import com.drbrosdev.extractor.ui.image.ImageNode
 import kotlinx.parcelize.Parcelize
 
 sealed interface MainRoutes : Parcelable {
@@ -20,7 +23,10 @@ sealed interface MainRoutes : Parcelable {
     data object SearchRoute : MainRoutes
 
     @Parcelize
-    data object ImageDetailRoute : MainRoutes
+    data class ImageDetailRoute(
+        val images: List<Uri>,
+        val initialIndex: Int
+    ) : MainRoutes
 
     @Parcelize
     data object AboutRoute : MainRoutes
@@ -47,10 +53,22 @@ class MainNode(
     }
 
     override fun resolve(interactionTarget: MainRoutes, buildContext: BuildContext): Node {
-        return when(interactionTarget) {
+        return when (interactionTarget) {
             MainRoutes.AboutRoute -> node(buildContext) { }
-            MainRoutes.ImageDetailRoute -> node(buildContext) {}
-            MainRoutes.SearchRoute -> HomeNode(buildContext)
+            is MainRoutes.ImageDetailRoute -> ImageNode(
+                images = interactionTarget.images,
+                initialIndex = interactionTarget.initialIndex,
+                buildContext = buildContext
+            )
+
+            MainRoutes.SearchRoute -> HomeNode(buildContext) {
+                backstack.push(
+                    MainRoutes.ImageDetailRoute(
+                        images = it.images,
+                        initialIndex = it.initialIndex
+                    )
+                )
+            }
         }
     }
 }

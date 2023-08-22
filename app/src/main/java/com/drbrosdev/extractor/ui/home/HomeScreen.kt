@@ -10,7 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.ui.components.ExtractorImageItem
 import com.drbrosdev.extractor.ui.components.SearchBar
 import com.drbrosdev.extractor.ui.components.SearchTopBar
@@ -26,7 +27,8 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @Composable
 fun HomeScreen(
     state: HomeUiState,
-    onEvent: (HomeScreenEvents) -> Unit
+    onEvent: (HomeScreenEvents) -> Unit,
+    onNavToImageNode: (List<MediaImage>, Int) -> Unit
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -82,11 +84,13 @@ fun HomeScreen(
                     ),
                 columns = GridCells.Fixed(count = 3),
             ) {
-                items(state.images, key = { it.id }) {
+                itemsIndexed(state.images, key = { _, it -> it.id }) { index, it ->
                     ExtractorImageItem(
                         imageUri = it.uri,
                         size = 144,
-                        onClick = {}
+                        onClick = {
+                            onNavToImageNode(state.images, index)
+                        }
                     )
                 }
                 item(span = { GridItemSpan(maxLineSpan) }) {
@@ -128,7 +132,11 @@ fun HomeScreen(
 private fun SearchScreenPreview() {
     ExtractorTheme {
         Surface {
-            HomeScreen(HomeUiState()) {}
+            HomeScreen(
+                state = HomeUiState(),
+                onEvent = {},
+                onNavToImageNode = { uri, int -> }
+            )
         }
     }
 }
