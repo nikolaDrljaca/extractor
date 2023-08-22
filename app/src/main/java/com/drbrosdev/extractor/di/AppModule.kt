@@ -10,6 +10,7 @@ import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultImageSearch
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import com.drbrosdev.extractor.ui.home.HomeViewModel
+import com.drbrosdev.extractor.ui.image.ImageDetailViewModel
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import kotlinx.coroutines.Dispatchers
@@ -78,6 +79,12 @@ private val uiModule = module {
             imageDataDao = get(),
             mediaImageRepository = get<DefaultMediaImageRepository>(),
             imageSearch = get<DefaultImageSearch>(),
+        )
+    }
+
+    viewModel {
+        ImageDetailViewModel(
+            mediaImageRepository = get<DefaultMediaImageRepository>()
         )
     }
 }
