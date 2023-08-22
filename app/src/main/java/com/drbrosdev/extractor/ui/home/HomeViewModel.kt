@@ -20,7 +20,6 @@ class HomeViewModel(
     private val imageDataDao: ImageDataDao,
     private val mediaImageRepository: MediaImageRepository,
     private val imageSearch: ImageSearch,
-    private val bulkExtractor: BulkExtractor
 ) : ViewModel() {
 
     private val syncStatus = flow {
@@ -44,7 +43,6 @@ class HomeViewModel(
         when (event) {
             is HomeScreenEvents.PerformSearch -> performSearch(event.query)
             HomeScreenEvents.RunExtraction -> viewModelScope.launch {
-                bulkExtractor.execute()
             }
         }
     }

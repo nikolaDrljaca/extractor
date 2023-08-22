@@ -64,7 +64,6 @@ private val uiModule = module {
         StartWorkerViewModel(
             workManager = get(),
             datastore = get(),
-            bulkExtractor = get()
         )
     }
 
@@ -79,7 +78,6 @@ private val uiModule = module {
             imageDataDao = get(),
             mediaImageRepository = get<DefaultMediaImageRepository>(),
             imageSearch = get<DefaultImageSearch>(),
-            bulkExtractor = get()
         )
     }
 }
