@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class StartWorkerViewModel(
     private val workManager: WorkManager,
-    private val datastore: ExtractorDataStore
+    private val datastore: ExtractorDataStore,
 ) : ViewModel() {
 
     fun spawnWorkRequest() {

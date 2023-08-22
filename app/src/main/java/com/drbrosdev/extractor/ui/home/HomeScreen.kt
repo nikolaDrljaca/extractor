@@ -61,7 +61,7 @@ fun HomeScreen(
                     }
                 )
                 .fillMaxWidth(),
-            onClick = {},
+            onClick = { onEvent(HomeScreenEvents.RunExtraction) },
             onAboutClick = {},
             localCount = state.syncStatus.localCount,
             deviceCount = state.syncStatus.deviceCount

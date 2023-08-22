@@ -15,5 +15,6 @@ data class HomeUiState(
 
 sealed interface HomeScreenEvents {
     data class PerformSearch(val query: String) : HomeScreenEvents
+    data object RunExtraction: HomeScreenEvents
 
 }

@@ -63,7 +63,7 @@ private val uiModule = module {
     viewModel {
         StartWorkerViewModel(
             workManager = get(),
-            datastore = get()
+            datastore = get(),
         )
     }
 
@@ -77,7 +77,7 @@ private val uiModule = module {
         HomeViewModel(
             imageDataDao = get(),
             mediaImageRepository = get<DefaultMediaImageRepository>(),
-            imageSearch = get<DefaultImageSearch>()
+            imageSearch = get<DefaultImageSearch>(),
         )
     }
 }

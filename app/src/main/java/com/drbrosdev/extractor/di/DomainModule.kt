@@ -49,6 +49,7 @@ val domainModule = module {
 
     factory {
         BulkExtractor(
+            dispatcher = get(named(CoroutineModuleName.Default)),
             mediaImageRepository = get(),
             imageDataDao = get(),
             extractor = get()

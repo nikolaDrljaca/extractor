@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.ImageDataDao
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.domain.usecase.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.ImageSearch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val imageDataDao: ImageDataDao,
     private val mediaImageRepository: MediaImageRepository,
-    private val imageSearch: ImageSearch
+    private val imageSearch: ImageSearch,
 ) : ViewModel() {
 
     private val syncStatus = flow {
@@ -41,6 +42,8 @@ class HomeViewModel(
     fun consumeEvent(event: HomeScreenEvents) {
         when (event) {
             is HomeScreenEvents.PerformSearch -> performSearch(event.query)
+            HomeScreenEvents.RunExtraction -> viewModelScope.launch {
+            }
         }
     }
 
