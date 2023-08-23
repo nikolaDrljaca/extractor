@@ -112,4 +112,8 @@ dependencies {
 
     //DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    //zoomable modifier
+    val zoomableVersion = "1.5.0"
+    implementation("net.engawapg.lib:zoomable:$zoomableVersion")
 }

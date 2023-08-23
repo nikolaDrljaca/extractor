@@ -6,12 +6,16 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.domain.model.MediaImageInfo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 fun ContentResolver.mediaImagesFlow() = observe(
@@ -43,6 +47,35 @@ suspend fun ContentResolver.runImageQuery(
     mediaImages
 }
 
+suspend fun ContentResolver.findByUri(
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    uri: Uri
+): MediaImageInfo? = withContext(dispatcher) {
+    val projection = arrayOf(
+        MediaStore.Images.Media._ID,
+        MediaStore.Images.Media.DISPLAY_NAME,
+        MediaStore.Images.Media.DATA,
+        MediaStore.Images.Media.DATE_ADDED,
+        MediaStore.Images.Media.SIZE,
+        MediaStore.Images.Media.HEIGHT,
+        MediaStore.Images.Media.WIDTH
+    )
+
+    query(
+        uri,
+        projection,
+        null,
+        null,
+        null
+    )?.use { cursor ->
+        if (cursor.moveToFirst()) {
+            return@withContext cursor.toMediaImageInfo()
+        }
+    }
+
+    null
+}
+
 suspend fun ContentResolver.getCount(
     dispatcher: CoroutineDispatcher = Dispatchers.Default
 ): Int = withContext(dispatcher) {
@@ -61,6 +94,31 @@ suspend fun ContentResolver.getCount(
     0
 }
 
+private fun Cursor.toMediaImageInfo(): MediaImageInfo {
+    val id = getLong(getColumnIndexOrThrow(MediaStore.Images.Media._ID))
+    val displayName = getString(getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME))
+    val data = getString(getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
+    val dateAdded = getLong(getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED))
+    val height = getInt(getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT))
+    val width = getInt(getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH))
+    val size = getLong(getColumnIndexOrThrow(MediaStore.Images.Media.SIZE))
+    val pathColumn = getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+    val path = getString(pathColumn)
+
+    val formatted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        .format(Date(dateAdded * 1000))
+
+
+    return MediaImageInfo(
+        id = id,
+        displayName = displayName,
+        dateAdded = formatted,
+        height = height,
+        width = width,
+        size = size,
+        path = path
+    )
+}
 
 private fun Cursor.toImage(): MediaImage {
     val idColumn = getColumnIndexOrThrow(MediaStore.Images.Media._ID)

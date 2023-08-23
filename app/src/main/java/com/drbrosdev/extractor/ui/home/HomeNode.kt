@@ -6,10 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
+import com.drbrosdev.extractor.ui.main.MainNavigator
+import com.drbrosdev.extractor.ui.main.NavToImageNodeArgs
 import org.koin.androidx.compose.koinViewModel
 
 class HomeNode(
-    buildContext: BuildContext
+    buildContext: BuildContext,
+    private val navigator: MainNavigator
 ) : Node(buildContext) {
 
     @Composable
@@ -19,8 +22,16 @@ class HomeNode(
 
         HomeScreen(
             state = state,
-            onEvent = viewModel::consumeEvent
+            onEvent = viewModel::consumeEvent,
+            onNavToImageNode = { images, index ->
+                val args = NavToImageNodeArgs(
+                    images = images.map { it.uri },
+                    initialIndex = index
+                )
+                navigator.toImageDetailRoute(args)
+            }
         )
     }
 }
+
 

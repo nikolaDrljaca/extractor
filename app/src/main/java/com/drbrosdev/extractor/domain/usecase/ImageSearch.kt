@@ -30,7 +30,7 @@ class DefaultImageSearch(
                     .map { it.mediaStoreId }
                 if (ids.isEmpty()) continue
 
-                val mediaImages = mediaImageRepository.getAllById(ids)
+                val mediaImages = mediaImageRepository.findAllById(ids)
                 out.addAll(mediaImages)
             }
             return@withContext out.toList()
