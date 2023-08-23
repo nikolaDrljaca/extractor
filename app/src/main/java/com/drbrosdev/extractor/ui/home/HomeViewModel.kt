@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.ImageDataDao
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.ImageSearch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +47,8 @@ class HomeViewModel(
     }
 
     private fun performSearch(query: String) {
+        if (query.isBlank()) return
+
         viewModelScope.launch {
             loadingFlow.update { true }
             val result = imageSearch.execute(query)

@@ -84,14 +84,17 @@ fun SearchTopBar(
                 color = MaterialTheme.colorScheme.onBackground
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = "Tap here to run extraction.",
-                fontStyle = FontStyle.Italic,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.secondary
-            )
+            if (localCount != deviceCount) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "Tap here to run extraction.",
+                    fontStyle = FontStyle.Italic,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
         }
 
         IconButton(

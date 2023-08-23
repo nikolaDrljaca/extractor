@@ -8,7 +8,6 @@ import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 
 interface Extractor {
@@ -41,7 +40,6 @@ class DefaultExtractor(
             val outLabel = labels.await()
 
             val result = buildString {
-                if (outText.isFailure && outLabel.isFailure) return@withContext
                 append(outText.getOrDefault(""))
                 append(" ")
                 append(outLabel.getOrDefault(""))
