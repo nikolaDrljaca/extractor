@@ -47,12 +47,13 @@ class HomeViewModel(
     }
 
     private fun performSearch(query: String) {
+        //TODO: Fire UI event to notify that a query cannot be blank
         if (query.isBlank()) return
 
         viewModelScope.launch {
             loadingFlow.update { true }
             val result = imageSearch.execute(query)
-            imagesFlow.update { result }
+            imagesFlow.update { result.getOrDefault(emptyList()) }
             loadingFlow.update { false }
         }
     }

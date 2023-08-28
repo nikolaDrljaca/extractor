@@ -10,7 +10,12 @@ import kotlinx.coroutines.withContext
 
 interface ImageSearch {
 
-    suspend fun execute(query: String): List<MediaImage>
+    /**
+     * Searches database embeds using query and returns a list of [MediaImage].
+     *
+     * Note: Expects a non-blank string as input.
+     */
+    suspend fun execute(query: String): Result<List<MediaImage>>
 
 }
 
@@ -20,9 +25,17 @@ class DefaultImageSearch(
     private val imageDataDao: ImageDataDao
 ) : ImageSearch {
 
-    override suspend fun execute(query: String): List<MediaImage> {
+
+    override suspend fun execute(query: String): Result<List<MediaImage>> {
+        if (query.isBlank()) return Result.failure(Throwable("Query must not be blank."))
+
         return withContext(dispatcher) {
-            val labels = query.split(" ")
+            val temp = query
+                .trim()
+                .replace(Regex("\\s+"), " ")
+                .lowercase()
+
+            val labels = temp.split(" ")
             val out = mutableSetOf<MediaImage>()
             for (label in labels) {
                 val ids = imageDataDao.findByLabel(label.lowercase())
@@ -33,7 +46,8 @@ class DefaultImageSearch(
                 val mediaImages = mediaImageRepository.findAllById(ids)
                 out.addAll(mediaImages)
             }
-            return@withContext out.toList()
+
+            Result.success(out.toList())
         }
     }
 }
