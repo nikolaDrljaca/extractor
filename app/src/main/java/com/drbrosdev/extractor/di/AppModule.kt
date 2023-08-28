@@ -1,12 +1,10 @@
 package com.drbrosdev.extractor.di
 
 import androidx.work.WorkManager
-import com.drbrosdev.extractor.MainViewModel
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.data.datastore
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultImageSearch
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import com.drbrosdev.extractor.ui.home.HomeViewModel
@@ -53,14 +51,6 @@ private val workerModule = module {
 }
 
 private val uiModule = module {
-    viewModel {
-        MainViewModel(
-            extractor = get<DefaultExtractor>(),
-            workManager = get(),
-            imageSearch = get()
-        )
-    }
-
     viewModel {
         StartWorkerViewModel(
             workManager = get(),
