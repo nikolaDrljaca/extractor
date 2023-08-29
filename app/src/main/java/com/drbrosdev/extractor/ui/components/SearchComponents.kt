@@ -2,11 +2,7 @@ package com.drbrosdev.extractor.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -25,7 +21,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -59,8 +54,6 @@ fun PreviousSearchItem(
 @Composable
 fun SearchTopBar(
     modifier: Modifier = Modifier,
-    localCount: Int = 30,
-    deviceCount: Int = 40,
     onClick: () -> Unit,
     onAboutClick: () -> Unit
 ) {
@@ -68,34 +61,9 @@ fun SearchTopBar(
         modifier = Modifier
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(
-            modifier = Modifier
-                .clickable { onClick() }
-                .clip(RoundedCornerShape(8.dp))
-                .padding(4.dp)
-                .weight(1f)
-                .then(modifier),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Extraction status: $localCount/$deviceCount",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-
-            if (localCount != deviceCount) {
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "Tap here to run extraction.",
-                    fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
-        }
+        ExtractorLeaderButton(onClick = onClick)
 
         IconButton(
             onClick = onAboutClick

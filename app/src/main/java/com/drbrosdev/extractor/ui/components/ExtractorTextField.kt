@@ -40,7 +40,7 @@ fun ExtractorTextField(
         modifier = Modifier
             .then(modifier),
         minLines = 1,
-        maxLines = 1,
+        maxLines = 2,
         keyboardOptions = KeyboardOptions(
             autoCorrect = false,
             imeAction = ImeAction.Done

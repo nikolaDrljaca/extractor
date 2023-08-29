@@ -2,7 +2,6 @@ package com.drbrosdev.extractor.ui.home
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -60,13 +59,12 @@ fun HomeScreen(
                     constrainBlock = {
                         top.linkTo(parent.top, margin = 12.dp)
                         start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
                     }
-                )
-                .fillMaxWidth(),
+                ),
             onClick = { onEvent(HomeScreenEvents.RunExtraction) },
             onAboutClick = {},
-            localCount = state.syncStatus.localCount,
-            deviceCount = state.syncStatus.deviceCount
         )
 
         if (state.images.isNotEmpty()) {

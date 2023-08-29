@@ -42,44 +42,31 @@ fun OnboardingCard(
     headline: (@Composable () -> Unit)? = null,
     actionButton: (@Composable () -> Unit)? = null,
 ) {
-    val brush = Brush.linearGradient(
-        listOf(
-            md_theme_light_primary,
-            md_theme_light_secondary
-        ),
-        start = Offset.Zero,
-        end = Offset(500f, 850f)
-    )
-
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.elevatedCardElevation(),
         colors = CardDefaults.elevatedCardColors(
-            contentColor = Color.White
+            contentColor = Color.White,
+            containerColor = md_theme_light_primary
         )
     ) {
-        Box(
+        Column(
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .background(brush)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Spacer(modifier = Modifier.height(24.dp))
-                headline?.invoke()
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(text = body, modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
+            headline?.invoke()
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = body, modifier = Modifier.weight(1f))
 
-                actionButton?.let {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    it.invoke()
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
+            actionButton?.let {
+                Spacer(modifier = Modifier.height(12.dp))
+                it.invoke()
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
