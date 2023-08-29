@@ -48,7 +48,7 @@ fun OnboardingCard(
             md_theme_light_secondary
         ),
         start = Offset.Zero,
-        end = Offset.Infinite
+        end = Offset(500f, 850f)
     )
 
     Card(
