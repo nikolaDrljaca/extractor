@@ -6,8 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,8 +18,10 @@ import com.bumble.appyx.navigation.node.Node
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.findActivity
 import com.drbrosdev.extractor.openAppSettings
+import com.drbrosdev.extractor.ui.components.ExtractorActionButton
 import com.drbrosdev.extractor.ui.components.OnboardingCard
 import com.drbrosdev.extractor.ui.components.OnboardingCardHeadline
+import com.drbrosdev.extractor.ui.components.OutlinedExtractorActionButton
 
 class PermissionNode(
     buildContext: BuildContext,
@@ -67,13 +67,13 @@ class PermissionNode(
                         alignment = Alignment.CenterHorizontally
                     )
                 ) {
-                    OutlinedButton(onClick = {
+                    OutlinedExtractorActionButton(onClick = {
                         activity.openAppSettings()
                     }) {
                         Text(text = "Open Settings")
                     }
 
-                    Button(onClick = {
+                    ExtractorActionButton(onClick = {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             imagePermissionResultLauncher.launch(
                                 Manifest.permission.READ_MEDIA_IMAGES

@@ -1,6 +1,15 @@
 package com.drbrosdev.extractor.ui.onboarding
 
 import android.os.Parcelable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,10 +18,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.Text
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -29,7 +43,9 @@ import com.bumble.appyx.navigation.node.Node
 import com.bumble.appyx.navigation.node.ParentNode
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerNode
-import com.drbrosdev.extractor.util.adaptiveIconPainterResource
+import com.drbrosdev.extractor.ui.theme.md_theme_light_secondary
+import com.drbrosdev.extractor.ui.theme.md_theme_light_tertiary
+import com.drbrosdev.extractor.util.applicationIconBitmap
 import kotlinx.parcelize.Parcelize
 
 sealed interface OnboardingRoutes : Parcelable {
@@ -69,9 +85,36 @@ class OnboardingNode(
 ) {
     @Composable
     override fun View(modifier: Modifier) {
+        val animation = rememberInfiniteTransition(label = "brush")
+        val flat = with(LocalDensity.current) { 800.dp.toPx() }
+
+        val offset by animation.animateFloat(
+            initialValue = 0f,
+            targetValue = flat,
+            animationSpec = infiniteRepeatable(
+                tween(
+                    durationMillis = 4000,
+                    easing = LinearEasing
+                ),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "brush"
+        )
+
+        val brush = Brush.linearGradient(
+            listOf(
+                md_theme_light_tertiary,
+                md_theme_light_secondary,
+            ),
+            start = Offset(offset, offset),
+            end = Offset(offset + flat, offset + flat),
+            tileMode = TileMode.Mirror
+        )
+
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
+                .background(brush)
                 .padding(horizontal = 24.dp)
                 .systemBarsPadding(),
         ) {
@@ -88,33 +131,31 @@ class OnboardingNode(
                     )
                     .fillMaxWidth(),
             ) {
-                Icon(
-                    painter = adaptiveIconPainterResource(id = R.mipmap.ic_launcher),
-                    contentDescription = "App Icon"
-                )
+                Image(bitmap = applicationIconBitmap(), contentDescription = "")
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = stringResource(id = R.string.app_name),
                     style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = Color.White
                 )
                 Text(
                     text = "Welcome!",
                     style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = Color.White
                 )
             }
 
-            AppyxComponent(
-                appyxComponent = backstack,
-                modifier = modifier.constrainAs(cards) {
-                    top.linkTo(header.bottom, margin = 2.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom, margin = 8.dp)
-                    height = Dimension.fillToConstraints
-                }
-            )
+            Box(modifier = modifier.constrainAs(cards) {
+                top.linkTo(header.bottom, margin = 12.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom, margin = 48.dp)
+                height = Dimension.fillToConstraints
+            }) {
+                AppyxComponent(
+                    appyxComponent = backstack,
+                )
+            }
         }
     }
 

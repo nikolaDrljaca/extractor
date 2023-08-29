@@ -2,7 +2,6 @@ package com.drbrosdev.extractor.ui.home
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -20,8 +19,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.ui.components.ExtractorImageItem
+import com.drbrosdev.extractor.ui.components.HomeTopBar
 import com.drbrosdev.extractor.ui.components.SearchBar
-import com.drbrosdev.extractor.ui.components.SearchTopBar
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
@@ -36,7 +35,7 @@ fun HomeScreen(
             .padding(horizontal = 24.dp)
             .systemBarsPadding(),
     ) {
-        val topGuideline = createGuidelineFromTop(0.15f)
+        val topGuideline = createGuidelineFromTop(0.2f)
         val (searchBar, previousSearch, status, aboutIcon) = createRefs()
 
         SearchBar(
@@ -53,20 +52,19 @@ fun HomeScreen(
             onDone = { onEvent(HomeScreenEvents.PerformSearch(it)) }
         )
 
-        SearchTopBar(
+        HomeTopBar(
             modifier = Modifier
                 .constrainAs(
                     ref = status,
                     constrainBlock = {
-                        top.linkTo(parent.top, margin = 12.dp)
+                        top.linkTo(parent.top, margin = 24.dp)
                         start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
                     }
-                )
-                .fillMaxWidth(),
+                ),
             onClick = { onEvent(HomeScreenEvents.RunExtraction) },
             onAboutClick = {},
-            localCount = state.syncStatus.localCount,
-            deviceCount = state.syncStatus.deviceCount
         )
 
         if (state.images.isNotEmpty()) {
