@@ -18,7 +18,7 @@ class MainNode(
     buildContext: BuildContext,
     private val backstack: BackStack<MainRoutes> = BackStack(
         model = BackStackModel(
-            initialTarget = MainRoutes.HomeRoute,
+            initialTarget = MainRoutes.SearchResultRoute(query = "asd"),
             savedStateMap = buildContext.savedStateMap
         ),
         motionController = { BackStackFader(it) },

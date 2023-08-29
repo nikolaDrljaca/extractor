@@ -2,9 +2,13 @@ package com.drbrosdev.extractor.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -12,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -21,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.MediaImage
 
@@ -97,3 +103,53 @@ fun ExtractorImageGrid(
         }
     }
 }
+
+@Composable
+fun SearchFilterSheet(
+    modifier: Modifier = Modifier,
+    onClearFilterClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .then(modifier),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text(text = "Filters", style = MaterialTheme.typography.headlineMedium)
+            OutlinedButton(
+                onClick = onClearFilterClick,
+                border = BorderStroke(
+                    width = 1.dp, color = Color.White
+                ),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color.White,
+                    containerColor = Color.Transparent
+                )
+            ) {
+                Text(text = "1 applied", style = MaterialTheme.typography.labelMedium)
+                Icon(
+                    imageVector = Icons.Rounded.Clear,
+                    contentDescription = null,
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(48.dp))
+
+        Column(
+            modifier = Modifier.height(244.dp),
+        ) {
+            DataFilter(
+                onFilterChanged = {}
+            )
+        }
+    }
+}
+
