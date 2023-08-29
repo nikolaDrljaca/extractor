@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -34,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.ui.theme.md_theme_light_primary
-import com.drbrosdev.extractor.util.applicationIconBitmap
 import kotlinx.coroutines.delay
 
 @Composable
@@ -146,10 +146,11 @@ fun ExtractorLeaderButton(
             ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                bitmap = applicationIconBitmap(),
+            Icon(
+                painter = painterResource(R.drawable.baseline_android_24),
                 contentDescription = "App Icon",
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(48.dp).padding(4.dp),
+                tint = MaterialTheme.colorScheme.onBackground
             )
 
             Column(
@@ -183,7 +184,7 @@ fun ExtractorLeaderButton(
 private fun ButtonsPreview() {
     ExtractorTheme(dynamicColor = false) {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-//            ExtractorLeaderButton(onClick = {})
+            ExtractorLeaderButton(onClick = {})
             OutlinedExtractorActionButton(onClick = { /*TODO*/ }) {
                 Text(text = "Action")
             }

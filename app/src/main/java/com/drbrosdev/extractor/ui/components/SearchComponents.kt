@@ -9,8 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +50,7 @@ fun PreviousSearchItem(
 }
 
 @Composable
-fun SearchTopBar(
+fun HomeTopBar(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     onAboutClick: () -> Unit
@@ -98,15 +96,6 @@ fun SearchBar(
             onChange = { setText(it) },
             onDoneSubmit = { onDone(text) }
         )
-        Button(
-            onClick = { onDone(text) },
-            shape = RoundedCornerShape(8.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Search,
-                contentDescription = "Search icon",
-            )
-        }
     }
 }
 
