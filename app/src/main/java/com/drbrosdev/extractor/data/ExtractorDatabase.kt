@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [ImageDataEntity::class],
-    version = 1
+    entities = [ImageDataEntity::class, PreviousSearchEntity::class],
+    version = 2
 )
 abstract class ExtractorDatabase : RoomDatabase() {
     abstract fun imageDataDao(): ImageDataDao
