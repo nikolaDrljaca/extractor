@@ -29,7 +29,10 @@ class HomeNode(
                             SearchResultRouteArgs(event.query)
                         )
 
-                    HomeScreenEvents.RunExtraction -> viewModel.consumeEvent(event)
+                    is HomeScreenEvents.OnDeleteSearch ->
+                        viewModel.deletePreviousSearch(event.value)
+
+                    HomeScreenEvents.OnNavToAbout -> {}
                 }
             },
         )

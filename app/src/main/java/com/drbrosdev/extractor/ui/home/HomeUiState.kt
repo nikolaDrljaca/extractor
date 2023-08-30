@@ -1,20 +1,16 @@
 package com.drbrosdev.extractor.ui.home
 
-import com.drbrosdev.extractor.domain.model.MediaImage
-
-data class SyncStatus(
-    val localCount: Int = 0,
-    val deviceCount: Int = 0
-)
+import com.drbrosdev.extractor.data.PreviousSearchEntity
 
 data class HomeUiState(
-    val syncStatus: SyncStatus = SyncStatus(),
-    val images: List<MediaImage> = emptyList(),
-    val isLoading: Boolean = false
+    val searches: List<PreviousSearchEntity> = emptyList(),
 )
 
 sealed interface HomeScreenEvents {
+
     data class PerformSearch(val query: String) : HomeScreenEvents
-    data object RunExtraction: HomeScreenEvents
+    data class OnDeleteSearch(val value: PreviousSearchEntity) : HomeScreenEvents
+
+    data object OnNavToAbout: HomeScreenEvents
 
 }

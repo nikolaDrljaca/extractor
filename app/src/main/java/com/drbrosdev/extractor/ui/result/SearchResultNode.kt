@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 class SearchResultNode(
@@ -21,7 +20,6 @@ class SearchResultNode(
         val state by viewModel.state.collectAsState()
 
         LaunchedEffect(key1 = Unit) {
-            delay(500L)
             viewModel.performSearch(query)
         }
 
