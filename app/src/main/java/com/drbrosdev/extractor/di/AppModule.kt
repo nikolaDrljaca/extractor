@@ -32,6 +32,7 @@ private val coroutineModule = module {
 private val dataModule = module {
     single { ExtractorDatabase.createExtractorDatabase(androidContext()) }
     single { get<ExtractorDatabase>().imageDataDao() }
+    single { get<ExtractorDatabase>().previousSearchDao() }
     factory {
         ExtractorDataStore(androidContext().datastore)
     }

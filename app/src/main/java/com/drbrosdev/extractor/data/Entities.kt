@@ -17,7 +17,6 @@ data class ImageDataEntity(
 
 @Entity(tableName = "previous_search_entity")
 data class PreviousSearchEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val query: String,
+    @PrimaryKey val query: String,
     val resultCount: Int
 )

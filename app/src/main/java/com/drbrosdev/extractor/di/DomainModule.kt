@@ -10,6 +10,7 @@ import com.drbrosdev.extractor.domain.usecase.Extractor
 import com.drbrosdev.extractor.domain.usecase.ImageLabelExtractor
 import com.drbrosdev.extractor.domain.usecase.ImageSearch
 import com.drbrosdev.extractor.domain.usecase.InputImageProvider
+import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
 import com.drbrosdev.extractor.domain.usecase.MLKitImageLabelExtractor
 import com.drbrosdev.extractor.domain.usecase.MlKitTextExtractor
 import com.drbrosdev.extractor.domain.usecase.TextExtractor
@@ -57,10 +58,18 @@ val domainModule = module {
     }
 
     factory {
+        InsertPreviousSearch(
+            dispatcher = get(named(CoroutineModuleName.IO)),
+            dao = get()
+        )
+    }
+
+    factory {
         DefaultImageSearch(
             dispatcher = get(named(CoroutineModuleName.IO)),
             imageDataDao = get(),
-            mediaImageRepository = get()
+            mediaImageRepository = get(),
+            insertPreviousSearch = get()
         )
     } bind ImageSearch::class
 
