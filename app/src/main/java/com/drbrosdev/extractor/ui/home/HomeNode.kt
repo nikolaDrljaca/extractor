@@ -32,13 +32,6 @@ class HomeNode(
                     HomeScreenEvents.RunExtraction -> viewModel.consumeEvent(event)
                 }
             },
-            onNavToImageNode = { images, index ->
-//                val args = NavToImageNodeArgs(
-//                    images = images.map { it.uri },
-//                    initialIndex = index
-//                )
-//                navigator.toImageDetailRoute(args)
-            }
         )
     }
 }
