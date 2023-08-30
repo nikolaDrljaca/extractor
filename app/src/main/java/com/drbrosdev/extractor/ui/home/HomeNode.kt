@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
 import com.drbrosdev.extractor.ui.main.MainNavigator
-import com.drbrosdev.extractor.ui.main.NavToImageNodeArgs
+import com.drbrosdev.extractor.ui.main.SearchResultRouteArgs
 import org.koin.androidx.compose.koinViewModel
 
 class HomeNode(
@@ -22,13 +22,22 @@ class HomeNode(
 
         HomeScreen(
             state = state,
-            onEvent = viewModel::consumeEvent,
+            onEvent = { event ->
+                when (event) {
+                    is HomeScreenEvents.PerformSearch ->
+                        navigator.toSearchResultRoute(
+                            SearchResultRouteArgs(event.query)
+                        )
+
+                    HomeScreenEvents.RunExtraction -> viewModel.consumeEvent(event)
+                }
+            },
             onNavToImageNode = { images, index ->
-                val args = NavToImageNodeArgs(
-                    images = images.map { it.uri },
-                    initialIndex = index
-                )
-                navigator.toImageDetailRoute(args)
+//                val args = NavToImageNodeArgs(
+//                    images = images.map { it.uri },
+//                    initialIndex = index
+//                )
+//                navigator.toImageDetailRoute(args)
             }
         )
     }

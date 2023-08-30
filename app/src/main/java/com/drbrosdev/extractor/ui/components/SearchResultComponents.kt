@@ -49,7 +49,8 @@ fun BackButton(
         ),
         contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.onBackground
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            containerColor = MaterialTheme.colorScheme.background
         ),
         shape = ButtonShape
     ) {
@@ -70,6 +71,7 @@ fun BackButton(
 fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
     images: List<MediaImage>,
+    searchTerm: String,
     onClick: () -> Unit,
     gridState: LazyGridState = rememberLazyGridState()
 ) {
@@ -80,23 +82,23 @@ fun ExtractorImageGrid(
         columns = GridCells.Fixed(count = 3),
         state = gridState,
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        contentPadding = PaddingValues(vertical = 112.dp)
     ) {
-        item(key = "spacer") {
-            Spacer(modifier = Modifier.height(140.dp))
-        }
-
         item(
             span = { GridItemSpan(maxLineSpan) },
             key = "search_term"
         ) {
             Text(
-                text = "Search Term",
+                text = "# $searchTerm",
                 style = MaterialTheme.typography.headlineLarge.copy(
                     color = MaterialTheme.colorScheme.onBackground
                 ),
             )
         }
+        item(
+            span = { GridItemSpan(maxLineSpan) }
+        ) { Spacer(modifier = Modifier.height(12.dp)) }
 
         itemsIndexed(images, key = { _, it -> it.id }) { _, it ->
             ExtractorImageItem(

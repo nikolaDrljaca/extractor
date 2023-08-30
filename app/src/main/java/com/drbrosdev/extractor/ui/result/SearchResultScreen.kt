@@ -24,6 +24,7 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @Composable
 fun SearchResultScreen(
     modifier: Modifier = Modifier,
+    state: SearchResultScreenState,
 ) {
 
     BottomSheetScaffold(
@@ -57,7 +58,8 @@ fun SearchResultScreen(
                         height = Dimension.fillToConstraints
                     }
                 ),
-                images = emptyList(),
+                images = state.images,
+                searchTerm = state.searchTerm,
                 onClick = {}
             )
 
@@ -76,7 +78,6 @@ fun SearchResultScreen(
 }
 
 
-
 @Preview(
     showBackground = true,
     showSystemUi = true
@@ -84,6 +85,6 @@ fun SearchResultScreen(
 @Composable
 private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
-        SearchResultScreen()
+        SearchResultScreen(state = SearchResultScreenState())
     }
 }

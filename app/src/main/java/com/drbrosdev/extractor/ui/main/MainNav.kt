@@ -10,12 +10,12 @@ sealed interface MainRoutes : Parcelable {
     data object HomeRoute : MainRoutes
 
     @Parcelize
-    data object SyncStatusRoute: MainRoutes
+    data object SyncStatusRoute : MainRoutes
 
     @Parcelize
     data class SearchResultRoute(
         val query: String
-    ): MainRoutes
+    ) : MainRoutes
 
     @Parcelize
     data object AboutRoute : MainRoutes
@@ -23,8 +23,10 @@ sealed interface MainRoutes : Parcelable {
 
 interface MainNavigator {
 
-    fun toImageDetailRoute(args: NavToImageNodeArgs)
+    fun toSearchResultRoute(args: SearchResultRouteArgs)
 }
+
+data class SearchResultRouteArgs(val query: String)
 
 data class NavToImageNodeArgs(
     val images: List<Uri>,

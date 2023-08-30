@@ -4,7 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.components.backstack.BackStack
 import com.bumble.appyx.components.backstack.BackStackModel
-import com.bumble.appyx.components.backstack.ui.fader.BackStackFader
+import com.bumble.appyx.components.backstack.operation.push
+import com.bumble.appyx.components.backstack.ui.slider.BackStackSlider
 import com.bumble.appyx.navigation.composable.AppyxComponent
 import com.bumble.appyx.navigation.modality.BuildContext
 import com.bumble.appyx.navigation.node.Node
@@ -18,10 +19,10 @@ class MainNode(
     buildContext: BuildContext,
     private val backstack: BackStack<MainRoutes> = BackStack(
         model = BackStackModel(
-            initialTarget = MainRoutes.SearchResultRoute(query = "asd"),
+            initialTarget = MainRoutes.HomeRoute,
             savedStateMap = buildContext.savedStateMap
         ),
-        motionController = { BackStackFader(it) },
+        motionController = { BackStackSlider(it) },
     ),
 ) : ParentNode<MainRoutes>(
     buildContext = buildContext,
@@ -37,10 +38,14 @@ class MainNode(
         return when (interactionTarget) {
             MainRoutes.AboutRoute -> node(buildContext) { }
             MainRoutes.HomeRoute -> HomeNode(buildContext, this)
-            is MainRoutes.SearchResultRoute -> SearchResultNode(buildContext)
+            is MainRoutes.SearchResultRoute -> SearchResultNode(buildContext, interactionTarget.query)
             MainRoutes.SyncStatusRoute -> node(buildContext) { /*TODO*/ }
         }
     }
 
-    override fun toImageDetailRoute(args: NavToImageNodeArgs) {}
+    override fun toSearchResultRoute(args: SearchResultRouteArgs) {
+        backstack.push(
+            MainRoutes.SearchResultRoute(args.query)
+        )
+    }
 }
