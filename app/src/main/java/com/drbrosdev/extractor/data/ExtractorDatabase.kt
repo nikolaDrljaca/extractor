@@ -12,6 +12,8 @@ import androidx.room.RoomDatabase
 abstract class ExtractorDatabase : RoomDatabase() {
     abstract fun imageDataDao(): ImageDataDao
 
+    abstract fun previousSearchDao(): PreviousSearchDao
+
     companion object {
         fun createExtractorDatabase(context: Context): ExtractorDatabase {
             return Room.databaseBuilder(

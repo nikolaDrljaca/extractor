@@ -27,3 +27,19 @@ interface ImageDataDao {
     @Query("select count(*) from image_data_entity")
     suspend fun getCount(): Int
 }
+
+@Dao
+interface PreviousSearchDao {
+
+    @Query("select * from previous_search_entity")
+    fun findAll(): Flow<List<PreviousSearchEntity>>
+
+    @Insert
+    suspend fun insert(vararg items: PreviousSearchEntity)
+
+    @Delete
+    suspend fun delete(value: PreviousSearchEntity)
+
+    @Query("delete from previous_search_entity where id=:id")
+    suspend fun deleteById(id: Int)
+}
