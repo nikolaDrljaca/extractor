@@ -10,6 +10,7 @@ import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import com.drbrosdev.extractor.ui.home.HomeViewModel
 import com.drbrosdev.extractor.ui.image.ImageDetailViewModel
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
+import com.drbrosdev.extractor.ui.result.SearchResultViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
@@ -75,6 +76,12 @@ private val uiModule = module {
     viewModel {
         ImageDetailViewModel(
             mediaImageRepository = get<DefaultMediaImageRepository>()
+        )
+    }
+
+    viewModel {
+        SearchResultViewModel(
+            imageSearch = get<DefaultImageSearch>()
         )
     }
 }

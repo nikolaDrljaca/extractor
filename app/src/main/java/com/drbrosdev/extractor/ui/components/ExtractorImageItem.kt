@@ -2,7 +2,6 @@ package com.drbrosdev.extractor.ui.components
 
 import android.net.Uri
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -32,7 +31,6 @@ fun ExtractorImageItem(
     AsyncImage(
         modifier = Modifier
             .then(sizeModifier)
-            .padding(4.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable { onClick() }
             .then(modifier),

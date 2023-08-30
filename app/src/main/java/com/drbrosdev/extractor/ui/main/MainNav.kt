@@ -7,12 +7,14 @@ import kotlinx.parcelize.Parcelize
 sealed interface MainRoutes : Parcelable {
 
     @Parcelize
-    data object SearchRoute : MainRoutes
+    data object HomeRoute : MainRoutes
 
     @Parcelize
-    data class ImageDetailRoute(
-        val images: List<Uri>,
-        val initialIndex: Int
+    data object SyncStatusRoute : MainRoutes
+
+    @Parcelize
+    data class SearchResultRoute(
+        val query: String
     ) : MainRoutes
 
     @Parcelize
@@ -21,8 +23,10 @@ sealed interface MainRoutes : Parcelable {
 
 interface MainNavigator {
 
-    fun toImageDetailRoute(args: NavToImageNodeArgs)
+    fun toSearchResultRoute(args: SearchResultRouteArgs)
 }
+
+data class SearchResultRouteArgs(val query: String)
 
 data class NavToImageNodeArgs(
     val images: List<Uri>,
