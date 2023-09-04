@@ -2,7 +2,6 @@ package com.drbrosdev.extractor.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -14,4 +13,10 @@ data class ImageDataEntity(
     val mediaStoreId: Long,
     val uri: String,
     val labels: String,
+)
+
+@Entity(tableName = "previous_search_entity")
+data class PreviousSearchEntity(
+    @PrimaryKey val query: String,
+    val resultCount: Int
 )

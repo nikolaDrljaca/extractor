@@ -1,10 +1,15 @@
 package com.drbrosdev.extractor.ui.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -12,9 +17,11 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.ui.components.HomeTopBar
+import com.drbrosdev.extractor.ui.components.PreviousSearchItem
 import com.drbrosdev.extractor.ui.components.SearchBar
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     state: HomeUiState,
@@ -54,8 +61,8 @@ fun HomeScreen(
                         width = Dimension.fillToConstraints
                     }
                 ),
-            onClick = { onEvent(HomeScreenEvents.RunExtraction) },
-            onAboutClick = {},
+            onClick = { },
+            onAboutClick = { },
         )
 
         //TODO: Need multiple states -> Recent searches, empty
@@ -66,18 +73,29 @@ fun HomeScreen(
                     constrainBlock = {
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                        top.linkTo(searchBar.bottom)
+                        top.linkTo(searchBar.bottom, margin = 24.dp)
                     }
-                )
+                ),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-//            items(temp) {
-//                PreviousSearchItem(
-//                    modifier = Modifier.padding(start = 4.dp),
-//                    text = it,
-//                    onClick = { /*TODO*/ },
-//                    onDelete = {}
-//                )
-//            }
+            item {
+                Text(
+                    text = "Previous Searches",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                )
+            }
+
+            items(state.searches) {
+                PreviousSearchItem(
+                    modifier = Modifier.animateItemPlacement(),
+                    text = it.query,
+                    count = it.resultCount,
+                    onClick = { onEvent(HomeScreenEvents.PerformSearch(it.query)) },
+                    onDelete = { onEvent(HomeScreenEvents.OnDeleteSearch(it)) }
+                )
+            }
         }
     }
 }
@@ -89,7 +107,7 @@ fun HomeScreen(
 )
 @Composable
 private fun SearchScreenPreview() {
-    ExtractorTheme {
+    ExtractorTheme(dynamicColor = false) {
         Surface {
             HomeScreen(
                 state = HomeUiState(),

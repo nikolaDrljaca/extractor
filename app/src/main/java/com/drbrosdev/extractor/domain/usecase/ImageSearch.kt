@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.domain.usecase
 import com.drbrosdev.extractor.data.ImageDataDao
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.util.runCatching
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -22,7 +23,8 @@ interface ImageSearch {
 class DefaultImageSearch(
     private val dispatcher: CoroutineDispatcher,
     private val mediaImageRepository: MediaImageRepository,
-    private val imageDataDao: ImageDataDao
+    private val imageDataDao: ImageDataDao,
+    private val insertPreviousSearch: InsertPreviousSearch
 ) : ImageSearch {
 
 
@@ -36,18 +38,21 @@ class DefaultImageSearch(
                 .lowercase()
 
             val labels = temp.split(" ")
-            val out = mutableSetOf<MediaImage>()
+            val foundImages = mutableSetOf<MediaImage>()
             for (label in labels) {
-                val ids = imageDataDao.findByLabel(label.lowercase())
+                val ids = imageDataDao.findByLabel(label)
                     .first()
                     .map { it.mediaStoreId }
                 if (ids.isEmpty()) continue
 
                 val mediaImages = mediaImageRepository.findAllById(ids)
-                out.addAll(mediaImages)
+                foundImages.addAll(mediaImages)
             }
 
-            Result.success(out.toList())
+            val out = foundImages.toList()
+            runCatching { insertPreviousSearch(temp, out.size) }
+
+            Result.success(out)
         }
     }
 }
