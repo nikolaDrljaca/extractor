@@ -3,40 +3,36 @@ package com.drbrosdev.extractor.ui.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import com.bumble.appyx.navigation.modality.BuildContext
-import com.bumble.appyx.navigation.node.Node
-import com.drbrosdev.extractor.ui.main.MainNavigator
-import com.drbrosdev.extractor.ui.main.SearchResultRouteArgs
+import com.drbrosdev.extractor.util.LocalNavController
+import com.drbrosdev.extractor.util.NavTarget
+import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
-class HomeNode(
-    buildContext: BuildContext,
-    private val navigator: MainNavigator
-) : Node(buildContext) {
+
+@Parcelize
+object HomeNavTarget: NavTarget {
 
     @Composable
-    override fun View(modifier: Modifier) {
+    override fun Content() {
         val viewModel: HomeViewModel = koinViewModel()
         val state by viewModel.state.collectAsState()
+        val navController = LocalNavController.current
 
         HomeScreen(
             state = state,
             onEvent = { event ->
-                when (event) {
-                    is HomeScreenEvents.PerformSearch ->
-                        navigator.toSearchResultRoute(
-                            SearchResultRouteArgs(event.query)
-                        )
-
-                    is HomeScreenEvents.OnDeleteSearch ->
-                        viewModel.deletePreviousSearch(event.value)
-
-                    HomeScreenEvents.OnNavToAbout -> {}
-                }
+//                when (event) {
+//                    is HomeScreenEvents.PerformSearch ->
+//                        navigator.toSearchResultRoute(
+//                            SearchResultRouteArgs(event.query)
+//                        )
+//
+//                    is HomeScreenEvents.OnDeleteSearch ->
+//                        viewModel.deletePreviousSearch(event.value)
+//
+//                    HomeScreenEvents.OnNavToAbout -> {}
+//                }
             },
         )
     }
 }
-
-

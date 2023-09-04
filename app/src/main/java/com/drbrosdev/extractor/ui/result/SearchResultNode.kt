@@ -4,18 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import com.bumble.appyx.navigation.modality.BuildContext
-import com.bumble.appyx.navigation.node.Node
+import com.drbrosdev.extractor.util.NavTarget
+import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
-class SearchResultNode(
-    buildContext: BuildContext,
-    private val query: String
-) : Node(buildContext) {
+@Parcelize
+data class SearchResultNavTarget(private val query: String) : NavTarget {
 
     @Composable
-    override fun View(modifier: Modifier) {
+    override fun Content() {
         val viewModel: SearchResultViewModel = koinViewModel()
         val state by viewModel.state.collectAsState()
 

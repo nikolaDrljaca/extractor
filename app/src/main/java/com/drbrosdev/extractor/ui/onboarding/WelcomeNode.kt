@@ -5,19 +5,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.bumble.appyx.navigation.modality.BuildContext
-import com.bumble.appyx.navigation.node.Node
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.ExtractorActionButton
 import com.drbrosdev.extractor.ui.components.OnboardingCard
 import com.drbrosdev.extractor.ui.components.OnboardingCardHeadline
+import dev.olshevski.navigation.reimagined.navigate
+import kotlinx.parcelize.Parcelize
 
-class WelcomeNode(
-    buildContext: BuildContext,
-) : Node(buildContext) {
+@Parcelize
+object WelcomeOnbCard : OnbNavTarget {
 
     @Composable
-    override fun View(modifier: Modifier) {
+    override fun Content() {
+        val navController = LocalOnbNavController.current
 
         OnboardingCard(
             body = stringResource(id = R.string.lorem),
@@ -26,13 +26,12 @@ class WelcomeNode(
             },
             actionButton = {
                 ExtractorActionButton(
-                    onClick = { finish() },
+                    onClick = { navController.navigate(PrivacyNoteOnbCard) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = "Let's get started!")
                 }
             },
-            modifier = modifier
         )
     }
 }

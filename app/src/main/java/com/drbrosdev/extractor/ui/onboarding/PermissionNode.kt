@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.bumble.appyx.navigation.modality.BuildContext
-import com.bumble.appyx.navigation.node.Node
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.findActivity
 import com.drbrosdev.extractor.openAppSettings
@@ -22,29 +19,21 @@ import com.drbrosdev.extractor.ui.components.ExtractorActionButton
 import com.drbrosdev.extractor.ui.components.OnboardingCard
 import com.drbrosdev.extractor.ui.components.OnboardingCardHeadline
 import com.drbrosdev.extractor.ui.components.OutlinedExtractorActionButton
+import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerOnbCard
+import dev.olshevski.navigation.reimagined.navigate
+import dev.olshevski.navigation.reimagined.pop
+import kotlinx.parcelize.Parcelize
 
-class PermissionNode(
-    buildContext: BuildContext,
-    private val onBackPressed: () -> Unit
-) : Node(buildContext) {
+@Parcelize
+object PermissionOnbCard : OnbNavTarget {
 
     @Composable
-    override fun View(modifier: Modifier) {
+    override fun Content() {
+        val navController = LocalOnbNavController.current
         val imagePermissionResultLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
-                if (isGranted) finish()
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//                    viewModel.onPermissionResult(
-//                        Manifest.permission.READ_MEDIA_IMAGES,
-//                        isGranted = isGranted
-//                    )
-//                } else {
-//                    viewModel.onPermissionResult(
-//                        Manifest.permission.READ_EXTERNAL_STORAGE,
-//                        isGranted = isGranted
-//                    )
-//                }
+                if (isGranted) navController.navigate(StartWorkerOnbCard)
             }
         )
         val activity = LocalContext.current.findActivity()
@@ -54,9 +43,7 @@ class PermissionNode(
             headline = {
                 OnboardingCardHeadline(
                     headline = "Permission",
-                    onBack = {
-                        onBackPressed()
-                    }
+                    onBack = { navController.pop() }
                 )
             },
             actionButton = {

@@ -83,11 +83,8 @@ dependencies {
     implementation("com.google.mlkit:text-recognition:16.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
 
-    //Appyx
-    val appyxVersion = "2.0.0-alpha01"
-    implementation("com.bumble.appyx:appyx-navigation:$appyxVersion")
-    implementation("com.bumble.appyx:backstack-android:$appyxVersion")
-    implementation("com.bumble.appyx:spotlight-android:$appyxVersion")
+    //Navigation Reimagined
+    implementation("dev.olshevski.navigation:reimagined:1.5.0")
 
     //Koin
     val koinAndroidComposeVersion = "3.4.6"
