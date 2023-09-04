@@ -35,8 +35,8 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerOnbCard
 import com.drbrosdev.extractor.ui.theme.md_theme_light_secondary
 import com.drbrosdev.extractor.ui.theme.md_theme_light_tertiary
+import com.drbrosdev.extractor.util.CardStackSpec
 import com.drbrosdev.extractor.util.NavTarget
-import com.drbrosdev.extractor.util.SlideTransitionSpec
 import com.drbrosdev.extractor.util.applicationIconBitmap
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.NavController
@@ -106,7 +106,7 @@ private fun OnboardingScreen(
             .systemBarsPadding(),
     ) {
         val topGuideline = createGuidelineFromTop(0.05f)
-        val cardGuideline = createGuidelineFromBottom(0.45f)
+        val cardGuideline = createGuidelineFromBottom(0.55f)
         val (header, cards) = createRefs()
 
         Column(
@@ -135,7 +135,7 @@ private fun OnboardingScreen(
 
         AnimatedNavHost(
             controller = onbNavController,
-            transitionSpec = SlideTransitionSpec,
+            transitionSpec = CardStackSpec,
             modifier = modifier.constrainAs(cards) {
                 top.linkTo(cardGuideline)
                 start.linkTo(parent.start)

@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.zIndex
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.ExtractorActionButton
 import com.drbrosdev.extractor.ui.components.OnboardingCard
@@ -32,6 +33,7 @@ object WelcomeOnbCard : OnbNavTarget {
                     Text(text = "Let's get started!")
                 }
             },
+            modifier = Modifier.zIndex(2f)
         )
     }
 }
