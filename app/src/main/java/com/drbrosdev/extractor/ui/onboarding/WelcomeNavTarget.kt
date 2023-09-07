@@ -5,38 +5,35 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.bumble.appyx.navigation.modality.BuildContext
-import com.bumble.appyx.navigation.node.Node
+import androidx.compose.ui.zIndex
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.ExtractorActionButton
 import com.drbrosdev.extractor.ui.components.OnboardingCard
 import com.drbrosdev.extractor.ui.components.OnboardingCardHeadline
+import dev.olshevski.navigation.reimagined.navigate
+import kotlinx.parcelize.Parcelize
 
-class PrivacyNoteNode(
-    buildContext: BuildContext,
-    private val onBackPressed: () -> Unit
-) : Node(buildContext) {
+@Parcelize
+object WelcomeOnbCard : OnbNavTarget {
+
     @Composable
-    override fun View(modifier: Modifier) {
+    override fun Content() {
+        val navController = LocalOnbNavController.current
+
         OnboardingCard(
             body = stringResource(id = R.string.lorem),
             headline = {
-                OnboardingCardHeadline(
-                    headline = "A Note on Privacy",
-                    onBack = {
-                        onBackPressed()
-                    }
-                )
-
+                OnboardingCardHeadline(headline = "What is <app name>?")
             },
             actionButton = {
                 ExtractorActionButton(
-                    onClick = { finish() },
+                    onClick = { navController.navigate(PrivacyNoteOnbCard) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Understood!")
+                    Text(text = "Let's get started!")
                 }
-            }
+            },
+            modifier = Modifier.zIndex(2f)
         )
     }
 }

@@ -24,9 +24,9 @@ class StartWorkerViewModel(
             ExistingWorkPolicy.KEEP,
             extractorWorkRequest
         )
+    }
 
-        viewModelScope.launch {
-            datastore.finishOnboarding()
-        }
+    fun finishOnboarding() {
+        viewModelScope.launch { datastore.finishOnboarding() }
     }
 }

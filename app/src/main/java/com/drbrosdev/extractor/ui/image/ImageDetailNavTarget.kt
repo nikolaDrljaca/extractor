@@ -22,23 +22,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.bumble.appyx.navigation.modality.BuildContext
-import com.bumble.appyx.navigation.node.Node
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.util.NavTarget
+import kotlinx.parcelize.Parcelize
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 import org.koin.androidx.compose.koinViewModel
 
-class ImageNode(
+@Parcelize
+data class ImageDetailNavTarget(
     private val images: List<Uri>,
-    private val initialIndex: Int,
-    buildContext: BuildContext
-) : Node(buildContext) {
+    private val initialIndex: Int
+) : NavTarget {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    override fun View(modifier: Modifier) {
-
+    override fun Content() {
         val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
         val viewModel: ImageDetailViewModel = koinViewModel()
         val currentImageInfo by viewModel.state.collectAsState()

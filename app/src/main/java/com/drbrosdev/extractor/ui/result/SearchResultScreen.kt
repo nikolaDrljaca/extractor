@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,8 +25,11 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @Composable
 fun SearchResultScreen(
     modifier: Modifier = Modifier,
+    onNavToDetail: (selectedIndex: Int) -> Unit,
+    onNavBack: () -> Unit,
     state: SearchResultScreenState,
 ) {
+    val scaffoldState = rememberBottomSheetScaffoldState()
 
     BottomSheetScaffold(
         sheetContent = {
@@ -36,7 +40,8 @@ fun SearchResultScreen(
         sheetContainerColor = MaterialTheme.colorScheme.primary,
         sheetDragHandle = { Spacer(modifier.height(24.dp)) },
         sheetContentColor = Color.White,
-        sheetPeekHeight = 100.dp
+        sheetPeekHeight = 100.dp,
+        scaffoldState = scaffoldState
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -60,7 +65,7 @@ fun SearchResultScreen(
                 ),
                 images = state.images,
                 searchTerm = state.searchTerm,
-                onClick = {}
+                onClick = onNavToDetail
             )
 
             BackButton(
@@ -71,7 +76,7 @@ fun SearchResultScreen(
                         start.linkTo(parent.start)
                     }
                 ),
-                onClick = {}
+                onClick = onNavBack
             )
         }
     }
@@ -85,6 +90,10 @@ fun SearchResultScreen(
 @Composable
 private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
-        SearchResultScreen(state = SearchResultScreenState())
+        SearchResultScreen(
+            state = SearchResultScreenState(),
+            onNavToDetail = {},
+            onNavBack = {}
+        )
     }
 }

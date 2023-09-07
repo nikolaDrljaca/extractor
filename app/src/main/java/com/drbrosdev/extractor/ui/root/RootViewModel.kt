@@ -5,9 +5,7 @@ import com.drbrosdev.extractor.data.ExtractorDataStore
 
 class RootViewModel(
     private val datastore: ExtractorDataStore
-): ViewModel() {
+) : ViewModel() {
 
-    val isOnboardingFinished = datastore
-        .isOnboardingFinished
-
+    fun isOnboardingFinished() = datastore.isOnboardingFinished
 }
