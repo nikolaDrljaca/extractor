@@ -30,6 +30,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun SearchResultScreen(
     modifier: Modifier = Modifier,
+    onNavToDetail: (selectedIndex: Int) -> Unit,
+    onNavBack: () -> Unit,
     state: SearchResultScreenState,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState(
@@ -78,7 +80,7 @@ fun SearchResultScreen(
                 ),
                 images = state.images,
                 searchTerm = state.searchTerm,
-                onClick = {}
+                onClick = onNavToDetail
             )
 
             BackButton(
@@ -89,7 +91,7 @@ fun SearchResultScreen(
                         start.linkTo(parent.start)
                     }
                 ),
-                onClick = {}
+                onClick = onNavBack
             )
         }
     }
@@ -103,6 +105,10 @@ fun SearchResultScreen(
 @Composable
 private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
-        SearchResultScreen(state = SearchResultScreenState())
+        SearchResultScreen(
+            state = SearchResultScreenState(),
+            onNavToDetail = {},
+            onNavBack = {}
+        )
     }
 }

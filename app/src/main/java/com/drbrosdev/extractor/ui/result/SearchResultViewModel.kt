@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.result
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.MediaImage
@@ -30,6 +31,10 @@ class SearchResultViewModel(
                 )
             }
         }
+    }
+
+    fun getImageUris(): List<Uri> {
+        return state.value.images.map { it.uri }
     }
 }
 

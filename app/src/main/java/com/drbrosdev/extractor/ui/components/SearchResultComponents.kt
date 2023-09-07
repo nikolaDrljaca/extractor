@@ -72,7 +72,7 @@ fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
     images: List<MediaImage>,
     searchTerm: String,
-    onClick: () -> Unit,
+    onClick: (index: Int) -> Unit,
     gridState: LazyGridState = rememberLazyGridState()
 ) {
 
@@ -100,11 +100,11 @@ fun ExtractorImageGrid(
             span = { GridItemSpan(maxLineSpan) }
         ) { Spacer(modifier = Modifier.height(12.dp)) }
 
-        itemsIndexed(images, key = { _, it -> it.id }) { _, it ->
+        itemsIndexed(images, key = { _, it -> it.id }) { index, it ->
             ExtractorImageItem(
                 imageUri = it.uri,
                 size = 144,
-                onClick = onClick
+                onClick = { onClick(index) }
             )
         }
     }

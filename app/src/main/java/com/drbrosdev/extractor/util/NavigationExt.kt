@@ -4,12 +4,15 @@ import android.os.Parcelable
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.drbrosdev.extractor.ui.image.ImageDetailNavTarget
+import com.drbrosdev.extractor.ui.result.SearchResultNavTarget
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
@@ -26,13 +29,22 @@ val LocalNavController = staticCompositionLocalOf<NavController<NavTarget>> {
 }
 
 
-val SlideTransitionSpec = NavTransitionSpec<Any?> { action, _, _ ->
+val SlideTransitionSpec = NavTransitionSpec<NavTarget?> { action, from, to ->
+    if ((from is SearchResultNavTarget) and (to is  ImageDetailNavTarget)) {
+        return@NavTransitionSpec fadeIn() togetherWith fadeOut()
+    }
+
+    if ((to is SearchResultNavTarget) and (from is  ImageDetailNavTarget)) {
+        return@NavTransitionSpec fadeIn() togetherWith fadeOut()
+    }
+
     val direction = if (action == NavAction.Pop) {
         AnimatedContentTransitionScope.SlideDirection.End
     } else {
         AnimatedContentTransitionScope.SlideDirection.Start
     }
-    slideIntoContainer(direction) togetherWith slideOutOfContainer(direction)
+
+    fadeIn() + slideIntoContainer(direction) togetherWith fadeOut() + slideOutOfContainer(direction)
 }
 
 

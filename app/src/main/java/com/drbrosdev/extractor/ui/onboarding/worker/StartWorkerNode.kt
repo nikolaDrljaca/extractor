@@ -13,8 +13,8 @@ import com.drbrosdev.extractor.ui.home.HomeNavTarget
 import com.drbrosdev.extractor.ui.onboarding.LocalOnbNavController
 import com.drbrosdev.extractor.ui.onboarding.OnbNavTarget
 import com.drbrosdev.extractor.util.LocalNavController
-import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
+import dev.olshevski.navigation.reimagined.replaceAll
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
@@ -41,7 +41,7 @@ object StartWorkerOnbCard : OnbNavTarget {
                     onClick = {
                         viewModel.spawnWorkRequest()
                         viewModel.finishOnboarding()
-                        rootNavController.navigate(HomeNavTarget)
+                        rootNavController.replaceAll(HomeNavTarget)
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
