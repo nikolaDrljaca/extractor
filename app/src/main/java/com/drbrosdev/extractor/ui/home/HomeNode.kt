@@ -3,14 +3,16 @@ package com.drbrosdev.extractor.ui.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.drbrosdev.extractor.ui.result.SearchResultNavTarget
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
+import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
 
 @Parcelize
-object HomeNavTarget: NavTarget {
+object HomeNavTarget : NavTarget {
 
     @Composable
     override fun Content() {
@@ -21,17 +23,15 @@ object HomeNavTarget: NavTarget {
         HomeScreen(
             state = state,
             onEvent = { event ->
-//                when (event) {
-//                    is HomeScreenEvents.PerformSearch ->
-//                        navigator.toSearchResultRoute(
-//                            SearchResultRouteArgs(event.query)
-//                        )
-//
-//                    is HomeScreenEvents.OnDeleteSearch ->
-//                        viewModel.deletePreviousSearch(event.value)
-//
-//                    HomeScreenEvents.OnNavToAbout -> {}
-//                }
+                when (event) {
+                    is HomeScreenEvents.PerformSearch ->
+                        navController.navigate(SearchResultNavTarget(event.query))
+
+                    is HomeScreenEvents.OnDeleteSearch ->
+                        viewModel.deletePreviousSearch(event.value)
+
+                    HomeScreenEvents.OnNavToAbout -> {}
+                }
             },
         )
     }

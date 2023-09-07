@@ -8,9 +8,14 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -19,6 +24,7 @@ import com.drbrosdev.extractor.ui.components.BackButton
 import com.drbrosdev.extractor.ui.components.ExtractorImageGrid
 import com.drbrosdev.extractor.ui.components.SearchFilterSheet
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +32,18 @@ fun SearchResultScreen(
     modifier: Modifier = Modifier,
     state: SearchResultScreenState,
 ) {
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = SheetState(
+            skipPartiallyExpanded = true,
+            density = LocalDensity.current,
+            initialValue = SheetValue.Hidden
+        )
+    )
+
+    LaunchedEffect(key1 = Unit) {
+        delay(500)
+        scaffoldState.bottomSheetState.show()
+    }
 
     BottomSheetScaffold(
         sheetContent = {

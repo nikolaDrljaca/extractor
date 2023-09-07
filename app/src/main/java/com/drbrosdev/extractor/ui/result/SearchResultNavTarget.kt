@@ -20,6 +20,7 @@ data class SearchResultNavTarget(private val query: String) : NavTarget {
             viewModel.performSearch(query)
         }
 
+        //TODO: Loading state, animated placeholders or spinners
         SearchResultScreen(
             state = state
         )

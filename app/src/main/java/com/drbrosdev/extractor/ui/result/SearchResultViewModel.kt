@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.usecase.ImageSearch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -20,6 +21,7 @@ class SearchResultViewModel(
         if (query.isBlank()) return
 
         viewModelScope.launch {
+            delay(500)
             val result = imageSearch.execute(query)
             _state.update {
                 SearchResultScreenState(
@@ -33,5 +35,5 @@ class SearchResultViewModel(
 
 data class SearchResultScreenState(
     val images: List<MediaImage> = emptyList(),
-    val searchTerm: String = "Search Term"
+    val searchTerm: String = "Loading..."
 )
