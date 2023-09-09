@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,35 +66,37 @@ fun HomeScreen(
         )
 
         //TODO: Need multiple states -> Recent searches, empty
-        LazyColumn(
-            modifier = Modifier
-                .constrainAs(
-                    ref = previousSearch,
-                    constrainBlock = {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        top.linkTo(searchBar.bottom, margin = 24.dp)
-                    }
-                ),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            item {
-                Text(
-                    text = "Previous Searches",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        color = MaterialTheme.colorScheme.primary
+        if(state.searches.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .constrainAs(
+                        ref = previousSearch,
+                        constrainBlock = {
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            top.linkTo(searchBar.bottom, margin = 24.dp)
+                        }
+                    ),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                item {
+                    Text(
+                        text = "Previous Searches",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     )
-                )
-            }
+                }
 
-            items(state.searches) {
-                PreviousSearchItem(
-                    modifier = Modifier.animateItemPlacement(),
-                    text = it.query,
-                    count = it.resultCount,
-                    onClick = { onEvent(HomeScreenEvents.PerformSearch(it.query)) },
-                    onDelete = { onEvent(HomeScreenEvents.OnDeleteSearch(it)) }
-                )
+                items(state.searches) {
+                    PreviousSearchItem(
+                        modifier = Modifier.animateItemPlacement(),
+                        text = it.query,
+                        count = it.resultCount,
+                        onClick = { onEvent(HomeScreenEvents.PerformSearch(it.query)) },
+                        onDelete = { onEvent(HomeScreenEvents.OnDeleteSearch(it)) }
+                    )
+                }
             }
         }
     }

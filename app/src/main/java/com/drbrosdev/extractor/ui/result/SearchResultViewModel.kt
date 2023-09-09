@@ -14,31 +14,47 @@ import kotlinx.coroutines.launch
 class SearchResultViewModel(
     private val imageSearch: ImageSearch
 ) : ViewModel() {
-    private val _state = MutableStateFlow(SearchResultScreenState())
+    private val _state = MutableStateFlow<SearchResultScreenState>(SearchResultScreenState.Loading)
     val state = _state.asStateFlow()
 
     fun performSearch(query: String) {
-        if (query == state.value.searchTerm) return
-        if (query.isBlank()) return
+        if (isQuerySame(query)) return
 
         viewModelScope.launch {
-            delay(500)
+            delay(100)
             val result = imageSearch.execute(query)
             _state.update {
-                SearchResultScreenState(
+                SearchResultScreenState.Success(
                     images = result.getOrDefault(emptyList()),
                     searchTerm = query
                 )
             }
+
         }
     }
 
     fun getImageUris(): List<Uri> {
-        return state.value.images.map { it.uri }
+        return when (val out = state.value) {
+            SearchResultScreenState.Loading -> emptyList()
+            is SearchResultScreenState.Success -> out.images.map { it.uri }
+        }
+    }
+
+    private fun isQuerySame(query: String): Boolean {
+        return when (val out = state.value) {
+            is SearchResultScreenState.Success -> (out.searchTerm == query) or query.isBlank()
+            is SearchResultScreenState.Loading -> false
+        }
     }
 }
 
-data class SearchResultScreenState(
-    val images: List<MediaImage> = emptyList(),
-    val searchTerm: String = "Loading..."
-)
+sealed interface SearchResultScreenState {
+
+    data class Success(
+        val images: List<MediaImage> = emptyList(),
+        val searchTerm: String = "Loading..."
+    ) : SearchResultScreenState
+
+    data object Loading : SearchResultScreenState
+
+}

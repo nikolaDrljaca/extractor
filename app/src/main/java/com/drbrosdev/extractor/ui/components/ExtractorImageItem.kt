@@ -1,7 +1,9 @@
 package com.drbrosdev.extractor.ui.components
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.util.shimmerBrush
 
 @Composable
 fun ExtractorImageItem(
@@ -41,5 +44,26 @@ fun ExtractorImageItem(
         contentDescription = null,
         contentScale = ContentScale.Crop,
         placeholder = painterResource(id = R.drawable.baseline_image_24)
+    )
+}
+
+@Composable
+fun ExtractorImagePlaceholder(
+    modifier: Modifier = Modifier,
+    size: Int? = null,
+) {
+    val shimmerBrush = shimmerBrush()
+    val sizeModifier = if (size != null) {
+        Modifier.size(size.dp)
+    } else {
+        Modifier
+    }
+
+    Box(
+        modifier = Modifier
+            .then(sizeModifier)
+            .clip(RoundedCornerShape(8.dp))
+            .background(brush = shimmerBrush)
+            .then(modifier)
     )
 }
