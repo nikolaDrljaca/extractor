@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.data.dao
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -7,6 +8,7 @@ import androidx.room.Query
 import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface PreviousSearchDao {
 
     @Query("select * from previous_search_entity")

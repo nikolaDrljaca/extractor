@@ -40,7 +40,9 @@ val domainModule = module {
             textExtractor = get(),
             provider = get(),
             dispatcher = get(named(CoroutineModuleName.Default)),
-            imageDataDao = get()
+            visualEmbeddingDao = get(),
+            textEmbeddingDao = get(),
+            extractorEntityDao = get()
         )
     } bind Extractor::class
 
@@ -52,7 +54,7 @@ val domainModule = module {
         BulkExtractor(
             dispatcher = get(named(CoroutineModuleName.Default)),
             mediaImageRepository = get(),
-            imageDataDao = get(),
+            extractionEntityDao = get(),
             extractor = get()
         )
     }
@@ -67,7 +69,6 @@ val domainModule = module {
     factory {
         DefaultImageSearch(
             dispatcher = get(named(CoroutineModuleName.IO)),
-            imageDataDao = get(),
             mediaImageRepository = get(),
             insertPreviousSearch = get()
         )

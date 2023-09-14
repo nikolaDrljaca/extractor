@@ -3,7 +3,6 @@ package com.drbrosdev.extractor.domain.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.drbrosdev.extractor.data.ImageDataDao
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.BulkExtractor
 

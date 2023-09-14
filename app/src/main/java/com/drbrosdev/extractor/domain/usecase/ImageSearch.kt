@@ -1,11 +1,9 @@
 package com.drbrosdev.extractor.domain.usecase
 
-import com.drbrosdev.extractor.data.ImageDataDao
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.util.runCatching
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 
@@ -23,7 +21,6 @@ interface ImageSearch {
 class DefaultImageSearch(
     private val dispatcher: CoroutineDispatcher,
     private val mediaImageRepository: MediaImageRepository,
-    private val imageDataDao: ImageDataDao,
     private val insertPreviousSearch: InsertPreviousSearch
 ) : ImageSearch {
 

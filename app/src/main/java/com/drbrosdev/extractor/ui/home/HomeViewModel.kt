@@ -2,8 +2,8 @@ package com.drbrosdev.extractor.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.data.PreviousSearchDao
-import com.drbrosdev.extractor.data.PreviousSearchEntity
+import com.drbrosdev.extractor.data.dao.PreviousSearchDao
+import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn

@@ -63,6 +63,29 @@ class ImageEmbeddingQueryTest {
 
     }
 
+    @Test
+    fun shouldNotFindEmbeddingsAfterDeletion() = runBlocking {
+        val imageEntityId = 11L
+        val textData = TextEmbedding(id = 10, imageEntityId = imageEntityId, value = "this")
+        val visualData =
+            VisualEmbedding(id = 10, imageEntityId = imageEntityId, value = "visualData")
+        val extractionEntity =
+            ExtractionEntity(mediaStoreId = imageEntityId, uri = "sadfasdf")
+
+        textDao.insert(textData)
+        visualDao.insert(visualData)
+        extractorDao.insert(extractionEntity)
+
+        //TODO: Have to delete both, extractor entity and related embeddings
+        //TODO: Possibly use a Repository or composite DAO for this - Service?
+        extractorDao.deleteByMediaId(imageEntityId)
+        visualDao.delete(visualData)
+        textDao.delete(textData)
+
+        assert(textDao.findById(10L) == null) { "Text embedding entity NOT deleted." }
+        assert(visualDao.findById(10L) == null) { "Visual embedding NOT deleted." }
+    }
+
     @After
     fun teardown() {
         database.close()
