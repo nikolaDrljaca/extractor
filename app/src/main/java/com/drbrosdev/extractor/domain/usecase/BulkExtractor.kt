@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase
 
-import com.drbrosdev.extractor.data.ImageDataDao
+import com.drbrosdev.extractor.data.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -11,11 +11,11 @@ import kotlinx.coroutines.withContext
 class BulkExtractor(
     private val dispatcher: CoroutineDispatcher,
     private val mediaImageRepository: MediaImageRepository,
-    private val imageDataDao: ImageDataDao,
-    private val extractor: Extractor
+    private val extractor: Extractor,
+    private val extractorRepository: ExtractorRepository
 ) {
     suspend fun execute() {
-        val storedImages = imageDataDao.getAll().first()
+        val storedImages = extractorRepository.getAll().first()
         val deviceImages = mediaImageRepository.getAll()
         val deviceImagesMap = toMap(deviceImages)
 
@@ -30,7 +30,6 @@ class BulkExtractor(
         val threads = Runtime.getRuntime().availableProcessors()
 
         withContext(dispatcher) {
-            println("threads: $threads, whole ${Runtime.getRuntime().availableProcessors()}")
             val chunks = isOnDevice.chunked(isOnDevice.size / threads)
             chunks.forEach { chk ->
                 launch {
@@ -43,9 +42,8 @@ class BulkExtractor(
             }
 
             launch {
-                //For each image only in storage, I need to delete them
                 isInStorage.forEach {
-                    imageDataDao.deleteByMediaId(it)
+                    extractorRepository.deleteExtractionData(imageEntityId = it)
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.domain.usecase
 
-import com.drbrosdev.extractor.data.PreviousSearchDao
-import com.drbrosdev.extractor.data.PreviousSearchEntity
+import com.drbrosdev.extractor.data.dao.PreviousSearchDao
+import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 

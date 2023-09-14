@@ -1,7 +1,11 @@
 package com.drbrosdev.extractor.domain.usecase
 
-import com.drbrosdev.extractor.data.ImageDataDao
-import com.drbrosdev.extractor.data.ImageDataEntity
+import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
+import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
+import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
+import com.drbrosdev.extractor.data.entity.ExtractionEntity
+import com.drbrosdev.extractor.data.entity.TextEmbedding
+import com.drbrosdev.extractor.data.entity.VisualEmbedding
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.util.runCatching
 import com.google.mlkit.vision.common.InputImage
@@ -19,39 +23,48 @@ class DefaultExtractor(
     private val labelExtractor: ImageLabelExtractor<InputImage>,
     private val textExtractor: TextExtractor<InputImage>,
     private val provider: InputImageProvider,
-    private val imageDataDao: ImageDataDao
+    private val extractorEntityDao: ExtractionEntityDao,
+    private val textEmbeddingDao: TextEmbeddingDao,
+    private val visualEmbeddingDao: VisualEmbeddingDao
 ) : Extractor {
 
     override suspend fun execute(mediaImage: MediaImage) {
         withContext(dispatcher) {
+            extractorEntityDao.insert(
+                ExtractionEntity(
+                    mediaStoreId = mediaImage.id,
+                    uri = mediaImage.uri.toString()
+                )
+            )
+
             val inputImage = provider.create(InputImageType.UriInputImage(mediaImage.uri))
+
             val text: Deferred<Result<String>> = async {
                 runCatching {
                     textExtractor.execute(inputImage).lowercase()
                 }
             }
-            val labels: Deferred<Result<String>> = async {
+
+            val labels: Deferred<Result<List<String>>> = async {
                 runCatching {
-                    labelExtractor.execute(inputImage).lowercase()
+                    labelExtractor.execute(inputImage)
                 }
             }
 
             val outText = text.await()
             val outLabel = labels.await()
 
-            val result = buildString {
-                append(outText.getOrDefault(""))
-                append(" ")
-                append(outLabel.getOrDefault(""))
-            }
-
-            val imageEntity = ImageDataEntity(
-                mediaStoreId = mediaImage.id,
-                uri = mediaImage.uri.toString(),
-                labels = result
+            val textEmbedding = TextEmbedding(
+                imageEntityId = mediaImage.id,
+                value = outText.getOrDefault("")
             )
+            textEmbeddingDao.insert(textEmbedding)
 
-            runCatching { imageDataDao.insert(imageEntity) }
+            outLabel
+                .getOrDefault(emptyList())
+                .map { VisualEmbedding(imageEntityId = mediaImage.id, value = it) }
+                .forEach { visualEmbeddingDao.insert(it) }
+
         }
     }
 }

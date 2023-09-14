@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.home
 
-import com.drbrosdev.extractor.data.PreviousSearchEntity
+import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
+
 
 data class HomeUiState(
     val searches: List<PreviousSearchEntity> = emptyList(),

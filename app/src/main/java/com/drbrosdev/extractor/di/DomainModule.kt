@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.di
 
+import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.BulkExtractor
@@ -40,7 +41,9 @@ val domainModule = module {
             textExtractor = get(),
             provider = get(),
             dispatcher = get(named(CoroutineModuleName.Default)),
-            imageDataDao = get()
+            visualEmbeddingDao = get(),
+            textEmbeddingDao = get(),
+            extractorEntityDao = get()
         )
     } bind Extractor::class
 
@@ -52,7 +55,7 @@ val domainModule = module {
         BulkExtractor(
             dispatcher = get(named(CoroutineModuleName.Default)),
             mediaImageRepository = get(),
-            imageDataDao = get(),
+            extractorRepository = get<DefaultExtractorRepository>(),
             extractor = get()
         )
     }
@@ -67,8 +70,8 @@ val domainModule = module {
     factory {
         DefaultImageSearch(
             dispatcher = get(named(CoroutineModuleName.IO)),
-            imageDataDao = get(),
             mediaImageRepository = get(),
+            imageDataWithEmbeddingsDao = get(),
             insertPreviousSearch = get()
         )
     } bind ImageSearch::class
