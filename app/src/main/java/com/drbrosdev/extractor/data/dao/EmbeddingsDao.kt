@@ -27,6 +27,9 @@ interface TextEmbeddingDao {
 
     @Delete
     suspend fun delete(value: TextEmbedding)
+
+    @Query("delete from text_embedding where image_entity_id=:mediaId")
+    suspend fun deleteByMediaId(mediaId: Long)
 }
 
 @Dao
@@ -46,4 +49,7 @@ interface VisualEmbeddingDao {
 
     @Delete
     suspend fun delete(value: VisualEmbedding)
+
+    @Query("delete from visual_embedding where image_entity_id=:mediaId")
+    suspend fun deleteByMediaId(mediaId: Long)
 }
