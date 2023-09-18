@@ -40,7 +40,6 @@ class HomeViewModel(
 
             val onDevice = mediaImageRepository.getCount()
             val inStorage = extractionEntityDao.getCount()
-            println("OnDevice $onDevice and inStorage = $inStorage")
             val percentage = (inStorage / onDevice).times(100)
             emit(percentage)
             delay(3000L)
