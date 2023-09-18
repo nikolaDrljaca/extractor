@@ -16,6 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.drbrosdev.extractor.ui.components.ExtractorLeaderButton
+import com.drbrosdev.extractor.ui.components.ExtractorLeaderButtonState
 import com.drbrosdev.extractor.ui.components.HomeTopBar
 import com.drbrosdev.extractor.ui.components.PreviousSearchItem
 import com.drbrosdev.extractor.ui.components.SearchBar
@@ -61,12 +63,19 @@ fun HomeScreen(
                         width = Dimension.fillToConstraints
                     }
                 ),
-            onClick = { },
             onAboutClick = { },
+            leader = {
+                ExtractorLeaderButton(
+                    onClick = {},
+                    buttonState = if (state.donePercentage == null)
+                        ExtractorLeaderButtonState.IDLE else ExtractorLeaderButtonState.WORKING,
+                    percentageDone = state.donePercentage
+                )
+            }
         )
 
         //TODO: Need multiple states -> Recent searches, empty
-        if(state.searches.isNotEmpty()) {
+        if (state.searches.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier
                     .constrainAs(
@@ -113,6 +122,23 @@ private fun SearchScreenPreview() {
         Surface {
             HomeScreen(
                 state = HomeUiState(),
+                onEvent = {},
+            )
+        }
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+)
+@Composable
+private fun SearchScreenPreviewWithState() {
+    ExtractorTheme(dynamicColor = false) {
+        Surface {
+            HomeScreen(
+                state = HomeUiState(donePercentage = 42),
                 onEvent = {},
             )
         }

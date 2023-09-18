@@ -6,12 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -68,8 +68,8 @@ fun PreviousSearchItem(
 @Composable
 fun HomeTopBar(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    onAboutClick: () -> Unit
+    onAboutClick: () -> Unit,
+    leader: (@Composable () -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
@@ -77,7 +77,7 @@ fun HomeTopBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        ExtractorLeaderButton(onClick = onClick)
+        leader?.invoke()
 
         IconButton(
             onClick = onAboutClick

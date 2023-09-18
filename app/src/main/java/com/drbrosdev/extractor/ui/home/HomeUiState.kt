@@ -5,6 +5,7 @@ import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
 
 data class HomeUiState(
     val searches: List<PreviousSearchEntity> = emptyList(),
+    val donePercentage: Int? = null
 )
 
 sealed interface HomeScreenEvents {

@@ -85,7 +85,10 @@ private val uiModule = module {
 
     viewModel {
         HomeViewModel(
-            previousSearchDao = get()
+            previousSearchDao = get(),
+            mediaImageRepository = get<DefaultMediaImageRepository>(),
+            extractionEntityDao = get(),
+            workManager = get()
         )
     }
 
