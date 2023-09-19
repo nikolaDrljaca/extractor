@@ -38,9 +38,9 @@ class HomeViewModel(
                 break
             }
 
-            val onDevice = mediaImageRepository.getCount()
-            val inStorage = extractionEntityDao.getCount()
-            val percentage = (inStorage / onDevice).times(100)
+            val onDevice = mediaImageRepository.getCount().toDouble()
+            val inStorage = extractionEntityDao.getCount().toDouble()
+            val percentage = inStorage.div(onDevice).times(100).toInt()
             emit(percentage)
             delay(3000L)
         }
