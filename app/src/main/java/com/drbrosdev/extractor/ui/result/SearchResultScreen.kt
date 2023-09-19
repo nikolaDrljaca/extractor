@@ -1,5 +1,8 @@
 package com.drbrosdev.extractor.ui.result
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +36,7 @@ import com.drbrosdev.extractor.ui.components.ExtractorImageGrid
 import com.drbrosdev.extractor.ui.components.ExtractorImagePlaceholder
 import com.drbrosdev.extractor.ui.components.SearchFilterSheet
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.isScrollingUp
 import com.drbrosdev.extractor.util.shimmerBrush
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -43,6 +48,7 @@ fun SearchResultScreen(
     state: SearchResultScreenState,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
+    val gridState = rememberLazyGridState()
 
     BottomSheetScaffold(
         sheetContent = {
@@ -92,10 +98,12 @@ fun SearchResultScreen(
                         ),
                         images = state.images,
                         searchTerm = state.searchTerm,
-                        onClick = onNavToDetail
+                        onClick = onNavToDetail,
+                        gridState = gridState
                     )
 
-                    BackButton(
+                    AnimatedVisibility(
+                        visible = gridState.isScrollingUp(),
                         modifier = Modifier.constrainAs(
                             ref = backButton,
                             constrainBlock = {
@@ -103,8 +111,11 @@ fun SearchResultScreen(
                                 start.linkTo(parent.start)
                             }
                         ),
-                        onClick = onNavBack
-                    )
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        BackButton(onClick = onNavBack)
+                    }
                 }
             }
         }
@@ -123,11 +134,12 @@ private fun LoadingView(
         columns = GridCells.Fixed(count = 3),
     ) {
         item {
-            Box(modifier = Modifier
-                .width(56.dp)
-                .height(36.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(shimmerBrush())
+            Box(
+                modifier = Modifier
+                    .width(56.dp)
+                    .height(36.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(shimmerBrush())
             )
         }
 
@@ -137,11 +149,12 @@ private fun LoadingView(
 
 
         item(span = { GridItemSpan(maxLineSpan) }) {
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(shimmerBrush())
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(shimmerBrush())
             )
         }
 

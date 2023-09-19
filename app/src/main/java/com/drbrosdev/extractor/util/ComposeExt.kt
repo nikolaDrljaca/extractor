@@ -6,7 +6,11 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -54,4 +58,29 @@ fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush
             end = Offset.Zero
         )
     }
+}
+
+@Composable
+fun LazyGridState.isScrollingUp(): Boolean {
+    val previousIndex = remember(this) {
+        mutableStateOf(firstVisibleItemIndex)
+    }
+
+    val previousScrollOffset = remember {
+        mutableStateOf(firstVisibleItemScrollOffset)
+    }
+
+    return remember(this) {
+        derivedStateOf {
+            if(previousIndex.value != firstVisibleItemIndex) {
+                previousIndex.value > firstVisibleItemIndex
+            } else {
+                previousScrollOffset.value >= firstVisibleItemScrollOffset
+            }.also {
+                previousIndex.value = firstVisibleItemIndex
+                previousScrollOffset.value = firstVisibleItemScrollOffset
+
+            }
+        }
+    }.value
 }
