@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChips
 import com.drbrosdev.extractor.ui.theme.ButtonShape
 
 
@@ -154,7 +155,7 @@ fun SearchFilterSheet(
             modifier = Modifier.height(244.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            DataFilter(
+            ImageLabelFilterChips(
                 onFilterChanged = {}
             )
 

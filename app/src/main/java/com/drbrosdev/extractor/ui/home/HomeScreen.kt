@@ -1,44 +1,42 @@
 package com.drbrosdev.extractor.ui.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.drbrosdev.extractor.ui.components.ExtractorLeaderButton
-import com.drbrosdev.extractor.ui.components.ExtractorLeaderButtonState
-import com.drbrosdev.extractor.ui.components.HomeTopBar
-import com.drbrosdev.extractor.ui.components.PreviousSearchItem
-import com.drbrosdev.extractor.ui.components.SearchBar
+import com.drbrosdev.extractor.domain.model.PreviousSearch
+import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchView
+import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewEvents
+import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearches
+import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
+import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBar
+import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarEvents
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
-    state: HomeUiState,
-    onEvent: (HomeScreenEvents) -> Unit,
+    onTopBarEvent: (ExtractorTopBarEvents) -> Unit,
+    onSearchViewEvents: (ExtractorSearchViewEvents) -> Unit,
+    onPreviousSearchEvents: (PreviousSearchesEvents) -> Unit,
+    donePercentage: Int?,
+    previousSearches: List<PreviousSearch>,
 ) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 16.dp)
             .systemBarsPadding(),
     ) {
-        val topGuideline = createGuidelineFromTop(0.2f)
+        val topGuideline = createGuidelineFromTop(0.16f)
         val (searchBar, previousSearch, status, aboutIcon) = createRefs()
 
-        SearchBar(
+        ExtractorSearchView(
             modifier = Modifier
                 .constrainAs(
                     ref = searchBar,
@@ -49,10 +47,18 @@ fun HomeScreen(
                         width = Dimension.fillToConstraints
                     }
                 ),
-            onDone = { onEvent(HomeScreenEvents.PerformSearch(it)) }
+            onDone = { onSearchViewEvents(ExtractorSearchViewEvents.OnPerformSearch) },
+            onFilterChanged = {
+                onSearchViewEvents(
+                    ExtractorSearchViewEvents.OnImageLabelFilterChanged(
+                        it
+                    )
+                )
+            },
+            onQueryChanged = { onSearchViewEvents(ExtractorSearchViewEvents.OnQueryChanged(it)) }
         )
 
-        HomeTopBar(
+        ExtractorTopBar(
             modifier = Modifier
                 .constrainAs(
                     ref = status,
@@ -63,51 +69,23 @@ fun HomeScreen(
                         width = Dimension.fillToConstraints
                     }
                 ),
-            onAboutClick = { },
-            leader = {
-                ExtractorLeaderButton(
-                    onClick = {},
-                    buttonState = if (state.donePercentage == null)
-                        ExtractorLeaderButtonState.IDLE else ExtractorLeaderButtonState.WORKING,
-                    percentageDone = state.donePercentage
-                )
-            }
+            donePercentage = donePercentage,
+            onEvent = onTopBarEvent
         )
 
-        //TODO: Need multiple states -> Recent searches, empty
-        if (state.searches.isNotEmpty()) {
-            LazyColumn(
-                modifier = Modifier
-                    .constrainAs(
-                        ref = previousSearch,
-                        constrainBlock = {
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            top.linkTo(searchBar.bottom, margin = 24.dp)
-                        }
-                    ),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                item {
-                    Text(
-                        text = "Previous Searches",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    )
-                }
-
-                items(state.searches) {
-                    PreviousSearchItem(
-                        modifier = Modifier.animateItemPlacement(),
-                        text = it.query,
-                        count = it.resultCount,
-                        onClick = { onEvent(HomeScreenEvents.PerformSearch(it.query)) },
-                        onDelete = { onEvent(HomeScreenEvents.OnDeleteSearch(it)) }
-                    )
-                }
-            }
-        }
+        PreviousSearches(
+            modifier = Modifier
+                .constrainAs(
+                    ref = previousSearch,
+                    constrainBlock = {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(searchBar.bottom, margin = 24.dp)
+                    }
+                ),
+            onEvent = onPreviousSearchEvents,
+            searches = previousSearches
+        )
     }
 }
 
@@ -121,25 +99,11 @@ private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         Surface {
             HomeScreen(
-                state = HomeUiState(),
-                onEvent = {},
-            )
-        }
-    }
-}
-
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true,
-)
-@Composable
-private fun SearchScreenPreviewWithState() {
-    ExtractorTheme(dynamicColor = false) {
-        Surface {
-            HomeScreen(
-                state = HomeUiState(donePercentage = 42),
-                onEvent = {},
+                onTopBarEvent = {},
+                onSearchViewEvents = {},
+                onPreviousSearchEvents = {},
+                donePercentage = null,
+                previousSearches = emptyList()
             )
         }
     }
