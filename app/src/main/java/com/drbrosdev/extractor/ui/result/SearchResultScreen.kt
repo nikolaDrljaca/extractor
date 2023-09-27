@@ -65,7 +65,7 @@ fun SearchResultScreen(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 16.dp)
                 .systemBarsPadding(),
         ) {
             val (backButton, images) = createRefs()

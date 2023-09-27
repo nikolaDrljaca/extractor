@@ -1,16 +1,17 @@
 package com.drbrosdev.extractor.ui.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -26,6 +27,11 @@ import androidx.compose.ui.unit.dp
 fun ExtractorTextField(
     modifier: Modifier = Modifier,
     text: String,
+    textColor: Color = if (isSystemInDarkTheme()) {
+        Color.White
+    } else {
+        Color.Black
+    },
     onChange: (String) -> Unit,
     onDoneSubmit: () -> Unit = {},
 ) {
@@ -70,20 +76,20 @@ fun ExtractorTextField(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
                     errorIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.primary,
+                    cursorColor = MaterialTheme.colorScheme.onBackground
                 ),
                 placeholder = {
                     Text(
                         text = "Search here...",
                         style = textStyle,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                        color = textColor.copy(alpha = 0.5f)
                     )
                 },
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Rounded.Search,
                         contentDescription = "Search Images",
-                        tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                        tint = textColor.copy(alpha = 0.5f)
                     )
                 }
             )

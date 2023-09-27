@@ -1,11 +1,5 @@
 package com.drbrosdev.extractor.ui.onboarding
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -19,25 +13,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerOnbCard
-import com.drbrosdev.extractor.ui.theme.md_theme_light_secondary
-import com.drbrosdev.extractor.ui.theme.md_theme_light_tertiary
 import com.drbrosdev.extractor.util.CardStackSpec
 import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.applicationIconBitmap
+import com.drbrosdev.extractor.util.createExtractorBrush
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.rememberNavController
@@ -72,31 +60,7 @@ private fun OnboardingScreen(
         )
     )
 
-    val animation = rememberInfiniteTransition(label = "brush")
-    val flat = with(LocalDensity.current) { 800.dp.toPx() }
-
-    val offset by animation.animateFloat(
-        initialValue = 0f,
-        targetValue = flat,
-        animationSpec = infiniteRepeatable(
-            tween(
-                durationMillis = 4000,
-                easing = LinearEasing
-            ),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "brush"
-    )
-
-    val brush = Brush.linearGradient(
-        listOf(
-            md_theme_light_tertiary,
-            md_theme_light_secondary,
-        ),
-        start = Offset(offset, offset),
-        end = Offset(offset + flat, offset + flat),
-        tileMode = TileMode.Mirror
-    )
+    val brush = createExtractorBrush()
 
     ConstraintLayout(
         modifier = Modifier

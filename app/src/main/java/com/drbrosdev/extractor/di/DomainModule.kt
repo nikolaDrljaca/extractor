@@ -6,10 +6,12 @@ import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultImageSearch
+import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
 import com.drbrosdev.extractor.domain.usecase.DefaultInputImageProvider
 import com.drbrosdev.extractor.domain.usecase.Extractor
 import com.drbrosdev.extractor.domain.usecase.ImageLabelExtractor
 import com.drbrosdev.extractor.domain.usecase.ImageSearch
+import com.drbrosdev.extractor.domain.usecase.ImageSearchByLabel
 import com.drbrosdev.extractor.domain.usecase.InputImageProvider
 import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
 import com.drbrosdev.extractor.domain.usecase.MLKitImageLabelExtractor
@@ -75,5 +77,14 @@ val domainModule = module {
             insertPreviousSearch = get()
         )
     } bind ImageSearch::class
+
+    factory {
+        DefaultImageSearchByLabel(
+            dispatcher = get(named(CoroutineModuleName.IO)),
+            mediaImageRepository = get(),
+            imageDataWithEmbeddingsDao = get(),
+            insertPreviousSearch = get()
+        )
+    } bind ImageSearchByLabel::class
 
 }
