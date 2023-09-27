@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import com.drbrosdev.extractor.domain.usecase.LabelType
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewEvents
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
@@ -39,7 +40,8 @@ object HomeNavTarget : NavTarget {
                 .collect {
                     navController.navigate(
                         SearchResultNavTarget(
-                            it.query
+                            query = it.query,
+                            labelType = it.filter
                         )
                     )
                 }
@@ -65,6 +67,12 @@ object HomeNavTarget : NavTarget {
                         previousSearchViewModel.deletePreviousSearch(it.previousSearch)
                     is PreviousSearchesEvents.PerformSearch -> {
                         keyboardController?.hide()
+                        navController.navigate(
+                            SearchResultNavTarget(
+                                query = it.query,
+                                labelType = LabelType.ALL //TODO: Persist in prev search
+                            )
+                        )
                     }
                 }
             }

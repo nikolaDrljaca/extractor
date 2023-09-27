@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.di
 
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.DefaultImageSearch
+import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarViewModel
@@ -52,7 +52,7 @@ val uiModule = module {
 
     viewModel {
         SearchResultViewModel(
-            imageSearch = get<DefaultImageSearch>()
+            imageSearch = get<DefaultImageSearchByLabel>()
         )
     }
 }

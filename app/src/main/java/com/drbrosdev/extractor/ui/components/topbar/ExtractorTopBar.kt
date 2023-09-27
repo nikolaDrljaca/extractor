@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.ui.components.topbar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
@@ -19,8 +20,9 @@ import androidx.work.await
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.worker.WorkNames
-import com.drbrosdev.extractor.ui.components.ExtractorLeaderButton
-import com.drbrosdev.extractor.ui.components.ExtractorLeaderButtonState
+import com.drbrosdev.extractor.ui.components.ExtractorHeader
+import com.drbrosdev.extractor.ui.components.ExtractorStatusButton
+import com.drbrosdev.extractor.ui.components.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -73,12 +75,14 @@ fun ExtractorTopBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        ExtractorLeaderButton(
+        ExtractorStatusButton(
             onClick = { onEvent(ExtractorTopBarEvents.OnExtractorButtonClicked) },
-            buttonState = if (donePercentage == null)
-                ExtractorLeaderButtonState.IDLE else ExtractorLeaderButtonState.WORKING,
-            percentageDone = donePercentage
+            state = if (donePercentage == null)
+                ExtractorStatusButtonState.IDLE else ExtractorStatusButtonState.WORKING,
+            donePercentage = donePercentage
         )
+
+        ExtractorHeader()
 
         IconButton(
             onClick = { onEvent(ExtractorTopBarEvents.OnAboutClicked) }
@@ -97,7 +101,7 @@ fun ExtractorTopBar(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme {
-        Column {
+        Column(modifier = Modifier.fillMaxWidth()) {
             ExtractorTopBar(onEvent = {}, donePercentage = null)
             ExtractorTopBar(onEvent = {}, donePercentage = 34)
         }

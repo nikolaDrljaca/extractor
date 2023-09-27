@@ -4,7 +4,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.MediaImage
-import com.drbrosdev.extractor.domain.usecase.ImageSearch
+import com.drbrosdev.extractor.domain.usecase.ImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.LabelType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,20 +13,20 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SearchResultViewModel(
-    private val imageSearch: ImageSearch
+    private val imageSearch: ImageSearchByLabel
 ) : ViewModel() {
     private val _state = MutableStateFlow<SearchResultScreenState>(SearchResultScreenState.Loading)
     val state = _state.asStateFlow()
 
-    fun performSearch(query: String) {
+    fun performSearch(query: String, labelType: LabelType) {
         if (isQuerySame(query)) return
 
         viewModelScope.launch {
             delay(100)
-            val result = imageSearch.execute(query)
+            val result = imageSearch.search(query, labelType)
             _state.update {
                 SearchResultScreenState.Success(
-                    images = result.getOrDefault(emptyList()),
+                    images = result,
                     searchTerm = query
                 )
             }

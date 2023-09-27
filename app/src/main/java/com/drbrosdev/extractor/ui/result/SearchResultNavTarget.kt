@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.drbrosdev.extractor.domain.usecase.LabelType
 import com.drbrosdev.extractor.ui.image.ImageDetailNavTarget
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
@@ -13,7 +14,10 @@ import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
 @Parcelize
-data class SearchResultNavTarget(private val query: String) : NavTarget {
+data class SearchResultNavTarget(
+    private val query: String,
+    private val labelType: LabelType
+) : NavTarget {
 
     @Composable
     override fun Content() {
@@ -22,7 +26,7 @@ data class SearchResultNavTarget(private val query: String) : NavTarget {
         val navController = LocalNavController.current
 
         LaunchedEffect(key1 = Unit) {
-            viewModel.performSearch(query)
+            viewModel.performSearch(query, labelType)
         }
 
         //TODO: Loading state, animated placeholders or spinners
