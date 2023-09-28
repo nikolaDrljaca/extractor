@@ -33,7 +33,7 @@ class DefaultImageSearchByLabel(
             LabelType.IMAGE -> findAllByVisual(query)
         }
 
-        runCatching { insertPreviousSearch(query, out.size) }
+        runCatching { insertPreviousSearch(query, out.size, labelType) }
         out
     }
 

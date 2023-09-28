@@ -37,10 +37,11 @@ private val chipItems = listOf(
 fun ImageLabelFilterChips(
     modifier: Modifier = Modifier,
     contentColor: Color = Color.White,
+    initial: Int = 0,
     onFilterChanged: (ImageLabelFilterChipData) -> Unit
 ) {
     var selected by rememberSaveable {
-        mutableIntStateOf(0)
+        mutableIntStateOf(initial)
     }
 
     Column {

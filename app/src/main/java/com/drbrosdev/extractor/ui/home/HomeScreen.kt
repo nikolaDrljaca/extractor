@@ -10,9 +10,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.drbrosdev.extractor.domain.model.PreviousSearch
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchView
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewEvents
+import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchItemState
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearches
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBar
@@ -25,7 +25,7 @@ fun HomeScreen(
     onSearchViewEvents: (ExtractorSearchViewEvents) -> Unit,
     onPreviousSearchEvents: (PreviousSearchesEvents) -> Unit,
     donePercentage: Int?,
-    previousSearches: List<PreviousSearch>,
+    previousSearches: List<PreviousSearchItemState>,
 ) {
     ConstraintLayout(
         modifier = Modifier

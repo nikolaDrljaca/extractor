@@ -19,7 +19,7 @@ class SearchResultViewModel(
     val state = _state.asStateFlow()
 
     fun performSearch(query: String, labelType: LabelType) {
-        if (isQuerySame(query)) return
+        if (isQuerySame(query, labelType)) return
 
         viewModelScope.launch {
             delay(100)
@@ -27,10 +27,10 @@ class SearchResultViewModel(
             _state.update {
                 SearchResultScreenState.Success(
                     images = result,
-                    searchTerm = query
+                    searchTerm = query,
+                    labelType = labelType
                 )
             }
-
         }
     }
 
@@ -41,9 +41,10 @@ class SearchResultViewModel(
         }
     }
 
-    private fun isQuerySame(query: String): Boolean {
+    private fun isQuerySame(query: String, labelType: LabelType): Boolean {
         return when (val out = state.value) {
-            is SearchResultScreenState.Success -> (out.searchTerm == query) or query.isBlank()
+            is SearchResultScreenState.Success ->
+                ((out.searchTerm == query) and (out.labelType == labelType)) or query.isBlank()
             is SearchResultScreenState.Loading -> false
         }
     }
@@ -53,7 +54,8 @@ sealed interface SearchResultScreenState {
 
     data class Success(
         val images: List<MediaImage> = emptyList(),
-        val searchTerm: String = "Loading..."
+        val searchTerm: String = "Loading...",
+        val labelType: LabelType
     ) : SearchResultScreenState
 
     data object Loading : SearchResultScreenState

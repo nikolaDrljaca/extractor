@@ -23,7 +23,7 @@ import com.drbrosdev.extractor.data.entity.VisualEmbedding
         VisualEmbedding::class,
         UserEmbedding::class
     ],
-    version = 3
+    version = 5
 )
 abstract class ExtractorDatabase : RoomDatabase() {
 

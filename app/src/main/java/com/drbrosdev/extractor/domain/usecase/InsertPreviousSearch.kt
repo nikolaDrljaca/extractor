@@ -10,10 +10,14 @@ class InsertPreviousSearch(
     private val dao: PreviousSearchDao
 ) {
 
-    suspend operator fun invoke(query: String, resultCount: Int) = withContext(dispatcher) {
-        val out = when (val existing = dao.findByQuery(query)) {
-            null -> PreviousSearchEntity(query, resultCount)
-            else -> existing.copy(resultCount = resultCount)
+    suspend operator fun invoke(
+        query: String,
+        resultCount: Int,
+        labelType: LabelType
+    ) = withContext(dispatcher) {
+        val out = when (val existing = dao.findByQueryAndLabelType(query, labelType)) {
+            null -> PreviousSearchEntity(query, resultCount, labelType)
+            else -> existing.copy(resultCount = resultCount, labelType = labelType)
         }
         dao.insert(out)
     }
