@@ -4,7 +4,6 @@ import com.drbrosdev.extractor.data.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -15,19 +14,16 @@ class BulkExtractor(
     private val extractorRepository: ExtractorRepository
 ) {
     suspend fun execute() {
-        val storedImages = extractorRepository.getAll().first()
-        val deviceImages = mediaImageRepository.getAll()
-        val deviceImagesMap = toMap(deviceImages)
+        val storedIds = extractorRepository.getAllIds()
+        val onDeviceIds = mediaImageRepository.getAllIds()
 
-        val storedIds = storedImages.map { it.mediaStoreId }
-        val onDeviceIds = deviceImages.map { it.id }
-
-        val isOnDevice = onDeviceIds.subtract(storedIds.toSet())
-        val isInStorage = storedIds.subtract(onDeviceIds.toSet())
+        val isOnDevice = onDeviceIds.subtract(storedIds)
+        val isInStorage = storedIds.subtract(onDeviceIds)
 
         if (isOnDevice == isInStorage) return
 
         val threads = Runtime.getRuntime().availableProcessors()
+        val mediaImages = toMap(mediaImageRepository.findAllById(onDeviceIds.toList()))
 
         withContext(dispatcher) {
             val chunks = isOnDevice.chunked(isOnDevice.size / threads)
@@ -35,7 +31,7 @@ class BulkExtractor(
                 launch {
                     //For each image only on device, I need to run extraction
                     chk.forEach {
-                        val mediaImage = deviceImagesMap[it]!!
+                        val mediaImage = mediaImages[it]!!
                         extractor.execute(mediaImage)
                     }
                 }

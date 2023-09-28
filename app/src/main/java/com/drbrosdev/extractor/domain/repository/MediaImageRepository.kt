@@ -15,11 +15,15 @@ import kotlinx.coroutines.flow.first
 interface MediaImageRepository {
     suspend fun getAll(): List<MediaImage>
 
+    suspend fun getAllIds(): Set<Long>
+
     suspend fun findAllById(ids: List<Long>): List<MediaImage>
 
     suspend fun getCount(): Int
 
     suspend fun findByUri(uri: Uri): MediaImageInfo?
+
+    suspend fun findById(id: Long): MediaImage?
 }
 
 class DefaultMediaImageRepository(
@@ -28,6 +32,13 @@ class DefaultMediaImageRepository(
 
     override suspend fun getAll(): List<MediaImage> {
         return contentResolver.mediaImagesFlow().first()
+    }
+
+    override suspend fun getAllIds(): Set<Long> {
+        return contentResolver.mediaImagesFlow()
+            .first()
+            .map { it.id }
+            .toSet()
     }
 
     override suspend fun findAllById(ids: List<Long>): List<MediaImage> {
@@ -43,5 +54,11 @@ class DefaultMediaImageRepository(
 
     override suspend fun findByUri(uri: Uri): MediaImageInfo? {
         return contentResolver.findByUri(uri = uri)
+    }
+
+    override suspend fun findById(id: Long): MediaImage? {
+        return contentResolver.mediaImagesFlow()
+            .first()
+            .find { it.id == id }
     }
 }

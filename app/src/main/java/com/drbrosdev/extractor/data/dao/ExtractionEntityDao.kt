@@ -15,6 +15,9 @@ interface ExtractionEntityDao {
     @Query("select * from image_extraction_entity")
     fun findAll(): Flow<List<ExtractionEntity>>
 
+    @Query("select media_store_id from image_extraction_entity")
+    suspend fun findAllIds(): Set<Long>
+
     @Insert
     suspend fun insert(value: ExtractionEntity)
 

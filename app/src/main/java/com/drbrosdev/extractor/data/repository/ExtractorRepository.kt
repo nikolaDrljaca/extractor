@@ -13,6 +13,8 @@ interface ExtractorRepository {
     suspend fun deleteExtractionData(imageEntityId: Long)
 
     fun getAll(): Flow<List<ExtractionEntity>>
+
+    suspend fun getAllIds(): Set<Long>
 }
 
 class DefaultExtractorRepository(
@@ -32,5 +34,9 @@ class DefaultExtractorRepository(
 
     override fun getAll(): Flow<List<ExtractionEntity>> {
         return extractionEntityDao.findAll()
+    }
+
+    override suspend fun getAllIds(): Set<Long> {
+        return extractionEntityDao.findAllIds()
     }
 }
