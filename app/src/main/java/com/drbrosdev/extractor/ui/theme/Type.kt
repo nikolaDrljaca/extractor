@@ -116,7 +116,7 @@ val Typography = Typography(
     ),
     labelMedium = TextStyle(
         fontFamily = BricolageFontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp

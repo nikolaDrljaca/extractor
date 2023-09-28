@@ -24,8 +24,18 @@ interface NavTarget : Parcelable {
     fun Content()
 }
 
+interface DialogNavTarget : Parcelable {
+
+    @Composable
+    fun Content()
+}
+
 val LocalNavController = staticCompositionLocalOf<NavController<NavTarget>> {
     error("NavController was not instantiated, or is unavailable in this context.")
+}
+
+val LocalDialogNavController = staticCompositionLocalOf<NavController<DialogNavTarget>> {
+    error("DialogNavController was not instantiated, or is unavailable in this context.")
 }
 
 

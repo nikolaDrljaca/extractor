@@ -37,6 +37,6 @@ class DefaultExtractorRepository(
     }
 
     override suspend fun getAllIds(): Set<Long> {
-        return extractionEntityDao.findAllIds()
+        return extractionEntityDao.findAllIds().toSet()
     }
 }
