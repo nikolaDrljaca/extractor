@@ -51,7 +51,7 @@ class DefaultImageSearch(
             }
 
             val out = foundImages.toList()
-            runCatching { insertPreviousSearch(temp, out.size) }
+            runCatching { insertPreviousSearch(temp, out.size, LabelType.ALL) }
 
             Result.success(out)
         }

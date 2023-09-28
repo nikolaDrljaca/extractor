@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import com.drbrosdev.extractor.domain.usecase.LabelType
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewEvents
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
@@ -70,7 +69,7 @@ object HomeNavTarget : NavTarget {
                         navController.navigate(
                             SearchResultNavTarget(
                                 query = it.query,
-                                labelType = LabelType.ALL //TODO: Persist in prev search
+                                labelType = it.labelType
                             )
                         )
                     }

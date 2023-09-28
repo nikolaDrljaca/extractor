@@ -4,11 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "previous_search_entity")
-data class PreviousSearchEntity(
-    @PrimaryKey val query: String,
-    val resultCount: Int
-)
 
 @Entity(
     tableName = "image_extraction_entity"

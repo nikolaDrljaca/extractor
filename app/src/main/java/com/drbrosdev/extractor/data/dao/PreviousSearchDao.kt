@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
+import com.drbrosdev.extractor.domain.usecase.LabelType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,6 +17,9 @@ interface PreviousSearchDao {
 
     @Query("select * from previous_search_entity where `query`=:query")
     suspend fun findByQuery(query: String): PreviousSearchEntity?
+
+    @Query("select * from previous_search_entity where `query`=:query and `labelType`=:labelType")
+    suspend fun findByQueryAndLabelType(query: String, labelType: LabelType): PreviousSearchEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg items: PreviousSearchEntity)
