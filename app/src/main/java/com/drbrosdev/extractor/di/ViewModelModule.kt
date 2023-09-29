@@ -9,6 +9,7 @@ import com.drbrosdev.extractor.ui.image.ImageDetailViewModel
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
 import com.drbrosdev.extractor.ui.result.SearchResultViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
+import com.drbrosdev.extractor.ui.status.ExtractorStatusDialogViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -53,6 +54,14 @@ val uiModule = module {
     viewModel {
         SearchResultViewModel(
             imageSearch = get<DefaultImageSearchByLabel>()
+        )
+    }
+
+    viewModel {
+        ExtractorStatusDialogViewModel(
+            mediaImageRepository = get<DefaultMediaImageRepository>(),
+            extractionEntityDao = get(),
+            workManager = get()
         )
     }
 }

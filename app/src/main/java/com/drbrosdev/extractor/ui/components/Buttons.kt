@@ -23,6 +23,7 @@ import com.drbrosdev.extractor.ui.theme.md_theme_light_primary
 fun ExtractorActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     content: @Composable (RowScope.() -> Unit)
 ) {
     val verticalContentPadding = 24.dp
@@ -39,8 +40,11 @@ fun ExtractorActionButton(
             .then(modifier),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
-            contentColor = md_theme_light_primary
+            contentColor = md_theme_light_primary,
+            disabledContentColor = Color.LightGray,
+            disabledContainerColor = Color.Gray
         ),
+        enabled = enabled,
         contentPadding = PaddingValues(
             top = verticalContentPadding,
             bottom = verticalContentPadding,

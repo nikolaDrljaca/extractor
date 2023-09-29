@@ -2,10 +2,9 @@ package com.drbrosdev.extractor.ui.components.previoussearch
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,25 +24,23 @@ fun PreviousSearches(
     searches: List<PreviousSearchItemState>
 ) {
 
-    LazyColumn(
+    Column(
         modifier = Modifier
             .then(modifier),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        item {
             Text(
                 text = "Previous Searches",
                 style = MaterialTheme.typography.titleMedium.copy(
                     color = MaterialTheme.colorScheme.primary
                 )
             )
-        }
 
-        item { Spacer(modifier = Modifier.height(8.dp)) }
+         Spacer(modifier = Modifier.height(8.dp))
 
-        itemsIndexed(searches) { index, item ->
+        searches.forEachIndexed { index, item ->
             PreviousSearchItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier,
                 itemState = item,
                 onClick = {
                     onEvent(
