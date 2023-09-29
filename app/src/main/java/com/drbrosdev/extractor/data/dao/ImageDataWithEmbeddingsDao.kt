@@ -46,7 +46,7 @@ interface ImageDataWithEmbeddingsDao {
             SELECT * FROM image_extraction_entity 
             LEFT JOIN text_embedding AS t ON media_store_id = t.image_entity_id 
             LEFT JOIN user_embedding AS u ON media_store_id = u.image_entity_id 
-            WHERE (t.value LIKE :query) OR (u.value LIKE :query)
+            WHERE (t.value LIKE '%' || :query || '%') OR (u.value LIKE :query)
             GROUP BY image_extraction_entity.media_store_id
     """
     )
