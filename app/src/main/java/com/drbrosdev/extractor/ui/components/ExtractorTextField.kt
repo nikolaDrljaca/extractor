@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.ui.components
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -57,8 +58,8 @@ fun ExtractorTextField(
         keyboardActions = KeyboardActions(
             onDone = { onDoneSubmit() }
         ),
-        textStyle = textStyle.copy(color = MaterialTheme.colorScheme.onBackground),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+        textStyle = textStyle.copy(color = Color.White),
+        cursorBrush = SolidColor(Color.White),
         decorationBox = {
             TextFieldDefaults.DecorationBox(
                 value = text,
@@ -76,7 +77,7 @@ fun ExtractorTextField(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
                     errorIndicatorColor = Color.Transparent,
-                    cursorColor = MaterialTheme.colorScheme.onBackground
+                    cursorColor = Color.White
                 ),
                 placeholder = {
                     Text(
@@ -89,7 +90,8 @@ fun ExtractorTextField(
                     Icon(
                         imageVector = Icons.Rounded.Search,
                         contentDescription = "Search Images",
-                        tint = textColor.copy(alpha = 0.5f)
+                        tint = textColor.copy(alpha = 0.5f),
+                        modifier = Modifier.size(36.dp)
                     )
                 }
             )

@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.ui.components.ExtractorTextField
@@ -43,7 +44,7 @@ fun ExtractorSearchView(
         modifier = Modifier
             .then(modifier),
         shape = RoundedCornerShape(14.dp),
-        color = MaterialTheme.colorScheme.primaryContainer,
+        color = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.primary,
         shadowElevation = elevation
     ) {
@@ -58,14 +59,14 @@ fun ExtractorSearchView(
                     onQueryChanged(it)
                 },
                 onDoneSubmit = onDone,
-                textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                textColor = Color.White,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(12.dp))
 
             ImageLabelFilterChips(
                 onFilterChanged = onFilterChanged,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                contentColor = Color.White
             )
         }
     }

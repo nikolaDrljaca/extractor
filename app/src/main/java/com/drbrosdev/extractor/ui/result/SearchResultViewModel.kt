@@ -15,13 +15,16 @@ import kotlinx.coroutines.launch
 class SearchResultViewModel(
     private val imageSearch: ImageSearchByLabel
 ) : ViewModel() {
-    private val _state = MutableStateFlow<SearchResultScreenState>(SearchResultScreenState.Loading)
+    private val _state = MutableStateFlow<SearchResultScreenState>(
+        SearchResultScreenState.Success()
+    )
     val state = _state.asStateFlow()
 
     fun performSearch(query: String, labelType: LabelType) {
         if (isQuerySame(query, labelType)) return
 
         viewModelScope.launch {
+            _state.update { SearchResultScreenState.Loading }
             delay(100)
             val result = imageSearch.search(query, labelType)
             _state.update {
@@ -45,6 +48,7 @@ class SearchResultViewModel(
         return when (val out = state.value) {
             is SearchResultScreenState.Success ->
                 ((out.searchTerm == query) and (out.labelType == labelType)) or query.isBlank()
+
             is SearchResultScreenState.Loading -> false
         }
     }
@@ -55,7 +59,7 @@ sealed interface SearchResultScreenState {
     data class Success(
         val images: List<MediaImage> = emptyList(),
         val searchTerm: String = "Loading...",
-        val labelType: LabelType
+        val labelType: LabelType = LabelType.ALL
     ) : SearchResultScreenState
 
     data object Loading : SearchResultScreenState
