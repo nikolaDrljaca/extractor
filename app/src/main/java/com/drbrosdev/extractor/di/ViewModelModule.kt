@@ -61,6 +61,7 @@ val uiModule = module {
         ExtractorStatusDialogViewModel(
             mediaImageRepository = get<DefaultMediaImageRepository>(),
             extractionEntityDao = get(),
+            bulkExtractor = get(),
             workManager = get()
         )
     }

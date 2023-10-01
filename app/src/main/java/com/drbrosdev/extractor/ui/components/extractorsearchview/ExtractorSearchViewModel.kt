@@ -28,6 +28,7 @@ class ExtractorSearchViewModel : ViewModel() {
     }
 
     fun performSearch() {
+        if (query.isBlank()) return
         viewModelScope.launch {
             _events.send(NavToResults(query, filter))
         }
