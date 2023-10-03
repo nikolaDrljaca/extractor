@@ -4,4 +4,6 @@
     <string name="status_explanation">Here you can run Sync if there are more indexed images than what is on the device, or if there are new images on the device that are not indexed.</string>
     <string name="dialog_work_background">** Start sync will start background work managed by your device. This means you might not see its results instantly.</string>
     <string name="in_storage_lower">*** In Storage number can be lower if extraction has failed for some images.</string>
+    <string name="set_as">Set as:</string>
+    <string name="edit">Edit</string>
 </resources>

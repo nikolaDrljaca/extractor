@@ -5,6 +5,7 @@ import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import android.webkit.MimeTypeMap
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.model.MediaImageInfo
 import kotlinx.coroutines.CoroutineDispatcher
@@ -108,6 +109,13 @@ private fun Cursor.toMediaImageInfo(): MediaImageInfo {
     val formatted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         .format(Date(dateAdded * 1000))
 
+    val uri = Uri.withAppendedPath(
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        id.toString()
+    )
+
+    val extension = path.substringAfterLast(".")
+    val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension).toString()
 
     return MediaImageInfo(
         id = id,
@@ -116,7 +124,9 @@ private fun Cursor.toMediaImageInfo(): MediaImageInfo {
         height = height,
         width = width,
         size = size,
-        path = path
+        path = path,
+        uri = uri,
+        mimeType = mimeType
     )
 }
 
