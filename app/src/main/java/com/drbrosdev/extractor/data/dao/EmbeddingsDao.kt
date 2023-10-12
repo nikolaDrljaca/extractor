@@ -11,13 +11,15 @@ import com.drbrosdev.extractor.data.entity.VisualEmbedding
 
 @Dao
 interface TextEmbeddingDao {
-    //TODO: Since this will be worked on as a flat string, think about updates
 
     @Query("select count(*) from text_embedding")
     suspend fun getCount(): Int
 
     @Query("select * from text_embedding where id=:id")
     suspend fun findById(id: Long): TextEmbedding?
+
+    @Query("select * from text_embedding where image_entity_id=:mediaId")
+    suspend fun findByMediaId(mediaId: Long): TextEmbedding?
 
     @Insert
     suspend fun insert(value: TextEmbedding)
@@ -40,6 +42,9 @@ interface VisualEmbeddingDao {
 
     @Query("select * from visual_embedding where id=:id")
     suspend fun findById(id: Long): VisualEmbedding?
+
+    @Query("select * from visual_embedding where id=:mediaId")
+    suspend fun findByMediaId(mediaId: Long): List<VisualEmbedding>
 
     @Insert
     suspend fun insert(value: VisualEmbedding)

@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.data.repository
 
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
+import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,7 +22,8 @@ class DefaultExtractorRepository(
     private val dispatcher: CoroutineDispatcher,
     private val extractionEntityDao: ExtractionEntityDao,
     private val visualEmbeddingDao: VisualEmbeddingDao,
-    private val textEmbeddingDao: TextEmbeddingDao
+    private val textEmbeddingDao: TextEmbeddingDao,
+    private val userEmbeddingDao: UserEmbeddingDao
 ): ExtractorRepository {
 
     override suspend fun deleteExtractionData(imageEntityId: Long) = withContext(dispatcher) {
@@ -30,6 +32,7 @@ class DefaultExtractorRepository(
 
         visualEmbeddingDao.deleteByMediaId(imageEntityId)
         textEmbeddingDao.deleteByMediaId(imageEntityId)
+        userEmbeddingDao.deleteByMediaId(imageEntityId)
     }
 
     override fun getAll(): Flow<List<ExtractionEntity>> {

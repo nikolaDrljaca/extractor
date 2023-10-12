@@ -44,7 +44,6 @@ fun ImageDetailScreen(
     onBottomBarClick: (ExtractorBottomBarItem) -> Unit,
     onBack: () -> Unit,
     onImageInfo: () -> Unit,
-    modifier: Modifier = Modifier,
     pagerState: PagerState,
     images: List<Uri>,
 ) {
@@ -55,8 +54,7 @@ fun ImageDetailScreen(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Black)
-            .padding(horizontal = 16.dp),
+            .background(color = Color.Black),
         constraintSet = imageDetailScreenConstraintSet()
     ) {
         HorizontalPager(
@@ -98,7 +96,7 @@ fun ImageDetailScreen(
             exit = fadeOut()
         ) {
             ExtractorImageTopBar(
-                modifier = Modifier.padding(top = 24.dp),
+                modifier = Modifier.padding(vertical = 36.dp, horizontal = 12.dp),
                 onBackClick = onBack,
                 onInfoClick = onImageInfo
             )
@@ -110,7 +108,10 @@ fun ImageDetailScreen(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            ExtractorImageBottomBar(onClick = onBottomBarClick)
+            ExtractorImageBottomBar(
+                onClick = onBottomBarClick,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
         }
     }
 }

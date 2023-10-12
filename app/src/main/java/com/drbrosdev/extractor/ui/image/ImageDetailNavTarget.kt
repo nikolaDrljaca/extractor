@@ -10,14 +10,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
-import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorBottomBarItem
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.launchEditIntent
 import com.drbrosdev.extractor.util.launchShareIntent
 import com.drbrosdev.extractor.util.launchUseAsIntent
 import dev.olshevski.navigation.reimagined.pop
-import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
@@ -32,7 +30,7 @@ data class ImageDetailNavTarget(
     override fun Content() {
         val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
         val viewModel: ImageDetailViewModel = koinViewModel()
-        val currentImageInfo by viewModel.state.collectAsState()
+        val currentImageInfo by viewModel.currentMediaImageInfo.collectAsState()
         val context = LocalContext.current
         val navController = LocalNavController.current
         val scope = rememberCoroutineScope()
@@ -44,40 +42,25 @@ data class ImageDetailNavTarget(
                 }
         }
 
+        LaunchedEffect(key1 = Unit) {
+            viewModel.events.collect { event ->
+                currentImageInfo?.let { imageInfo ->
+                    when (event) {
+                        ImageDetailEvents.OnEdit -> context.launchEditIntent(imageInfo)
+                        ImageDetailEvents.OnExtractorInfo -> {}
+                        ImageDetailEvents.OnShare -> context.launchShareIntent(imageInfo)
+                        ImageDetailEvents.OnUseAs -> context.launchUseAsIntent(imageInfo)
+                    }
+                }
+            }
+        }
+
         ImageDetailScreen(
             pagerState = pagerState,
             images = images,
             onBack = { navController.pop() },
             onImageInfo = { /*TODO*/ },
-            onBottomBarClick = {
-                when (it) {
-                    ExtractorBottomBarItem.SHARE -> {
-                        currentImageInfo?.let { imageInfo ->
-                            scope.launch {
-                                context.launchShareIntent(imageInfo)
-                            }
-                        }
-                    }
-
-                    ExtractorBottomBarItem.EDIT -> {
-                        currentImageInfo?.let { imageInfo ->
-                            scope.launch {
-                                context.launchEditIntent(imageInfo)
-                            }
-                        }
-                    }
-
-                    ExtractorBottomBarItem.USE_AS -> {
-                        currentImageInfo?.let { imageInfo ->
-                            scope.launch {
-                                context.launchUseAsIntent(imageInfo)
-                            }
-                        }
-                    }
-
-                    ExtractorBottomBarItem.EX_INFO -> {}
-                }
-            }
+            onBottomBarClick = { viewModel.processEvent(it) }
         )
     }
 }

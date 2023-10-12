@@ -33,6 +33,7 @@ private val dataModule = module {
     single { get<ExtractorDatabase>().imageDataWithEmbeddingsDao() }
     single { get<ExtractorDatabase>().textEmbeddingDao() }
     single { get<ExtractorDatabase>().visualEmbeddingDao() }
+    single { get<ExtractorDatabase>().userEmbeddingDao() }
 
     factory {
         ExtractorDataStore(androidContext().datastore)
@@ -43,7 +44,8 @@ private val dataModule = module {
             dispatcher = get(named(CoroutineModuleName.IO)),
             extractionEntityDao = get(),
             visualEmbeddingDao = get(),
-            textEmbeddingDao = get()
+            textEmbeddingDao = get(),
+            userEmbeddingDao = get()
         )
     } bind ExtractorRepository::class
 }
