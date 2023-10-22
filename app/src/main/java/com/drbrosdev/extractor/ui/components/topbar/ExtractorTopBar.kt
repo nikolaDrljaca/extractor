@@ -20,9 +20,9 @@ import androidx.work.await
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.worker.WorkNames
-import com.drbrosdev.extractor.ui.components.ExtractorHeader
-import com.drbrosdev.extractor.ui.components.ExtractorStatusButton
-import com.drbrosdev.extractor.ui.components.ExtractorStatusButtonState
+import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
+import com.drbrosdev.extractor.ui.components.shared.ExtractorStatusButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted

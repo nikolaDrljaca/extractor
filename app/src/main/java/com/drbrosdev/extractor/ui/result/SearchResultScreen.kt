@@ -23,9 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.drbrosdev.extractor.ui.components.BackButton
-import com.drbrosdev.extractor.ui.components.ExtractorImageGrid
-import com.drbrosdev.extractor.ui.components.SearchFilterSheet
+import com.drbrosdev.extractor.ui.components.shared.BackButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorImageGrid
+import com.drbrosdev.extractor.ui.components.shared.SearchFilterSheet
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.isScrollingUp
 

@@ -27,7 +27,7 @@ private val coroutineModule = module {
 
 private val dataModule = module {
     single { ExtractorDatabase.createExtractorDatabase(androidContext()) }
-    //TODO: DAOs for injection, do we need repos?
+
     single { get<ExtractorDatabase>().previousSearchDao() }
     single { get<ExtractorDatabase>().extractionEntityDao() }
     single { get<ExtractorDatabase>().imageDataWithEmbeddingsDao() }
@@ -45,7 +45,8 @@ private val dataModule = module {
             extractionEntityDao = get(),
             visualEmbeddingDao = get(),
             textEmbeddingDao = get(),
-            userEmbeddingDao = get()
+            userEmbeddingDao = get(),
+            imageDataWithEmbeddingsDao = get()
         )
     } bind ExtractorRepository::class
 }

@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.zIndex
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.components.ExtractorActionButton
-import com.drbrosdev.extractor.ui.components.OnboardingCard
-import com.drbrosdev.extractor.ui.components.OnboardingCardHeadline
+import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
+import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
+import com.drbrosdev.extractor.ui.components.shared.OnboardingCardHeadline
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.parcelize.Parcelize
 

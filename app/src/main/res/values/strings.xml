@@ -6,4 +6,5 @@
     <string name="in_storage_lower">*** In Storage number can be lower if extraction has failed for some images.</string>
     <string name="set_as">Set as:</string>
     <string name="edit">Edit</string>
+    <string name="extractor_info_about_image">This is information extracted for this image.\nFeel free to edit it in any manner you like. Changes made here will impact how you can search for this image moving forward.</string>
 </resources>

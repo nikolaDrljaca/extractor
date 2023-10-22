@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.findActivity
 import com.drbrosdev.extractor.openAppSettings
-import com.drbrosdev.extractor.ui.components.ExtractorActionButton
-import com.drbrosdev.extractor.ui.components.OnboardingCard
-import com.drbrosdev.extractor.ui.components.OnboardingCardHeadline
-import com.drbrosdev.extractor.ui.components.OutlinedExtractorActionButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
+import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
+import com.drbrosdev.extractor.ui.components.shared.OnboardingCardHeadline
+import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerOnbCard
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop

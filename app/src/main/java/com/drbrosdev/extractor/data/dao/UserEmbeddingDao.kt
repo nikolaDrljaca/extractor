@@ -25,6 +25,9 @@ interface UserEmbeddingDao {
     @Update
     suspend fun update(value: UserEmbedding)
 
+    @Query("UPDATE user_embedding SET value=:value WHERE image_entity_id=:imageEntityId")
+    suspend fun update(value: String, imageEntityId: Long)
+
     @Delete
     suspend fun delete(value: UserEmbedding)
 

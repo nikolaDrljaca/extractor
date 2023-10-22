@@ -8,6 +8,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
@@ -31,10 +32,9 @@ import androidx.constraintlayout.compose.layoutId
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.components.ExtractorImageTopBar
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorBottomBarItem
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorImageBottomBar
-import com.drbrosdev.extractor.util.noRippleClickable
+import com.drbrosdev.extractor.ui.components.shared.ExtractorImageTopBar
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
@@ -74,8 +74,11 @@ fun ImageDetailScreen(
             AsyncImage(
                 modifier = Modifier
                     .fillMaxSize()
-                    .zoomable(zoomState)
-                    .noRippleClickable { showUi = !showUi },
+                    .systemBarsPadding()
+                    .zoomable(
+                        zoomState = zoomState,
+                        onTap = { showUi = !showUi }
+                    ),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(images[it])
                     .crossfade(true)

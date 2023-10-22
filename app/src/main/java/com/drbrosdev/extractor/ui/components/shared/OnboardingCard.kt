@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.components
+package com.drbrosdev.extractor.ui.components.shared
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import androidx.compose.foundation.layout.Arrangement

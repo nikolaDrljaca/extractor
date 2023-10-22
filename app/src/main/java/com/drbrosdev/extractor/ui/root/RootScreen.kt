@@ -7,7 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import com.drbrosdev.extractor.ui.home.HomeNavTarget
 import com.drbrosdev.extractor.ui.onboarding.Onboarding
+import com.drbrosdev.extractor.util.BottomSheetNavTarget
 import com.drbrosdev.extractor.util.DialogNavTarget
+import com.drbrosdev.extractor.util.LocalBottomSheetNavController
 import com.drbrosdev.extractor.util.LocalDialogNavController
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
@@ -15,6 +17,7 @@ import com.drbrosdev.extractor.util.SlideTransitionSpec
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.DialogNavHost
 import dev.olshevski.navigation.reimagined.NavBackHandler
+import dev.olshevski.navigation.reimagined.material3.BottomSheetNavHost
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.rememberNavController
 import dev.olshevski.navigation.reimagined.replaceAll
@@ -30,6 +33,7 @@ fun Root(
     val navController = rememberNavController<NavTarget>(startDestination = HomeNavTarget)
 
     val dialogNavController = rememberNavController<DialogNavTarget>(initialBackstack = emptyList())
+    val bottomSheetNavController = rememberNavController<BottomSheetNavTarget>(initialBackstack = emptyList())
 
     LaunchedEffect(key1 = Unit) {
         val isOnboardingFinished = viewModel.isOnboardingFinished().first()
@@ -41,6 +45,21 @@ fun Root(
 
     NavBackHandler(controller = navController)
 
+    NavBackHandler(controller = bottomSheetNavController, allowEmptyBackstack = true)
+
+    AnimatedNavHost(
+        controller = navController,
+        transitionSpec = SlideTransitionSpec,
+    ) {
+        CompositionLocalProvider(
+            LocalNavController provides navController,
+            LocalDialogNavController provides dialogNavController,
+            LocalBottomSheetNavController provides bottomSheetNavController
+        ) {
+            it.Content()
+        }
+    }
+
     DialogNavHost(controller = dialogNavController) {
         CompositionLocalProvider(LocalDialogNavController provides dialogNavController) {
             Dialog(onDismissRequest = { dialogNavController.pop() }) {
@@ -49,14 +68,14 @@ fun Root(
         }
     }
 
-    AnimatedNavHost(
-        controller = navController,
-        transitionSpec = SlideTransitionSpec,
+    BottomSheetNavHost(
+        controller = bottomSheetNavController,
+        onDismissRequest = { bottomSheetNavController.pop() }
     ) {
-        CompositionLocalProvider(LocalNavController provides navController) {
-            CompositionLocalProvider(LocalDialogNavController provides dialogNavController) {
-                it.Content()
-            }
+        CompositionLocalProvider(
+            LocalBottomSheetNavController provides bottomSheetNavController,
+        ) {
+            it.Content()
         }
     }
 }
