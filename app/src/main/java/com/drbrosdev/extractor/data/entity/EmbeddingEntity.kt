@@ -36,6 +36,9 @@ data class TextEmbedding(
     val value: String
 )
 
+/**
+ * Visual embeddings are also unique by <code>value</code>.
+ */
 @Entity(tableName = "visual_embedding")
 data class VisualEmbedding(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

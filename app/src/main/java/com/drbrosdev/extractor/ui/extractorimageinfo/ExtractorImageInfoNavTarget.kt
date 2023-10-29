@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.drbrosdev.extractor.util.BottomSheetNavTarget
 import com.drbrosdev.extractor.util.LocalBottomSheetNavController
+import dev.olshevski.navigation.reimagined.material.BottomSheetState
 import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
@@ -16,7 +17,7 @@ data class ExtractorImageInfoNavTarget(
 ) : BottomSheetNavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(sheetState: BottomSheetState) {
         val viewModel: ExtractorImageInfoViewModel = koinViewModel {
             parametersOf(mediaImageId)
         }
@@ -25,7 +26,7 @@ data class ExtractorImageInfoNavTarget(
 
         ExtractorImageInfoScreen(
             model = imageInfoModel,
-            onClearVisual = {},
+            onClearVisual = { viewModel.clearVisualEmbedding(it) },
             onSaveEmbeddings = {
                 viewModel.saveEmbeddings()
                 sheetNavigator.pop()

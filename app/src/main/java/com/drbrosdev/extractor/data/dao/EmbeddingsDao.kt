@@ -60,4 +60,7 @@ interface VisualEmbeddingDao {
 
     @Query("delete from visual_embedding where image_entity_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
+
+    @Query("delete from visual_embedding where value=:value")
+    suspend fun deleteByValue(value: String)
 }

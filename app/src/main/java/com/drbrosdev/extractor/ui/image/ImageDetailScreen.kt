@@ -43,7 +43,6 @@ import net.engawapg.lib.zoomable.zoomable
 fun ImageDetailScreen(
     onBottomBarClick: (ExtractorBottomBarItem) -> Unit,
     onBack: () -> Unit,
-    onImageInfo: () -> Unit,
     pagerState: PagerState,
     images: List<Uri>,
 ) {
@@ -101,7 +100,6 @@ fun ImageDetailScreen(
             ExtractorImageTopBar(
                 modifier = Modifier.padding(vertical = 36.dp, horizontal = 12.dp),
                 onBackClick = onBack,
-                onInfoClick = onImageInfo
             )
         }
 

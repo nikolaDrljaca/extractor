@@ -3,9 +3,9 @@ package com.drbrosdev.extractor.ui.components.shared
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -19,7 +19,6 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @Composable
 fun ExtractorImageTopBar(
     onBackClick: () -> Unit,
-    onInfoClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val background = Brush.verticalGradient(listOf(Color.Black, Color.Transparent))
@@ -38,14 +37,6 @@ fun ExtractorImageTopBar(
                 tint = Color.White
             )
         }
-
-        IconButton(onClick = onInfoClick) {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = "",
-                tint = Color.White
-            )
-        }
     }
 }
 
@@ -53,6 +44,9 @@ fun ExtractorImageTopBar(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme {
-        ExtractorImageTopBar(onBackClick = { /*TODO*/ }, onInfoClick = { /*TODO*/ })
+        ExtractorImageTopBar(
+            modifier = Modifier.fillMaxWidth(),
+            onBackClick = { /*TODO*/ },
+        )
     }
 }

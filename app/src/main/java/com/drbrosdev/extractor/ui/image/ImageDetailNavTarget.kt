@@ -62,7 +62,6 @@ data class ImageDetailNavTarget(
             pagerState = pagerState,
             images = images,
             onBack = { navController.pop() },
-            onImageInfo = { /*TODO*/ },
             onBottomBarClick = { viewModel.processEvent(it) }
         )
     }

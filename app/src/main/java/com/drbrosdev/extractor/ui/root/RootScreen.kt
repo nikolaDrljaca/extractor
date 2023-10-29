@@ -75,7 +75,7 @@ fun Root(
         CompositionLocalProvider(
             LocalBottomSheetNavController provides bottomSheetNavController,
         ) {
-            it.Content()
+            it.Content(this.sheetState)
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.ui.components.shared.EmbeddingTextField
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageLabelChip
+import com.drbrosdev.extractor.ui.extractorimageinfo.VisualEmbedUiModel
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -24,7 +25,7 @@ fun EmbeddingsForm(
     onClearVisual: (String) -> Unit,
     modifier: Modifier = Modifier,
     formState: EmbeddingsFormState = rememberEmbeddingsFormState(),
-    visualEmbeddings: List<String>,
+    visualEmbeddings: List<VisualEmbedUiModel>,
 ) {
     Column(
         modifier = Modifier
@@ -38,8 +39,9 @@ fun EmbeddingsForm(
         ) {
             visualEmbeddings.forEach {
                 ExtractorImageLabelChip(
-                    text = it,
-                    onDismiss = { onClearVisual(it) },
+                    isChecked = it.isChecked,
+                    text = it.text,
+                    onDismiss = { onClearVisual(it.text) },
                 )
             }
         }
@@ -53,7 +55,7 @@ fun EmbeddingsForm(
         EmbeddingTextField(
             value = formState.userEmbedding,
             onTextChange = formState::setUserValue,
-            label = { Text(text = "User Embeddings") }
+            label = { Text(text = "Type your search terms here...") }
         )
     }
 }

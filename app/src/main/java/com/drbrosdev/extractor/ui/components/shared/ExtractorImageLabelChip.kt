@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -19,13 +20,14 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorImageLabelChip(
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     text: String,
-    onDismiss: () -> Unit,
+    isChecked: Boolean,
 ) {
     InputChip(
         modifier = modifier,
-        selected = false,
+        selected = isChecked,
         onClick = {
             onDismiss()
         },
@@ -38,14 +40,16 @@ fun ExtractorImageLabelChip(
             )
         },
         border = InputChipDefaults.inputChipBorder(
-            borderColor = Color.Transparent
+            borderColor = Color.Transparent,
+            selectedBorderColor = Color.White
         ),
         shape = CircleShape,
         colors = InputChipDefaults.inputChipColors(
             containerColor = MaterialTheme.colorScheme.primary,
             labelColor = Color.White,
             leadingIconColor = Color.White,
-            trailingIconColor = Color.White
+            trailingIconColor = Color.White,
+            selectedContainerColor = Color.Transparent,
         )
     )
 }
@@ -53,10 +57,19 @@ fun ExtractorImageLabelChip(
 @Preview
 @Composable
 private fun CurrentPreview() {
-    ExtractorTheme {
-        ExtractorImageLabelChip(
-            text = "Sample",
-            onDismiss = {}
-        )
+    ExtractorTheme(dynamicColor = false) {
+        Column {
+            ExtractorImageLabelChip(
+                text = "Sample",
+                isChecked = false,
+                onDismiss = {}
+            )
+
+            ExtractorImageLabelChip(
+                text = "Sample",
+                isChecked = true,
+                onDismiss = {}
+            )
+        }
     }
 }

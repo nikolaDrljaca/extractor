@@ -8,9 +8,9 @@ import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
 import com.drbrosdev.extractor.data.entity.ImageDataWithEmbeddings
 import com.drbrosdev.extractor.data.entity.UserEmbedding
+import com.drbrosdev.extractor.data.entity.VisualEmbedding
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 
 interface ExtractorRepository {
 
@@ -25,6 +25,10 @@ interface ExtractorRepository {
     suspend fun updateTextEmbed(value: String, imageEntityId: Long)
 
     suspend fun updateUserEmbed(value: String, imageEntityId: Long)
+
+    suspend fun deleteVisualEmbedding(value: String)
+
+    suspend fun insertVisualEmbedding(mediaImageId: Long, embed: String)
 }
 
 class DefaultExtractorRepository(
@@ -36,9 +40,9 @@ class DefaultExtractorRepository(
     private val imageDataWithEmbeddingsDao: ImageDataWithEmbeddingsDao,
 ) : ExtractorRepository {
 
-    override suspend fun deleteExtractionData(imageEntityId: Long) = withContext(dispatcher) {
+    override suspend fun deleteExtractionData(imageEntityId: Long) {
         val countDeleted = extractionEntityDao.deleteByMediaId(imageEntityId)
-        if (countDeleted == 0) return@withContext
+        if (countDeleted == 0) return
 
         visualEmbeddingDao.deleteByMediaId(imageEntityId)
         textEmbeddingDao.deleteByMediaId(imageEntityId)
@@ -56,10 +60,9 @@ class DefaultExtractorRepository(
     override fun findImageDataByMediaId(mediaImageId: Long) =
         imageDataWithEmbeddingsDao.findByMediaImageId(mediaImageId)
 
-    override suspend fun updateTextEmbed(value: String, imageEntityId: Long) =
-        withContext(dispatcher) {
-            textEmbeddingDao.update(value, imageEntityId)
-        }
+    override suspend fun updateTextEmbed(value: String, imageEntityId: Long) {
+        textEmbeddingDao.update(value, imageEntityId)
+    }
 
     override suspend fun updateUserEmbed(value: String, imageEntityId: Long) {
         val existing = userEmbeddingDao.findByMediaId(imageEntityId)
@@ -69,6 +72,18 @@ class DefaultExtractorRepository(
         } else {
             userEmbeddingDao.update(value, imageEntityId)
         }
+    }
+
+    override suspend fun deleteVisualEmbedding(value: String) {
+        visualEmbeddingDao.deleteByValue(value)
+    }
+
+    override suspend fun insertVisualEmbedding(mediaImageId: Long, embed: String) {
+        val visualEmbed = VisualEmbedding(
+            imageEntityId = mediaImageId,
+            value = embed
+        )
+        visualEmbeddingDao.insert(visualEmbed)
     }
 
 }

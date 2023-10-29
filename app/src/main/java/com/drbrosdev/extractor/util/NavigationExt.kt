@@ -16,6 +16,7 @@ import com.drbrosdev.extractor.ui.result.SearchResultNavTarget
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
+import dev.olshevski.navigation.reimagined.material.BottomSheetState
 
 
 interface NavTarget : Parcelable {
@@ -33,7 +34,7 @@ interface DialogNavTarget : Parcelable {
 interface BottomSheetNavTarget: Parcelable {
 
     @Composable
-    fun Content()
+    fun Content(sheetState: BottomSheetState)
 }
 
 val LocalNavController = staticCompositionLocalOf<NavController<NavTarget>> {
