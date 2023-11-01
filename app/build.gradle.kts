@@ -85,6 +85,7 @@ dependencies {
 
     //Navigation Reimagined
     implementation("dev.olshevski.navigation:reimagined:1.5.0")
+    implementation("dev.olshevski.navigation:reimagined-material3:1.5.0")
 
     //Koin
     val koinAndroidComposeVersion = "3.4.6"

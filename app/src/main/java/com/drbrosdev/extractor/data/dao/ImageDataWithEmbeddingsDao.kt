@@ -66,4 +66,12 @@ interface ImageDataWithEmbeddingsDao {
     fun findByUserEmbeddingFlow(query: String): Flow<List<ImageDataWithEmbeddings>>
 
     suspend fun findByUserEmbedding(query: String) = findByUserEmbeddingFlow(query).first()
+
+    @Query("""
+            SELECT * FROM image_extraction_entity 
+            LEFT JOIN text_embedding AS t ON media_store_id = t.image_entity_id 
+            LEFT JOIN user_embedding AS u ON media_store_id = u.image_entity_id 
+            WHERE media_store_id=:mediaImageId
+    """)
+    fun findByMediaImageId(mediaImageId: Long): Flow<ImageDataWithEmbeddings?>
 }

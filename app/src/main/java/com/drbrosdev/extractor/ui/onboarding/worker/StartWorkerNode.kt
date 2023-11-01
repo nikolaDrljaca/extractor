@@ -6,9 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.components.ExtractorActionButton
-import com.drbrosdev.extractor.ui.components.OnboardingCard
-import com.drbrosdev.extractor.ui.components.OnboardingCardHeadline
+import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
+import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
+import com.drbrosdev.extractor.ui.components.shared.OnboardingCardHeadline
 import com.drbrosdev.extractor.ui.home.HomeNavTarget
 import com.drbrosdev.extractor.ui.onboarding.LocalOnbNavController
 import com.drbrosdev.extractor.ui.onboarding.OnbNavTarget

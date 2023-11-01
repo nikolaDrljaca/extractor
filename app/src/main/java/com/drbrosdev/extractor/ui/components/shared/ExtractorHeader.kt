@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.components
+package com.drbrosdev.extractor.ui.components.shared
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement

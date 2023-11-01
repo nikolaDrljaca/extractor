@@ -16,6 +16,7 @@ import com.drbrosdev.extractor.ui.result.SearchResultNavTarget
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
+import dev.olshevski.navigation.reimagined.material.BottomSheetState
 
 
 interface NavTarget : Parcelable {
@@ -30,12 +31,22 @@ interface DialogNavTarget : Parcelable {
     fun Content()
 }
 
+interface BottomSheetNavTarget: Parcelable {
+
+    @Composable
+    fun Content(sheetState: BottomSheetState)
+}
+
 val LocalNavController = staticCompositionLocalOf<NavController<NavTarget>> {
     error("NavController was not instantiated, or is unavailable in this context.")
 }
 
 val LocalDialogNavController = staticCompositionLocalOf<NavController<DialogNavTarget>> {
     error("DialogNavController was not instantiated, or is unavailable in this context.")
+}
+
+val LocalBottomSheetNavController = staticCompositionLocalOf<NavController<BottomSheetNavTarget>> {
+    error("BottomSheetNavController was not instantiated, or is unavailable in this scope.")
 }
 
 

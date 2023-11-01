@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.ui.components.PreviousSearchItem
-import com.drbrosdev.extractor.ui.components.PreviousSearchItemViewType
+import com.drbrosdev.extractor.ui.components.shared.PreviousSearchItem
+import com.drbrosdev.extractor.ui.components.shared.PreviousSearchItemViewType
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 

@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.ui.components.ExtractorTextField
+import com.drbrosdev.extractor.ui.components.shared.ExtractorTextField
 import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChipData
 import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChips
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme

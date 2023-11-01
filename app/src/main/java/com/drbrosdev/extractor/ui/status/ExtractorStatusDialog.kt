@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.components.ExtractorActionButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable

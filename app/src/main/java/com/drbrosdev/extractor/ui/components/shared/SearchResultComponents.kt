@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.components
+package com.drbrosdev.extractor.ui.components.shared
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -76,14 +76,15 @@ fun ExtractorImageGrid(
     onClick: (index: Int) -> Unit,
     gridState: LazyGridState = rememberLazyGridState()
 ) {
+    val imageSize = 86
 
     LazyVerticalGrid(
         modifier = Modifier
             .then(modifier),
-        columns = GridCells.Fixed(count = 3),
+        columns = GridCells.Adaptive(minSize = imageSize.dp),
         state = gridState,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         contentPadding = PaddingValues(vertical = 112.dp)
     ) {
         item(
@@ -104,7 +105,7 @@ fun ExtractorImageGrid(
         itemsIndexed(images, key = { _, it -> it.id }) { index, it ->
             ExtractorImageItem(
                 imageUri = it.uri,
-                size = 144,
+                size = imageSize,
                 onClick = { onClick(index) }
             )
         }

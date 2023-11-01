@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.components
+package com.drbrosdev.extractor.ui.components.shared
 
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -34,7 +34,7 @@ fun ExtractorImageItem(
     AsyncImage(
         modifier = Modifier
             .then(sizeModifier)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(4.dp))
             .clickable { onClick() }
             .then(modifier),
         model = ImageRequest.Builder(LocalContext.current)

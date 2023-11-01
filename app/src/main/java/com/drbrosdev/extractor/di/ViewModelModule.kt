@@ -1,10 +1,12 @@
 package com.drbrosdev.extractor.di
 
+import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarViewModel
+import com.drbrosdev.extractor.ui.extractorimageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.image.ImageDetailViewModel
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
 import com.drbrosdev.extractor.ui.result.SearchResultViewModel
@@ -54,6 +56,14 @@ val uiModule = module {
     viewModel {
         SearchResultViewModel(
             imageSearch = get<DefaultImageSearchByLabel>()
+        )
+    }
+
+    viewModel {
+        ExtractorImageInfoViewModel(
+            mediaImageId = it.get(),
+            extractorRepository = get<DefaultExtractorRepository>(),
+            mediaImageRepository = get<DefaultMediaImageRepository>()
         )
     }
 
