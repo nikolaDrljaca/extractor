@@ -1,15 +1,15 @@
 package com.drbrosdev.extractor.ui.home
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewEvents
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
+import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarEvents
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarViewModel
 import com.drbrosdev.extractor.ui.result.SearchResultNavTarget
@@ -25,16 +25,18 @@ import org.koin.androidx.compose.koinViewModel
 @Parcelize
 object HomeNavTarget : NavTarget {
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val extractorSearchViewModel: ExtractorSearchViewModel = koinViewModel()
 
         val topBarViewModel: ExtractorTopBarViewModel = koinViewModel()
-        val donePercentage by topBarViewModel.percentageDoneFlow.collectAsState()
+        val donePercentage by topBarViewModel.percentageDoneFlow.collectAsStateWithLifecycle()
 
         val previousSearchViewModel: PreviousSearchesViewModel = koinViewModel()
-        val searches by previousSearchViewModel.prevSearchesFlow.collectAsState()
+        val searches by previousSearchViewModel.prevSearchesFlow.collectAsStateWithLifecycle()
+
+        val statsViewModel: ExtractorStatsViewModel = koinViewModel()
+        val statsUiState by statsViewModel.state.collectAsStateWithLifecycle()
 
         val navController = LocalNavController.current
         val dialogNavController = LocalDialogNavController.current
@@ -54,6 +56,14 @@ object HomeNavTarget : NavTarget {
 
         HomeScreen(
             donePercentage = donePercentage,
+            onStatClick = { query, type ->
+                navController.navigate(
+                    SearchResultNavTarget(
+                        query = query,
+                        labelType = type
+                    )
+                )
+            },
             onTopBarEvent = {
                 when (it) {
                     ExtractorTopBarEvents.OnAboutClicked -> {}
@@ -90,7 +100,8 @@ object HomeNavTarget : NavTarget {
                         )
                     }
                 }
-            }
+            },
+            statsUiState = statsUiState
         )
     }
 }

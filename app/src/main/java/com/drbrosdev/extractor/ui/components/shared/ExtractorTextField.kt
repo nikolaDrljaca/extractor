@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
@@ -91,7 +92,7 @@ fun ExtractorTextField(
                         imageVector = Icons.Rounded.Search,
                         contentDescription = "Search Images",
                         tint = textColor.copy(alpha = 0.5f),
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(36.dp).clickable { onDoneSubmit() }
                     )
                 }
             )

@@ -110,14 +110,14 @@ private fun imageInfoConstraintSet() = ConstraintSet {
     }
 
     constrain(saveButton) {
-        top.linkTo(parent.top)
+        top.linkTo(parent.top, margin = 12.dp)
         end.linkTo(parent.end)
         start.linkTo(guideline)
         width = Dimension.fillToConstraints
     }
 
     constrain(imageInfo) {
-        top.linkTo(parent.top)
+        top.linkTo(parent.top, margin = 12.dp)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
         width = Dimension.fillToConstraints

@@ -51,6 +51,7 @@ fun EmbeddingTextField(
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: (@Composable () -> Unit)? = null,
+    placeholder: (@Composable () -> Unit)? = null,
 ) {
 
     OutlinedTextField(
@@ -67,7 +68,8 @@ fun EmbeddingTextField(
             errorContainerColor = Color.Transparent,
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent
-        )
+        ),
+        placeholder = placeholder
     )
 }
 
