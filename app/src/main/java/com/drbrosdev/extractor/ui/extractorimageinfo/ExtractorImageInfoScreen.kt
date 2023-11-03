@@ -101,6 +101,7 @@ private fun imageInfoConstraintSet() = ConstraintSet {
     val note = createRefFor(ViewIds.NOTE)
 
     val guideline = createGuidelineFromStart(0.7f)
+    val topGuideline = createGuidelineFromTop(0.03f)
 
     constrain(note) {
         top.linkTo(embeddings.bottom)
@@ -110,14 +111,14 @@ private fun imageInfoConstraintSet() = ConstraintSet {
     }
 
     constrain(saveButton) {
-        top.linkTo(parent.top, margin = 12.dp)
+        top.linkTo(topGuideline)
         end.linkTo(parent.end)
         start.linkTo(guideline)
         width = Dimension.fillToConstraints
     }
 
     constrain(imageInfo) {
-        top.linkTo(parent.top, margin = 12.dp)
+        top.linkTo(topGuideline)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
         width = Dimension.fillToConstraints
@@ -146,7 +147,7 @@ private fun CurrentPreview() {
             modifier = Modifier.background(color = Color.White),
             model = ImageInfoUiModel(),
             onClearVisual = {},
-            onSaveEmbeddings = {}
+            onSaveEmbeddings = {},
         )
     }
 }
