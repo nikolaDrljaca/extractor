@@ -4,6 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +25,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorImageLabelChip
 import com.drbrosdev.extractor.ui.extractorimageinfo.VisualEmbedUiModel
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun EmbeddingsForm(
     onClearVisual: (String) -> Unit,
@@ -42,6 +48,13 @@ fun EmbeddingsForm(
                     isChecked = it.isChecked,
                     text = it.text,
                     onDismiss = { onClearVisual(it.text) },
+                    trailingIcon = {
+                        Icon(
+                            Icons.Outlined.Delete,
+                            contentDescription = "Localized description",
+                            Modifier.size(InputChipDefaults.AvatarSize)
+                        )
+                    }
                 )
             }
         }
@@ -55,7 +68,8 @@ fun EmbeddingsForm(
         EmbeddingTextField(
             value = formState.userEmbedding,
             onTextChange = formState::setUserValue,
-            label = { Text(text = "Type your search terms here...") }
+            label = { Text(text = "User Embeddings") },
+            placeholder = { Text(text = "Type your search terms here...") }
         )
     }
 }

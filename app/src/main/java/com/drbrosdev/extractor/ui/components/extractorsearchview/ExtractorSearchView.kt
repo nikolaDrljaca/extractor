@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.ui.components.extractorsearchview
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.ui.components.shared.ExtractorTextField
 import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChipData
 import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChips
+import com.drbrosdev.extractor.ui.components.shared.ExtractorTextField
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
@@ -34,19 +33,13 @@ fun ExtractorSearchView(
         mutableStateOf(initialQuery)
     }
 
-    val elevation = if (isSystemInDarkTheme()) {
-        0.dp
-    } else {
-        4.dp
-    }
-
     Surface(
         modifier = Modifier
             .then(modifier),
         shape = RoundedCornerShape(14.dp),
         color = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.primary,
-        shadowElevation = elevation
+        shadowElevation = 0.dp
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
@@ -22,6 +22,7 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 fun ExtractorImageLabelChip(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    trailingIcon: (@Composable () -> Unit)? = null,
     text: String,
     isChecked: Boolean,
 ) {
@@ -33,11 +34,7 @@ fun ExtractorImageLabelChip(
         },
         label = { Text(text) },
         trailingIcon = {
-            Icon(
-                Icons.Rounded.Close,
-                contentDescription = "Localized description",
-                Modifier.size(InputChipDefaults.AvatarSize)
-            )
+            trailingIcon?.invoke()
         },
         border = InputChipDefaults.inputChipBorder(
             borderColor = Color.Transparent,
@@ -54,6 +51,7 @@ fun ExtractorImageLabelChip(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun CurrentPreview() {
@@ -62,7 +60,14 @@ private fun CurrentPreview() {
             ExtractorImageLabelChip(
                 text = "Sample",
                 isChecked = false,
-                onDismiss = {}
+                onDismiss = {},
+                trailingIcon = {
+                    Icon(
+                        Icons.Rounded.Delete,
+                        contentDescription = "Localized description",
+                        Modifier.size(InputChipDefaults.AvatarSize)
+                    )
+                }
             )
 
             ExtractorImageLabelChip(

@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.ui.components.previoussearch
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +15,6 @@ import com.drbrosdev.extractor.ui.components.shared.PreviousSearchItemViewType
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PreviousSearches(
     onEvent: (PreviousSearchesEvents) -> Unit,

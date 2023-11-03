@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.drbrosdev.extractor.data.entity.TextEmbedding
 import com.drbrosdev.extractor.data.entity.VisualEmbedding
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -40,8 +41,16 @@ interface TextEmbeddingDao {
 @Dao
 interface VisualEmbeddingDao {
 
+    data class VisualEmbedUsage(
+        val value: String,
+        val usageCount: Int
+    )
+
     @Query("select count(id) from visual_embedding")
     suspend fun getCount(): Int
+
+    @Query("select value, count(*) as usageCount from visual_embedding group by value order by usageCount desc limit :amount")
+    fun getMostUsed(amount: Int): Flow<List<VisualEmbedUsage>>
 
     @Query("select * from visual_embedding where id=:id")
     suspend fun findById(id: Long): VisualEmbedding?
