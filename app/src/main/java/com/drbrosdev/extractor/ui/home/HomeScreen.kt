@@ -80,7 +80,7 @@ fun HomeScreen(
 }
 
 private fun homeScreenConstraintSet() = ConstraintSet {
-    val topGuideline = createGuidelineFromTop(0.1f)
+    val topGuideline = createGuidelineFromTop(0.15f)
     val searchView = createRefFor(ViewIds.SEARCH_VIEW)
     val previousSearch = createRefFor(ViewIds.PREV_SEARCH)
     val topBar = createRefFor(ViewIds.TOP_BAR)

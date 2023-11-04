@@ -1,17 +1,17 @@
 package com.drbrosdev.extractor.ui.result
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.ui.components.datafilterchip.toLabelType
 import com.drbrosdev.extractor.ui.image.ImageDetailNavTarget
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
 import dev.olshevski.navigation.reimagined.navigate
-import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Parcelize
 data class SearchResultNavTarget(
@@ -21,13 +21,11 @@ data class SearchResultNavTarget(
 
     @Composable
     override fun Content() {
-        val viewModel: SearchResultViewModel = koinViewModel()
-        val state by viewModel.state.collectAsState()
-        val navController = LocalNavController.current
-
-        LaunchedEffect(key1 = Unit) {
-            viewModel.performSearch(query, labelType)
+        val viewModel: SearchResultViewModel = koinViewModel {
+            parametersOf(query, labelType)
         }
+        val state by viewModel.state.collectAsStateWithLifecycle()
+        val navController = LocalNavController.current
 
         //TODO: Loading state, animated placeholders or spinners
         SearchResultScreen(
@@ -40,7 +38,7 @@ data class SearchResultNavTarget(
                     )
                 )
             },
-            onNavBack = { navController.pop() }
+            onFilterChanged = { viewModel.setLabelType(it.toLabelType()) }
         )
     }
 }

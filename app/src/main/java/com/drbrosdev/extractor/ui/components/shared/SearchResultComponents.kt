@@ -1,7 +1,9 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,11 +13,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
@@ -23,16 +25,21 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChipData
 import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChips
 import com.drbrosdev.extractor.ui.theme.ButtonShape
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 
 @Composable
@@ -72,9 +79,8 @@ fun BackButton(
 fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
     images: List<MediaImage>,
-    searchTerm: String,
     onClick: (index: Int) -> Unit,
-    gridState: LazyGridState = rememberLazyGridState()
+    gridState: LazyGridState = rememberLazyGridState(),
 ) {
     val imageSize = 86
 
@@ -87,21 +93,6 @@ fun ExtractorImageGrid(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         contentPadding = PaddingValues(vertical = 112.dp)
     ) {
-        item(
-            span = { GridItemSpan(maxLineSpan) },
-            key = "search_term"
-        ) {
-            Text(
-                text = "# $searchTerm",
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    color = MaterialTheme.colorScheme.onBackground
-                ),
-            )
-        }
-        item(
-            span = { GridItemSpan(maxLineSpan) }
-        ) { Spacer(modifier = Modifier.height(12.dp)) }
-
         itemsIndexed(images, key = { _, it -> it.id }) { index, it ->
             ExtractorImageItem(
                 imageUri = it.uri,
@@ -114,8 +105,10 @@ fun ExtractorImageGrid(
 
 @Composable
 fun SearchFilterSheet(
+    onClearFilterClick: () -> Unit,
+    onFilterChanged: (ImageLabelFilterChipData) -> Unit,
     modifier: Modifier = Modifier,
-    onClearFilterClick: () -> Unit
+    initialLabelSelected: Int = 0,
 ) {
     Column(
         modifier = Modifier
@@ -157,7 +150,8 @@ fun SearchFilterSheet(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ImageLabelFilterChips(
-                onFilterChanged = {}
+                onFilterChanged = onFilterChanged,
+                initial = initialLabelSelected
             )
 
             Row(
@@ -219,3 +213,61 @@ fun BottomSheetButton(
     }
 }
 
+enum class QueryTextHeaderState {
+    NORMAL,
+    ELEVATED
+}
+
+@Composable
+fun QueryTextHeader(
+    text: String,
+    modifier: Modifier = Modifier,
+    state: QueryTextHeaderState = QueryTextHeaderState.NORMAL,
+) {
+    val elevation by animateDpAsState(
+        targetValue = when (state) {
+            QueryTextHeaderState.NORMAL -> 0.dp
+            QueryTextHeaderState.ELEVATED -> 4.dp
+        },
+        label = ""
+    )
+
+    val cornerShape by animateDpAsState(
+        targetValue = when (state) {
+            QueryTextHeaderState.NORMAL -> 0.dp
+            QueryTextHeaderState.ELEVATED -> 14.dp
+        },
+        label = ""
+    )
+
+    Surface(
+        modifier = Modifier
+            .then(modifier),
+        tonalElevation = elevation,
+        shape = RoundedCornerShape(cornerShape),
+        color = MaterialTheme.colorScheme.background //TODO Maybe keep default
+    ) {
+        Box(
+            contentAlignment = Alignment.CenterStart,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
+        ) {
+            Text(
+                text = "# $text",
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                ),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun CurrentPreview() {
+    ExtractorTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(space = 8.dp)) {
+            QueryTextHeader(text = "Search Term")
+            QueryTextHeader(text = "Search Term", state = QueryTextHeaderState.ELEVATED)
+        }
+    }
+}

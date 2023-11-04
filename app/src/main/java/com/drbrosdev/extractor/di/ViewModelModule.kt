@@ -56,6 +56,8 @@ val uiModule = module {
 
     viewModel {
         SearchResultViewModel(
+            query = it.get(),
+            labelType = it.get(),
             imageSearch = get<DefaultImageSearchByLabel>()
         )
     }
