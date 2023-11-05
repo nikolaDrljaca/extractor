@@ -46,7 +46,7 @@ private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         ExtractorImageInfoScreen(
             modifier = Modifier.background(color = Color.White),
-            model = ImageInfoUiModel(),
+            model = ExtractorImageInfoUiState(),
             onClearVisual = {},
             onSaveEmbeddings = {},
         )

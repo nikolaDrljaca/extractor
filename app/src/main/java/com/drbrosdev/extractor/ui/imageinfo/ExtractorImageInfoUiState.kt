@@ -4,7 +4,7 @@ import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
 import com.drbrosdev.extractor.ui.components.embeddingsform.EmbeddingsFormState
 
 
-data class ImageInfoUiModel(
+data class ExtractorImageInfoUiState(
     val mediaImageId: Long = 0L,
     val userEmbedding: String? = null,
     val textEmbedding: String = "",
@@ -22,8 +22,8 @@ fun String.mapToVisualEmbedUiModel(): VisualEmbedUiModel {
     return VisualEmbedUiModel(this, false)
 }
 
-fun ImageDataWithEmbeddings.mapToInfoModel(): ImageInfoUiModel {
-    return ImageInfoUiModel(
+fun ImageDataWithEmbeddings.mapToInfoModel(): ExtractorImageInfoUiState {
+    return ExtractorImageInfoUiState(
         mediaImageId = this.imageEntity.mediaStoreId,
         userEmbedding = this.userEmbeddingEntity?.value,
         textEmbedding = this.textEmbeddingEntity.value,

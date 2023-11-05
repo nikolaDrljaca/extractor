@@ -32,7 +32,7 @@ fun ExtractorImageInfoScreen(
     onClearVisual: (String) -> Unit,
     onSaveEmbeddings: () -> Unit,
     modifier: Modifier = Modifier,
-    model: ImageInfoUiModel,
+    model: ExtractorImageInfoUiState,
 ) {
     val scrollState = rememberScrollState()
 

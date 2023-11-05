@@ -25,7 +25,7 @@ class ExtractorImageInfoViewModel(
         .filterNotNull()
         .map { it.mapToInfoModel() }
         .combine(checkedVisualEmbeds) { imageInfoUiModel, checkedEmbeds ->
-            ImageInfoUiModel(
+            ExtractorImageInfoUiState(
                 mediaImageId = imageInfoUiModel.mediaImageId,
                 userEmbedding = imageInfoUiModel.userEmbedding,
                 textEmbedding = imageInfoUiModel.textEmbedding,
@@ -37,7 +37,7 @@ class ExtractorImageInfoViewModel(
                 }
             )
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ImageInfoUiModel())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ExtractorImageInfoUiState())
 
     fun clearVisualEmbedding(embedding: String) {
         checkedVisualEmbeds.update {
