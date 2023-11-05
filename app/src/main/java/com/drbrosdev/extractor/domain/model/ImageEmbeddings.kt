@@ -1,20 +1,20 @@
 package com.drbrosdev.extractor.domain.model
 
-import com.drbrosdev.extractor.data.entity.ImageDataWithEmbeddings
-import com.drbrosdev.extractor.data.entity.TextEmbedding
-import com.drbrosdev.extractor.data.entity.UserEmbedding
-import com.drbrosdev.extractor.data.entity.VisualEmbedding
+import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
+import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
+import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
+import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 
 data class ImageEmbeddings(
-    val textEmbedding: TextEmbedding,
-    val visualEmbeddings: List<VisualEmbedding>,
-    val userEmbedding: UserEmbedding?
+    val textEmbeddingEntity: TextEmbeddingEntity,
+    val visualEmbeddingEntities: List<VisualEmbeddingEntity>,
+    val userEmbeddingEntity: UserEmbeddingEntity?
 )
 
 fun ImageDataWithEmbeddings.mapToImageEmbeddings(): ImageEmbeddings {
     return ImageEmbeddings(
-        textEmbedding = this.textEmbedding,
-        visualEmbeddings = this.visualEmbeddings,
-        userEmbedding = this.userEmbedding
+        textEmbeddingEntity = this.textEmbeddingEntity,
+        visualEmbeddingEntities = this.visualEmbeddingEntities,
+        userEmbeddingEntity = this.userEmbeddingEntity
     )
 }

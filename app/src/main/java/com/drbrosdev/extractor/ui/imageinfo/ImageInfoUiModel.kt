@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
-import com.drbrosdev.extractor.data.entity.ImageDataWithEmbeddings
+import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
 import com.drbrosdev.extractor.ui.components.embeddingsform.EmbeddingsFormState
 
 
@@ -25,8 +25,8 @@ fun String.mapToVisualEmbedUiModel(): VisualEmbedUiModel {
 fun ImageDataWithEmbeddings.mapToInfoModel(): ImageInfoUiModel {
     return ImageInfoUiModel(
         mediaImageId = this.imageEntity.mediaStoreId,
-        userEmbedding = this.userEmbedding?.value,
-        textEmbedding = this.textEmbedding.value,
-        visualEmbedding = this.visualEmbeddings.map { it.value.mapToVisualEmbedUiModel() },
+        userEmbedding = this.userEmbeddingEntity?.value,
+        textEmbedding = this.textEmbeddingEntity.value,
+        visualEmbedding = this.visualEmbeddingEntities.map { it.value.mapToVisualEmbedUiModel() },
     )
 }

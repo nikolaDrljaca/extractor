@@ -40,9 +40,9 @@ class DefaultImageEmbeddingsRepository(
         requireNotNull(textEmbedding) { "This should never happen." }
 
         ImageEmbeddings(
-            textEmbedding = textEmbedding,
-            visualEmbeddings = visualEmbedding,
-            userEmbedding = userEmbedding
+            textEmbeddingEntity = textEmbedding,
+            visualEmbeddingEntities = visualEmbedding,
+            userEmbeddingEntity = userEmbedding
         )
     }
 
@@ -51,15 +51,15 @@ class DefaultImageEmbeddingsRepository(
         updatedImageEmbeddings: ImageEmbeddings
     ) = withContext(dispatcher) {
         launch {
-            updatedImageEmbeddings.visualEmbeddings.forEach {
+            updatedImageEmbeddings.visualEmbeddingEntities.forEach {
                 visualEmbeddingDao.update(it)
             }
         }
 
-        updatedImageEmbeddings.userEmbedding?.let {
+        updatedImageEmbeddings.userEmbeddingEntity?.let {
             userEmbeddingDao.update(it)
         }
 
-        textEmbeddingDao.update(updatedImageEmbeddings.textEmbedding)
+        textEmbeddingDao.update(updatedImageEmbeddings.textEmbeddingEntity)
     }
 }

@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.data.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.drbrosdev.extractor.data.entity.ImageDataWithEmbeddings
+import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 

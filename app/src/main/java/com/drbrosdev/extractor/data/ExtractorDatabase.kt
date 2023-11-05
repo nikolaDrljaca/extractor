@@ -12,17 +12,17 @@ import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
 import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
-import com.drbrosdev.extractor.data.entity.TextEmbedding
-import com.drbrosdev.extractor.data.entity.UserEmbedding
-import com.drbrosdev.extractor.data.entity.VisualEmbedding
+import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
+import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
+import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 
 @Database(
     entities = [
         PreviousSearchEntity::class,
         ExtractionEntity::class,
-        TextEmbedding::class,
-        VisualEmbedding::class,
-        UserEmbedding::class
+        TextEmbeddingEntity::class,
+        VisualEmbeddingEntity::class,
+        UserEmbeddingEntity::class
     ],
     version = 5
 )

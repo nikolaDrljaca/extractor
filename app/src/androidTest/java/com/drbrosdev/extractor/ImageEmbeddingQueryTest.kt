@@ -10,9 +10,9 @@ import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.entity.ImageDataWithEmbeddings
-import com.drbrosdev.extractor.data.entity.TextEmbedding
-import com.drbrosdev.extractor.data.entity.VisualEmbedding
+import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
+import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
+import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -42,9 +42,9 @@ class ImageEmbeddingQueryTest {
 
         //Init some data
         val imageEntityId = 10L
-        val textData = TextEmbedding(id = 1, imageEntityId = imageEntityId, value = "this")
+        val textData = TextEmbeddingEntity(id = 1, imageEntityId = imageEntityId, value = "this")
         val visualData =
-            VisualEmbedding(id = 1, imageEntityId = imageEntityId, value = "visualData")
+            VisualEmbeddingEntity(id = 1, imageEntityId = imageEntityId, value = "visualData")
         val extractionEntity =
             ExtractionEntity(mediaStoreId = imageEntityId, uri = "sadfasdf")
 
@@ -52,7 +52,7 @@ class ImageEmbeddingQueryTest {
             textDao.insert(textData)
             visualDao.insert(visualData)
             visualDao.insert(
-                VisualEmbedding(
+                VisualEmbeddingEntity(
                     id = 2,
                     imageEntityId = 10L,
                     value = "some_other"
@@ -66,9 +66,9 @@ class ImageEmbeddingQueryTest {
     @Test
     fun shouldNotFindEmbeddingsAfterDeletion() = runBlocking {
         val imageEntityId = 11L
-        val textData = TextEmbedding(id = 10, imageEntityId = imageEntityId, value = "this")
+        val textData = TextEmbeddingEntity(id = 10, imageEntityId = imageEntityId, value = "this")
         val visualData =
-            VisualEmbedding(id = 10, imageEntityId = imageEntityId, value = "visualData")
+            VisualEmbeddingEntity(id = 10, imageEntityId = imageEntityId, value = "visualData")
         val extractionEntity =
             ExtractionEntity(mediaStoreId = imageEntityId, uri = "sadfasdf")
 
@@ -99,7 +99,7 @@ class ImageEmbeddingQueryTest {
         assert(result.isNotEmpty()) { "Result set is empty." }
 
         assert(
-            result.first().textEmbedding.value.contains(query)
+            result.first().textEmbeddingEntity.value.contains(query)
         ) { "Text embedding value not present." }
     }
 
@@ -112,7 +112,7 @@ class ImageEmbeddingQueryTest {
         println(result)
 
         assert(
-            result.first().visualEmbeddings.first().value.contains(query)
+            result.first().visualEmbeddingEntities.first().value.contains(query)
         ) { "Visual embedding value not present." }
     }
 
@@ -136,8 +136,8 @@ class ImageEmbeddingQueryTest {
         assert(result.isNotEmpty()) { "Result set is empty." }
 
         assert(
-            result.first().visualEmbeddings.contains(
-                VisualEmbedding(
+            result.first().visualEmbeddingEntities.contains(
+                VisualEmbeddingEntity(
                     id = 1,
                     imageEntityId = 10L,
                     value = "visualData"
