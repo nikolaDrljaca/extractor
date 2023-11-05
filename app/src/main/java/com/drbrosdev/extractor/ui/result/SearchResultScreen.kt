@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.result
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -150,6 +151,25 @@ private fun LoadingView(
 )
 @Composable
 private fun SearchScreenPreview() {
+    ExtractorTheme(dynamicColor = false) {
+        SearchResultScreen(
+            onFilterChanged = {},
+            state = SearchResultUiState.Loading(
+                searchTerm = "",
+                labelType = LabelType.ALL
+            ),
+            onNavToDetail = {},
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun SearchScreenPreviewDark() {
     ExtractorTheme(dynamicColor = false) {
         SearchResultScreen(
             onFilterChanged = {},

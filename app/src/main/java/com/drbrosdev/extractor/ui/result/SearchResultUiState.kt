@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.ui.result
 
-import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.domain.model.MediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.LabelType
 
 
@@ -11,7 +11,7 @@ sealed class SearchResultUiState {
     abstract val initialLabelIndex: Int
 
     data class Success(
-        val images: List<MediaImage>,
+        val images: List<MediaImageInfo>,
         override val searchTerm: String,
         override val labelType: LabelType,
     ) : SearchResultUiState() {

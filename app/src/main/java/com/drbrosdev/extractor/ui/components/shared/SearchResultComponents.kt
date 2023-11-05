@@ -35,7 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.domain.model.MediaImageInfo
 import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChipData
 import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChips
 import com.drbrosdev.extractor.ui.theme.ButtonShape
@@ -78,7 +78,7 @@ fun BackButton(
 @Composable
 fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
-    images: List<MediaImage>,
+    images: List<MediaImageInfo>,
     onClick: (index: Int) -> Unit,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
@@ -93,7 +93,7 @@ fun ExtractorImageGrid(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         contentPadding = PaddingValues(vertical = 112.dp)
     ) {
-        itemsIndexed(images, key = { _, it -> it.id }) { index, it ->
+        itemsIndexed(images, key = { _, it -> it.mediaImageId }) { index, it ->
             ExtractorImageItem(
                 imageUri = it.uri,
                 size = imageSize,

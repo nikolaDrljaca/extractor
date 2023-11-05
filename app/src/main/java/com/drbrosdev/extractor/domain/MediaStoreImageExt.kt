@@ -25,7 +25,7 @@ fun ContentResolver.mediaImagesFlow() = observe(
 
 
 suspend fun ContentResolver.runImageQuery(
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
     selection: String? = null
 ): List<MediaImage> = withContext(dispatcher) {
     val mediaImages = mutableListOf<MediaImage>()
@@ -41,15 +41,47 @@ suspend fun ContentResolver.runImageQuery(
         MediaStore.Images.Media.DATE_ADDED + " DESC"
     )?.use { cursor ->
         while (cursor.moveToNext()) {
-            mediaImages.add(cursor.toImage())
+            mediaImages.add(cursor.toMediaImage())
         }
     }
 
     mediaImages
 }
 
+suspend fun ContentResolver.queryMediaImageInfo(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    selection: String? = null
+): List<MediaImageInfo> = withContext(dispatcher) {
+    val out = mutableListOf<MediaImageInfo>()
+    val projection = arrayOf(
+        MediaStore.Images.Media._ID,
+        MediaStore.Images.Media.DISPLAY_NAME,
+        MediaStore.Images.Media.DATA,
+        MediaStore.Images.Media.DATE_ADDED,
+        MediaStore.Images.Media.SIZE,
+        MediaStore.Images.Media.HEIGHT,
+        MediaStore.Images.Media.WIDTH
+    )
+
+    query(
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        projection,
+        selection,
+        null,
+        MediaStore.Images.Media.DATE_ADDED + " DESC"
+    )?.use { cursor ->
+        {
+            while (cursor.moveToNext()) {
+                out.add(cursor.toMediaImageInfo())
+            }
+        }
+    }
+    out
+}
+
+
 suspend fun ContentResolver.findByUri(
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
     uri: Uri
 ): MediaImageInfo? = withContext(dispatcher) {
     val projection = arrayOf(
@@ -78,7 +110,7 @@ suspend fun ContentResolver.findByUri(
 }
 
 suspend fun ContentResolver.getCount(
-    dispatcher: CoroutineDispatcher = Dispatchers.Default
+    dispatcher: CoroutineDispatcher = Dispatchers.IO
 ): Int = withContext(dispatcher) {
     val projection = arrayOf(MediaStore.Images.Media._ID)
 
@@ -118,7 +150,7 @@ private fun Cursor.toMediaImageInfo(): MediaImageInfo {
     val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension).toString()
 
     return MediaImageInfo(
-        id = id,
+        mediaImageId = id,
         displayName = displayName,
         dateAdded = formatted,
         height = height,
@@ -130,7 +162,7 @@ private fun Cursor.toMediaImageInfo(): MediaImageInfo {
     )
 }
 
-private fun Cursor.toImage(): MediaImage {
+private fun Cursor.toMediaImage(): MediaImage {
     val idColumn = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
     val pathColumn = getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
 

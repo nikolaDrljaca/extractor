@@ -50,7 +50,7 @@ data class ImageDetailNavTarget(
                     when (event) {
                         ImageDetailEvents.OnEdit -> context.launchEditIntent(imageInfo)
                         ImageDetailEvents.OnExtractorInfo ->
-                            bottomSheetNavigator.navigate(ExtractorImageInfoNavTarget(imageInfo.id))
+                            bottomSheetNavigator.navigate(ExtractorImageInfoNavTarget(imageInfo.mediaImageId))
                         ImageDetailEvents.OnShare -> context.launchShareIntent(imageInfo)
                         ImageDetailEvents.OnUseAs -> context.launchUseAsIntent(imageInfo)
                     }
