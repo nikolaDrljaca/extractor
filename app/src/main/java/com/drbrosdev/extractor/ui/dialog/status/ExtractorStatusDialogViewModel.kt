@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.status
+package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

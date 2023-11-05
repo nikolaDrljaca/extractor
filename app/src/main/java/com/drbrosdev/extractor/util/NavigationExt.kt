@@ -11,8 +11,8 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.drbrosdev.extractor.ui.image.ImageDetailNavTarget
-import com.drbrosdev.extractor.ui.result.SearchResultNavTarget
+import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
+import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
@@ -51,11 +51,11 @@ val LocalBottomSheetNavController = staticCompositionLocalOf<NavController<Botto
 
 
 val SlideTransitionSpec = NavTransitionSpec<NavTarget?> { action, from, to ->
-    if ((from is SearchResultNavTarget) and (to is  ImageDetailNavTarget)) {
+    if ((from is ExtractorSearchNavTarget) and (to is  ExtractorImageNavTarget)) {
         return@NavTransitionSpec fadeIn() togetherWith fadeOut()
     }
 
-    if ((to is SearchResultNavTarget) and (from is  ImageDetailNavTarget)) {
+    if ((to is ExtractorSearchNavTarget) and (from is  ExtractorImageNavTarget)) {
         return@NavTransitionSpec fadeIn() togetherWith fadeOut()
     }
 

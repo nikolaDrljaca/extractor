@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.ui.components.shared.EmbeddingTextField
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageLabelChip
-import com.drbrosdev.extractor.ui.extractorimageinfo.VisualEmbedUiModel
+import com.drbrosdev.extractor.ui.imageinfo.VisualEmbedUiModel
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)

@@ -1,6 +1,5 @@
-package com.drbrosdev.extractor.ui.result
+package com.drbrosdev.extractor.ui.search
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -18,27 +17,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
-import com.drbrosdev.extractor.domain.usecase.LabelType
 import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChipData
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageGrid
 import com.drbrosdev.extractor.ui.components.shared.QueryTextHeader
 import com.drbrosdev.extractor.ui.components.shared.QueryTextHeaderState
 import com.drbrosdev.extractor.ui.components.shared.SearchFilterSheet
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchResultScreen(
+fun ExtractorSearchScreen(
     onNavToDetail: (selectedIndex: Int) -> Unit,
     onFilterChanged: (ImageLabelFilterChipData) -> Unit,
     modifier: Modifier = Modifier,
-    state: SearchResultUiState,
+    state: ExtractorSearchScreenUiState,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val gridState = rememberLazyGridState()
@@ -71,11 +67,11 @@ fun SearchResultScreen(
             constraintSet = searchResultScreenConstraintSet()
         ) {
             when (state) {
-                is SearchResultUiState.Loading -> {
+                is ExtractorSearchScreenUiState.Loading -> {
                     LoadingView(modifier = Modifier.layoutId(ViewIds.SPINNER))
                 }
 
-                is SearchResultUiState.Success -> {
+                is ExtractorSearchScreenUiState.Success -> {
                     ExtractorImageGrid(
                         modifier = Modifier.layoutId(ViewIds.IMAGE_GRID),
                         images = state.images,
@@ -124,12 +120,9 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
 }
 
 private object ViewIds {
-    //backButton, queryText, imageGrid, loading
-    const val BACK = "BACK"
     const val QUERY = "QUERY"
     const val IMAGE_GRID = "imageGrid"
     const val SPINNER = "loading"
-
 }
 
 @Composable
@@ -142,42 +135,4 @@ private fun LoadingView(
         trackColor = Color.Transparent,
         strokeCap = StrokeCap.Round
     )
-}
-
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-private fun SearchScreenPreview() {
-    ExtractorTheme(dynamicColor = false) {
-        SearchResultScreen(
-            onFilterChanged = {},
-            state = SearchResultUiState.Loading(
-                searchTerm = "",
-                labelType = LabelType.ALL
-            ),
-            onNavToDetail = {},
-        )
-    }
-}
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-private fun SearchScreenPreviewDark() {
-    ExtractorTheme(dynamicColor = false) {
-        SearchResultScreen(
-            onFilterChanged = {},
-            state = SearchResultUiState.Loading(
-                searchTerm = "",
-                labelType = LabelType.ALL
-            ),
-            onNavToDetail = {},
-        )
-    }
 }

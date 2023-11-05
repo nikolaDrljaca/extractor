@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.status
+package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -22,11 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
 fun ExtractorStatusDialog(
@@ -165,16 +163,5 @@ private fun ExtractorCountChips(
             }
         }
 
-    }
-}
-
-@Preview
-@Composable
-private fun CurrentPreview() {
-    ExtractorTheme {
-        ExtractorStatusDialog(
-            state = ExtractorStatusDialogUiModel(),
-            onClick = {}
-        )
     }
 }

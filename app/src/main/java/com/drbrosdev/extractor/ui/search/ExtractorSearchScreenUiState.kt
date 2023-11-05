@@ -1,11 +1,11 @@
-package com.drbrosdev.extractor.ui.result
+package com.drbrosdev.extractor.ui.search
 
 import com.drbrosdev.extractor.domain.model.MediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.LabelType
 
 
 
-sealed class SearchResultUiState {
+sealed class ExtractorSearchScreenUiState {
     abstract val labelType: LabelType
     abstract val searchTerm: String
     abstract val initialLabelIndex: Int
@@ -14,7 +14,7 @@ sealed class SearchResultUiState {
         val images: List<MediaImageInfo>,
         override val searchTerm: String,
         override val labelType: LabelType,
-    ) : SearchResultUiState() {
+    ) : ExtractorSearchScreenUiState() {
         override val initialLabelIndex: Int
             get() = labelType.toIndex()
     }
@@ -22,7 +22,7 @@ sealed class SearchResultUiState {
     data class Loading(
         override val labelType: LabelType,
         override val searchTerm: String
-    ) : SearchResultUiState() {
+    ) : ExtractorSearchScreenUiState() {
         override val initialLabelIndex: Int
             get() = labelType.toIndex()
     }

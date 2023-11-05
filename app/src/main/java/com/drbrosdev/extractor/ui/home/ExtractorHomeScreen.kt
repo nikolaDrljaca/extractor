@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
@@ -24,10 +22,9 @@ import com.drbrosdev.extractor.ui.components.stats.ExtractorStats
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarEvents
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
-fun HomeScreen(
+fun ExtractorHomeScreen(
     onTopBarEvent: (ExtractorTopBarEvents) -> Unit,
     onSearchViewEvents: (ExtractorSearchViewEvents) -> Unit,
     onPreviousSearchEvents: (PreviousSearchesEvents) -> Unit,
@@ -121,24 +118,3 @@ private object ViewIds {
     const val STATS = "stats"
 }
 
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true,
-)
-@Composable
-private fun SearchScreenPreview() {
-    ExtractorTheme(dynamicColor = false) {
-        Surface {
-            HomeScreen(
-                onTopBarEvent = {},
-                onSearchViewEvents = {},
-                onPreviousSearchEvents = {},
-                onStatClick = { query, type -> },
-                donePercentage = null,
-                previousSearches = emptyList(),
-                statsUiState = ExtractorStatsUiState.Loading
-            )
-        }
-    }
-}

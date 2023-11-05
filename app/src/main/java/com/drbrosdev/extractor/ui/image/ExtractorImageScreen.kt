@@ -40,7 +40,7 @@ import net.engawapg.lib.zoomable.zoomable
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ImageDetailScreen(
+fun ExtractorImageScreen(
     onBottomBarClick: (ExtractorBottomBarItem) -> Unit,
     onBack: () -> Unit,
     pagerState: PagerState,
@@ -57,7 +57,7 @@ fun ImageDetailScreen(
         constraintSet = imageDetailScreenConstraintSet()
     ) {
         HorizontalPager(
-            modifier = Modifier.layoutId(ImageDetailScreenViewIds.PAGER),
+            modifier = Modifier.layoutId(ViewIds.PAGER),
             state = pagerState,
             verticalAlignment = Alignment.CenterVertically,
             pageSize = PageSize.Fill
@@ -93,7 +93,7 @@ fun ImageDetailScreen(
 
         AnimatedVisibility(
             visible = showUi,
-            modifier = Modifier.layoutId(ImageDetailScreenViewIds.TOP_BAR),
+            modifier = Modifier.layoutId(ViewIds.TOP_BAR),
             enter = fadeIn(),
             exit = fadeOut()
         ) {
@@ -105,7 +105,7 @@ fun ImageDetailScreen(
 
         AnimatedVisibility(
             visible = showUi,
-            modifier = Modifier.layoutId(ImageDetailScreenViewIds.BOTTOM_BAR),
+            modifier = Modifier.layoutId(ViewIds.BOTTOM_BAR),
             enter = fadeIn(),
             exit = fadeOut()
         ) {
@@ -118,9 +118,9 @@ fun ImageDetailScreen(
 }
 
 private fun imageDetailScreenConstraintSet() = ConstraintSet {
-    val bottomBar = createRefFor(ImageDetailScreenViewIds.BOTTOM_BAR)
-    val topBar = createRefFor(ImageDetailScreenViewIds.TOP_BAR)
-    val pager = createRefFor(ImageDetailScreenViewIds.PAGER)
+    val bottomBar = createRefFor(ViewIds.BOTTOM_BAR)
+    val topBar = createRefFor(ViewIds.TOP_BAR)
+    val pager = createRefFor(ViewIds.PAGER)
 
     constrain(pager) {
         start.linkTo(parent.start)
@@ -146,7 +146,7 @@ private fun imageDetailScreenConstraintSet() = ConstraintSet {
     }
 }
 
-private object ImageDetailScreenViewIds {
+private object ViewIds {
     const val TOP_BAR = "topBar"
     const val BOTTOM_BAR = "bottomBar"
     const val PAGER = "pager"

@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -43,41 +42,9 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 
 @Composable
-fun BackButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedButton(
-        modifier = Modifier
-            .then(modifier),
-        onClick = onClick,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.primary
-        ),
-        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.onBackground,
-            containerColor = MaterialTheme.colorScheme.background
-        ),
-        shape = ButtonShape
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.KeyboardArrowLeft,
-            contentDescription = "Go back",
-            modifier = Modifier.align(Alignment.CenterVertically)
-        )
-
-        Text(
-            text = "Back",
-            modifier = Modifier.align(Alignment.CenterVertically)
-        )
-    }
-}
-
-@Composable
 fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(vertical = 112.dp),
     images: List<MediaImageInfo>,
     onClick: (index: Int) -> Unit,
     gridState: LazyGridState = rememberLazyGridState(),
@@ -91,7 +58,7 @@ fun ExtractorImageGrid(
         state = gridState,
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
-        contentPadding = PaddingValues(vertical = 112.dp)
+        contentPadding = contentPadding
     ) {
         itemsIndexed(images, key = { _, it -> it.mediaImageId }) { index, it ->
             ExtractorImageItem(

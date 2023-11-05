@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.result
+package com.drbrosdev.extractor.ui.search
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SearchResultViewModel(
+class ExtractorSearchViewModel(
     private val query: String,
     private val labelType: LabelType,
     private val imageSearch: ImageSearchByLabel
 ) : ViewModel() {
-    private val _state = MutableStateFlow<SearchResultUiState>(
-        SearchResultUiState.Success(
+    private val _state = MutableStateFlow<ExtractorSearchScreenUiState>(
+        ExtractorSearchScreenUiState.Success(
             images = emptyList(),
             searchTerm = query,
             labelType = labelType
@@ -34,11 +34,11 @@ class SearchResultViewModel(
 
     private fun performSearch() {
         viewModelScope.launch {
-            _state.update { SearchResultUiState.Loading(_labelType.value, searchTerm = query) }
+            _state.update { ExtractorSearchScreenUiState.Loading(_labelType.value, searchTerm = query) }
             delay(100)
             val result = imageSearch.search(query, _labelType.value)
             _state.update {
-                SearchResultUiState.Success(
+                ExtractorSearchScreenUiState.Success(
                     images = result,
                     searchTerm = query,
                     labelType = _labelType.value
@@ -49,8 +49,8 @@ class SearchResultViewModel(
 
     fun getImageUris(): List<Uri> {
         return when (val out = state.value) {
-            is SearchResultUiState.Loading -> emptyList()
-            is SearchResultUiState.Success -> out.images.map { it.uri }
+            is ExtractorSearchScreenUiState.Loading -> emptyList()
+            is ExtractorSearchScreenUiState.Success -> out.images.map { it.uri }
         }
     }
 

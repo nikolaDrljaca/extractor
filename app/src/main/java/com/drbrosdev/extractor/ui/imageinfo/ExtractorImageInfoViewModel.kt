@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.extractorimageinfo
+package com.drbrosdev.extractor.ui.imageinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

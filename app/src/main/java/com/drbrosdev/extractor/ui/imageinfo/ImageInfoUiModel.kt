@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.extractorimageinfo
+package com.drbrosdev.extractor.ui.imageinfo
 
 import com.drbrosdev.extractor.data.entity.ImageDataWithEmbeddings
 import com.drbrosdev.extractor.ui.components.embeddingsform.EmbeddingsFormState

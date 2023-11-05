@@ -1,6 +1,5 @@
-package com.drbrosdev.extractor.ui.extractorimageinfo
+package com.drbrosdev.extractor.ui.imageinfo
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,9 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
@@ -28,7 +25,6 @@ import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.embeddingsform.EmbeddingsForm
 import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -139,15 +135,3 @@ private object ViewIds {
     const val NOTE = "note"
 }
 
-@Preview
-@Composable
-private fun CurrentPreview() {
-    ExtractorTheme {
-        ExtractorImageInfoScreen(
-            modifier = Modifier.background(color = Color.White),
-            model = ImageInfoUiModel(),
-            onClearVisual = {},
-            onSaveEmbeddings = {},
-        )
-    }
-}

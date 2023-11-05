@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.home
 
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -9,21 +10,24 @@ import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearch
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
+import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarEvents
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarViewModel
-import com.drbrosdev.extractor.ui.result.SearchResultNavTarget
-import com.drbrosdev.extractor.ui.status.ExtractorStatusDialogNavTarget
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
+import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.LocalDialogNavController
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
+import com.drbrosdev.extractor.util.ScreenPreview
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
 
 @Parcelize
-object HomeNavTarget : NavTarget {
+object ExtractorHomeNavTarget : NavTarget {
 
     @Composable
     override fun Content() {
@@ -46,7 +50,7 @@ object HomeNavTarget : NavTarget {
             extractorSearchViewModel.events
                 .collect {
                     navController.navigate(
-                        SearchResultNavTarget(
+                        ExtractorSearchNavTarget(
                             query = it.query,
                             labelType = it.filter
                         )
@@ -54,11 +58,11 @@ object HomeNavTarget : NavTarget {
                 }
         }
 
-        HomeScreen(
+        ExtractorHomeScreen(
             donePercentage = donePercentage,
             onStatClick = { query, type ->
                 navController.navigate(
-                    SearchResultNavTarget(
+                    ExtractorSearchNavTarget(
                         query = query,
                         labelType = type
                     )
@@ -93,7 +97,7 @@ object HomeNavTarget : NavTarget {
                     is PreviousSearchesEvents.PerformSearch -> {
                         keyboardController?.hide()
                         navController.navigate(
-                            SearchResultNavTarget(
+                            ExtractorSearchNavTarget(
                                 query = it.query,
                                 labelType = it.labelType
                             )
@@ -103,5 +107,23 @@ object HomeNavTarget : NavTarget {
             },
             statsUiState = statsUiState
         )
+    }
+}
+
+@ScreenPreview
+@Composable
+private fun SearchScreenPreview() {
+    ExtractorTheme(dynamicColor = false) {
+        Surface {
+            ExtractorHomeScreen(
+                onTopBarEvent = {},
+                onSearchViewEvents = {},
+                onPreviousSearchEvents = {},
+                onStatClick = { query, type -> },
+                donePercentage = null,
+                previousSearches = emptyList(),
+                statsUiState = ExtractorStatsUiState.Loading
+            )
+        }
     }
 }
