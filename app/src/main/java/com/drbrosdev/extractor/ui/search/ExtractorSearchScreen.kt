@@ -37,7 +37,6 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchScreen(
-    onStatusButtonClick: () -> Unit,
     onNavToDetail: (selectedIndex: Int) -> Unit,
     onExtractorHomeClicked: () -> Unit,
     onDone: () -> Unit,
@@ -93,7 +92,7 @@ fun ExtractorSearchScreen(
                 state = extractorTopBarState.value,
                 leadingSlot = {
                     ExtractorStatusButton(
-                        onClick = onStatusButtonClick,
+                        onClick = {},
                         state = extractorStatusButtonState
                     )
                 },

@@ -29,7 +29,7 @@ fun ExtractorTopBar(
     modifier: Modifier = Modifier,
     state: ExtractorTopBarState = ExtractorTopBarState.NORMAL,
     leadingSlot: @Composable RowScope.() -> Unit,
-    centerSlot: @Composable RowScope.() -> Unit,
+    centerSlot: (@Composable RowScope.() -> Unit)? = null,
     trailingSlot: (@Composable RowScope.() -> Unit)? = null
 ) {
     val elevation by animateDpAsState(
@@ -65,7 +65,7 @@ fun ExtractorTopBar(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 leadingSlot()
-                centerSlot()
+                centerSlot?.invoke(this)
                 when {
                     trailingSlot != null -> trailingSlot()
                     else -> Spacer(modifier = Modifier.size(12.dp))

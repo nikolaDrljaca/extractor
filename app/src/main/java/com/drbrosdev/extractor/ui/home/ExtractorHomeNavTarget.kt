@@ -11,6 +11,8 @@ import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEven
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogUiModel
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
@@ -33,6 +35,9 @@ object ExtractorHomeNavTarget : NavTarget {
         val statsViewModel: ExtractorStatsViewModel = koinViewModel()
         val statsUiState by statsViewModel.state.collectAsStateWithLifecycle()
 
+        val syncStatusViewModel: ExtractorStatusDialogViewModel = koinViewModel()
+        val syncState by syncStatusViewModel.state.collectAsStateWithLifecycle()
+
         val navController = LocalNavController.current
         val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -47,13 +52,16 @@ object ExtractorHomeNavTarget : NavTarget {
         }
 
         ExtractorHomeScreen(
+            statsUiState = statsUiState,
+            previousSearches = searches,
+            extractorStatusState = syncState,
+            onStartSync = { syncStatusViewModel.startExtractionSync() },
             onStatClick = { query, type ->
                 navController.navigateToSearchScreen(
                     query = query,
                     labelType = type
                 )
             },
-            previousSearches = searches,
             onPreviousSearchEvents = {
                 when (it) {
                     is PreviousSearchesEvents.OnDeleteSearch ->
@@ -68,7 +76,6 @@ object ExtractorHomeNavTarget : NavTarget {
                     }
                 }
             },
-            statsUiState = statsUiState
         )
     }
 }
@@ -81,8 +88,10 @@ private fun SearchScreenPreview() {
             ExtractorHomeScreen(
                 onPreviousSearchEvents = {},
                 onStatClick = { query, type -> },
+                onStartSync = {},
                 previousSearches = emptyList(),
                 statsUiState = ExtractorStatsUiState.Loading,
+                extractorStatusState = ExtractorStatusDialogUiModel()
             )
         }
     }

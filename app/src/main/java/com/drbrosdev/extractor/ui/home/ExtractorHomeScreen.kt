@@ -22,13 +22,17 @@ import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearches
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStats
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialog
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogUiModel
 
 @Composable
 fun ExtractorHomeScreen(
     statsUiState: ExtractorStatsUiState,
     previousSearches: List<PreviousSearchItemState>,
+    extractorStatusState: ExtractorStatusDialogUiModel,
     onPreviousSearchEvents: (PreviousSearchesEvents) -> Unit,
     onStatClick: (String, LabelType) -> Unit,
+    onStartSync: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -40,8 +44,14 @@ fun ExtractorHomeScreen(
             .verticalScroll(scrollState),
         constraintSet = homeScreenConstraintSet()
     ) {
+        ExtractorStatusDialog(
+            modifier = Modifier.layoutId(ViewIds.SYNC_STATUS),
+            onClick = onStartSync,
+            state = extractorStatusState
+        )
+
         ExtractorStats(
-            modifier = Modifier.layoutId(ViewIds.STATS),
+            modifier = Modifier.layoutId(ViewIds.COMMON_V),
             state = statsUiState,
             onStatClick = onStatClick
         )
@@ -63,12 +73,13 @@ fun ExtractorHomeScreen(
 private fun homeScreenConstraintSet() = ConstraintSet {
     val previousSearch = createRefFor(ViewIds.PREV_SEARCH)
     val topBar = createRefFor(ViewIds.TOP_BAR)
-    val stats = createRefFor(ViewIds.STATS)
+    val common = createRefFor(ViewIds.COMMON_V)
+    val syncStatus = createRefFor(ViewIds.SYNC_STATUS)
 
     constrain(previousSearch) {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        top.linkTo(stats.bottom, margin = 16.dp)
+        top.linkTo(common.bottom, margin = 16.dp)
     }
 
     constrain(topBar) {
@@ -78,10 +89,17 @@ private fun homeScreenConstraintSet() = ConstraintSet {
         width = Dimension.fillToConstraints
     }
 
-    constrain(stats) {
+    constrain(common) {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
+        top.linkTo(syncStatus.bottom, margin = 8.dp)
+        width = Dimension.fillToConstraints
+    }
+
+    constrain(syncStatus) {
         top.linkTo(topBar.bottom, margin = 16.dp)
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
         width = Dimension.fillToConstraints
     }
 }
@@ -89,6 +107,7 @@ private fun homeScreenConstraintSet() = ConstraintSet {
 private object ViewIds {
     const val PREV_SEARCH = "prevSearch"
     const val TOP_BAR = "topBar"
-    const val STATS = "stats"
+    const val COMMON_V = "commonV"
+    const val SYNC_STATUS = "syncStatus"
 }
 

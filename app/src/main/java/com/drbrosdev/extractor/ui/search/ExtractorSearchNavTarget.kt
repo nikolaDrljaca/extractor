@@ -8,11 +8,9 @@ import com.drbrosdev.extractor.domain.usecase.LabelType
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
-import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.LocalDialogNavController
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
@@ -38,7 +36,6 @@ data class ExtractorSearchNavTarget(
         val extractorStatusButtonState by extractorStatusButtonViewModel.state.collectAsStateWithLifecycle()
 
         val navController = LocalNavController.current
-        val dialogNavController = LocalDialogNavController.current
         val keyboardController = LocalSoftwareKeyboardController.current
 
         //TODO: Loading state, animated placeholders or spinners
@@ -54,7 +51,6 @@ data class ExtractorSearchNavTarget(
                     )
                 )
             },
-            onStatusButtonClick = { dialogNavController.navigate(ExtractorStatusDialogNavTarget) },
             onExtractorHomeClicked = { navController.navigate(ExtractorHomeNavTarget) },
             onDone = {
                 keyboardController?.hide()
@@ -72,7 +68,6 @@ private fun SearchScreenPreview() {
             state = ExtractorSearchScreenUiState.Loading,
             onNavToDetail = {},
             extractorStatusButtonState = ExtractorStatusButtonState.Idle,
-            onStatusButtonClick = {},
             onExtractorHomeClicked = {},
             onDone = {},
             searchViewState = ExtractorSearchViewState("", LabelType.ALL),
