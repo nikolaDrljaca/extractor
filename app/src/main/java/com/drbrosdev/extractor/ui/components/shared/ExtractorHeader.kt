@@ -80,8 +80,10 @@ fun ExtractorHeader(
 @Composable
 private fun ButtonsPreview() {
     ExtractorTheme(dynamicColor = false) {
-        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            ExtractorHeader()
+        Surface {
+            Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                ExtractorHeader()
+            }
         }
     }
 }

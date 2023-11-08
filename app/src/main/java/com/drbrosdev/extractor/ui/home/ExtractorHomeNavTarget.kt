@@ -3,20 +3,18 @@ package com.drbrosdev.extractor.ui.home
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.usecase.LabelType
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
+import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
+import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
-import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarEvents
-import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -36,8 +34,8 @@ object ExtractorHomeNavTarget : NavTarget {
     override fun Content() {
         val extractorSearchViewModel: ExtractorSearchViewModel = koinViewModel()
 
-        val topBarViewModel: ExtractorTopBarViewModel = koinViewModel()
-        val donePercentage by topBarViewModel.percentageDoneFlow.collectAsStateWithLifecycle()
+        val topBarViewModel: ExtractorStatusButtonViewModel = koinViewModel()
+        val extractorButtonState by topBarViewModel.state.collectAsStateWithLifecycle()
 
         val previousSearchViewModel: PreviousSearchesViewModel = koinViewModel()
         val searches by previousSearchViewModel.prevSearchesFlow.collectAsStateWithLifecycle()
@@ -63,8 +61,9 @@ object ExtractorHomeNavTarget : NavTarget {
 
         ExtractorHomeScreen(
             searchViewState = extractorSearchViewModel.state,
+            extractorStatusButtonState = extractorButtonState,
             onSearchViewDone = { extractorSearchViewModel.performSearch() },
-            donePercentage = donePercentage,
+            onStatusButtonClick = { dialogNavController.navigate(ExtractorStatusDialogNavTarget) },
             onStatClick = { query, type ->
                 navController.navigate(
                     ExtractorSearchNavTarget(
@@ -72,14 +71,6 @@ object ExtractorHomeNavTarget : NavTarget {
                         labelType = type
                     )
                 )
-            },
-            onTopBarEvent = {
-                when (it) {
-                    ExtractorTopBarEvents.OnAboutClicked -> {}
-                    ExtractorTopBarEvents.OnExtractorButtonClicked -> {
-                        dialogNavController.navigate(ExtractorStatusDialogNavTarget)
-                    }
-                }
             },
             previousSearches = searches,
             onPreviousSearchEvents = {
@@ -109,19 +100,17 @@ private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         Surface {
             ExtractorHomeScreen(
-                onTopBarEvent = {},
+                extractorStatusButtonState = ExtractorStatusButtonState.Idle,
+                onStatusButtonClick = {},
                 onSearchViewDone = {},
                 onPreviousSearchEvents = {},
                 onStatClick = { query, type -> },
-                donePercentage = null,
                 previousSearches = emptyList(),
                 statsUiState = ExtractorStatsUiState.Loading,
                 searchViewState = object : ExtractorSearchViewState {
-                    override var query: State<String>
-                        get() = mutableStateOf("")
+                    override var query: String
+                        get() = ""
                         set(value) {}
-
-                    override fun onQueryChange(value: String) = Unit
 
                     override var labelType: LabelType
                         get() = LabelType.ALL

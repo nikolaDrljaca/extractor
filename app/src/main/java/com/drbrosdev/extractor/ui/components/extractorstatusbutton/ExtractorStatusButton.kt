@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.components.shared
+package com.drbrosdev.extractor.ui.components.extractorstatusbutton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,27 +18,34 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.work.WorkManager
+import androidx.work.await
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
+import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.domain.worker.WorkNames
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.createExtractorBrush
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
-enum class ExtractorStatusButtonState {
-    IDLE,
-    WORKING
-}
 
 @Composable
 fun ExtractorStatusButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     state: ExtractorStatusButtonState,
-    donePercentage: Int?
 ) {
-    val brush = createExtractorBrush()
-
-    val brushModifier = if (donePercentage == null) {
-        Modifier
-    } else Modifier.background(brush)
+    val brushModifier = when (state) {
+        is ExtractorStatusButtonState.Idle -> Modifier
+        is ExtractorStatusButtonState.Working -> Modifier.background(createExtractorBrush())
+    }
 
     Box(
         modifier = Modifier
@@ -50,7 +57,7 @@ fun ExtractorStatusButton(
         contentAlignment = Alignment.Center
     ) {
         when (state) {
-            ExtractorStatusButtonState.IDLE ->
+            is ExtractorStatusButtonState.Idle ->
                 Icon(
                     painter = painterResource(id = R.drawable.round_short_text_24),
                     modifier = Modifier.size(40.dp),
@@ -58,13 +65,13 @@ fun ExtractorStatusButton(
                     contentDescription = null
                 )
 
-            ExtractorStatusButtonState.WORKING ->
+            is ExtractorStatusButtonState.Working ->
                 Box(
                     modifier = Modifier.padding(4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "$donePercentage%",
+                        text = "${state.donePercentage}%",
                         color = Color.White,
                         style = MaterialTheme.typography.labelSmall
                     )
@@ -80,14 +87,12 @@ private fun CurrentPreview() {
         Column {
             ExtractorStatusButton(
                 onClick = { /*TODO*/ },
-                state = ExtractorStatusButtonState.IDLE,
-                donePercentage = null
+                state = ExtractorStatusButtonState.Idle,
             )
 
             ExtractorStatusButton(
                 onClick = { /*TODO*/ },
-                state = ExtractorStatusButtonState.WORKING,
-                donePercentage = 34
+                state = ExtractorStatusButtonState.Working(34),
             )
         }
     }

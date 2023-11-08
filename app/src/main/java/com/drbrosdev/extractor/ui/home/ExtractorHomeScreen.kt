@@ -15,24 +15,26 @@ import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.domain.usecase.LabelType
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchView
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
+import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
+import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchItemState
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearches
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
+import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
+import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStats
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
-import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBar
-import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarEvents
 
 @Composable
 fun ExtractorHomeScreen(
     searchViewState: ExtractorSearchViewState,
-    onTopBarEvent: (ExtractorTopBarEvents) -> Unit,
+    statsUiState: ExtractorStatsUiState,
+    extractorStatusButtonState: ExtractorStatusButtonState,
+    previousSearches: List<PreviousSearchItemState>,
+    onStatusButtonClick: () -> Unit,
     onSearchViewDone: () -> Unit,
     onPreviousSearchEvents: (PreviousSearchesEvents) -> Unit,
     onStatClick: (String, LabelType) -> Unit,
-    donePercentage: Int?,
-    previousSearches: List<PreviousSearchItemState>,
-    statsUiState: ExtractorStatsUiState
 ) {
     val scrollState = rememberScrollState()
 
@@ -58,8 +60,13 @@ fun ExtractorHomeScreen(
 
         ExtractorTopBar(
             modifier = Modifier.layoutId(ViewIds.TOP_BAR),
-            donePercentage = donePercentage,
-            onEvent = onTopBarEvent
+            leadingSlot = {
+                ExtractorStatusButton(
+                    onClick = onStatusButtonClick,
+                    state = extractorStatusButtonState
+                )
+            },
+            centerSlot = { ExtractorHeader() },
         )
 
         PreviousSearches(

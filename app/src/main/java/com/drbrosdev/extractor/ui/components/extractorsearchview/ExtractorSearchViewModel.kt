@@ -29,9 +29,9 @@ class ExtractorSearchViewModel(
         .launchIn(viewModelScope)
 
     fun performSearch() {
-        if (state.query.value.isBlank()) return
+        if (state.query.isBlank()) return
         viewModelScope.launch {
-            _events.send(NavToResults(state.query.value, state.labelType))
+            _events.send(NavToResults(state.query, state.labelType))
         }
     }
 
