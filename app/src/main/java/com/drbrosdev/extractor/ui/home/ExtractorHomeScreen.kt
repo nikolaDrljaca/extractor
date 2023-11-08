@@ -14,7 +14,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.domain.usecase.LabelType
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchView
-import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewEvents
+import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchItemState
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearches
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
@@ -25,8 +25,9 @@ import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarEvents
 
 @Composable
 fun ExtractorHomeScreen(
+    searchViewState: ExtractorSearchViewState,
     onTopBarEvent: (ExtractorTopBarEvents) -> Unit,
-    onSearchViewEvents: (ExtractorSearchViewEvents) -> Unit,
+    onSearchViewDone: () -> Unit,
     onPreviousSearchEvents: (PreviousSearchesEvents) -> Unit,
     onStatClick: (String, LabelType) -> Unit,
     donePercentage: Int?,
@@ -44,16 +45,9 @@ fun ExtractorHomeScreen(
         constraintSet = homeScreenConstraintSet()
     ) {
         ExtractorSearchView(
-            modifier = Modifier.layoutId(ViewIds.SEARCH_VIEW),
-            onDone = { onSearchViewEvents(ExtractorSearchViewEvents.OnPerformSearch) },
-            onFilterChanged = {
-                onSearchViewEvents(
-                    ExtractorSearchViewEvents.OnImageLabelFilterChanged(
-                        it
-                    )
-                )
-            },
-            onQueryChanged = { onSearchViewEvents(ExtractorSearchViewEvents.OnQueryChanged(it)) }
+            onDone = onSearchViewDone,
+            state = searchViewState,
+            modifier = Modifier.layoutId(ViewIds.SEARCH_VIEW)
         )
 
         ExtractorStats(

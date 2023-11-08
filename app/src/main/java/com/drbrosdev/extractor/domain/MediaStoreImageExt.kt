@@ -60,7 +60,7 @@ suspend fun ContentResolver.queryMediaImageInfo(
         MediaStore.Images.Media.DATE_ADDED,
         MediaStore.Images.Media.SIZE,
         MediaStore.Images.Media.HEIGHT,
-        MediaStore.Images.Media.WIDTH
+        MediaStore.Images.Media.WIDTH,
     )
 
     query(
@@ -70,10 +70,8 @@ suspend fun ContentResolver.queryMediaImageInfo(
         null,
         MediaStore.Images.Media.DATE_ADDED + " DESC"
     )?.use { cursor ->
-        {
-            while (cursor.moveToNext()) {
-                out.add(cursor.toMediaImageInfo())
-            }
+        while (cursor.moveToNext()) {
+            out.add(cursor.toMediaImageInfo())
         }
     }
     out
@@ -130,13 +128,19 @@ suspend fun ContentResolver.getCount(
 private fun Cursor.toMediaImageInfo(): MediaImageInfo {
     val id = getLong(getColumnIndexOrThrow(MediaStore.Images.Media._ID))
     val displayName = getString(getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME))
-    val data = getString(getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
     val dateAdded = getLong(getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED))
     val height = getInt(getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT))
     val width = getInt(getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH))
     val size = getLong(getColumnIndexOrThrow(MediaStore.Images.Media.SIZE))
     val pathColumn = getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
     val path = getString(pathColumn)
+
+//    val exifData = ExifInterface(path)
+//    val point = exifData.latLong?.let {
+//        LocationPoint(latitude = it[0], longitude = it[1])
+//    }
+//    val bar = Geocoder(this, Locale.getDefault())
+//    bar.getFromLocationName("some", 1, object: Geocoder.GeocodeListener {})
 
     val formatted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         .format(Date(dateAdded * 1000))

@@ -3,11 +3,14 @@ package com.drbrosdev.extractor.ui.home
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewEvents
+import com.drbrosdev.extractor.domain.usecase.LabelType
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
+import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
@@ -59,6 +62,8 @@ object ExtractorHomeNavTarget : NavTarget {
         }
 
         ExtractorHomeScreen(
+            searchViewState = extractorSearchViewModel.state,
+            onSearchViewDone = { extractorSearchViewModel.performSearch() },
             donePercentage = donePercentage,
             onStatClick = { query, type ->
                 navController.navigate(
@@ -74,18 +79,6 @@ object ExtractorHomeNavTarget : NavTarget {
                     ExtractorTopBarEvents.OnExtractorButtonClicked -> {
                         dialogNavController.navigate(ExtractorStatusDialogNavTarget)
                     }
-                }
-            },
-            onSearchViewEvents = {
-                when (it) {
-                    is ExtractorSearchViewEvents.OnImageLabelFilterChanged ->
-                        extractorSearchViewModel.onFilterChanged(it.data)
-
-                    is ExtractorSearchViewEvents.OnPerformSearch ->
-                        extractorSearchViewModel.performSearch()
-
-                    is ExtractorSearchViewEvents.OnQueryChanged ->
-                        extractorSearchViewModel.onQueryChanged(it.data)
                 }
             },
             previousSearches = searches,
@@ -117,12 +110,24 @@ private fun SearchScreenPreview() {
         Surface {
             ExtractorHomeScreen(
                 onTopBarEvent = {},
-                onSearchViewEvents = {},
+                onSearchViewDone = {},
                 onPreviousSearchEvents = {},
                 onStatClick = { query, type -> },
                 donePercentage = null,
                 previousSearches = emptyList(),
-                statsUiState = ExtractorStatsUiState.Loading
+                statsUiState = ExtractorStatsUiState.Loading,
+                searchViewState = object : ExtractorSearchViewState {
+                    override var query: State<String>
+                        get() = mutableStateOf("")
+                        set(value) {}
+
+                    override fun onQueryChange(value: String) = Unit
+
+                    override var labelType: LabelType
+                        get() = LabelType.ALL
+                        set(value) {}
+
+                }
             )
         }
     }

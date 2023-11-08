@@ -6,11 +6,11 @@ import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
 import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarViewModel
-import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.image.ExtractorImageViewModel
+import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
-import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -29,7 +29,9 @@ val uiModule = module {
     }
 
     viewModel {
-        com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel()
+        com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel(
+            savedStateHandle = get()
+        )
     }
 
     viewModel {
