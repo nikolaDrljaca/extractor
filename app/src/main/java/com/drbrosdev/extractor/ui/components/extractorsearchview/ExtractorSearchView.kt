@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.ui.components.extractorsearchview
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,9 +24,10 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
 fun ExtractorSearchView(
+    state: ExtractorSearchViewState,
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
-    state: ExtractorSearchViewState,
+    contentPadding: PaddingValues = PaddingValues(16.dp)
 ) {
     Surface(
         modifier = Modifier
@@ -36,7 +38,7 @@ fun ExtractorSearchView(
         shadowElevation = 0.dp
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(contentPadding),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             ExtractorTextField(
@@ -46,7 +48,7 @@ fun ExtractorSearchView(
                 textColor = Color.White,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             ImageLabelFilterChips(
                 onFilterChanged = {

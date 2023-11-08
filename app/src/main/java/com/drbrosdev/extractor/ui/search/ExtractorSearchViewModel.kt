@@ -1,10 +1,12 @@
 package com.drbrosdev.extractor.ui.search
 
 import android.net.Uri
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.usecase.ImageSearchByLabel
 import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,35 +16,34 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ExtractorSearchViewModel(
-    private val query: String,
-    private val labelType: LabelType,
+    query: String,
+    labelType: LabelType,
     private val imageSearch: ImageSearchByLabel
 ) : ViewModel() {
+    val searchViewState = ExtractorSearchViewState(
+        initialQuery = query,
+        initialLabelType = labelType
+    )
+
     private val _state = MutableStateFlow<ExtractorSearchScreenUiState>(
         ExtractorSearchScreenUiState.Success(
-            images = emptyList(),
-            searchTerm = query,
-            labelType = labelType
+            images = emptyList()
         )
     )
     val state = _state.asStateFlow()
 
-    private val _labelType = MutableStateFlow(labelType)
-    private val labelTypeUpdateFlow = _labelType
+    private val labelTypeUpdateFlow = snapshotFlow { searchViewState.labelType }
         .onEach { performSearch() }
         .launchIn(viewModelScope)
 
-    private fun performSearch() {
+    fun performSearch() {
+        if (searchViewState.query.isBlank()) return
         viewModelScope.launch {
-            _state.update { ExtractorSearchScreenUiState.Loading(_labelType.value, searchTerm = query) }
+            _state.update { ExtractorSearchScreenUiState.Loading }
             delay(100)
-            val result = imageSearch.search(query, _labelType.value)
+            val result = imageSearch.search(searchViewState.query, searchViewState.labelType)
             _state.update {
-                ExtractorSearchScreenUiState.Success(
-                    images = result,
-                    searchTerm = query,
-                    labelType = _labelType.value
-                )
+                ExtractorSearchScreenUiState.Success(images = result)
             }
         }
     }
@@ -53,7 +54,5 @@ class ExtractorSearchViewModel(
             is ExtractorSearchScreenUiState.Success -> out.images.map { it.uri }
         }
     }
-
-    fun setLabelType(labelType: LabelType) = _labelType.update { labelType }
 }
 

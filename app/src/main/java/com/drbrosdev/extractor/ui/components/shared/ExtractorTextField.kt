@@ -1,10 +1,11 @@
 package com.drbrosdev.extractor.ui.components.shared
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -22,7 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,14 +92,29 @@ fun ExtractorTextField(
                     )
                 },
                 trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Rounded.Search,
-                        contentDescription = "Search Images",
-                        tint = textColor.copy(alpha = 0.5f),
-                        modifier = Modifier.size(36.dp).clickable { onDoneSubmit() }
-                    )
+                    Surface(
+                        color = textColor.copy(alpha = 0.2f),
+                        onClick =  onDoneSubmit,
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.size(48.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Search,
+                            contentDescription = "Search Images",
+                            tint = textColor.copy(alpha = 0.5f),
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
                 }
             )
         }
     )
+}
+
+@Preview
+@Composable
+private fun CurrentPreview() {
+    ExtractorTheme {
+        ExtractorTextField(text = "", onChange = {})
+    }
 }

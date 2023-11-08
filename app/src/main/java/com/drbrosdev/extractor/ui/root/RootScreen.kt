@@ -5,8 +5,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
-import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.onboarding.Onboarding
+import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.util.BottomSheetNavTarget
 import com.drbrosdev.extractor.util.DialogNavTarget
 import com.drbrosdev.extractor.util.LocalBottomSheetNavController
@@ -30,7 +30,7 @@ fun Root(
     modifier: Modifier = Modifier,
 ) {
     val viewModel: RootViewModel = koinViewModel()
-    val navController = rememberNavController<NavTarget>(startDestination = ExtractorHomeNavTarget)
+    val navController = rememberNavController<NavTarget>(startDestination = ExtractorSearchNavTarget())
 
     val dialogNavController = rememberNavController<DialogNavTarget>(initialBackstack = emptyList())
     val bottomSheetNavController = rememberNavController<BottomSheetNavTarget>(initialBackstack = emptyList())
