@@ -14,6 +14,14 @@ interface ExtractorSearchViewState {
     var labelType: LabelType
 }
 
+fun ExtractorSearchViewState.initialLabelTypeIndex(): Int {
+    return when(labelType) {
+        LabelType.ALL -> 0
+        LabelType.TEXT -> 1
+        LabelType.IMAGE -> 2
+    }
+}
+
 @Composable
 fun rememberExtractorSearchViewState(
     initialQuery: String,

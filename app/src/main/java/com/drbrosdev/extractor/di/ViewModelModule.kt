@@ -58,7 +58,8 @@ val uiModule = module {
         com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel(
             query = it.get(),
             labelType = it.get(),
-            imageSearch = get<DefaultImageSearchByLabel>()
+            imageSearch = get<DefaultImageSearchByLabel>(),
+            stateHandle = get()
         )
     }
 

@@ -22,7 +22,10 @@ object ExtractorStatusDialogNavTarget : DialogNavTarget {
 
         ExtractorStatusDialog(
             state = state,
-            onClick = { viewModel.startExtractionSync() }
+            onClick = { viewModel.startExtractionSync() },
+            headline = {
+                Text(text = "Status", style = MaterialTheme.typography.displaySmall)
+            }
         )
     }
 }

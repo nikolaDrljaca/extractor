@@ -64,11 +64,13 @@ fun ExtractorTopBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                leadingSlot()
-                centerSlot?.invoke(this)
-                when {
-                    trailingSlot != null -> trailingSlot()
-                    else -> Spacer(modifier = Modifier.size(12.dp))
+                Row { leadingSlot() }
+                Row { centerSlot?.invoke(this) }
+                Row {
+                    when {
+                        trailingSlot != null -> trailingSlot()
+                        else -> Spacer(modifier = Modifier.size(12.dp))
+                    }
                 }
             }
         }

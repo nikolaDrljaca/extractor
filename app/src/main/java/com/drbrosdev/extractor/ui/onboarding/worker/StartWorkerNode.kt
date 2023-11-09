@@ -9,9 +9,9 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
 import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
 import com.drbrosdev.extractor.ui.components.shared.OnboardingCardHeadline
-import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.onboarding.LocalOnbNavController
 import com.drbrosdev.extractor.ui.onboarding.OnbNavTarget
+import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.util.LocalNavController
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.replaceAll
@@ -41,7 +41,7 @@ object StartWorkerOnbCard : OnbNavTarget {
                     onClick = {
                         viewModel.spawnWorkRequest()
                         viewModel.finishOnboarding()
-                        rootNavController.replaceAll(ExtractorHomeNavTarget)
+                        rootNavController.replaceAll(ExtractorSearchNavTarget())
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

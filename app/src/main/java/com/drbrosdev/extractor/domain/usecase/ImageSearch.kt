@@ -57,3 +57,8 @@ class DefaultImageSearch(
         }
     }
 }
+
+enum class SearchStrategy {
+    NORMAL,
+    DIRTY_CHECKING
+}

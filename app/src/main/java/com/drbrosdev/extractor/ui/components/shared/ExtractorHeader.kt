@@ -29,13 +29,14 @@ import kotlinx.coroutines.delay
 fun ExtractorHeader(
     modifier: Modifier = Modifier,
     headerText: String = stringResource(id = R.string.app_name),
-    bottomText: String = "Tap left for more.",
+    bottomText: String? = null,
 ) {
     var shouldShowInfoText by rememberSaveable {
-        mutableStateOf(true)
+        mutableStateOf(bottomText != null)
     }
 
     LaunchedEffect(key1 = Unit) {
+        if (bottomText == null) return@LaunchedEffect
         delay(3500L)
         shouldShowInfoText = false
     }
@@ -64,12 +65,14 @@ fun ExtractorHeader(
             AnimatedVisibility(
                 visible = shouldShowInfoText,
             ) {
-                Text(
-                    text = bottomText,
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = MaterialTheme.colorScheme.onBackground
+                bottomText?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
                     )
-                )
+                }
             }
         }
     }

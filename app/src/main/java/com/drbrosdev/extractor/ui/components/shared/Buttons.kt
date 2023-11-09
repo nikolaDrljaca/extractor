@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,12 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.ui.theme.md_theme_light_primary
+import com.drbrosdev.extractor.util.CombinedPreview
 
 @Composable
 fun ExtractorActionButton(
@@ -28,7 +29,7 @@ fun ExtractorActionButton(
     enabled: Boolean = true,
     content: @Composable (RowScope.() -> Unit)
 ) {
-    val verticalContentPadding = 24.dp
+    val verticalContentPadding = 20.dp
     val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
         LayoutDirection.Ltr
     )
@@ -65,7 +66,7 @@ fun ExtractorButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    verticalContentPadding: Dp = 24.dp,
+    verticalContentPadding: Dp = 20.dp,
     content: @Composable (RowScope.() -> Unit)
 ) {
     val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
@@ -105,7 +106,7 @@ fun OutlinedExtractorActionButton(
     modifier: Modifier = Modifier,
     content: @Composable (RowScope.() -> Unit)
 ) {
-    val verticalContentPadding = 24.dp
+    val verticalContentPadding = 20.dp
 
     val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
         LayoutDirection.Ltr
@@ -115,12 +116,18 @@ fun OutlinedExtractorActionButton(
         LayoutDirection.Ltr
     )
 
+    val mainColor = if (isSystemInDarkTheme()) {
+        Color.White
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier
             .then(modifier),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = Color.White
+            contentColor = mainColor
         ),
         contentPadding = PaddingValues(
             top = verticalContentPadding,
@@ -132,7 +139,7 @@ fun OutlinedExtractorActionButton(
         border = ButtonDefaults.outlinedButtonBorder.copy(
             width = 1.dp,
             brush = Brush.linearGradient(
-                listOf(Color.White, Color.White)
+                listOf(mainColor, mainColor)
             )
         )
     ) {
@@ -140,7 +147,7 @@ fun OutlinedExtractorActionButton(
     }
 }
 
-@Preview
+@CombinedPreview
 @Composable
 private fun ButtonsPreview() {
     ExtractorTheme(dynamicColor = false) {

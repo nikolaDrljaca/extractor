@@ -54,7 +54,8 @@ fun ExtractorSearchView(
                 onFilterChanged = {
                     state.labelType = it.toLabelType()
                 },
-                contentColor = Color.White
+                contentColor = Color.White,
+                initial = state.initialLabelTypeIndex()
             )
         }
     }

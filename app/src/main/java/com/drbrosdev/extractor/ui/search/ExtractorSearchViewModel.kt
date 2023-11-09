@@ -2,10 +2,12 @@ package com.drbrosdev.extractor.ui.search
 
 import android.net.Uri
 import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.usecase.ImageSearchByLabel
 import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.usecase.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,10 +20,11 @@ import kotlinx.coroutines.launch
 class ExtractorSearchViewModel(
     query: String,
     labelType: LabelType,
-    private val imageSearch: ImageSearchByLabel
+    private val imageSearch: ImageSearchByLabel,
+    private val stateHandle: SavedStateHandle,
 ) : ViewModel() {
     val searchViewState = ExtractorSearchViewState(
-        initialQuery = query,
+        initialQuery = stateHandle["query"] ?: query,
         initialLabelType = labelType
     )
 
@@ -32,16 +35,38 @@ class ExtractorSearchViewModel(
     )
     val state = _state.asStateFlow()
 
+    private val lastQuery = MutableStateFlow(LastQuery(query, labelType))
+
     private val labelTypeUpdateFlow = snapshotFlow { searchViewState.labelType }
-        .onEach { performSearch() }
+        .onEach { performSearch(SearchStrategy.NORMAL) }
         .launchIn(viewModelScope)
 
-    fun performSearch() {
-        if (searchViewState.query.isBlank()) return
+    private val saveQueryJob = snapshotFlow { searchViewState.query }
+        .onEach { stateHandle["query"] = it }
+        .launchIn(viewModelScope)
+
+    fun performSearch(searchStrategy: SearchStrategy) {
+        when (searchStrategy) {
+            SearchStrategy.NORMAL -> runSearch()
+            SearchStrategy.DIRTY_CHECKING -> {
+                if (searchViewState.query.isBlank()) return
+                if (lastQuery.value.isOldQuery(
+                        searchViewState.query,
+                        searchViewState.labelType
+                    )
+                ) return
+                runSearch()
+            }
+        }
+    }
+
+    private fun runSearch() {
         viewModelScope.launch {
             _state.update { ExtractorSearchScreenUiState.Loading }
             delay(100)
-            val result = imageSearch.search(searchViewState.query, searchViewState.labelType)
+            val result = imageSearch.search(searchViewState.query, searchViewState.labelType).also {
+                lastQuery.update { LastQuery(searchViewState.query, searchViewState.labelType) }
+            }
             _state.update {
                 ExtractorSearchScreenUiState.Success(images = result)
             }
@@ -52,6 +77,15 @@ class ExtractorSearchViewModel(
         return when (val out = state.value) {
             is ExtractorSearchScreenUiState.Loading -> emptyList()
             is ExtractorSearchScreenUiState.Success -> out.images.map { it.uri }
+        }
+    }
+
+    private data class LastQuery(val query: String, val labelType: LabelType)
+
+    private fun LastQuery.isOldQuery(query: String, labelType: LabelType): Boolean {
+        return when {
+            (query == this.query) and (labelType == this.labelType) -> true
+            else -> false
         }
     }
 }

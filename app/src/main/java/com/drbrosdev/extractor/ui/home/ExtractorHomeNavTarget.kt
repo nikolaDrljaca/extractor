@@ -11,13 +11,14 @@ import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEven
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
-import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogUiModel
-import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.LocalDialogNavController
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.navigateToSearchScreen
+import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
@@ -35,10 +36,8 @@ object ExtractorHomeNavTarget : NavTarget {
         val statsViewModel: ExtractorStatsViewModel = koinViewModel()
         val statsUiState by statsViewModel.state.collectAsStateWithLifecycle()
 
-        val syncStatusViewModel: ExtractorStatusDialogViewModel = koinViewModel()
-        val syncState by syncStatusViewModel.state.collectAsStateWithLifecycle()
-
         val navController = LocalNavController.current
+        val dialogNavController = LocalDialogNavController.current
         val keyboardController = LocalSoftwareKeyboardController.current
 
         LaunchedEffect(key1 = Unit) {
@@ -54,8 +53,7 @@ object ExtractorHomeNavTarget : NavTarget {
         ExtractorHomeScreen(
             statsUiState = statsUiState,
             previousSearches = searches,
-            extractorStatusState = syncState,
-            onStartSync = { syncStatusViewModel.startExtractionSync() },
+            onSyncClick = { dialogNavController.navigate(ExtractorStatusDialogNavTarget) },
             onStatClick = { query, type ->
                 navController.navigateToSearchScreen(
                     query = query,
@@ -88,10 +86,9 @@ private fun SearchScreenPreview() {
             ExtractorHomeScreen(
                 onPreviousSearchEvents = {},
                 onStatClick = { query, type -> },
-                onStartSync = {},
+                onSyncClick = {},
                 previousSearches = emptyList(),
                 statsUiState = ExtractorStatsUiState.Loading,
-                extractorStatusState = ExtractorStatusDialogUiModel()
             )
         }
     }
