@@ -4,8 +4,8 @@ import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.entity.TextEmbedding
-import com.drbrosdev.extractor.data.entity.VisualEmbedding
+import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
+import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.util.runCatching
 import com.google.mlkit.vision.common.InputImage
@@ -54,15 +54,15 @@ class DefaultExtractor(
             val outText = text.await()
             val outLabel = labels.await()
 
-            val textEmbedding = TextEmbedding(
+            val textEmbeddingEntity = TextEmbeddingEntity(
                 imageEntityId = mediaImage.id,
                 value = outText.getOrDefault("")
             )
-            textEmbeddingDao.insert(textEmbedding)
+            textEmbeddingDao.insert(textEmbeddingEntity)
 
             outLabel
                 .getOrDefault(emptyList())
-                .map { VisualEmbedding(imageEntityId = mediaImage.id, value = it) }
+                .map { VisualEmbeddingEntity(imageEntityId = mediaImage.id, value = it) }
                 .forEach { visualEmbeddingDao.insert(it) }
 
         }

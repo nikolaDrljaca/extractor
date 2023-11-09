@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.status
+package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,7 +29,7 @@ class ExtractorStatusDialogViewModel(
     val state = flow {
         while (true) {
             emit(updateState())
-            delay(5000L)
+            delay(2000L)
         }
     }
         .stateIn(

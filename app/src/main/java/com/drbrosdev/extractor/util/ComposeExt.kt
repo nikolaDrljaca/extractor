@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -74,11 +74,11 @@ fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush
 @Composable
 fun LazyGridState.isScrollingUp(): Boolean {
     val previousIndex = remember(this) {
-        mutableStateOf(firstVisibleItemIndex)
+        mutableIntStateOf(firstVisibleItemIndex)
     }
 
     val previousScrollOffset = remember {
-        mutableStateOf(firstVisibleItemScrollOffset)
+        mutableIntStateOf(firstVisibleItemScrollOffset)
     }
 
     return remember(this) {

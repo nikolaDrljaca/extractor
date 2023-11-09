@@ -8,6 +8,7 @@ import com.drbrosdev.extractor.domain.getCount
 import com.drbrosdev.extractor.domain.mediaImagesFlow
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.model.MediaImageInfo
+import com.drbrosdev.extractor.domain.queryMediaImageInfo
 import com.drbrosdev.extractor.domain.runImageQuery
 import kotlinx.coroutines.flow.first
 
@@ -18,6 +19,8 @@ interface MediaImageRepository {
     suspend fun getAllIds(): Set<Long>
 
     suspend fun findAllById(ids: List<Long>): List<MediaImage>
+
+    suspend fun findAllInfosById(ids: List<Long>): List<MediaImageInfo>
 
     suspend fun getCount(): Int
 
@@ -46,6 +49,12 @@ class DefaultMediaImageRepository(
             selection = "${MediaStore.Images.Media._ID} IN (${ids.joinToString(", ")})"
         )
         return out
+    }
+
+    override suspend fun findAllInfosById(ids: List<Long>): List<MediaImageInfo> {
+        return contentResolver.queryMediaImageInfo(
+            selection = "${MediaStore.Images.Media._ID} IN (${ids.joinToString(", ")})"
+        )
     }
 
     override suspend fun getCount(): Int {

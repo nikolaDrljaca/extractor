@@ -6,9 +6,9 @@ import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.entity.ImageDataWithEmbeddings
-import com.drbrosdev.extractor.data.entity.UserEmbedding
-import com.drbrosdev.extractor.data.entity.VisualEmbedding
+import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
+import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
+import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
@@ -67,7 +67,7 @@ class DefaultExtractorRepository(
     override suspend fun updateUserEmbed(value: String, imageEntityId: Long) {
         val existing = userEmbeddingDao.findByMediaId(imageEntityId)
         if (existing == null) {
-            val newUserEmbed = UserEmbedding(imageEntityId = imageEntityId, value = value)
+            val newUserEmbed = UserEmbeddingEntity(imageEntityId = imageEntityId, value = value)
             userEmbeddingDao.insert(newUserEmbed)
         } else {
             userEmbeddingDao.update(value, imageEntityId)
@@ -79,7 +79,7 @@ class DefaultExtractorRepository(
     }
 
     override suspend fun insertVisualEmbedding(mediaImageId: Long, embed: String) {
-        val visualEmbed = VisualEmbedding(
+        val visualEmbed = VisualEmbeddingEntity(
             imageEntityId = mediaImageId,
             value = embed
         )

@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.domain.usecase
 
 import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
-import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.domain.model.MediaImageInfo
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.util.runCatching
 import kotlinx.coroutines.CoroutineDispatcher
@@ -15,7 +15,7 @@ enum class LabelType {
 
 interface ImageSearchByLabel {
 
-    suspend fun search(query: String, labelType: LabelType): List<MediaImage>
+    suspend fun search(query: String, labelType: LabelType): List<MediaImageInfo>
 }
 
 
@@ -26,16 +26,19 @@ class DefaultImageSearchByLabel(
     private val insertPreviousSearch: InsertPreviousSearch
 ) : ImageSearchByLabel {
 
-    override suspend fun search(query: String, labelType: LabelType) = withContext(dispatcher) {
-        val out = when (labelType) {
-            LabelType.ALL -> findAllByAll(query)
-            LabelType.TEXT -> findAllByText(query)
-            LabelType.IMAGE -> findAllByVisual(query)
-        }
+    override suspend fun search(query: String, labelType: LabelType): List<MediaImageInfo> =
+        withContext(dispatcher) {
+            val out = when (labelType) {
+                LabelType.ALL -> findAllByAll(query)
+                LabelType.TEXT -> findAllByText(query)
+                LabelType.IMAGE -> findAllByVisual(query)
+            }
 
-        runCatching { insertPreviousSearch(query, out.size, labelType) }
-        out
-    }
+            runCatching {
+                if (query.isNotBlank()) insertPreviousSearch(query, out.size, labelType)
+            }
+            out
+        }
 
     private fun processQueryIntoLabels(query: String): List<String> {
         if (query.isBlank()) return emptyList()
@@ -48,9 +51,9 @@ class DefaultImageSearchByLabel(
         return temp.split(" ")
     }
 
-    private suspend fun findAllByAll(query: String): List<MediaImage> {
+    private suspend fun findAllByAll(query: String): List<MediaImageInfo> {
         val labels = processQueryIntoLabels(query)
-        val result = mutableSetOf<MediaImage>()
+        val result = mutableSetOf<MediaImageInfo>()
 
         for (label in labels) {
             val ids = imageDataWithEmbeddingsDao
@@ -58,16 +61,16 @@ class DefaultImageSearchByLabel(
                 .map { it.imageEntity.mediaStoreId }
             if (ids.isEmpty()) continue
 
-            val mediaImages = mediaImageRepository.findAllById(ids)
+            val mediaImages = mediaImageRepository.findAllInfosById(ids)
             result.addAll(mediaImages)
         }
 
         return result.toList()
     }
 
-    private suspend fun findAllByText(query: String): List<MediaImage> {
+    private suspend fun findAllByText(query: String): List<MediaImageInfo> {
         val labels = processQueryIntoLabels(query)
-        val result = mutableSetOf<MediaImage>()
+        val result = mutableSetOf<MediaImageInfo>()
 
         for (label in labels) {
             val ids = imageDataWithEmbeddingsDao
@@ -75,7 +78,7 @@ class DefaultImageSearchByLabel(
                 .map { it.imageEntity.mediaStoreId }
             if (ids.isEmpty()) continue
 
-            val mediaImages = mediaImageRepository.findAllById(ids)
+            val mediaImages = mediaImageRepository.findAllInfosById(ids)
             result.addAll(mediaImages)
         }
 
@@ -83,9 +86,9 @@ class DefaultImageSearchByLabel(
     }
 
 
-    private suspend fun findAllByVisual(query: String): List<MediaImage> {
+    private suspend fun findAllByVisual(query: String): List<MediaImageInfo> {
         val labels = processQueryIntoLabels(query)
-        val result = mutableSetOf<MediaImage>()
+        val result = mutableSetOf<MediaImageInfo>()
 
         for (label in labels) {
             val ids = imageDataWithEmbeddingsDao
@@ -93,7 +96,7 @@ class DefaultImageSearchByLabel(
                 .map { it.imageEntity.mediaStoreId }
             if (ids.isEmpty()) continue
 
-            val mediaImages = mediaImageRepository.findAllById(ids)
+            val mediaImages = mediaImageRepository.findAllInfosById(ids)
             result.addAll(mediaImages)
         }
 

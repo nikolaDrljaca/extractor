@@ -10,7 +10,7 @@ import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.entity.VisualEmbedding
+import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -40,10 +40,10 @@ class VisualEmbeddingDaoTest {
 
     private suspend fun setup() {
         val imageEntityId = 10L
-        val visualEmbeddings = buildList {
+        val visualEmbeddingEntities = buildList {
             repeat(10) {
                 add(
-                    VisualEmbedding(
+                    VisualEmbeddingEntity(
                         id = (it + 1).toLong(),
                         imageEntityId = imageEntityId,
                         value = "someText$it"
@@ -57,7 +57,7 @@ class VisualEmbeddingDaoTest {
                 uri = "some_uri"
             )
         )
-        visualEmbeddings.forEach {
+        visualEmbeddingEntities.forEach {
             visualDao.insert(it)
         }
     }

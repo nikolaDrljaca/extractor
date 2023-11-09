@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.status
+package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
@@ -22,16 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
 fun ExtractorStatusDialog(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    headline: (@Composable () -> Unit)? = null,
     state: ExtractorStatusDialogUiModel
 ) {
     Surface(
@@ -43,8 +42,11 @@ fun ExtractorStatusDialog(
         Column(
             modifier = Modifier.padding(16.dp),
         ) {
-            Text(text = "Status", style = MaterialTheme.typography.displaySmall)
-            Spacer(modifier = Modifier.height(12.dp))
+            headline?.let {
+                it()
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
             Text(
                 text = stringResource(R.string.status_explanation),
                 style = MaterialTheme.typography.labelMedium
@@ -54,11 +56,11 @@ fun ExtractorStatusDialog(
             if (state.isExtractionRunning) {
                 Text(text = "Current Extraction", modifier = Modifier.padding(vertical = 4.dp))
                 LinearProgressIndicator(
-                    progress = state.percentage,
+                    progress = { state.percentage },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp),
-                    strokeCap = StrokeCap.Round
+                    strokeCap = StrokeCap.Round,
                 )
                 Spacer(modifier = Modifier.height(24.dp))
             }
@@ -165,16 +167,5 @@ private fun ExtractorCountChips(
             }
         }
 
-    }
-}
-
-@Preview
-@Composable
-private fun CurrentPreview() {
-    ExtractorTheme {
-        ExtractorStatusDialog(
-            state = ExtractorStatusDialogUiModel(),
-            onClick = {}
-        )
     }
 }

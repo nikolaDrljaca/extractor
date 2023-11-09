@@ -3,16 +3,14 @@ package com.drbrosdev.extractor.di
 import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
-import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
+import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
-import com.drbrosdev.extractor.ui.components.topbar.ExtractorTopBarViewModel
-import com.drbrosdev.extractor.ui.extractorimageinfo.ExtractorImageInfoViewModel
-import com.drbrosdev.extractor.ui.image.ImageDetailViewModel
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
+import com.drbrosdev.extractor.ui.image.ExtractorImageViewModel
+import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
-import com.drbrosdev.extractor.ui.result.SearchResultViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
-import com.drbrosdev.extractor.ui.status.ExtractorStatusDialogViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -31,11 +29,13 @@ val uiModule = module {
     }
 
     viewModel {
-        ExtractorSearchViewModel()
+        com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel(
+            savedStateHandle = get()
+        )
     }
 
     viewModel {
-        ExtractorTopBarViewModel(
+        ExtractorStatusButtonViewModel(
             mediaImageRepository = get<DefaultMediaImageRepository>(),
             extractionEntityDao = get(),
             workManager = get()
@@ -49,14 +49,17 @@ val uiModule = module {
     }
 
     viewModel {
-        ImageDetailViewModel(
+        ExtractorImageViewModel(
             mediaImageRepository = get<DefaultMediaImageRepository>()
         )
     }
 
     viewModel {
-        SearchResultViewModel(
-            imageSearch = get<DefaultImageSearchByLabel>()
+        com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel(
+            query = it.get(),
+            labelType = it.get(),
+            imageSearch = get<DefaultImageSearchByLabel>(),
+            stateHandle = get()
         )
     }
 

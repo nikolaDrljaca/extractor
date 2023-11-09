@@ -14,14 +14,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ImageDetailViewModel(
+class ExtractorImageViewModel(
     private val mediaImageRepository: MediaImageRepository,
 ) : ViewModel() {
 
     private val _currentMediaImageInfo = MutableStateFlow<MediaImageInfo?>(null)
     val currentMediaImageInfo = _currentMediaImageInfo.asStateFlow()
 
-    private val eventChannel = Channel<ImageDetailEvents>()
+    private val eventChannel = Channel<ExtractorImageEvents>()
     val events = eventChannel.receiveAsFlow()
         .debounce(200L)
 

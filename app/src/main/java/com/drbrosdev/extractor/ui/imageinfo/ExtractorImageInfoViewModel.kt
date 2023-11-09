@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.extractorimageinfo
+package com.drbrosdev.extractor.ui.imageinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,7 +25,7 @@ class ExtractorImageInfoViewModel(
         .filterNotNull()
         .map { it.mapToInfoModel() }
         .combine(checkedVisualEmbeds) { imageInfoUiModel, checkedEmbeds ->
-            ImageInfoUiModel(
+            ExtractorImageInfoUiState(
                 mediaImageId = imageInfoUiModel.mediaImageId,
                 userEmbedding = imageInfoUiModel.userEmbedding,
                 textEmbedding = imageInfoUiModel.textEmbedding,
@@ -37,7 +37,7 @@ class ExtractorImageInfoViewModel(
                 }
             )
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ImageInfoUiModel())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ExtractorImageInfoUiState())
 
     fun clearVisualEmbedding(embedding: String) {
         checkedVisualEmbeds.update {

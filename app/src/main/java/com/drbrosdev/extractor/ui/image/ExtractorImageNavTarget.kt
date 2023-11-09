@@ -9,10 +9,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
-import com.drbrosdev.extractor.ui.extractorimageinfo.ExtractorImageInfoNavTarget
+import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoNavTarget
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.LocalBottomSheetNavController
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
+import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchEditIntent
 import com.drbrosdev.extractor.util.launchShareIntent
 import com.drbrosdev.extractor.util.launchUseAsIntent
@@ -22,7 +24,7 @@ import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
 @Parcelize
-data class ImageDetailNavTarget(
+data class ExtractorImageNavTarget(
     private val images: List<Uri>,
     private val initialIndex: Int
 ) : NavTarget {
@@ -31,7 +33,7 @@ data class ImageDetailNavTarget(
     @Composable
     override fun Content() {
         val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
-        val viewModel: ImageDetailViewModel = koinViewModel()
+        val viewModel: ExtractorImageViewModel = koinViewModel()
         val currentImageInfo by viewModel.currentMediaImageInfo.collectAsState()
         val context = LocalContext.current
         val navController = LocalNavController.current
@@ -48,21 +50,35 @@ data class ImageDetailNavTarget(
             viewModel.events.collect { event ->
                 currentImageInfo?.let { imageInfo ->
                     when (event) {
-                        ImageDetailEvents.OnEdit -> context.launchEditIntent(imageInfo)
-                        ImageDetailEvents.OnExtractorInfo ->
-                            bottomSheetNavigator.navigate(ExtractorImageInfoNavTarget(imageInfo.id))
-                        ImageDetailEvents.OnShare -> context.launchShareIntent(imageInfo)
-                        ImageDetailEvents.OnUseAs -> context.launchUseAsIntent(imageInfo)
+                        ExtractorImageEvents.OnEdit -> context.launchEditIntent(imageInfo)
+                        ExtractorImageEvents.OnExtractorInfo ->
+                            bottomSheetNavigator.navigate(ExtractorImageInfoNavTarget(imageInfo.mediaImageId))
+                        ExtractorImageEvents.OnShare -> context.launchShareIntent(imageInfo)
+                        ExtractorImageEvents.OnUseAs -> context.launchUseAsIntent(imageInfo)
                     }
                 }
             }
         }
 
-        ImageDetailScreen(
+        ExtractorImageScreen(
             pagerState = pagerState,
             images = images,
             onBack = { navController.pop() },
             onBottomBarClick = { viewModel.processEvent(it) }
+        )
+    }
+}
+
+@ScreenPreview
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun CurrentPreview() {
+    ExtractorTheme {
+        ExtractorImageScreen(
+            onBottomBarClick = {},
+            onBack = { /*TODO*/ },
+            pagerState = rememberPagerState { 0 },
+            images = emptyList()
         )
     }
 }
