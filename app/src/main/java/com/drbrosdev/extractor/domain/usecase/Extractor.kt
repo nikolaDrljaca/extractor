@@ -6,6 +6,7 @@ import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
 import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
 import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
+import com.drbrosdev.extractor.domain.model.InputImageType
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.util.runCatching
 import com.google.mlkit.vision.common.InputImage
@@ -22,7 +23,7 @@ class DefaultExtractor(
     private val dispatcher: CoroutineDispatcher,
     private val labelExtractor: ImageLabelExtractor<InputImage>,
     private val textExtractor: TextExtractor<InputImage>,
-    private val provider: InputImageProvider,
+    private val inputImageFactory: InputImageFactory,
     private val extractorEntityDao: ExtractionEntityDao,
     private val textEmbeddingDao: TextEmbeddingDao,
     private val visualEmbeddingDao: VisualEmbeddingDao
@@ -32,12 +33,12 @@ class DefaultExtractor(
         withContext(dispatcher) {
             extractorEntityDao.insert(
                 ExtractionEntity(
-                    mediaStoreId = mediaImage.id,
+                    mediaStoreId = mediaImage.mediaImageId,
                     uri = mediaImage.uri.toString()
                 )
             )
 
-            val inputImage = provider.create(InputImageType.UriInputImage(mediaImage.uri))
+            val inputImage = inputImageFactory.create(InputImageType.UriInputImage(mediaImage.uri))
 
             val text: Deferred<Result<String>> = async {
                 runCatching {
@@ -55,14 +56,14 @@ class DefaultExtractor(
             val outLabel = labels.await()
 
             val textEmbeddingEntity = TextEmbeddingEntity(
-                imageEntityId = mediaImage.id,
+                imageEntityId = mediaImage.mediaImageId,
                 value = outText.getOrDefault("")
             )
             textEmbeddingDao.insert(textEmbeddingEntity)
 
             outLabel
                 .getOrDefault(emptyList())
-                .map { VisualEmbeddingEntity(imageEntityId = mediaImage.id, value = it) }
+                .map { VisualEmbeddingEntity(imageEntityId = mediaImage.mediaImageId, value = it) }
                 .forEach { visualEmbeddingDao.insert(it) }
 
         }

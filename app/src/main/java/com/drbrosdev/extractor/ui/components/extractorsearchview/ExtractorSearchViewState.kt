@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 
 
 @Stable

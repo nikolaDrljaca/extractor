@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.usecase.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState

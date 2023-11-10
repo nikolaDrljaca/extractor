@@ -20,7 +20,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchItemState
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearches
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents

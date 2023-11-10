@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchItemState
 import com.drbrosdev.extractor.ui.components.previoussearch.drawableResource
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme

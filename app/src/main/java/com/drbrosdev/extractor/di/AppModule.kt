@@ -4,8 +4,8 @@ import androidx.work.WorkManager
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.data.datastore
-import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
-import com.drbrosdev.extractor.data.repository.ExtractorRepository
+import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
+import com.drbrosdev.extractor.data.repository.ExtractorDataRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +40,7 @@ private val dataModule = module {
     }
 
     factory {
-        DefaultExtractorRepository(
+        DefaultExtractorDataRepository(
             dispatcher = get(named(CoroutineModuleName.IO)),
             extractionEntityDao = get(),
             visualEmbeddingDao = get(),
@@ -48,7 +48,7 @@ private val dataModule = module {
             userEmbeddingDao = get(),
             imageDataWithEmbeddingsDao = get()
         )
-    } bind ExtractorRepository::class
+    } bind ExtractorDataRepository::class
 }
 
 

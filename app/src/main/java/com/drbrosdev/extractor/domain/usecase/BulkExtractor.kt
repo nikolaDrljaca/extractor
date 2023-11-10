@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase
 
-import com.drbrosdev.extractor.data.repository.ExtractorRepository
+import com.drbrosdev.extractor.data.repository.ExtractorDataRepository
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -11,10 +11,10 @@ class BulkExtractor(
     private val dispatcher: CoroutineDispatcher,
     private val mediaImageRepository: MediaImageRepository,
     private val extractor: Extractor,
-    private val extractorRepository: ExtractorRepository
+    private val extractorDataRepository: ExtractorDataRepository
 ) {
     suspend fun execute() {
-        val storedIds = extractorRepository.getAllIds()
+        val storedIds = extractorDataRepository.getAllIds()
         val onDeviceIds = mediaImageRepository.getAllIds()
         println(onDeviceIds.size)
 
@@ -43,7 +43,7 @@ class BulkExtractor(
 
             launch {
                 isInStorage.forEach {
-                    extractorRepository.deleteExtractionData(imageEntityId = it)
+                    extractorDataRepository.deleteExtractionData(imageEntityId = it)
                 }
             }
         }
@@ -52,7 +52,7 @@ class BulkExtractor(
     private fun toMap(items: List<MediaImage>): Map<Long, MediaImage> {
         val out = mutableMapOf<Long, MediaImage>()
         items.forEach {
-            out[it.id] = it
+            out[it.mediaImageId] = it
         }
         return out
     }

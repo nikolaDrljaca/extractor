@@ -11,7 +11,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import dev.olshevski.navigation.reimagined.NavAction

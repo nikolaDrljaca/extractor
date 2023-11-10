@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.domain.model
 
 import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
-import com.drbrosdev.extractor.domain.usecase.LabelType
 
 
 data class PreviousSearch(

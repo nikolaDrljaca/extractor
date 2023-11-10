@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChips
 import com.drbrosdev.extractor.ui.components.datafilterchip.toLabelType
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextField
@@ -69,14 +69,7 @@ private fun CurrentPreview() {
     ExtractorTheme {
         ExtractorSearchView(
             onDone = {},
-            state = object : ExtractorSearchViewState {
-                override var query: String
-                    get() = "some query"
-                    set(value) {}
-                override var labelType: LabelType
-                    get() = LabelType.ALL
-                    set(value) {}
-            }
+            state = ExtractorSearchViewState("", LabelType.ALL)
         )
     }
 }

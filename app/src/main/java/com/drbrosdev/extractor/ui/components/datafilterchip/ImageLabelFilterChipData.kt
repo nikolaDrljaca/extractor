@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.ui.components.datafilterchip
 
 import androidx.annotation.DrawableRes
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 
 
 sealed class ImageLabelFilterChipData(

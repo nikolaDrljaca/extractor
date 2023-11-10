@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.di
 
-import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
@@ -66,7 +66,7 @@ val uiModule = module {
     viewModel {
         ExtractorImageInfoViewModel(
             mediaImageId = it.get(),
-            extractorRepository = get<DefaultExtractorRepository>(),
+            extractorDataRepository = get<DefaultExtractorDataRepository>(),
             mediaImageRepository = get<DefaultMediaImageRepository>()
         )
     }

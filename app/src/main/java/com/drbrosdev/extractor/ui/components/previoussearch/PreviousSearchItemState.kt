@@ -1,8 +1,8 @@
 package com.drbrosdev.extractor.ui.components.previoussearch
 
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.model.PreviousSearch
-import com.drbrosdev.extractor.domain.usecase.LabelType
 
 data class PreviousSearchItemState(
     val text: String,

@@ -6,13 +6,13 @@ import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
 import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
 import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
+import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
-interface ExtractorRepository {
+interface ExtractorDataRepository {
 
     suspend fun deleteExtractionData(imageEntityId: Long)
 
@@ -31,14 +31,14 @@ interface ExtractorRepository {
     suspend fun insertVisualEmbedding(mediaImageId: Long, embed: String)
 }
 
-class DefaultExtractorRepository(
+class DefaultExtractorDataRepository(
     private val dispatcher: CoroutineDispatcher,
     private val extractionEntityDao: ExtractionEntityDao,
     private val visualEmbeddingDao: VisualEmbeddingDao,
     private val textEmbeddingDao: TextEmbeddingDao,
     private val userEmbeddingDao: UserEmbeddingDao,
     private val imageDataWithEmbeddingsDao: ImageDataWithEmbeddingsDao,
-) : ExtractorRepository {
+) : ExtractorDataRepository {
 
     override suspend fun deleteExtractionData(imageEntityId: Long) {
         val countDeleted = extractionEntityDao.deleteByMediaId(imageEntityId)
@@ -85,5 +85,4 @@ class DefaultExtractorRepository(
         )
         visualEmbeddingDao.insert(visualEmbed)
     }
-
 }

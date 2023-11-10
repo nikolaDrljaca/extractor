@@ -7,9 +7,7 @@ import com.drbrosdev.extractor.domain.findByUri
 import com.drbrosdev.extractor.domain.getCount
 import com.drbrosdev.extractor.domain.mediaImagesFlow
 import com.drbrosdev.extractor.domain.model.MediaImage
-import com.drbrosdev.extractor.domain.model.MediaImageInfo
-import com.drbrosdev.extractor.domain.queryMediaImageInfo
-import com.drbrosdev.extractor.domain.runImageQuery
+import com.drbrosdev.extractor.domain.runMediaImageQuery
 import kotlinx.coroutines.flow.first
 
 
@@ -20,11 +18,9 @@ interface MediaImageRepository {
 
     suspend fun findAllById(ids: List<Long>): List<MediaImage>
 
-    suspend fun findAllInfosById(ids: List<Long>): List<MediaImageInfo>
-
     suspend fun getCount(): Int
 
-    suspend fun findByUri(uri: Uri): MediaImageInfo?
+    suspend fun findByUri(uri: Uri): MediaImage?
 
     suspend fun findById(id: Long): MediaImage?
 }
@@ -40,19 +36,12 @@ class DefaultMediaImageRepository(
     override suspend fun getAllIds(): Set<Long> {
         return contentResolver.mediaImagesFlow()
             .first()
-            .map { it.id }
+            .map { it.mediaImageId }
             .toSet()
     }
 
     override suspend fun findAllById(ids: List<Long>): List<MediaImage> {
-        val out = contentResolver.runImageQuery(
-            selection = "${MediaStore.Images.Media._ID} IN (${ids.joinToString(", ")})"
-        )
-        return out
-    }
-
-    override suspend fun findAllInfosById(ids: List<Long>): List<MediaImageInfo> {
-        return contentResolver.queryMediaImageInfo(
+        return contentResolver.runMediaImageQuery(
             selection = "${MediaStore.Images.Media._ID} IN (${ids.joinToString(", ")})"
         )
     }
@@ -61,13 +50,13 @@ class DefaultMediaImageRepository(
         return contentResolver.getCount()
     }
 
-    override suspend fun findByUri(uri: Uri): MediaImageInfo? {
+    override suspend fun findByUri(uri: Uri): MediaImage? {
         return contentResolver.findByUri(uri = uri)
     }
 
     override suspend fun findById(id: Long): MediaImage? {
         return contentResolver.mediaImagesFlow()
             .first()
-            .find { it.id == id }
+            .find { it.mediaImageId == id }
     }
 }

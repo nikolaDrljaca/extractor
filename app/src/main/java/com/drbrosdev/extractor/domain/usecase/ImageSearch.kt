@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.domain.usecase
 
 import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
+import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.util.runCatching

@@ -1,18 +1,18 @@
 package com.drbrosdev.extractor.di
 
-import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.DefaultImageSearch
 import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
-import com.drbrosdev.extractor.domain.usecase.DefaultInputImageProvider
+import com.drbrosdev.extractor.domain.usecase.DefaultInputImageFactory
 import com.drbrosdev.extractor.domain.usecase.Extractor
 import com.drbrosdev.extractor.domain.usecase.ImageLabelExtractor
 import com.drbrosdev.extractor.domain.usecase.ImageSearch
 import com.drbrosdev.extractor.domain.usecase.ImageSearchByLabel
-import com.drbrosdev.extractor.domain.usecase.InputImageProvider
+import com.drbrosdev.extractor.domain.usecase.InputImageFactory
 import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
 import com.drbrosdev.extractor.domain.usecase.MLKitImageLabelExtractor
 import com.drbrosdev.extractor.domain.usecase.MlKitTextExtractor
@@ -23,7 +23,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val domainModule = module {
-    factory { DefaultInputImageProvider(context = androidContext()) } bind InputImageProvider::class
+    factory { DefaultInputImageFactory(context = androidContext()) } bind InputImageFactory::class
 
     factory {
         MLKitImageLabelExtractor(
@@ -41,7 +41,7 @@ val domainModule = module {
         DefaultExtractor(
             labelExtractor = get(),
             textExtractor = get(),
-            provider = get(),
+            inputImageFactory = get(),
             dispatcher = get(named(CoroutineModuleName.Default)),
             visualEmbeddingDao = get(),
             textEmbeddingDao = get(),
@@ -57,7 +57,7 @@ val domainModule = module {
         BulkExtractor(
             dispatcher = get(named(CoroutineModuleName.Default)),
             mediaImageRepository = get(),
-            extractorRepository = get<DefaultExtractorRepository>(),
+            extractorDataRepository = get<DefaultExtractorDataRepository>(),
             extractor = get()
         )
     }
