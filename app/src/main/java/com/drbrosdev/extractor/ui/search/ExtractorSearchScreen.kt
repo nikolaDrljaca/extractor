@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.BottomSheetScaffold
@@ -84,6 +85,7 @@ fun ExtractorSearchScreen(
     ) {
         ConstraintLayout(
             modifier = Modifier
+                .navigationBarsPadding()
                 .fillMaxSize(),
             constraintSet = searchResultScreenConstraintSet()
         ) {
@@ -103,7 +105,8 @@ fun ExtractorSearchScreen(
             }
 
             ExtractorTopBar(
-                modifier = Modifier.layoutId(ViewIds.TOP_BAR),
+                modifier = Modifier
+                    .layoutId(ViewIds.TOP_BAR),
                 state = extractorTopBarState.value,
                 leadingSlot = {
                     ExtractorStatusButton(

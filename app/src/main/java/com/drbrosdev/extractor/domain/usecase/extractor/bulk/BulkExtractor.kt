@@ -17,7 +17,6 @@ class BulkExtractor(
     suspend fun execute() {
         val storedIds = extractorDataRepository.getAllIds()
         val onDeviceIds = mediaImageRepository.getAllIds()
-        println(onDeviceIds.size)
 
         val isOnDevice = onDeviceIds.subtract(storedIds)
         val isInStorage = storedIds.subtract(onDeviceIds)
@@ -29,9 +28,11 @@ class BulkExtractor(
 
         withContext(dispatcher) {
             val chunks = when {
+                isOnDevice.isNotEmpty() and (isOnDevice.size < threads) -> listOf(isOnDevice.toList())
                 isOnDevice.isNotEmpty() -> isOnDevice.chunked(isOnDevice.size / threads)
                 else -> emptyList()
             }
+
             chunks.forEach { chk ->
                 launch {
                     //For each image only on device, I need to run extraction
