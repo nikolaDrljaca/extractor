@@ -1,8 +1,6 @@
-package com.drbrosdev.extractor.di
+package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
-import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
@@ -20,7 +18,8 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val domainModule = module {
+
+val useCaseModule = module {
 
     factory {
         DefaultInputImageFactory(context = androidContext())
@@ -49,10 +48,6 @@ val domainModule = module {
             extractorEntityDao = get()
         )
     } bind Extractor::class
-
-    factory {
-        DefaultMediaImageRepository(contentResolver = androidContext().contentResolver)
-    } bind MediaImageRepository::class
 
     factory {
         BulkExtractor(

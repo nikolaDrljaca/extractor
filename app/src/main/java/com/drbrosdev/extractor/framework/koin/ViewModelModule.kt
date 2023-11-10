@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.di
+package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
@@ -14,7 +14,7 @@ import com.drbrosdev.extractor.ui.root.RootViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-val uiModule = module {
+val viewModelModule = module {
     viewModel {
         StartWorkerViewModel(
             workManager = get(),
