@@ -3,27 +3,28 @@ package com.drbrosdev.extractor.di
 import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.BulkExtractor
-import com.drbrosdev.extractor.domain.usecase.DefaultExtractor
-import com.drbrosdev.extractor.domain.usecase.DefaultImageSearch
-import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
-import com.drbrosdev.extractor.domain.usecase.DefaultInputImageFactory
-import com.drbrosdev.extractor.domain.usecase.Extractor
-import com.drbrosdev.extractor.domain.usecase.ImageLabelExtractor
-import com.drbrosdev.extractor.domain.usecase.ImageSearch
-import com.drbrosdev.extractor.domain.usecase.ImageSearchByLabel
-import com.drbrosdev.extractor.domain.usecase.InputImageFactory
 import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
-import com.drbrosdev.extractor.domain.usecase.MLKitImageLabelExtractor
-import com.drbrosdev.extractor.domain.usecase.MlKitTextExtractor
-import com.drbrosdev.extractor.domain.usecase.TextExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
+import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
+import com.drbrosdev.extractor.domain.usecase.image.create.DefaultInputImageFactory
+import com.drbrosdev.extractor.domain.usecase.image.create.InputImageFactory
+import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.label.extractor.ImageLabelExtractor
+import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitImageLabelExtractor
+import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitTextExtractor
+import com.drbrosdev.extractor.domain.usecase.text.extractor.TextExtractor
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val domainModule = module {
-    factory { DefaultInputImageFactory(context = androidContext()) } bind InputImageFactory::class
+
+    factory {
+        DefaultInputImageFactory(context = androidContext())
+    } bind InputImageFactory::class
 
     factory {
         MLKitImageLabelExtractor(
@@ -70,15 +71,6 @@ val domainModule = module {
     }
 
     factory {
-        DefaultImageSearch(
-            dispatcher = get(named(CoroutineModuleName.IO)),
-            mediaImageRepository = get(),
-            imageDataWithEmbeddingsDao = get(),
-            insertPreviousSearch = get()
-        )
-    } bind ImageSearch::class
-
-    factory {
         DefaultImageSearchByLabel(
             dispatcher = get(named(CoroutineModuleName.IO)),
             mediaImageRepository = get(),
@@ -86,5 +78,4 @@ val domainModule = module {
             insertPreviousSearch = get()
         )
     } bind ImageSearchByLabel::class
-
 }

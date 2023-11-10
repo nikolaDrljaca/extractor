@@ -1,13 +1,8 @@
-package com.drbrosdev.extractor.domain.usecase
+package com.drbrosdev.extractor.domain.usecase.image.create
 
 import android.content.Context
 import com.drbrosdev.extractor.domain.model.InputImageType
 import com.google.mlkit.vision.common.InputImage
-
-
-interface InputImageFactory {
-    fun create(type: InputImageType): InputImage
-}
 
 class DefaultInputImageFactory(
     private val context: Context

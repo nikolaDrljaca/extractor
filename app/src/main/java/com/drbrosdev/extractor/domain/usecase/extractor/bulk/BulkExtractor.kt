@@ -1,8 +1,9 @@
-package com.drbrosdev.extractor.domain.usecase
+package com.drbrosdev.extractor.domain.usecase.extractor.bulk
 
 import com.drbrosdev.extractor.data.repository.ExtractorDataRepository
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.di
 
 import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByLabel
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel

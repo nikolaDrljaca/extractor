@@ -1,18 +1,13 @@
-package com.drbrosdev.extractor.domain.usecase
+package com.drbrosdev.extractor.domain.usecase.image.search
 
 import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
 import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
 import com.drbrosdev.extractor.util.runCatching
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-
-interface ImageSearchByLabel {
-
-    suspend fun search(query: String, labelType: LabelType): List<MediaImage>
-}
-
 
 class DefaultImageSearchByLabel(
     private val dispatcher: CoroutineDispatcher,
