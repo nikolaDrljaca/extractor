@@ -3,12 +3,12 @@ package com.drbrosdev.extractor.util
 import android.content.Context
 import android.content.Intent
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.MediaImageInfo
+import com.drbrosdev.extractor.domain.model.MediaImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-suspend fun Context.launchShareIntent(media: MediaImageInfo) =
+suspend fun Context.launchShareIntent(media: MediaImage) =
     withContext(Dispatchers.Default) {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = media.mimeType
@@ -18,7 +18,7 @@ suspend fun Context.launchShareIntent(media: MediaImageInfo) =
         startActivity(Intent.createChooser(intent, "Share Image via..."))
     }
 
-suspend fun Context.launchEditIntent(media: MediaImageInfo) =
+suspend fun Context.launchEditIntent(media: MediaImage) =
     withContext(Dispatchers.Default) {
         val intent = Intent(Intent.ACTION_EDIT).apply {
             addCategory(Intent.CATEGORY_DEFAULT)
@@ -29,7 +29,7 @@ suspend fun Context.launchEditIntent(media: MediaImageInfo) =
         startActivity(Intent.createChooser(intent, getString(R.string.edit)))
     }
 
-suspend fun Context.launchUseAsIntent(media: MediaImageInfo) =
+suspend fun Context.launchUseAsIntent(media: MediaImage) =
     withContext(Dispatchers.Default) {
         val intent = Intent(Intent.ACTION_ATTACH_DATA).apply {
             addCategory(Intent.CATEGORY_DEFAULT)

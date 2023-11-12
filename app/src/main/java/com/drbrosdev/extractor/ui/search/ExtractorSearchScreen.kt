@@ -1,8 +1,12 @@
 package com.drbrosdev.extractor.ui.search
 
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.BottomSheetScaffold
@@ -11,7 +15,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +52,15 @@ fun ExtractorSearchScreen(
     searchViewState: ExtractorSearchViewState,
     extractorStatusButtonState: ExtractorStatusButtonState,
 ) {
-    val scaffoldState = rememberBottomSheetScaffoldState()
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(confirmValueChange = {
+            when (it) {
+                SheetValue.Hidden -> false
+                SheetValue.Expanded -> true
+                SheetValue.PartiallyExpanded -> true
+            }
+        })
+    )
     val gridState = rememberLazyGridState()
     val extractorTopBarState = remember {
         derivedStateOf {
@@ -54,6 +68,7 @@ fun ExtractorSearchScreen(
             else ExtractorTopBarState.NORMAL
         }
     }
+    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     BottomSheetScaffold(
         sheetContent = {
@@ -63,13 +78,14 @@ fun ExtractorSearchScreen(
             )
         },
         sheetContainerColor = MaterialTheme.colorScheme.primary,
-        sheetDragHandle = { Spacer(modifier.height(24.dp)) },
+        sheetDragHandle = { Spacer(Modifier.height(20.dp)) },
         sheetContentColor = Color.White,
-        sheetPeekHeight = 100.dp,
+        sheetPeekHeight = 100.dp + bottomPadding,
         scaffoldState = scaffoldState
     ) {
         ConstraintLayout(
             modifier = Modifier
+                .navigationBarsPadding()
                 .fillMaxSize(),
             constraintSet = searchResultScreenConstraintSet()
         ) {
@@ -89,7 +105,8 @@ fun ExtractorSearchScreen(
             }
 
             ExtractorTopBar(
-                modifier = Modifier.layoutId(ViewIds.TOP_BAR),
+                modifier = Modifier
+                    .layoutId(ViewIds.TOP_BAR),
                 state = extractorTopBarState.value,
                 leadingSlot = {
                     ExtractorStatusButton(

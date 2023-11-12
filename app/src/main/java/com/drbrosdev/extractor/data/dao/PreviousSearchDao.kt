@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 import kotlinx.coroutines.flow.Flow
 
 @Dao

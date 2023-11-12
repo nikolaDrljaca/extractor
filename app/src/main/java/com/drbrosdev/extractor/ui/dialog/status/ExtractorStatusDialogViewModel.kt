@@ -6,7 +6,7 @@ import androidx.work.WorkManager
 import androidx.work.await
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.BulkExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
 import com.drbrosdev.extractor.domain.worker.WorkNames
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

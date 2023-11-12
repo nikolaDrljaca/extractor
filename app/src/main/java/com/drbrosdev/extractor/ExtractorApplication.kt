@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor
 
 import android.app.Application
-import com.drbrosdev.extractor.di.allKoinModules
+import com.drbrosdev.extractor.framework.koin.allKoinModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory

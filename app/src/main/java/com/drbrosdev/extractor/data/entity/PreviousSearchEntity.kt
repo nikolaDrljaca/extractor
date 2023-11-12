@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.data.entity
 
 import androidx.room.Entity
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 
 
 @Entity(

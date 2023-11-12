@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.ui.imageinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.data.repository.ExtractorRepository
+import com.drbrosdev.extractor.data.repository.ExtractorDataRepository
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,11 +16,11 @@ import kotlinx.coroutines.launch
 class ExtractorImageInfoViewModel(
     private val mediaImageId: Long,
     private val mediaImageRepository: MediaImageRepository,
-    private val extractorRepository: ExtractorRepository
+    private val extractorDataRepository: ExtractorDataRepository
 ) : ViewModel() {
     private val checkedVisualEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
-    val imageInfoModel = extractorRepository
+    val imageInfoModel = extractorDataRepository
         .findImageDataByMediaId(mediaImageId = mediaImageId)
         .filterNotNull()
         .map { it.mapToInfoModel() }
@@ -49,19 +49,19 @@ class ExtractorImageInfoViewModel(
 
     fun saveEmbeddings() {
         viewModelScope.launch {
-            extractorRepository.updateTextEmbed(
+            extractorDataRepository.updateTextEmbed(
                 value = imageInfoModel.value.embeddingsFormState.textEmbedding.trim(),
                 imageEntityId = mediaImageId
             )
 
-            extractorRepository.updateUserEmbed(
+            extractorDataRepository.updateUserEmbed(
                 value = imageInfoModel.value.embeddingsFormState.userEmbedding.trim(),
                 imageEntityId = mediaImageId
             )
 
             imageInfoModel.value.visualEmbedding
                 .filter { it.isChecked }
-                .forEach { extractorRepository.deleteVisualEmbedding(it.text) }
+                .forEach { extractorDataRepository.deleteVisualEmbedding(it.text) }
         }
     }
 }

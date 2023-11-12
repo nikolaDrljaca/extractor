@@ -1,16 +1,12 @@
-package com.drbrosdev.extractor.di
+package com.drbrosdev.extractor.framework.koin
 
-import androidx.work.WorkManager
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.data.datastore
-import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
-import com.drbrosdev.extractor.data.repository.ExtractorRepository
-import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
-import com.drbrosdev.extractor.domain.worker.ExtractorWorker
+import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
+import com.drbrosdev.extractor.data.repository.ExtractorDataRepository
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -40,7 +36,7 @@ private val dataModule = module {
     }
 
     factory {
-        DefaultExtractorRepository(
+        DefaultExtractorDataRepository(
             dispatcher = get(named(CoroutineModuleName.IO)),
             extractionEntityDao = get(),
             visualEmbeddingDao = get(),
@@ -48,22 +44,15 @@ private val dataModule = module {
             userEmbeddingDao = get(),
             imageDataWithEmbeddingsDao = get()
         )
-    } bind ExtractorRepository::class
+    } bind ExtractorDataRepository::class
 }
 
 
-private val workerModule = module {
-    worker {
-        ExtractorWorker(
-            context = androidContext(),
-            workerParameters = get(),
-            extractor = get(),
-            mediaImageRepository = get<DefaultMediaImageRepository>(),
-            extractionEntityDao = get(),
-        )
-    }
-    single { WorkManager.getInstance(androidContext()) }
-}
-
-
-val allKoinModules = listOf(dataModule, domainModule, coroutineModule, workerModule, uiModule)
+val allKoinModules = listOf(
+    dataModule,
+    domainModule,
+    coroutineModule,
+    workerModule,
+    viewModelModule,
+    useCaseModule
+)

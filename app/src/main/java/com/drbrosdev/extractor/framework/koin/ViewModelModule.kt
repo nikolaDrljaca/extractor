@@ -1,8 +1,8 @@
-package com.drbrosdev.extractor.di
+package com.drbrosdev.extractor.framework.koin
 
-import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
 import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.DefaultImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByLabel
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
@@ -14,7 +14,7 @@ import com.drbrosdev.extractor.ui.root.RootViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-val uiModule = module {
+val viewModelModule = module {
     viewModel {
         StartWorkerViewModel(
             workManager = get(),
@@ -66,7 +66,7 @@ val uiModule = module {
     viewModel {
         ExtractorImageInfoViewModel(
             mediaImageId = it.get(),
-            extractorRepository = get<DefaultExtractorRepository>(),
+            extractorDataRepository = get<DefaultExtractorDataRepository>(),
             mediaImageRepository = get<DefaultMediaImageRepository>()
         )
     }

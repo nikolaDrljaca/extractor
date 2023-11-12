@@ -27,8 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.domain.model.MediaImageInfo
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchView
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.theme.ButtonShape
@@ -39,7 +39,7 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 112.dp),
-    images: List<MediaImageInfo>,
+    images: List<MediaImage>,
     onClick: (index: Int) -> Unit,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
@@ -150,14 +150,7 @@ private fun SheetPreview() {
         Surface(color = MaterialTheme.colorScheme.primary) {
             ExtractorSearchBottomSheet(
                 onDone = {},
-                searchViewState = object : ExtractorSearchViewState {
-                    override var query: String
-                        get() = ""
-                        set(value) {}
-                    override var labelType: LabelType
-                        get() = LabelType.ALL
-                        set(value) {}
-                }
+                searchViewState = ExtractorSearchViewState("", LabelType.ALL)
             )
         }
     }

@@ -5,9 +5,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.domain.usecase.ImageSearchByLabel
-import com.drbrosdev.extractor.domain.usecase.LabelType
-import com.drbrosdev.extractor.domain.usecase.SearchStrategy
+import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

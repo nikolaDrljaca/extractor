@@ -1,11 +1,9 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.BottomSheetNavTarget
 import com.drbrosdev.extractor.util.LocalBottomSheetNavController
@@ -45,7 +43,7 @@ data class ExtractorImageInfoNavTarget(
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         ExtractorImageInfoScreen(
-            modifier = Modifier.background(color = Color.White),
+            modifier = Modifier,
             model = ExtractorImageInfoUiState(),
             onClearVisual = {},
             onSaveEmbeddings = {},

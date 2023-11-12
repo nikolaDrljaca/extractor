@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.components.shared
 
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,21 +33,27 @@ fun ExtractorTopBar(
     centerSlot: (@Composable RowScope.() -> Unit)? = null,
     trailingSlot: (@Composable RowScope.() -> Unit)? = null
 ) {
-    val elevation by animateDpAsState(
-        targetValue = when (state) {
+    val transition = updateTransition(targetState = state, label = "")
+    val elevation by transition.animateDp(label = "") {
+        when (it) {
             ExtractorTopBarState.NORMAL -> 0.dp
             ExtractorTopBarState.ELEVATED -> 4.dp
-        },
-        label = ""
-    )
+        }
+    }
 
-    val cornerShape by animateDpAsState(
-        targetValue = when (state) {
+    val spacerHeight by transition.animateDp(label = "") {
+        when (it) {
+            ExtractorTopBarState.NORMAL -> 36.dp
+            ExtractorTopBarState.ELEVATED -> 12.dp
+        }
+    }
+
+    val cornerShape by transition.animateDp(label = "") {
+        when (it) {
             ExtractorTopBarState.NORMAL -> 0.dp
             ExtractorTopBarState.ELEVATED -> 14.dp
-        },
-        label = ""
-    )
+        }
+    }
 
     Surface(
         modifier = Modifier
@@ -56,7 +63,7 @@ fun ExtractorTopBar(
         color = MaterialTheme.colorScheme.background //TODO Maybe keep default
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(spacerHeight))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

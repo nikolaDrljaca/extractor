@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.ui.components.previoussearch
 
-import com.drbrosdev.extractor.domain.usecase.LabelType
+import com.drbrosdev.extractor.domain.model.LabelType
 
 
 sealed interface PreviousSearchesEvents {

@@ -1,0 +1,76 @@
+package com.drbrosdev.extractor.framework.koin
+
+import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
+import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
+import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
+import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
+import com.drbrosdev.extractor.domain.usecase.image.create.DefaultInputImageFactory
+import com.drbrosdev.extractor.domain.usecase.image.create.InputImageFactory
+import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.label.extractor.ImageLabelExtractor
+import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitImageLabelExtractor
+import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitTextExtractor
+import com.drbrosdev.extractor.domain.usecase.text.extractor.TextExtractor
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.qualifier.named
+import org.koin.dsl.bind
+import org.koin.dsl.module
+
+
+val useCaseModule = module {
+
+    factory {
+        DefaultInputImageFactory(context = androidContext())
+    } bind InputImageFactory::class
+
+    factory {
+        MLKitImageLabelExtractor(
+            dispatcher = get(named(CoroutineModuleName.Default))
+        )
+    } bind ImageLabelExtractor::class
+
+    factory {
+        MlKitTextExtractor(
+            dispatcher = get(named(CoroutineModuleName.Default))
+        )
+    } bind TextExtractor::class
+
+    factory {
+        DefaultExtractor(
+            labelExtractor = get(),
+            textExtractor = get(),
+            inputImageFactory = get(),
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            visualEmbeddingDao = get(),
+            textEmbeddingDao = get(),
+            extractorEntityDao = get()
+        )
+    } bind Extractor::class
+
+    factory {
+        BulkExtractor(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            mediaImageRepository = get(),
+            extractorDataRepository = get<DefaultExtractorDataRepository>(),
+            extractor = get()
+        )
+    }
+
+    factory {
+        InsertPreviousSearch(
+            dispatcher = get(named(CoroutineModuleName.IO)),
+            dao = get()
+        )
+    }
+
+    factory {
+        DefaultImageSearchByLabel(
+            dispatcher = get(named(CoroutineModuleName.IO)),
+            mediaImageRepository = get(),
+            imageDataWithEmbeddingsDao = get(),
+            insertPreviousSearch = get()
+        )
+    } bind ImageSearchByLabel::class
+}
