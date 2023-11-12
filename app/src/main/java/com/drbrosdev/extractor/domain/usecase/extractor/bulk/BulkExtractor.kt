@@ -24,7 +24,8 @@ class BulkExtractor(
         if (isOnDevice == isInStorage) return
 
         val threads = Runtime.getRuntime().availableProcessors()
-        val mediaImages = toMap(mediaImageRepository.findAllById(onDeviceIds.toList()))
+        val mediaImages = mediaImageRepository.findAllById(onDeviceIds.toList())
+            .associateBy { it.mediaImageId }
 
         withContext(dispatcher) {
             val chunks = when {
