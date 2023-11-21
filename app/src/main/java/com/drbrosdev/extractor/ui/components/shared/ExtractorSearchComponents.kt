@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -33,6 +34,7 @@ import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearch
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
@@ -56,7 +58,8 @@ fun ExtractorImageGrid(
             ExtractorImageItem(
                 imageUri = it.uri,
                 size = imageSize,
-                onClick = { onClick(index) }
+                onClick = { onClick(index) },
+                modifier = Modifier.animateItemPlacement()
             )
         }
     }

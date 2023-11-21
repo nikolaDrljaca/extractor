@@ -20,7 +20,7 @@ class ExtractorStatsViewModel(
     private val visualEmbedDao: VisualEmbeddingDao
 ) : ViewModel() {
 
-    val state = visualEmbedDao.getMostUsed(5)
+    val state = visualEmbedDao.getMostUsed(amount = 7)
         .map {
             ExtractorStatsUiState.View(
                 statEmbeds = it.map { out -> StatEmbed(out.value, LabelType.IMAGE) }

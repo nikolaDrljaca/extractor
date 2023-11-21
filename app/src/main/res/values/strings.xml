@@ -11,4 +11,6 @@
     <string name="tap_right_for_more">Tap right for more.</string>
     <string name="sync_status">Sync Status</string>
     <string name="settings">Settings</string>
+    <string name="export_data">Export Data</string>
+    <string name="import_data">Import Data</string>
 </resources>

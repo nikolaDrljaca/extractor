@@ -29,16 +29,9 @@ fun ExtractorActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
     content: @Composable (RowScope.() -> Unit)
 ) {
-    val verticalContentPadding = 20.dp
-    val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
-        LayoutDirection.Ltr
-    )
-    val rightContentPadding = ButtonDefaults.ContentPadding.calculateRightPadding(
-        LayoutDirection.Ltr
-    )
-
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -50,12 +43,7 @@ fun ExtractorActionButton(
             disabledContainerColor = Color.Gray
         ),
         enabled = enabled,
-        contentPadding = PaddingValues(
-            top = verticalContentPadding,
-            bottom = verticalContentPadding,
-            start = leftContentPadding,
-            end = rightContentPadding
-        ),
+        contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp)
     ) {
         content()
@@ -68,16 +56,9 @@ fun ExtractorButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    verticalContentPadding: Dp = 20.dp,
+    contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
     content: @Composable (RowScope.() -> Unit)
 ) {
-    val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
-        LayoutDirection.Ltr
-    )
-    val rightContentPadding = ButtonDefaults.ContentPadding.calculateRightPadding(
-        LayoutDirection.Ltr
-    )
-
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -89,12 +70,7 @@ fun ExtractorButton(
             disabledContainerColor = Color.Gray
         ),
         enabled = enabled,
-        contentPadding = PaddingValues(
-            top = verticalContentPadding,
-            bottom = verticalContentPadding,
-            start = leftContentPadding,
-            end = rightContentPadding
-        ),
+        contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp)
     ) {
         content()
@@ -106,18 +82,9 @@ fun ExtractorButton(
 fun OutlinedExtractorActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
     content: @Composable (RowScope.() -> Unit)
 ) {
-    val verticalContentPadding = 20.dp
-
-    val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
-        LayoutDirection.Ltr
-    )
-
-    val rightContentPadding = ButtonDefaults.ContentPadding.calculateRightPadding(
-        LayoutDirection.Ltr
-    )
-
     val mainColor = if (isSystemInDarkTheme()) {
         Color.White
     } else {
@@ -131,12 +98,7 @@ fun OutlinedExtractorActionButton(
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = mainColor
         ),
-        contentPadding = PaddingValues(
-            top = verticalContentPadding,
-            bottom = verticalContentPadding,
-            start = leftContentPadding,
-            end = rightContentPadding
-        ),
+        contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp),
         border = ButtonDefaults.outlinedButtonBorder.copy(
             width = 1.dp,
@@ -169,6 +131,36 @@ fun BottomSheetButton(
     ) {
         content()
     }
+}
+
+object ExtractorButtonDefaults {
+
+    private val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
+        LayoutDirection.Ltr
+    )
+
+    private val rightContentPadding = ButtonDefaults.ContentPadding.calculateRightPadding(
+        LayoutDirection.Ltr
+    )
+
+    @Composable
+    fun paddingValues(
+        top: Dp = 16.dp,
+        bottom: Dp = 16.dp
+    ): PaddingValues = PaddingValues(
+        start = leftContentPadding,
+        end = rightContentPadding,
+        top = top,
+        bottom = bottom
+    )
+
+    @Composable
+    fun paddingValues(vertical: Dp = 16.dp): PaddingValues = PaddingValues(
+        start = leftContentPadding,
+        end = rightContentPadding,
+        top = vertical,
+        bottom = vertical
+    )
 }
 
 @CombinedPreview

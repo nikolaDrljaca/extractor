@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchQuery
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
@@ -55,7 +56,8 @@ class ExtractorSearchViewModel(
         .onEach { dateRange ->
             when {
                 dateRange != null -> {
-                    val temp = imageSearch.search(searchViewState.query, searchViewState.labelType)
+                    val searchQuery = ImageSearchQuery(searchViewState.query, searchViewState.labelType)
+                    val temp = imageSearch.search(searchQuery)
                     _state.update {
                         val out = temp.filter { mediaImage ->
                             (mediaImage.dateAdded.isAfter(dateRange.start)) and (mediaImage.dateAdded.isBefore(
@@ -90,7 +92,8 @@ class ExtractorSearchViewModel(
     private fun runSearch() {
         viewModelScope.launch {
             _state.update { ExtractorSearchScreenUiState.Loading }
-            val result = imageSearch.search(searchViewState.query, searchViewState.labelType).also {
+            val searchQuery = ImageSearchQuery(searchViewState.query, searchViewState.labelType)
+            val result = imageSearch.search(searchQuery).also {
                 lastQuery.update { LastQuery(searchViewState.query, searchViewState.labelType) }
             }
             _state.update {
