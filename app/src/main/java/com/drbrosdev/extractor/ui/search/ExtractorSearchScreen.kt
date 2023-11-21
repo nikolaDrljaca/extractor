@@ -32,6 +32,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
@@ -49,6 +50,7 @@ fun ExtractorSearchScreen(
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
     state: ExtractorSearchScreenUiState,
+    dateFilterState: ExtractorDateFilterState,
     searchViewState: ExtractorSearchViewState,
     extractorStatusButtonState: ExtractorStatusButtonState,
 ) {
@@ -74,7 +76,8 @@ fun ExtractorSearchScreen(
         sheetContent = {
             ExtractorSearchBottomSheet(
                 onDone = onDone,
-                searchViewState = searchViewState
+                searchViewState = searchViewState,
+                dateFilterState = dateFilterState
             )
         },
         sheetContainerColor = MaterialTheme.colorScheme.primary,

@@ -25,6 +25,7 @@ import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.embeddingsform.EmbeddingsForm
 import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorButtonDefaults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +71,7 @@ fun ExtractorImageInfoScreen(
             ExtractorButton(
                 onClick = onSaveEmbeddings,
                 modifier = Modifier.layoutId(ViewIds.SAVE_BUTTON),
-                verticalContentPadding = 4.dp
+                contentPadding = ExtractorButtonDefaults.paddingValues(vertical = 4.dp)
             ) {
                 Text(text = "Save")
             }

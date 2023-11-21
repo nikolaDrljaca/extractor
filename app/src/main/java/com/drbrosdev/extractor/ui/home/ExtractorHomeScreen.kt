@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.home
 
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -24,13 +25,13 @@ import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchItemState
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearches
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
-import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStats
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorHomeScreen(
     statsUiState: ExtractorStatsUiState,
@@ -75,16 +76,37 @@ fun ExtractorHomeScreen(
             modifier = Modifier.layoutId(ViewIds.SYNC_BUTTON)
         ) {
             Icon(painter = painterResource(id = R.drawable.round_sync_24), contentDescription = "")
+            Spacer(modifier = Modifier.width(8.dp))
             Text(text = stringResource(R.string.sync_status))
         }
 
-        ExtractorButton(
+        OutlinedExtractorActionButton(
             onClick = { /*TODO*/ },
             modifier = Modifier.layoutId(ViewIds.SETTINGS_BUTTON)
         ) {
             Icon(imageVector = Icons.Rounded.Settings, contentDescription = "")
+            Spacer(modifier = Modifier.width(8.dp))
             Text(text = stringResource(R.string.settings))
         }
+
+        OutlinedExtractorActionButton(
+            onClick = { /*TODO*/ },
+            modifier = Modifier.layoutId(ViewIds.IMPORT_BUTTON)
+        ) {
+            Icon(painter = painterResource(id = R.drawable.round_archive_24), contentDescription = "")
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = stringResource(R.string.import_data))
+        }
+
+        OutlinedExtractorActionButton(
+            onClick = { /*TODO*/ },
+            modifier = Modifier.layoutId(ViewIds.EXPORT_BUTTON)
+        ) {
+            Icon(painter = painterResource(id = R.drawable.round_unarchive_24), contentDescription = "")
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = stringResource(R.string.export_data))
+        }
+
     }
 }
 
@@ -92,9 +114,11 @@ private fun homeScreenConstraintSet() = ConstraintSet {
     val previousSearch = createRefFor(ViewIds.PREV_SEARCH)
     val topBar = createRefFor(ViewIds.TOP_BAR)
     val common = createRefFor(ViewIds.COMMON_V)
-
     val settingsButton = createRefFor(ViewIds.SETTINGS_BUTTON)
     val syncButton = createRefFor(ViewIds.SYNC_BUTTON)
+    val importButton = createRefFor(ViewIds.IMPORT_BUTTON)
+    val exportButton = createRefFor(ViewIds.EXPORT_BUTTON)
+
     val buttonGuideline = createGuidelineFromStart(0.5f)
 
     constrain(settingsButton) {
@@ -108,6 +132,20 @@ private fun homeScreenConstraintSet() = ConstraintSet {
         top.linkTo(topBar.bottom, margin = 8.dp)
         start.linkTo(parent.start, margin = 16.dp)
         end.linkTo(buttonGuideline, margin = 4.dp)
+        width = Dimension.fillToConstraints
+    }
+
+    constrain(importButton) {
+        top.linkTo(syncButton.bottom, margin = 8.dp)
+        start.linkTo(parent.start, margin = 16.dp)
+        end.linkTo(buttonGuideline, margin = 4.dp)
+        width = Dimension.fillToConstraints
+    }
+
+    constrain(exportButton) {
+        start.linkTo(buttonGuideline, margin = 4.dp)
+        top.linkTo(settingsButton.bottom, margin = 8.dp)
+        end.linkTo(parent.end, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
 
@@ -128,7 +166,7 @@ private fun homeScreenConstraintSet() = ConstraintSet {
     constrain(common) {
         start.linkTo(parent.start, margin = 16.dp)
         end.linkTo(parent.end, margin = 16.dp)
-        top.linkTo(settingsButton.bottom, margin = 18.dp)
+        top.linkTo(exportButton.bottom, margin = 18.dp)
         width = Dimension.fillToConstraints
     }
 }
@@ -139,5 +177,7 @@ private object ViewIds {
     const val COMMON_V = "commonV"
     const val SYNC_BUTTON = "syncButton"
     const val SETTINGS_BUTTON = "settingsButton"
+    const val IMPORT_BUTTON = "import"
+    const val EXPORT_BUTTON = "export"
 }
 

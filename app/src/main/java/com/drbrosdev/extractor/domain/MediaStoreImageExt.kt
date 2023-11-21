@@ -13,9 +13,9 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 fun ContentResolver.mediaImagesFlow() = observe(
@@ -117,8 +117,7 @@ private fun Cursor.toMediaImage(): MediaImage {
 //    val bar = Geocoder(this, Locale.getDefault())
 //    bar.getFromLocationName("some", 1, object: Geocoder.GeocodeListener {})
 
-    val formatted = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        .format(Date(dateAdded * 1000))
+    val formatted = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateAdded * 1000), ZoneId.systemDefault())
 
     val uri = Uri.withAppendedPath(
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,

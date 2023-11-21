@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.drbrosdev.extractor.ui.theme.ButtonShape
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.ui.theme.md_theme_light_primary
 import com.drbrosdev.extractor.util.CombinedPreview
@@ -27,16 +29,9 @@ fun ExtractorActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
     content: @Composable (RowScope.() -> Unit)
 ) {
-    val verticalContentPadding = 20.dp
-    val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
-        LayoutDirection.Ltr
-    )
-    val rightContentPadding = ButtonDefaults.ContentPadding.calculateRightPadding(
-        LayoutDirection.Ltr
-    )
-
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -48,12 +43,7 @@ fun ExtractorActionButton(
             disabledContainerColor = Color.Gray
         ),
         enabled = enabled,
-        contentPadding = PaddingValues(
-            top = verticalContentPadding,
-            bottom = verticalContentPadding,
-            start = leftContentPadding,
-            end = rightContentPadding
-        ),
+        contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp)
     ) {
         content()
@@ -66,16 +56,9 @@ fun ExtractorButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    verticalContentPadding: Dp = 20.dp,
+    contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
     content: @Composable (RowScope.() -> Unit)
 ) {
-    val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
-        LayoutDirection.Ltr
-    )
-    val rightContentPadding = ButtonDefaults.ContentPadding.calculateRightPadding(
-        LayoutDirection.Ltr
-    )
-
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -87,12 +70,7 @@ fun ExtractorButton(
             disabledContainerColor = Color.Gray
         ),
         enabled = enabled,
-        contentPadding = PaddingValues(
-            top = verticalContentPadding,
-            bottom = verticalContentPadding,
-            start = leftContentPadding,
-            end = rightContentPadding
-        ),
+        contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp)
     ) {
         content()
@@ -104,18 +82,9 @@ fun ExtractorButton(
 fun OutlinedExtractorActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
     content: @Composable (RowScope.() -> Unit)
 ) {
-    val verticalContentPadding = 20.dp
-
-    val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
-        LayoutDirection.Ltr
-    )
-
-    val rightContentPadding = ButtonDefaults.ContentPadding.calculateRightPadding(
-        LayoutDirection.Ltr
-    )
-
     val mainColor = if (isSystemInDarkTheme()) {
         Color.White
     } else {
@@ -129,12 +98,7 @@ fun OutlinedExtractorActionButton(
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = mainColor
         ),
-        contentPadding = PaddingValues(
-            top = verticalContentPadding,
-            bottom = verticalContentPadding,
-            start = leftContentPadding,
-            end = rightContentPadding
-        ),
+        contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp),
         border = ButtonDefaults.outlinedButtonBorder.copy(
             width = 1.dp,
@@ -145,6 +109,58 @@ fun OutlinedExtractorActionButton(
     ) {
         content()
     }
+}
+
+@Composable
+fun BottomSheetButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (RowScope.() -> Unit)
+) {
+    OutlinedButton(
+        modifier = Modifier.then(modifier),
+        onClick = onClick,
+        border = BorderStroke(
+            width = 1.dp, color = Color.White
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = Color.Black,
+            containerColor = Color.White
+        ),
+        shape = ButtonShape
+    ) {
+        content()
+    }
+}
+
+object ExtractorButtonDefaults {
+
+    private val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
+        LayoutDirection.Ltr
+    )
+
+    private val rightContentPadding = ButtonDefaults.ContentPadding.calculateRightPadding(
+        LayoutDirection.Ltr
+    )
+
+    @Composable
+    fun paddingValues(
+        top: Dp = 16.dp,
+        bottom: Dp = 16.dp
+    ): PaddingValues = PaddingValues(
+        start = leftContentPadding,
+        end = rightContentPadding,
+        top = top,
+        bottom = bottom
+    )
+
+    @Composable
+    fun paddingValues(vertical: Dp = 16.dp): PaddingValues = PaddingValues(
+        start = leftContentPadding,
+        end = rightContentPadding,
+        top = vertical,
+        bottom = vertical
+    )
 }
 
 @CombinedPreview
@@ -159,6 +175,9 @@ private fun ButtonsPreview() {
                 Text(text = "Action")
             }
             ExtractorButton(onClick = { /*TODO*/ }) {
+                Text(text = "Action")
+            }
+            BottomSheetButton(onClick = { /*TODO*/ }) {
                 Text(text = "Action")
             }
         }

@@ -16,18 +16,26 @@ class DefaultImageSearchByLabel(
     private val insertPreviousSearch: InsertPreviousSearch
 ) : ImageSearchByLabel {
 
-    override suspend fun search(query: String, labelType: LabelType): List<MediaImage> =
-        withContext(dispatcher) {
-            val out = when (labelType) {
-                LabelType.ALL -> findAllByAll(query)
-                LabelType.TEXT -> findAllByText(query)
-                LabelType.IMAGE -> findAllByVisual(query)
-            }
+    private val searches = mutableMapOf<ImageSearchQuery, List<MediaImage>>()
 
-            runCatching {
-                if (query.isNotBlank()) insertPreviousSearch(query, out.size, labelType)
+    override suspend fun search(searchQuery: ImageSearchQuery): List<MediaImage> =
+        searches.getOrPut(searchQuery) {
+            withContext(dispatcher) {
+                val out = when (searchQuery.labelType) {
+                    LabelType.ALL -> findAllByAll(searchQuery.query)
+                    LabelType.TEXT -> findAllByText(searchQuery.query)
+                    LabelType.IMAGE -> findAllByVisual(searchQuery.query)
+                }
+
+                runCatching {
+                    if (searchQuery.query.isNotBlank()) insertPreviousSearch(
+                        searchQuery.query,
+                        out.size,
+                        searchQuery.labelType
+                    )
+                }
+                out
             }
-            out
         }
 
     private fun processQueryIntoLabels(query: String): List<String> {

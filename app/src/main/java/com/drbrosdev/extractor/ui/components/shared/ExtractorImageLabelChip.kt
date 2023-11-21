@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
@@ -17,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorImageLabelChip(
     onDismiss: () -> Unit,
@@ -38,7 +36,9 @@ fun ExtractorImageLabelChip(
         },
         border = InputChipDefaults.inputChipBorder(
             borderColor = Color.Transparent,
-            selectedBorderColor = Color.White
+            selectedBorderColor = Color.White,
+            selected = isChecked,
+            enabled = true
         ),
         shape = CircleShape,
         colors = InputChipDefaults.inputChipColors(
@@ -51,7 +51,6 @@ fun ExtractorImageLabelChip(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun CurrentPreview() {

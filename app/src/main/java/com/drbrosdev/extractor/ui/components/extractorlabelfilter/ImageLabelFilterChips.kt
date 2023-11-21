@@ -1,10 +1,9 @@
-package com.drbrosdev.extractor.ui.components.datafilterchip
+package com.drbrosdev.extractor.ui.components.extractorlabelfilter
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -32,7 +31,6 @@ private val chipItems = listOf(
     ImageLabelFilterChipData.Image(label = "Image", resId = R.drawable.round_image_search_24),
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ImageLabelFilterChips(
     modifier: Modifier = Modifier,
@@ -81,6 +79,11 @@ fun ImageLabelFilterChips(
                         labelColor = contentColor,
                         selectedLeadingIconColor = Color.White,
                         iconColor = contentColor
+                    ),
+                    border = FilterChipDefaults.filterChipBorder(
+                        enabled = true,
+                        selected = selected == index,
+                        borderColor = Color.White
                     )
                 )
             }

@@ -1,12 +1,13 @@
 package com.drbrosdev.extractor.domain.model
 
 import android.net.Uri
+import java.time.LocalDateTime
 
 data class MediaImage(
     val mediaImageId: Long,
     val uri: Uri,
     val path: String,
-    val dateAdded: String,
+    val dateAdded: LocalDateTime,
     val displayName: String,
     val width: Int,
     val height: Int,
