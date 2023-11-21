@@ -16,8 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.LabelType
-import com.drbrosdev.extractor.ui.components.datafilterchip.ImageLabelFilterChips
-import com.drbrosdev.extractor.ui.components.datafilterchip.toLabelType
+import com.drbrosdev.extractor.ui.components.extractorlabelfilter.ImageLabelFilterChips
+import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toLabelType
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextField
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
@@ -43,7 +43,7 @@ fun ExtractorSearchView(
         ) {
             ExtractorTextField(
                 text = state.query,
-                onChange = { state.query = it },
+                onChange = state::updateQuery,
                 onDoneSubmit = onDone,
                 textColor = Color.White,
                 modifier = Modifier.fillMaxWidth()
@@ -52,7 +52,7 @@ fun ExtractorSearchView(
 
             ImageLabelFilterChips(
                 onFilterChanged = {
-                    state.labelType = it.toLabelType()
+                    state.updateLabelType(it.toLabelType())
                 },
                 contentColor = Color.White,
                 initial = state.initialLabelTypeIndex()

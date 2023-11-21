@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.drbrosdev.extractor.ui.theme.ButtonShape
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.ui.theme.md_theme_light_primary
 import com.drbrosdev.extractor.util.CombinedPreview
@@ -147,6 +149,28 @@ fun OutlinedExtractorActionButton(
     }
 }
 
+@Composable
+fun BottomSheetButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (RowScope.() -> Unit)
+) {
+    OutlinedButton(
+        modifier = Modifier.then(modifier),
+        onClick = onClick,
+        border = BorderStroke(
+            width = 1.dp, color = Color.White
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = Color.Black,
+            containerColor = Color.White
+        ),
+        shape = ButtonShape
+    ) {
+        content()
+    }
+}
+
 @CombinedPreview
 @Composable
 private fun ButtonsPreview() {
@@ -159,6 +183,9 @@ private fun ButtonsPreview() {
                 Text(text = "Action")
             }
             ExtractorButton(onClick = { /*TODO*/ }) {
+                Text(text = "Action")
+            }
+            BottomSheetButton(onClick = { /*TODO*/ }) {
                 Text(text = "Action")
             }
         }

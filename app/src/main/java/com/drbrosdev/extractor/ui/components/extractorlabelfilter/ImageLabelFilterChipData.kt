@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.components.datafilterchip
+package com.drbrosdev.extractor.ui.components.extractorlabelfilter
 
 import androidx.annotation.DrawableRes
 import com.drbrosdev.extractor.domain.model.LabelType

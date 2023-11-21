@@ -5,7 +5,7 @@ the state of a component in a record/data class holder.
 Especially the case when it comes to dealing with basically more than one `TextField`.
 
 For these scenarios, follow this approach:
-- Create a `data class` as state holder. An interface is also possible, with a default implementation.
+- Create a `data class` as state holder.
 - Make sure observable properties are backed by mutable states, and that there is a function that allows mutation.
 - Factory *smart* function eg. `fun MyStateHolder() = MyStateHolder(...)`
 - Factory `remember*` function that wraps the one above
@@ -28,6 +28,8 @@ class FormState(initialValue: String) {
         fun Saver() = Saver {/*...*/}
     }
 }
+
+fun FormState.textAsFlow() = snapshotFlow { textValue }
 
 fun FormState(initialValue: String) = FormState(initialValue)
 

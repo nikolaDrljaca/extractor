@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
+import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
@@ -44,6 +45,7 @@ data class ExtractorSearchNavTarget(
             state = state,
             extractorStatusButtonState = extractorStatusButtonState,
             searchViewState = viewModel.searchViewState,
+            dateFilterState = viewModel.dateFilterState,
             onNavToDetail = { selectedIndex ->
                 navController.navigate(
                     ExtractorImageNavTarget(
@@ -72,6 +74,7 @@ private fun SearchScreenPreview() {
             onExtractorHomeClicked = {},
             onDone = {},
             searchViewState = ExtractorSearchViewState("", LabelType.ALL),
+            dateFilterState = ExtractorDateFilterState()
         )
     }
 }
