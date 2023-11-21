@@ -29,12 +29,6 @@ val viewModelModule = module {
     }
 
     viewModel {
-        com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel(
-            savedStateHandle = get()
-        )
-    }
-
-    viewModel {
         ExtractorStatusButtonViewModel(
             mediaImageRepository = get<DefaultMediaImageRepository>(),
             extractionEntityDao = get(),

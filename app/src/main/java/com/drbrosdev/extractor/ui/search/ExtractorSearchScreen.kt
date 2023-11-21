@@ -1,5 +1,7 @@
 package com.drbrosdev.extractor.ui.search
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -16,11 +18,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -36,6 +40,8 @@ import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFi
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
+import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
+import com.drbrosdev.extractor.ui.components.shared.ExtractorFirstSearch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageGrid
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchBottomSheet
@@ -92,18 +98,28 @@ fun ExtractorSearchScreen(
                 .fillMaxSize(),
             constraintSet = searchResultScreenConstraintSet()
         ) {
-            when (state) {
-                is ExtractorSearchScreenUiState.Loading -> {
-                    LoadingView(modifier = Modifier.layoutId(ViewIds.SPINNER))
-                }
+            AnimatedContent(
+                targetState = state,
+                label = "",
+                modifier = Modifier.layoutId(ViewIds.MAIN_CONTENT)
+            ) {
+                when (it) {
+                    ExtractorSearchScreenUiState.Loading -> Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "Loading")
+                    }
 
-                is ExtractorSearchScreenUiState.Success -> {
-                    ExtractorImageGrid(
-                        modifier = Modifier.layoutId(ViewIds.IMAGE_GRID),
-                        images = state.images,
-                        onClick = onNavToDetail,
-                        gridState = gridState,
-                    )
+                    is ExtractorSearchScreenUiState.Success ->
+                        ExtractorImageGrid(
+                            images = it.images,
+                            onClick = onNavToDetail,
+                            gridState = gridState,
+                        )
+
+                    is ExtractorSearchScreenUiState.FirstSearch -> ExtractorFirstSearch(modifier = Modifier.fillMaxSize())
+                    is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()
                 }
             }
 
@@ -133,18 +149,10 @@ fun ExtractorSearchScreen(
 }
 
 private fun searchResultScreenConstraintSet() = ConstraintSet {
-    val spinner = createRefFor(ViewIds.SPINNER)
-    val imageGrid = createRefFor(ViewIds.IMAGE_GRID)
     val topBar = createRefFor(ViewIds.TOP_BAR)
+    val mainContent = createRefFor(ViewIds.MAIN_CONTENT)
 
-    constrain(spinner) {
-        start.linkTo(parent.start, margin = 16.dp)
-        end.linkTo(parent.end, margin = 16.dp)
-        top.linkTo(topBar.bottom, margin = 4.dp)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(imageGrid) {
+    constrain(mainContent) {
         start.linkTo(parent.start, margin = 16.dp)
         end.linkTo(parent.end, margin = 16.dp)
         top.linkTo(parent.top)
@@ -162,8 +170,7 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
 }
 
 private object ViewIds {
-    const val IMAGE_GRID = "imageGrid"
-    const val SPINNER = "loading"
+    const val MAIN_CONTENT = "content"
     const val TOP_BAR = "topBar"
 }
 
