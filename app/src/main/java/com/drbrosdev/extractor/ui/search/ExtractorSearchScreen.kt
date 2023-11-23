@@ -153,8 +153,8 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
     val mainContent = createRefFor(ViewIds.MAIN_CONTENT)
 
     constrain(mainContent) {
-        start.linkTo(parent.start, margin = 16.dp)
-        end.linkTo(parent.end, margin = 16.dp)
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
         top.linkTo(parent.top)
         bottom.linkTo(parent.bottom)
         width = Dimension.fillToConstraints

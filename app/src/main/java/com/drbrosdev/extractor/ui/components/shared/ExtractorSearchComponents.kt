@@ -56,15 +56,15 @@ fun ExtractorImageGrid(
     onClick: (index: Int) -> Unit,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
-    val imageSize = 86
+    val imageSize = 96
 
     LazyVerticalGrid(
         modifier = Modifier
             .then(modifier),
         columns = GridCells.Adaptive(minSize = imageSize.dp),
         state = gridState,
-        verticalArrangement = Arrangement.spacedBy(2.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        verticalArrangement = Arrangement.spacedBy(1.dp),
+        horizontalArrangement = Arrangement.spacedBy(1.dp),
         contentPadding = contentPadding
     ) {
         itemsIndexed(images, key = { _, it -> it.mediaImageId }) { index, it ->

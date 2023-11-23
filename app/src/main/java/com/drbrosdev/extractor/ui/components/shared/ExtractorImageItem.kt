@@ -34,7 +34,7 @@ fun ExtractorImageItem(
     AsyncImage(
         modifier = Modifier
             .then(sizeModifier)
-            .clip(RoundedCornerShape(4.dp))
+            .clip(RoundedCornerShape(2.dp))
             .clickable { onClick() }
             .then(modifier),
         model = ImageRequest.Builder(LocalContext.current)
