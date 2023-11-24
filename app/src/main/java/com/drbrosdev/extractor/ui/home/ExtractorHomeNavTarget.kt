@@ -2,11 +2,9 @@ package com.drbrosdev.extractor.ui.home
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
@@ -28,8 +26,6 @@ object ExtractorHomeNavTarget : NavTarget {
 
     @Composable
     override fun Content() {
-        val extractorSearchViewModel: ExtractorSearchViewModel = koinViewModel()
-
         val previousSearchViewModel: PreviousSearchesViewModel = koinViewModel()
         val searches by previousSearchViewModel.prevSearchesFlow.collectAsStateWithLifecycle()
 
@@ -39,16 +35,6 @@ object ExtractorHomeNavTarget : NavTarget {
         val navController = LocalNavController.current
         val dialogNavController = LocalDialogNavController.current
         val keyboardController = LocalSoftwareKeyboardController.current
-
-        LaunchedEffect(key1 = Unit) {
-            extractorSearchViewModel.events
-                .collect {
-                    navController.navigateToSearchScreen(
-                        query = it.query,
-                        labelType = it.filter
-                    )
-                }
-        }
 
         ExtractorHomeScreen(
             statsUiState = statsUiState,

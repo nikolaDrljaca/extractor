@@ -48,6 +48,14 @@ class ExtractorSearchViewState(
     }
 }
 
+fun ExtractorSearchViewState.isBlank(): Boolean {
+    return query.isBlank()
+}
+
+fun ExtractorSearchViewState.isNotBlank(): Boolean {
+    return isBlank()
+}
+
 fun ExtractorSearchViewState.initialLabelTypeIndex(): Int {
     return when(labelType) {
         LabelType.ALL -> 0

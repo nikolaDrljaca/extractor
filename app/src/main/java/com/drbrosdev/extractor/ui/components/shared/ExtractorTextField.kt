@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,14 +40,13 @@ fun ExtractorTextField(
     } else {
         Color.Black
     },
+    interactionSource: InteractionSource = remember {
+        MutableInteractionSource()
+    },
     onChange: (String) -> Unit,
     onDoneSubmit: () -> Unit = {},
 ) {
-
     val textStyle = MaterialTheme.typography.headlineMedium
-    val interactionSource = remember {
-        MutableInteractionSource()
-    }
 
     BasicTextField(
         value = text,
@@ -82,7 +83,11 @@ fun ExtractorTextField(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent,
                     errorIndicatorColor = Color.Transparent,
-                    cursorColor = Color.White
+                    cursorColor = Color.White,
+                    selectionColors = TextSelectionColors(
+                        backgroundColor = Color.Black,
+                        handleColor = Color.White
+                    )
                 ),
                 placeholder = {
                     Text(

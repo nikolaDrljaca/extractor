@@ -12,6 +12,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.raise.nullable
+import com.drbrosdev.extractor.domain.usecase.image.search.DateRange
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -110,12 +111,18 @@ fun ExtractorDateFilterState.endDateAsFlow(): Flow<Option<LocalDateTime>> {
         }
 }
 
-data class DateRange(
-    val start: LocalDateTime,
-    val end: LocalDateTime
-)
+fun ExtractorDateFilterState.dateRange(): DateRange? {
+    return nullable {
+        val start = startDate.bind()
+        val end = endDate.bind()
+        DateRange(
+            start = LocalDateTime.ofInstant(Instant.ofEpochMilli(start), ZoneId.systemDefault()),
+            end = LocalDateTime.ofInstant(Instant.ofEpochMilli(end), ZoneId.systemDefault())
+        )
+    }
+}
 
-fun ExtractorDateFilterState.dateRange(): Flow<DateRange?> {
+fun ExtractorDateFilterState.dateRangeAsFlow(): Flow<DateRange?> {
     return combine(
         snapshotFlow { startDate },
         snapshotFlow { endDate }

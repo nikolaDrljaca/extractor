@@ -10,11 +10,11 @@ import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchQuery
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
+import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRangeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
+import com.drbrosdev.extractor.ui.components.extractorsearchview.isBlank
 import com.drbrosdev.extractor.ui.components.extractorsearchview.labelTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -36,9 +36,7 @@ class ExtractorSearchViewModel(
     val dateFilterState = ExtractorDateFilterState()
 
     private val _state = MutableStateFlow<ExtractorSearchScreenUiState>(
-        ExtractorSearchScreenUiState.Success(
-            images = persistentListOf()
-        )
+        ExtractorSearchScreenUiState.FirstSearch
     )
     val state = _state.asStateFlow()
 
@@ -52,32 +50,15 @@ class ExtractorSearchViewModel(
         .onEach { stateHandle["query"] = it }
         .launchIn(viewModelScope)
 
-    private val dateFilterJob = dateFilterState.dateRange()
-        .onEach { dateRange ->
-            when {
-                dateRange != null -> {
-                    val searchQuery = ImageSearchQuery(searchViewState.query, searchViewState.labelType)
-                    val temp = imageSearch.search(searchQuery)
-                    _state.update {
-                        val out = temp.filter { mediaImage ->
-                            (mediaImage.dateAdded.isAfter(dateRange.start)) and (mediaImage.dateAdded.isBefore(
-                                dateRange.end
-                            ))
-                        }.toImmutableList()
-                        ExtractorSearchScreenUiState.Success(out)
-                    }
-                }
-
-                else -> runSearch()
-            }
-        }
+    private val dateFilterJob = dateFilterState.dateRangeAsFlow()
+        .onEach { performSearch(SearchStrategy.NORMAL) }
         .launchIn(viewModelScope)
 
     fun performSearch(searchStrategy: SearchStrategy) {
         when (searchStrategy) {
             SearchStrategy.NORMAL -> runSearch()
             SearchStrategy.DIRTY_CHECKING -> {
-                if (searchViewState.query.isBlank()) return
+                if (searchViewState.isBlank()) return
                 if (
                     lastQuery.value.isOldQuery(
                         searchViewState.query,
@@ -89,23 +70,27 @@ class ExtractorSearchViewModel(
         }
     }
 
-    private fun runSearch() {
-        viewModelScope.launch {
-            _state.update { ExtractorSearchScreenUiState.Loading }
-            val searchQuery = ImageSearchQuery(searchViewState.query, searchViewState.labelType)
-            val result = imageSearch.search(searchQuery).also {
-                lastQuery.update { LastQuery(searchViewState.query, searchViewState.labelType) }
-            }
-            _state.update {
-                ExtractorSearchScreenUiState.Success(images = result.toImmutableList())
-            }
+    fun getImageUris(): List<Uri> {
+        return when (val out = state.value) {
+            is ExtractorSearchScreenUiState.Success -> out.images.map { it.uri }
+            else -> emptyList()
         }
     }
 
-    fun getImageUris(): List<Uri> {
-        return when (val out = state.value) {
-            is ExtractorSearchScreenUiState.Loading -> emptyList()
-            is ExtractorSearchScreenUiState.Success -> out.images.map { it.uri }
+    private fun runSearch() {
+        if (searchViewState.isBlank()) return
+
+        viewModelScope.launch {
+            _state.update { ExtractorSearchScreenUiState.Loading }
+            val searchQuery = ImageSearchQuery(
+                query = searchViewState.query,
+                labelType = searchViewState.labelType,
+                dateRange = dateFilterState.dateRange()
+            )
+            val result = imageSearch.search(searchQuery).also {
+                lastQuery.update { LastQuery(searchViewState.query, searchViewState.labelType) }
+            }
+            _state.createFrom(result)
         }
     }
 

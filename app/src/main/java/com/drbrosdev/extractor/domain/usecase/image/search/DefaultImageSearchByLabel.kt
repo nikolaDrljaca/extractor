@@ -34,7 +34,11 @@ class DefaultImageSearchByLabel(
                         searchQuery.labelType
                     )
                 }
-                out
+
+                when {
+                    searchQuery.dateRange != null -> out.filter { it.dateAdded isIn searchQuery.dateRange }
+                    else -> out
+                }
             }
         }
 
