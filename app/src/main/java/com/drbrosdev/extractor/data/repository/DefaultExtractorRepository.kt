@@ -6,39 +6,23 @@ import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
+import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
 import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
 import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
-import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
+import com.drbrosdev.extractor.data.payload.CreateExtraction
+import com.drbrosdev.extractor.data.payload.EmbedUpdate
+import com.drbrosdev.extractor.data.payload.NewEmbed
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
-interface ExtractorDataRepository {
-
-    suspend fun deleteExtractionData(imageEntityId: Long)
-
-    fun getAll(): Flow<List<ExtractionEntity>>
-
-    suspend fun getAllIds(): Set<Long>
-
-    fun findImageDataByMediaId(mediaImageId: Long): Flow<ImageDataWithEmbeddings?>
-
-    suspend fun updateTextEmbed(value: String, imageEntityId: Long)
-
-    suspend fun updateUserEmbed(value: String, imageEntityId: Long)
-
-    suspend fun deleteVisualEmbedding(value: String)
-
-    suspend fun insertVisualEmbedding(mediaImageId: Long, embed: String)
-}
-
-class DefaultExtractorDataRepository(
+class DefaultExtractorRepository(
     private val dispatcher: CoroutineDispatcher,
     private val extractionEntityDao: ExtractionEntityDao,
     private val visualEmbeddingDao: VisualEmbeddingDao,
     private val textEmbeddingDao: TextEmbeddingDao,
     private val userEmbeddingDao: UserEmbeddingDao,
     private val imageDataWithEmbeddingsDao: ImageDataWithEmbeddingsDao,
-) : ExtractorDataRepository {
+) : ExtractorRepository {
 
     override suspend fun deleteExtractionData(imageEntityId: Long) {
         val countDeleted = extractionEntityDao.deleteByMediaId(imageEntityId)
@@ -60,17 +44,17 @@ class DefaultExtractorDataRepository(
     override fun findImageDataByMediaId(mediaImageId: Long) =
         imageDataWithEmbeddingsDao.findByMediaImageId(mediaImageId)
 
-    override suspend fun updateTextEmbed(value: String, imageEntityId: Long) {
-        textEmbeddingDao.update(value, imageEntityId)
+    override suspend fun updateTextEmbed(embedUpdate: EmbedUpdate) = with(embedUpdate) {
+        textEmbeddingDao.update(value, mediaImageId)
     }
 
-    override suspend fun updateUserEmbed(value: String, imageEntityId: Long) {
-        val existing = userEmbeddingDao.findByMediaId(imageEntityId)
+    override suspend fun updateOrInsertUserEmbed(embedUpdate: EmbedUpdate) {
+        val existing = userEmbeddingDao.findByMediaId(embedUpdate.mediaImageId)
         if (existing == null) {
-            val newUserEmbed = UserEmbeddingEntity(imageEntityId = imageEntityId, value = value)
+            val newUserEmbed = UserEmbeddingEntity(imageEntityId = embedUpdate.mediaImageId, value = embedUpdate.value)
             userEmbeddingDao.insert(newUserEmbed)
         } else {
-            userEmbeddingDao.update(value, imageEntityId)
+            userEmbeddingDao.update(embedUpdate.value, embedUpdate.mediaImageId)
         }
     }
 
@@ -78,11 +62,32 @@ class DefaultExtractorDataRepository(
         visualEmbeddingDao.deleteByValue(value)
     }
 
-    override suspend fun insertVisualEmbedding(mediaImageId: Long, embed: String) {
+    override suspend fun insertVisualEmbedding(newEmbed: NewEmbed) = with(newEmbed) {
         val visualEmbed = VisualEmbeddingEntity(
             imageEntityId = mediaImageId,
-            value = embed
+            value = value
         )
         visualEmbeddingDao.insert(visualEmbed)
+    }
+
+    override suspend fun createExtractionData(data: CreateExtraction) = with(data) {
+        val extractorEntity = ExtractionEntity(
+            mediaStoreId = mediaImageId,
+            uri = extractorImageUri
+        )
+
+        val textEntity = TextEmbeddingEntity(
+            imageEntityId = mediaImageId,
+            value = textEmbed
+        )
+
+        val visualEntities = visualEmbeds.map {
+            VisualEmbeddingEntity(imageEntityId = mediaImageId, value = it)
+        }
+
+        //NOTE: Ordering is important for relationships
+        extractionEntityDao.insert(extractorEntity)
+        textEmbeddingDao.insert(textEntity)
+        visualEmbeddingDao.insertAll(*visualEntities.toTypedArray())
     }
 }

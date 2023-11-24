@@ -3,8 +3,8 @@ package com.drbrosdev.extractor.framework.koin
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.data.datastore
-import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
-import com.drbrosdev.extractor.data.repository.ExtractorDataRepository
+import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.data.repository.ExtractorRepository
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
@@ -36,7 +36,7 @@ private val dataModule = module {
     }
 
     factory {
-        DefaultExtractorDataRepository(
+        DefaultExtractorRepository(
             dispatcher = get(named(CoroutineModuleName.IO)),
             extractionEntityDao = get(),
             visualEmbeddingDao = get(),
@@ -44,7 +44,7 @@ private val dataModule = module {
             userEmbeddingDao = get(),
             imageDataWithEmbeddingsDao = get()
         )
-    } bind ExtractorDataRepository::class
+    } bind ExtractorRepository::class
 }
 
 

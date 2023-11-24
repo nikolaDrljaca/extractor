@@ -1,11 +1,7 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
-import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
-import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
-import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
-import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
-import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
+import com.drbrosdev.extractor.data.payload.CreateExtraction
+import com.drbrosdev.extractor.data.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.model.InputImageType
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.usecase.image.create.InputImageFactory
@@ -21,20 +17,11 @@ class DefaultExtractor(
     private val labelExtractor: ImageLabelExtractor<InputImage>,
     private val textExtractor: TextExtractor<InputImage>,
     private val inputImageFactory: InputImageFactory,
-    private val extractorEntityDao: ExtractionEntityDao,
-    private val textEmbeddingDao: TextEmbeddingDao,
-    private val visualEmbeddingDao: VisualEmbeddingDao
+    private val extractorRepository: ExtractorRepository
 ) : Extractor {
 
     override suspend fun execute(mediaImage: MediaImage) {
         withContext(dispatcher) {
-            extractorEntityDao.insert(
-                ExtractionEntity(
-                    mediaStoreId = mediaImage.mediaImageId,
-                    uri = mediaImage.uri.toString()
-                )
-            )
-
             val inputImage = inputImageFactory.create(InputImageType.UriInputImage(mediaImage.uri))
 
             val text = async {
@@ -48,17 +35,14 @@ class DefaultExtractor(
             val outText = text.await()
             val outLabel = labels.await()
 
-            val textEmbeddingEntity = TextEmbeddingEntity(
-                imageEntityId = mediaImage.mediaImageId,
-                value = outText.getOrDefault("")
+            val payload = CreateExtraction(
+                mediaImageId = mediaImage.mediaImageId,
+                extractorImageUri = mediaImage.uri.toString(),
+                textEmbed = outText.getOrDefault(""),
+                visualEmbeds = outLabel.getOrDefault(emptyList())
             )
-            textEmbeddingDao.insert(textEmbeddingEntity)
 
-            outLabel
-                .getOrDefault(emptyList())
-                .map { VisualEmbeddingEntity(imageEntityId = mediaImage.mediaImageId, value = it) }
-                .forEach { visualEmbeddingDao.insert(it) }
-
+            extractorRepository.createExtractionData(payload)
         }
     }
 }

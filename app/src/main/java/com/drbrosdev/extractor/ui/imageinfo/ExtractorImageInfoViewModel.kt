@@ -2,7 +2,8 @@ package com.drbrosdev.extractor.ui.imageinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.data.repository.ExtractorDataRepository
+import com.drbrosdev.extractor.data.payload.EmbedUpdate
+import com.drbrosdev.extractor.data.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 class ExtractorImageInfoViewModel(
     private val mediaImageId: Long,
     private val mediaImageRepository: MediaImageRepository,
-    private val extractorDataRepository: ExtractorDataRepository
+    private val extractorDataRepository: ExtractorRepository
 ) : ViewModel() {
     private val checkedVisualEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
@@ -50,13 +51,17 @@ class ExtractorImageInfoViewModel(
     fun saveEmbeddings() {
         viewModelScope.launch {
             extractorDataRepository.updateTextEmbed(
-                value = imageInfoModel.value.embeddingsFormState.textEmbedding.trim(),
-                imageEntityId = mediaImageId
+                EmbedUpdate(
+                    value = imageInfoModel.value.embeddingsFormState.textEmbedding.trim(),
+                    mediaImageId = mediaImageId
+                )
             )
 
-            extractorDataRepository.updateUserEmbed(
-                value = imageInfoModel.value.embeddingsFormState.userEmbedding.trim(),
-                imageEntityId = mediaImageId
+            extractorDataRepository.updateOrInsertUserEmbed(
+                EmbedUpdate(
+                    value = imageInfoModel.value.embeddingsFormState.userEmbedding.trim(),
+                    mediaImageId = mediaImageId
+                )
             )
 
             imageInfoModel.value.visualEmbedding
