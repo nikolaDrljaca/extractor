@@ -3,8 +3,9 @@ package com.drbrosdev.extractor.domain.usecase.image.search
 import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
 import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.domain.model.isIn
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
+import com.drbrosdev.extractor.domain.usecase.RememberSearch
 import com.drbrosdev.extractor.util.runCatching
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -13,30 +14,33 @@ class DefaultImageSearchByLabel(
     private val dispatcher: CoroutineDispatcher,
     private val mediaImageRepository: MediaImageRepository,
     private val imageDataWithEmbeddingsDao: ImageDataWithEmbeddingsDao,
-    private val insertPreviousSearch: InsertPreviousSearch
+    private val rememberSearch: RememberSearch
 ) : ImageSearchByLabel {
 
-    private val searches = mutableMapOf<ImageSearchQuery, List<MediaImage>>()
+    private val searches = mutableMapOf<ImageSearchByLabel.Params, List<MediaImage>>()
 
-    override suspend fun search(searchQuery: ImageSearchQuery): List<MediaImage> =
-        searches.getOrPut(searchQuery) {
+    override suspend fun search(params: ImageSearchByLabel.Params): List<MediaImage> =
+        searches.getOrPut(params) {
             withContext(dispatcher) {
-                val out = when (searchQuery.labelType) {
-                    LabelType.ALL -> findAllByAll(searchQuery.query)
-                    LabelType.TEXT -> findAllByText(searchQuery.query)
-                    LabelType.IMAGE -> findAllByVisual(searchQuery.query)
+                val out = when (params.labelType) {
+                    LabelType.ALL -> findAllByAll(params.query)
+                    LabelType.TEXT -> findAllByText(params.query)
+                    LabelType.IMAGE -> findAllByVisual(params.query)
                 }
 
                 runCatching {
-                    if (searchQuery.query.isNotBlank()) insertPreviousSearch(
-                        searchQuery.query,
-                        out.size,
-                        searchQuery.labelType
-                    )
+                    if (params.query.isNotBlank()) {
+                        val rememberSearchParams = RememberSearch.Params(
+                            query = params.query,
+                            resultCount = out.size,
+                            labelType = params.labelType
+                        )
+                        rememberSearch(rememberSearchParams)
+                    }
                 }
 
                 when {
-                    searchQuery.dateRange != null -> out.filter { it.dateAdded isIn searchQuery.dateRange }
+                    params.dateRange != null -> out.filter { it.dateAdded isIn params.dateRange }
                     else -> out
                 }
             }

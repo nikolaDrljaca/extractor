@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.framework.koin
 
-import com.drbrosdev.extractor.data.repository.DefaultExtractorDataRepository
-import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
+import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.domain.usecase.RememberSearch
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
 import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
@@ -43,9 +43,7 @@ val useCaseModule = module {
             textExtractor = get(),
             inputImageFactory = get(),
             dispatcher = get(named(CoroutineModuleName.Default)),
-            visualEmbeddingDao = get(),
-            textEmbeddingDao = get(),
-            extractorEntityDao = get()
+            extractorRepository = get()
         )
     } bind Extractor::class
 
@@ -53,13 +51,13 @@ val useCaseModule = module {
         BulkExtractor(
             dispatcher = get(named(CoroutineModuleName.Default)),
             mediaImageRepository = get(),
-            extractorDataRepository = get<DefaultExtractorDataRepository>(),
+            extractorDataRepository = get<DefaultExtractorRepository>(),
             extractor = get()
         )
     }
 
     factory {
-        InsertPreviousSearch(
+        RememberSearch(
             dispatcher = get(named(CoroutineModuleName.IO)),
             dao = get()
         )
@@ -70,7 +68,7 @@ val useCaseModule = module {
             dispatcher = get(named(CoroutineModuleName.IO)),
             mediaImageRepository = get(),
             imageDataWithEmbeddingsDao = get(),
-            insertPreviousSearch = get()
+            rememberSearch = get()
         )
     } bind ImageSearchByLabel::class
 }

@@ -14,11 +14,10 @@ class PreviousSearchesViewModel(
     private val previousSearchDao: PreviousSearchDao
 ) : ViewModel() {
     val prevSearchesFlow = previousSearchDao
-        .findAll()
+        .findAllAndTakeFlow(10)
         .map { searches ->
             searches.map { it.toPreviousSearch().toItemState() }
                 .reversed()
-                .take(7)
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 

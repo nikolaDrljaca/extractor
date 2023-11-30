@@ -6,9 +6,6 @@ import androidx.room.PrimaryKey
 
 
 
-/**
- * Visual embeddings are also unique by <code>value</code>.
- */
 @Entity(tableName = "visual_embedding")
 data class VisualEmbeddingEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

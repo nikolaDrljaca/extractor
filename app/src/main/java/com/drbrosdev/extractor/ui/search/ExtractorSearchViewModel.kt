@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
-import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchQuery
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
@@ -82,7 +81,7 @@ class ExtractorSearchViewModel(
 
         viewModelScope.launch {
             _state.update { ExtractorSearchScreenUiState.Loading }
-            val searchQuery = ImageSearchQuery(
+            val searchQuery = ImageSearchByLabel.Params(
                 query = searchViewState.query,
                 labelType = searchViewState.labelType,
                 dateRange = dateFilterState.dateRange()

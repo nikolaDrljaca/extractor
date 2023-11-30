@@ -31,11 +31,17 @@ interface VisualEmbeddingDao {
     @Insert
     suspend fun insert(value: VisualEmbeddingEntity)
 
+    @Insert
+    suspend fun insertAll(vararg embeds: VisualEmbeddingEntity)
+
     @Update
     suspend fun update(value: VisualEmbeddingEntity)
 
     @Delete
     suspend fun delete(value: VisualEmbeddingEntity)
+
+    @Query("delete from visual_embedding where id=:id")
+    suspend fun deleteById(id: Long)
 
     @Query("delete from visual_embedding where image_entity_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)

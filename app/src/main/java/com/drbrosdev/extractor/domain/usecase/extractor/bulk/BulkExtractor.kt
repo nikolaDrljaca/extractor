@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase.extractor.bulk
 
-import com.drbrosdev.extractor.data.repository.ExtractorDataRepository
+import com.drbrosdev.extractor.data.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
@@ -12,7 +12,7 @@ class BulkExtractor(
     private val dispatcher: CoroutineDispatcher,
     private val mediaImageRepository: MediaImageRepository,
     private val extractor: Extractor,
-    private val extractorDataRepository: ExtractorDataRepository
+    private val extractorDataRepository: ExtractorRepository
 ) {
     suspend fun execute() {
         val storedIds = extractorDataRepository.getAllIds()

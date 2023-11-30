@@ -8,12 +8,18 @@ import androidx.room.Query
 import com.drbrosdev.extractor.data.entity.PreviousSearchEntity
 import com.drbrosdev.extractor.domain.model.LabelType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 @Dao
 interface PreviousSearchDao {
 
     @Query("select * from previous_search_entity")
     fun findAll(): Flow<List<PreviousSearchEntity>>
+
+    @Query("select * from previous_search_entity limit :take")
+    fun findAllAndTakeFlow(take: Int): Flow<List<PreviousSearchEntity>>
+
+    suspend fun findAllAndTake(take: Int) = findAllAndTakeFlow(take).first()
 
     @Query("select * from previous_search_entity where `query`=:query")
     suspend fun findByQuery(query: String): PreviousSearchEntity?
