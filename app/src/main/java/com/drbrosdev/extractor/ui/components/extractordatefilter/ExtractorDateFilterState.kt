@@ -12,7 +12,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.raise.nullable
-import com.drbrosdev.extractor.domain.usecase.image.search.DateRange
+import com.drbrosdev.extractor.domain.model.DateRange
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map

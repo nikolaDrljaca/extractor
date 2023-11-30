@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain.usecase.image.search
+package com.drbrosdev.extractor.domain.model
 
 import java.time.LocalDateTime
 
