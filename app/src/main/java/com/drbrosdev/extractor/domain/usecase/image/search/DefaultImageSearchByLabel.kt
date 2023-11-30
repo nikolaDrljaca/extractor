@@ -5,7 +5,7 @@ import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.model.isIn
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.InsertPreviousSearch
+import com.drbrosdev.extractor.domain.usecase.RememberSearch
 import com.drbrosdev.extractor.util.runCatching
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -14,7 +14,7 @@ class DefaultImageSearchByLabel(
     private val dispatcher: CoroutineDispatcher,
     private val mediaImageRepository: MediaImageRepository,
     private val imageDataWithEmbeddingsDao: ImageDataWithEmbeddingsDao,
-    private val insertPreviousSearch: InsertPreviousSearch
+    private val rememberSearch: RememberSearch
 ) : ImageSearchByLabel {
 
     private val searches = mutableMapOf<ImageSearchByLabel.Params, List<MediaImage>>()
@@ -29,11 +29,14 @@ class DefaultImageSearchByLabel(
                 }
 
                 runCatching {
-                    if (params.query.isNotBlank()) insertPreviousSearch(
-                        params.query,
-                        out.size,
-                        params.labelType
-                    )
+                    if (params.query.isNotBlank()) {
+                        val rememberSearchParams = RememberSearch.Params(
+                            query = params.query,
+                            resultCount = out.size,
+                            labelType = params.labelType
+                        )
+                        rememberSearch(rememberSearchParams)
+                    }
                 }
 
                 when {
