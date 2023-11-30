@@ -33,7 +33,8 @@ class ExtractorImageInfoViewModel(
                 visualEmbedding = imageInfoUiModel.visualEmbedding.map {
                     VisualEmbedUiModel(
                         text = it.text,
-                        isChecked = checkedEmbeds.getOrDefault(it.text, false)
+                        isChecked = checkedEmbeds.getOrDefault(it.text, false),
+                        id = it.id
                     )
                 }
             )
@@ -66,7 +67,7 @@ class ExtractorImageInfoViewModel(
 
             imageInfoModel.value.visualEmbedding
                 .filter { it.isChecked }
-                .forEach { extractorDataRepository.deleteVisualEmbedding(it.text) }
+                .forEach { extractorDataRepository.deleteVisualEmbedding(it.id) }
         }
     }
 }

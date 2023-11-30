@@ -23,7 +23,7 @@ interface ExtractorRepository {
 
     suspend fun insertVisualEmbedding(newEmbed: NewEmbed)
 
-    suspend fun deleteVisualEmbedding(value: String)
+    suspend fun deleteVisualEmbedding(visualEmbeddingId: Long)
 
     suspend fun createExtractionData(data: CreateExtraction)
 

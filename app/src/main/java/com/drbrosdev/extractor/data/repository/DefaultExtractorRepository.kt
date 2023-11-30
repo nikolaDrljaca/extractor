@@ -58,8 +58,8 @@ class DefaultExtractorRepository(
         }
     }
 
-    override suspend fun deleteVisualEmbedding(value: String) {
-        visualEmbeddingDao.deleteByValue(value)
+    override suspend fun deleteVisualEmbedding(visualEmbeddingId: Long) {
+        visualEmbeddingDao.deleteById(visualEmbeddingId)
     }
 
     override suspend fun insertVisualEmbedding(newEmbed: NewEmbed) = with(newEmbed) {
