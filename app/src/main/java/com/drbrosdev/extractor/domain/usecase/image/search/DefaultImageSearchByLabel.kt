@@ -1,6 +1,8 @@
 package com.drbrosdev.extractor.domain.usecase.image.search
 
 import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
+import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
+import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.model.isIn
@@ -17,95 +19,55 @@ class DefaultImageSearchByLabel(
     private val rememberSearch: RememberSearch
 ) : ImageSearchByLabel {
 
-    private val searches = mutableMapOf<ImageSearchByLabel.Params, List<MediaImage>>()
-
     override suspend fun search(params: ImageSearchByLabel.Params): List<MediaImage> =
-        searches.getOrPut(params) {
-            withContext(dispatcher) {
-                val out = when (params.labelType) {
-                    LabelType.ALL -> findAllByAll(params.query)
-                    LabelType.TEXT -> findAllByText(params.query)
-                    LabelType.IMAGE -> findAllByVisual(params.query)
-                }
-
-                runCatching {
-                    if (params.query.isNotBlank()) {
-                        val rememberSearchParams = RememberSearch.Params(
-                            query = params.query,
-                            resultCount = out.size,
-                            labelType = params.labelType
-                        )
-                        rememberSearch(rememberSearchParams)
+        withContext(dispatcher) {
+            val result = with(params) {
+                val embedSupplier: suspend (String) -> List<ImageDataWithEmbeddings> =
+                    when (labelType) {
+                        LabelType.ALL -> { it -> imageDataWithEmbeddingsDao.findByLabel(it) }
+                        LabelType.TEXT -> { it -> imageDataWithEmbeddingsDao.findByTextEmbedding(it) }
+                        LabelType.IMAGE -> { it ->
+                            imageDataWithEmbeddingsDao.findByVisualEmbedding(it)
+                        }
                     }
-                }
 
-                when {
-                    params.dateRange != null -> out.filter { it.dateAdded isIn params.dateRange }
-                    else -> out
-                }
+                query
+                    .prepareQuery()
+                    .findBy { embedSupplier(it) }
+                    .toMediaImage()
+                    .filterByDateRange(dateRange)
             }
+
+            if (params.query.isNotBlank()) runCatching {
+                val rememberSearchParams = RememberSearch.Params(
+                    query = params.query,
+                    resultCount = result.size,
+                    labelType = params.labelType
+                )
+                rememberSearch(rememberSearchParams)
+            }
+
+            result
         }
 
-    private fun processQueryIntoLabels(query: String): List<String> {
-        if (query.isBlank()) return emptyList()
-
-        val temp = query
+    private fun String.prepareQuery(): String {
+        return this
             .trim()
             .replace(Regex("\\s+"), " ")
             .lowercase()
-
-        return temp.split(" ")
     }
 
-    private suspend fun findAllByAll(query: String): List<MediaImage> {
-        val labels = processQueryIntoLabels(query)
-        val result = mutableSetOf<MediaImage>()
-
-        for (label in labels) {
-            val ids = imageDataWithEmbeddingsDao
-                .findByLabel(label)
-                .map { it.imageEntity.mediaStoreId }
-            if (ids.isEmpty()) continue
-
-            val mediaImages = mediaImageRepository.findAllById(ids)
-            result.addAll(mediaImages)
-        }
-
-        return result.toList()
+    private suspend fun String.findBy(block: suspend (String) -> List<ImageDataWithEmbeddings>): List<Long> {
+        return block(this)
+            .map { it.imageEntity.mediaStoreId }
     }
 
-    private suspend fun findAllByText(query: String): List<MediaImage> {
-        val labels = processQueryIntoLabels(query)
-        val result = mutableSetOf<MediaImage>()
-
-        for (label in labels) {
-            val ids = imageDataWithEmbeddingsDao
-                .findByTextEmbedding(label)
-                .map { it.imageEntity.mediaStoreId }
-            if (ids.isEmpty()) continue
-
-            val mediaImages = mediaImageRepository.findAllById(ids)
-            result.addAll(mediaImages)
-        }
-
-        return result.toList()
+    private suspend fun List<Long>.toMediaImage(): List<MediaImage> {
+        return mediaImageRepository.findAllById(this)
     }
 
-
-    private suspend fun findAllByVisual(query: String): List<MediaImage> {
-        val labels = processQueryIntoLabels(query)
-        val result = mutableSetOf<MediaImage>()
-
-        for (label in labels) {
-            val ids = imageDataWithEmbeddingsDao
-                .findByVisualEmbedding(label)
-                .map { it.imageEntity.mediaStoreId }
-            if (ids.isEmpty()) continue
-
-            val mediaImages = mediaImageRepository.findAllById(ids)
-            result.addAll(mediaImages)
-        }
-
-        return result.toList()
+    private fun List<MediaImage>.filterByDateRange(range: DateRange?) = when {
+        range != null -> this.filter { it.dateAdded isIn range }
+        else -> this
     }
 }

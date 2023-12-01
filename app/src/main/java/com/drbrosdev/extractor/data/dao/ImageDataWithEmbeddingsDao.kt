@@ -12,7 +12,7 @@ interface ImageDataWithEmbeddingsDao {
 
     @Query(
         """
-            SELECT * FROM image_extraction_entity 
+            SELECT DISTINCT * FROM image_extraction_entity 
             LEFT JOIN text_embedding AS t ON media_store_id = t.image_entity_id 
             LEFT JOIN visual_embedding AS v ON media_store_id = v.image_entity_id 
             LEFT JOIN user_embedding AS u ON media_store_id = u.image_entity_id 
@@ -29,7 +29,7 @@ interface ImageDataWithEmbeddingsDao {
 
     @Query(
         """
-            SELECT * FROM image_extraction_entity 
+            SELECT DISTINCT * FROM image_extraction_entity 
             LEFT JOIN visual_embedding AS v ON media_store_id = v.image_entity_id 
             LEFT JOIN user_embedding AS u ON media_store_id = u.image_entity_id 
             WHERE (v.value LIKE :query) OR (u.value LIKE :query)
@@ -43,7 +43,7 @@ interface ImageDataWithEmbeddingsDao {
 
     @Query(
         """
-            SELECT * FROM image_extraction_entity 
+            SELECT DISTINCT * FROM image_extraction_entity 
             LEFT JOIN text_embedding AS t ON media_store_id = t.image_entity_id 
             LEFT JOIN user_embedding AS u ON media_store_id = u.image_entity_id 
             WHERE (t.value LIKE '%' || :query || '%') OR (u.value LIKE :query)
@@ -57,7 +57,7 @@ interface ImageDataWithEmbeddingsDao {
 
     @Query(
         """
-            SELECT * FROM image_extraction_entity 
+            SELECT DISTINCT * FROM image_extraction_entity 
             LEFT JOIN user_embedding AS u ON media_store_id = u.image_entity_id 
             WHERE (u.value LIKE '%' || :query || '%')
             GROUP BY image_extraction_entity.media_store_id
@@ -68,7 +68,7 @@ interface ImageDataWithEmbeddingsDao {
     suspend fun findByUserEmbedding(query: String) = findByUserEmbeddingFlow(query).first()
 
     @Query("""
-            SELECT * FROM image_extraction_entity 
+            SELECT DISTINCT * FROM image_extraction_entity 
             LEFT JOIN text_embedding AS t ON media_store_id = t.image_entity_id 
             LEFT JOIN user_embedding AS u ON media_store_id = u.image_entity_id 
             LEFT JOIN visual_embedding as v on media_store_id = v.image_entity_id
