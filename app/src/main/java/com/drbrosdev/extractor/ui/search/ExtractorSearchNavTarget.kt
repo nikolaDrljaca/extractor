@@ -56,7 +56,7 @@ data class ExtractorSearchNavTarget(
             },
             onExtractorHomeClicked = { navController.navigate(ExtractorHomeNavTarget) },
             onDone = {
-//                keyboardController?.hide()
+                keyboardController?.hide()
                 viewModel.performSearch(SearchStrategy.DIRTY_CHECKING)
             }
         )
