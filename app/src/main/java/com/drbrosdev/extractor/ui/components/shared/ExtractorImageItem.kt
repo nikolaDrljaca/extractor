@@ -1,6 +1,8 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import android.graphics.Bitmap
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -9,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -44,6 +47,31 @@ fun ExtractorImageItem(
         contentDescription = null,
         contentScale = ContentScale.Crop,
         placeholder = painterResource(id = R.drawable.baseline_image_24)
+    )
+}
+
+@Composable
+fun ExtractorImageItem(
+    modifier: Modifier = Modifier,
+    bitmap: Bitmap,
+    size: Int? = null,
+    onClick: () -> Unit
+) {
+    val sizeModifier = if (size != null) {
+        Modifier.size(size.dp)
+    } else {
+        Modifier
+    }
+
+    Image(
+        modifier = Modifier
+            .then(sizeModifier)
+            .clip(RoundedCornerShape(2.dp))
+            .clickable { onClick() }
+            .then(modifier),
+        bitmap = bitmap.asImageBitmap(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
     )
 }
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
@@ -25,6 +26,7 @@ class ExtractorSearchViewModel(
     query: String,
     labelType: LabelType,
     private val imageSearch: ImageSearchByLabel,
+    private val mediaImageRepository: MediaImageRepository,
     private val stateHandle: SavedStateHandle,
 ) : ViewModel() {
     val searchViewState = ExtractorSearchViewState(
@@ -79,17 +81,22 @@ class ExtractorSearchViewModel(
     private fun runSearch() {
         if (searchViewState.isBlank()) return
 
+        _state.update { ExtractorSearchScreenUiState.Loading }
+
         viewModelScope.launch {
-            _state.update { ExtractorSearchScreenUiState.Loading }
             val searchQuery = ImageSearchByLabel.Params(
                 query = searchViewState.query,
                 labelType = searchViewState.labelType,
                 dateRange = dateFilterState.dateRange()
             )
+
             val result = imageSearch.search(searchQuery).also {
                 lastQuery.update { LastQuery(searchViewState.query, searchViewState.labelType) }
             }
-            _state.createFrom(result)
+
+            val thumbnails = mediaImageRepository.getThumbnails(result)
+
+            _state.createFrom(result, thumbnails)
         }
     }
 

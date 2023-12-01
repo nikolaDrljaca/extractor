@@ -11,15 +11,6 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-object CoroutineModuleName {
-    const val IO = "IODispatcher"
-    const val Default = "DefaultDispatcher"
-}
-
-private val coroutineModule = module {
-    single(named(CoroutineModuleName.IO)) { Dispatchers.IO }
-    single(named(CoroutineModuleName.Default)) { Dispatchers.Default }
-}
 
 private val dataModule = module {
     single { ExtractorDatabase.createExtractorDatabase(androidContext()) }
