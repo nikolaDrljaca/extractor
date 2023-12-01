@@ -114,6 +114,8 @@ fun ExtractorSearchScreen(
                     ) {
                         Text(text = "Loading")
                     }
+                    is ExtractorSearchScreenUiState.FirstSearch -> ExtractorFirstSearch(modifier = Modifier.fillMaxSize())
+                    is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()
 
                     is ExtractorSearchScreenUiState.Success ->
                         ExtractorImageGrid(
@@ -121,9 +123,6 @@ fun ExtractorSearchScreen(
                             onClick = onNavToDetail,
                             gridState = gridState,
                         )
-
-                    is ExtractorSearchScreenUiState.FirstSearch -> ExtractorFirstSearch(modifier = Modifier.fillMaxSize())
-                    is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()
                 }
             }
 
