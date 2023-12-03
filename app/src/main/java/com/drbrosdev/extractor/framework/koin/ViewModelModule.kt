@@ -53,7 +53,8 @@ val viewModelModule = module {
             query = it.get(),
             labelType = it.get(),
             imageSearch = get<DefaultImageSearchByLabel>(),
-            stateHandle = get()
+            stateHandle = get(),
+            mediaImageRepository = get()
         )
     }
 

@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import android.graphics.Bitmap
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -70,6 +71,35 @@ fun ExtractorImageGrid(
         itemsIndexed(images, key = { _, it -> it.mediaImageId }) { index, it ->
             ExtractorImageItem(
                 imageUri = it.uri,
+                size = imageSize,
+                onClick = { onClick(index) },
+            )
+        }
+    }
+}
+
+@Composable
+fun ExtractorImageGrid(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(vertical = 112.dp),
+    onClick: (index: Int) -> Unit,
+    thumbnails: List<Bitmap>,
+    gridState: LazyGridState = rememberLazyGridState(),
+) {
+    val imageSize = 96
+
+    LazyVerticalGrid(
+        modifier = Modifier
+            .then(modifier),
+        columns = GridCells.Adaptive(minSize = imageSize.dp),
+        state = gridState,
+        verticalArrangement = Arrangement.spacedBy(1.dp),
+        horizontalArrangement = Arrangement.spacedBy(1.dp),
+        contentPadding = contentPadding
+    ) {
+        itemsIndexed(thumbnails) { index, it ->
+            ExtractorImageItem(
+                bitmap = it,
                 size = imageSize,
                 onClick = { onClick(index) },
             )

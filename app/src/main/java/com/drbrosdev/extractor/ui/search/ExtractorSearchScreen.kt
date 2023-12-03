@@ -26,6 +26,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
@@ -61,14 +62,17 @@ fun ExtractorSearchScreen(
     extractorStatusButtonState: ExtractorStatusButtonState,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberStandardBottomSheetState(confirmValueChange = {
-            when (it) {
-                SheetValue.Hidden -> false
-                SheetValue.Expanded -> true
-                SheetValue.PartiallyExpanded -> true
+        bottomSheetState = rememberStandardBottomSheetState(
+            confirmValueChange = {
+                when (it) {
+                    SheetValue.Hidden -> false
+                    SheetValue.Expanded -> true
+                    SheetValue.PartiallyExpanded -> true
+                }
             }
-        })
+        )
     )
+    val focusRequester = remember { FocusRequester() }
     val gridState = rememberLazyGridState()
     val extractorTopBarState = remember {
         derivedStateOf {
@@ -110,16 +114,15 @@ fun ExtractorSearchScreen(
                     ) {
                         Text(text = "Loading")
                     }
+                    is ExtractorSearchScreenUiState.FirstSearch -> ExtractorFirstSearch(modifier = Modifier.fillMaxSize())
+                    is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()
 
                     is ExtractorSearchScreenUiState.Success ->
                         ExtractorImageGrid(
-                            images = it.images,
+                            thumbnails = it.thumbnails,
                             onClick = onNavToDetail,
                             gridState = gridState,
                         )
-
-                    is ExtractorSearchScreenUiState.FirstSearch -> ExtractorFirstSearch(modifier = Modifier.fillMaxSize())
-                    is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()
                 }
             }
 

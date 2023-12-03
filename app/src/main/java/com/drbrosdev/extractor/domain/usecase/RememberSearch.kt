@@ -12,10 +12,10 @@ class RememberSearch(
 ) {
 
     suspend operator fun invoke(params: Params) = withContext(dispatcher) {
-        //Keep only the most recent 10 searches
-        val current = dao.findAllAndTake(10)
+        val amount = 10
+        val current = dao.findAllAndTake(amount)
 
-        if (current.isNotEmpty()) dao.delete(current.last())
+        if (current.size == amount) dao.delete(current.last())
 
         val out = with(params) {
             when (val existing = dao.findByQueryAndLabelType(query, labelType)) {
