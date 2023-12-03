@@ -29,7 +29,7 @@ class ExtractorStatusDialogViewModel(
     val state = flow {
         while (true) {
             emit(updateState())
-            delay(2000L)
+            delay(1000L)
         }
     }
         .stateIn(

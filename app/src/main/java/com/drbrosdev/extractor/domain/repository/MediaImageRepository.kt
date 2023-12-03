@@ -14,6 +14,7 @@ import com.drbrosdev.extractor.domain.getCount
 import com.drbrosdev.extractor.domain.mediaImagesFlow
 import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.runMediaImageQuery
+import com.drbrosdev.extractor.util.CONCURRENCY
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -74,8 +75,7 @@ class DefaultMediaImageRepository(
     override suspend fun getThumbnails(imagesPaths: List<MediaImage>): List<Bitmap> =
         withContext(dispatcher) {
             val size = 300
-
-            imagesPaths.parMap {
+            imagesPaths.parMap(concurrency = CONCURRENCY) {
                 when {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ->
                         contentResolver.loadThumbnail(it.uri, Size(size, size), null)

@@ -4,6 +4,7 @@ import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.data.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
+import com.drbrosdev.extractor.util.CONCURRENCY
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
@@ -22,7 +23,6 @@ class BulkExtractor(
 
         if (isOnDevice == isInStorage) return
 
-        val threads = Runtime.getRuntime().availableProcessors()
 
         val mediaImages = mediaImageRepository.findAllById(onDeviceIds.toList())
             .associateBy { it.mediaImageId }
@@ -31,14 +31,14 @@ class BulkExtractor(
             when {
                 isOnDevice.size > isInStorage.size -> {
                     //perform extraction
-                    isOnDevice.parMap(concurrency = threads) {
+                    isOnDevice.parMap(concurrency = CONCURRENCY) {
                         extractor.execute(mediaImages[it]!!)
                     }
                 }
 
                 isOnDevice.size < isInStorage.size -> {
                     //delete diff
-                    isInStorage.parMap(concurrency = threads) {
+                    isInStorage.parMap(concurrency = CONCURRENCY) {
                         extractorDataRepository.deleteExtractionData(it)
                     }
                 }
