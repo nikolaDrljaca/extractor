@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
-import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
+import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
@@ -23,7 +23,7 @@ class VisualEmbeddingDaoTest {
     private lateinit var extractorDao: ExtractionEntityDao
     private lateinit var textDao: TextEmbeddingDao
     private lateinit var visualDao: VisualEmbeddingDao
-    private lateinit var queryDao: ImageDataWithEmbeddingsDao
+    private lateinit var queryDao: ImageEmbeddingsDao
 
     @Before
     fun init() {

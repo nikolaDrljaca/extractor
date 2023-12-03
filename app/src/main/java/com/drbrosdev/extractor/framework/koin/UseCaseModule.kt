@@ -67,7 +67,7 @@ val useCaseModule = module {
         DefaultImageSearchByLabel(
             dispatcher = get(named(CoroutineModuleName.IO)),
             mediaImageRepository = get(),
-            imageDataWithEmbeddingsDao = get(),
+            imageEmbeddingRepository = get(),
             rememberSearch = get()
         )
     } bind ImageSearchByLabel::class

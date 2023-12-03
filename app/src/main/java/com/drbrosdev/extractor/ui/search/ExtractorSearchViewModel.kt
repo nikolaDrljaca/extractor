@@ -15,6 +15,9 @@ import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearch
 import com.drbrosdev.extractor.ui.components.extractorsearchview.isBlank
 import com.drbrosdev.extractor.ui.components.extractorsearchview.labelTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTypeSwitchState
+import com.drbrosdev.extractor.ui.components.shared.selectionFlow
+import com.drbrosdev.extractor.util.toSearchType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -36,6 +39,8 @@ class ExtractorSearchViewModel(
 
     val dateFilterState = ExtractorDateFilterState()
 
+    val searchTypeState = ExtractorSearchTypeSwitchState()
+
     private val _state = MutableStateFlow<ExtractorSearchScreenUiState>(
         ExtractorSearchScreenUiState.FirstSearch
     )
@@ -44,6 +49,10 @@ class ExtractorSearchViewModel(
     private val lastQuery = MutableStateFlow(LastQuery(query, labelType))
 
     private val labelTypeUpdateFlow = searchViewState.labelTypeAsFlow()
+        .onEach { performSearch(SearchStrategy.NORMAL) }
+        .launchIn(viewModelScope)
+
+    private val searchTypeUpdateFlow = searchTypeState.selectionFlow()
         .onEach { performSearch(SearchStrategy.NORMAL) }
         .launchIn(viewModelScope)
 
@@ -87,7 +96,8 @@ class ExtractorSearchViewModel(
             val searchQuery = ImageSearchByLabel.Params(
                 query = searchViewState.query,
                 labelType = searchViewState.labelType,
-                dateRange = dateFilterState.dateRange()
+                dateRange = dateFilterState.dateRange(),
+                type = searchTypeState.selection.toSearchType()
             )
 
             val result = imageSearch.search(searchQuery).also {

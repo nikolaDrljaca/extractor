@@ -10,6 +10,7 @@ import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFi
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTypeSwitchState
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -46,6 +47,7 @@ data class ExtractorSearchNavTarget(
             extractorStatusButtonState = extractorStatusButtonState,
             searchViewState = viewModel.searchViewState,
             dateFilterState = viewModel.dateFilterState,
+            searchTypeSwitchState = viewModel.searchTypeState,
             onNavToDetail = { selectedIndex ->
                 navController.navigate(
                     ExtractorImageNavTarget(
@@ -74,7 +76,8 @@ private fun SearchScreenPreview() {
             onExtractorHomeClicked = {},
             onDone = {},
             searchViewState = ExtractorSearchViewState("", LabelType.ALL),
-            dateFilterState = ExtractorDateFilterState()
+            dateFilterState = ExtractorDateFilterState(),
+            searchTypeSwitchState = ExtractorSearchTypeSwitchState()
         )
     }
 }

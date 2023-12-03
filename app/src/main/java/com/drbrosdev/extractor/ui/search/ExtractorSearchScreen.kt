@@ -46,6 +46,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorFirstSearch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageGrid
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchBottomSheet
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTypeSwitchState
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 
@@ -59,6 +60,7 @@ fun ExtractorSearchScreen(
     state: ExtractorSearchScreenUiState,
     dateFilterState: ExtractorDateFilterState,
     searchViewState: ExtractorSearchViewState,
+    searchTypeSwitchState: ExtractorSearchTypeSwitchState,
     extractorStatusButtonState: ExtractorStatusButtonState,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState(
@@ -87,7 +89,8 @@ fun ExtractorSearchScreen(
             ExtractorSearchBottomSheet(
                 onDone = onDone,
                 searchViewState = searchViewState,
-                dateFilterState = dateFilterState
+                dateFilterState = dateFilterState,
+                searchTypeSwitchState = searchTypeSwitchState
             )
         },
         sheetContainerColor = MaterialTheme.colorScheme.primary,
