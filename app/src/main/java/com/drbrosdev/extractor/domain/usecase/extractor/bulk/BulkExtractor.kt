@@ -22,6 +22,8 @@ class BulkExtractor(
 
         if (isOnDevice == isInStorage) return
 
+        val threads = Runtime.getRuntime().availableProcessors()
+
         val mediaImages = mediaImageRepository.findAllById(onDeviceIds.toList())
             .associateBy { it.mediaImageId }
 
@@ -29,14 +31,14 @@ class BulkExtractor(
             when {
                 isOnDevice.size > isInStorage.size -> {
                     //perform extraction
-                    isOnDevice.parMap {
+                    isOnDevice.parMap(concurrency = threads) {
                         extractor.execute(mediaImages[it]!!)
                     }
                 }
 
                 isOnDevice.size < isInStorage.size -> {
                     //delete diff
-                    isInStorage.parMap {
+                    isInStorage.parMap(concurrency = threads) {
                         extractorDataRepository.deleteExtractionData(it)
                     }
                 }
