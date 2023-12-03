@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Size
+import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.domain.findByUri
 import com.drbrosdev.extractor.domain.getCount
 import com.drbrosdev.extractor.domain.mediaImagesFlow
@@ -74,7 +75,7 @@ class DefaultMediaImageRepository(
         withContext(dispatcher) {
             val size = 300
 
-            imagesPaths.map {
+            imagesPaths.parMap {
                 when {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ->
                         contentResolver.loadThumbnail(it.uri, Size(size, size), null)

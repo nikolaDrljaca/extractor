@@ -1,11 +1,10 @@
 package com.drbrosdev.extractor.domain.usecase.extractor.bulk
 
+import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.data.repository.ExtractorRepository
-import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class BulkExtractor(
@@ -23,40 +22,27 @@ class BulkExtractor(
 
         if (isOnDevice == isInStorage) return
 
-        val threads = Runtime.getRuntime().availableProcessors()
         val mediaImages = mediaImageRepository.findAllById(onDeviceIds.toList())
             .associateBy { it.mediaImageId }
 
         withContext(dispatcher) {
-            val chunks = when {
-                isOnDevice.isNotEmpty() and (isOnDevice.size < threads) -> listOf(isOnDevice.toList())
-                isOnDevice.isNotEmpty() -> isOnDevice.chunked(isOnDevice.size / threads)
-                else -> emptyList()
-            }
-
-            chunks.forEach { chk ->
-                launch {
-                    //For each image only on device, I need to run extraction
-                    chk.forEach {
-                        val mediaImage = mediaImages[it]!!
-                        extractor.execute(mediaImage)
+            when {
+                isOnDevice.size > isInStorage.size -> {
+                    //perform extraction
+                    isOnDevice.parMap {
+                        extractor.execute(mediaImages[it]!!)
                     }
                 }
-            }
 
-            launch {
-                isInStorage.forEach {
-                    extractorDataRepository.deleteExtractionData(imageEntityId = it)
+                isOnDevice.size < isInStorage.size -> {
+                    //delete diff
+                    isInStorage.parMap {
+                        extractorDataRepository.deleteExtractionData(it)
+                    }
                 }
+
+                else -> Unit
             }
         }
-    }
-
-    private fun toMap(items: List<MediaImage>): Map<Long, MediaImage> {
-        val out = mutableMapOf<Long, MediaImage>()
-        items.forEach {
-            out[it.mediaImageId] = it
-        }
-        return out
     }
 }
