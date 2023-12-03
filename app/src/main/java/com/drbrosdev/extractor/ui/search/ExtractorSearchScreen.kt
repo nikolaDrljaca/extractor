@@ -15,7 +15,6 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
@@ -26,9 +25,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -74,7 +71,6 @@ fun ExtractorSearchScreen(
             }
         )
     )
-    val focusRequester = remember { FocusRequester() }
     val gridState = rememberLazyGridState()
     val extractorTopBarState = remember {
         derivedStateOf {
@@ -178,16 +174,4 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
 private object ViewIds {
     const val MAIN_CONTENT = "content"
     const val TOP_BAR = "topBar"
-}
-
-@Composable
-private fun LoadingView(
-    modifier: Modifier = Modifier,
-) {
-    LinearProgressIndicator(
-        modifier = Modifier.then(modifier),
-        color = MaterialTheme.colorScheme.primary,
-        trackColor = Color.Transparent,
-        strokeCap = StrokeCap.Round
-    )
 }
