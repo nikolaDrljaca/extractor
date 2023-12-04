@@ -21,66 +21,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.domain.model.asString
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import kotlinx.coroutines.flow.Flow
-
-class ExtractorSearchTypeSwitchState(
-    initialSelection: Selection = Selection.PARTIAL
-) {
-
-    var selection by mutableStateOf(initialSelection)
-        private set
-
-    fun updateSelection(value: Selection) {
-        selection = value
-    }
-
-    enum class Selection {
-        FULL,
-        PARTIAL
-    }
-
-    companion object {
-
-        fun Saver() =
-            androidx.compose.runtime.saveable.Saver<ExtractorSearchTypeSwitchState, Selection>(
-                save = { it.selection },
-                restore = {
-                    ExtractorSearchTypeSwitchState(
-                        initialSelection = it
-                    )
-                }
-            )
-    }
-}
-
-fun ExtractorSearchTypeSwitchState.Selection.asString(): String {
-    return when (this) {
-        ExtractorSearchTypeSwitchState.Selection.FULL -> "Full"
-        ExtractorSearchTypeSwitchState.Selection.PARTIAL -> "Partial"
-    }
-}
-
-fun ExtractorSearchTypeSwitchState.selectionFlow(): Flow<ExtractorSearchTypeSwitchState.Selection> {
-    return snapshotFlow { this.selection }
-}
-
-@Composable
-fun rememberExtractorSearchTypeSwitchState(
-    initial: ExtractorSearchTypeSwitchState.Selection
-): ExtractorSearchTypeSwitchState {
-    return rememberSaveable(saver = ExtractorSearchTypeSwitchState.Saver()) {
-        ExtractorSearchTypeSwitchState(initial)
-    }
-}
-
-private val selectionItems = ExtractorSearchTypeSwitchState.Selection.entries.toList()
 
 @Composable
 fun ExtractorSearchTypeSwitch(
     modifier: Modifier = Modifier,
     contentColor: Color = Color.White,
-    state: ExtractorSearchTypeSwitchState
+    selection: SearchType,
+    onSelectionChanged: (SearchType) -> Unit,
 ) {
 
     Column {
@@ -98,11 +49,11 @@ fun ExtractorSearchTypeSwitch(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            selectionItems.forEach { item ->
+            SearchType.entries.toList().forEach { item ->
                 FilterChip(
-                    selected = state.selection == item,
+                    selected = selection == item,
                     onClick = {
-                        state.updateSelection(item)
+                              onSelectionChanged(item)
                     },
                     label = { Text(text = item.asString()) },
                     leadingIcon = {},
@@ -116,7 +67,7 @@ fun ExtractorSearchTypeSwitch(
                     ),
                     border = FilterChipDefaults.filterChipBorder(
                         enabled = true,
-                        selected = state.selection == item,
+                        selected = selection == item,
                         borderColor = Color.White
                     )
                 )
@@ -130,9 +81,8 @@ fun ExtractorSearchTypeSwitch(
 private fun CurrentPreview() {
     ExtractorTheme {
         ExtractorSearchTypeSwitch(
-            state = ExtractorSearchTypeSwitchState(
-                ExtractorSearchTypeSwitchState.Selection.PARTIAL
-            )
+            selection = SearchType.PARTIAL,
+            onSelectionChanged = {}
         )
     }
 }

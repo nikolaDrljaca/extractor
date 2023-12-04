@@ -109,7 +109,6 @@ fun ExtractorSearchBottomSheet(
     onDone: () -> Unit,
     searchViewState: ExtractorSearchViewState,
     dateFilterState: ExtractorDateFilterState,
-    searchTypeSwitchState: ExtractorSearchTypeSwitchState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -124,8 +123,6 @@ fun ExtractorSearchBottomSheet(
             state = searchViewState,
             contentPadding = PaddingValues()
         )
-
-        ExtractorSearchTypeSwitch(state = searchTypeSwitchState)
 
         ExtractorDateFilter(state = dateFilterState)
 
@@ -229,7 +226,6 @@ private fun SheetPreview() {
                 onDone = {},
                 searchViewState = ExtractorSearchViewState("", LabelType.ALL),
                 dateFilterState = ExtractorDateFilterState(),
-                searchTypeSwitchState = ExtractorSearchTypeSwitchState()
             )
         }
     }
