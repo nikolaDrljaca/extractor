@@ -8,13 +8,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.SearchType
 import kotlinx.coroutines.flow.Flow
 
 
 @Stable
 class ExtractorSearchViewState(
     initialQuery: String,
-    initialLabelType: LabelType
+    initialLabelType: LabelType,
+    initialSearchType: SearchType = SearchType.PARTIAL
 ) {
     var query by mutableStateOf(initialQuery)
         private set
@@ -22,9 +24,16 @@ class ExtractorSearchViewState(
     var labelType by mutableStateOf(initialLabelType)
         private set
 
+    var searchType by mutableStateOf(initialSearchType)
+        private set
+
     inline fun updateQuery(block: (String) -> String) {
         val new = block(query)
         updateQuery(new)
+    }
+
+    fun updateSearchType(value: SearchType) {
+        searchType = value
     }
 
     fun updateQuery(new: String) {
@@ -41,7 +50,8 @@ class ExtractorSearchViewState(
             restore = {
                 ExtractorSearchViewState(
                     initialQuery = it,
-                    initialLabelType = LabelType.ALL
+                    initialLabelType = LabelType.ALL,
+                    initialSearchType = SearchType.PARTIAL
                 )
             }
         )
@@ -53,25 +63,29 @@ fun ExtractorSearchViewState.isBlank(): Boolean {
 }
 
 fun ExtractorSearchViewState.isNotBlank(): Boolean {
-    return isBlank()
+    return !isBlank()
 }
 
 fun ExtractorSearchViewState.initialLabelTypeIndex(): Int {
-    return when(labelType) {
+    return when (labelType) {
         LabelType.ALL -> 0
         LabelType.TEXT -> 1
         LabelType.IMAGE -> 2
     }
 }
 
+
 @Composable
 fun rememberExtractorSearchViewState(
     initialQuery: String,
-    initialLabelType: LabelType
+    initialLabelType: LabelType,
+    initialSearchType: SearchType = SearchType.PARTIAL
 ): ExtractorSearchViewState {
     return rememberSaveable(saver = ExtractorSearchViewState.Saver()) {
         ExtractorSearchViewState(
-            initialQuery, initialLabelType
+            initialQuery = initialQuery,
+            initialLabelType = initialLabelType,
+            initialSearchType = initialSearchType
         )
     }
 }
@@ -82,4 +96,8 @@ fun ExtractorSearchViewState.queryAsFlow(): Flow<String> {
 
 fun ExtractorSearchViewState.labelTypeAsFlow(): Flow<LabelType> {
     return snapshotFlow { this.labelType }
+}
+
+fun ExtractorSearchViewState.searchTypeAsFlow(): Flow<SearchType> {
+    return snapshotFlow { this.searchType }
 }

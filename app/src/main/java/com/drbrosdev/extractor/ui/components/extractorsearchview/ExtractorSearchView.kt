@@ -21,8 +21,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.ImageLabelFilterChips
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toLabelType
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTypeSwitch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextField
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
@@ -84,10 +86,14 @@ fun ExtractorSearchView(
                 contentColor = Color.White,
                 initial = state.initialLabelTypeIndex()
             )
+
+            ExtractorSearchTypeSwitch(
+                selection = state.searchType,
+                onSelectionChanged = state::updateSearchType
+            )
         }
     }
 }
-
 
 
 @Preview
@@ -96,7 +102,11 @@ private fun CurrentPreview() {
     ExtractorTheme {
         ExtractorSearchView(
             onDone = {},
-            state = ExtractorSearchViewState("", LabelType.ALL)
+            state = ExtractorSearchViewState(
+                "",
+                LabelType.ALL,
+                SearchType.PARTIAL
+            )
         )
     }
 }

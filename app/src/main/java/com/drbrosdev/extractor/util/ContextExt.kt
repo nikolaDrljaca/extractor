@@ -1,7 +1,12 @@
 package com.drbrosdev.extractor.util
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.core.content.ContextCompat
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.MediaImage
 import kotlinx.coroutines.Dispatchers
@@ -39,3 +44,22 @@ suspend fun Context.launchUseAsIntent(media: MediaImage) =
         }
         startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
     }
+
+fun Context.findActivity(): Activity {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    error("No activity found.")
+}
+
+fun Context.checkAndRequestPermission(
+    permission: String,
+    launcher: ManagedActivityResultLauncher<String, Boolean>
+) {
+    val result = ContextCompat.checkSelfPermission(this, permission)
+    if (result != PackageManager.PERMISSION_GRANTED) {
+        launcher.launch(permission)
+    }
+}

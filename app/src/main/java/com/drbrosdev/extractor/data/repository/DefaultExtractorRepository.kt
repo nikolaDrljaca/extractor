@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.data.repository
 
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
-import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
+import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
@@ -21,7 +21,7 @@ class DefaultExtractorRepository(
     private val visualEmbeddingDao: VisualEmbeddingDao,
     private val textEmbeddingDao: TextEmbeddingDao,
     private val userEmbeddingDao: UserEmbeddingDao,
-    private val imageDataWithEmbeddingsDao: ImageDataWithEmbeddingsDao,
+    private val imageEmbeddingsDao: ImageEmbeddingsDao,
 ) : ExtractorRepository {
 
     override suspend fun deleteExtractionData(imageEntityId: Long) {
@@ -42,7 +42,7 @@ class DefaultExtractorRepository(
     }
 
     override fun findImageDataByMediaId(mediaImageId: Long) =
-        imageDataWithEmbeddingsDao.findByMediaImageId(mediaImageId)
+        imageEmbeddingsDao.findByMediaImageId(mediaImageId)
 
     override suspend fun updateTextEmbed(embedUpdate: EmbedUpdate) = with(embedUpdate) {
         textEmbeddingDao.update(value, mediaImageId)

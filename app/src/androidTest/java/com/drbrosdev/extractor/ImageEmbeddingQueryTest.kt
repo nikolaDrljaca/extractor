@@ -6,11 +6,11 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
-import com.drbrosdev.extractor.data.dao.ImageDataWithEmbeddingsDao
+import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
+import com.drbrosdev.extractor.data.relation.ImageEmbeddingsRelation
 import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
 import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 import kotlinx.coroutines.runBlocking
@@ -26,7 +26,7 @@ class ImageEmbeddingQueryTest {
     private lateinit var extractorDao: ExtractionEntityDao
     private lateinit var textDao: TextEmbeddingDao
     private lateinit var visualDao: VisualEmbeddingDao
-    private lateinit var queryDao: ImageDataWithEmbeddingsDao
+    private lateinit var queryDao: ImageEmbeddingsDao
 
     @Before
     fun setup() {
@@ -119,7 +119,7 @@ class ImageEmbeddingQueryTest {
     @Test
     fun shouldFindWithCombinedQuery() = runBlocking {
         val query = "visualData this"
-        val out = mutableListOf<List<ImageDataWithEmbeddings>>()
+        val out = mutableListOf<List<ImageEmbeddingsRelation>>()
         query.split(" ").forEach {
             out.add(queryDao.findByLabel(it))
         }

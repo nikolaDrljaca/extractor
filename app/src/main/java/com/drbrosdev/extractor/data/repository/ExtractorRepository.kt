@@ -4,7 +4,7 @@ import com.drbrosdev.extractor.data.entity.ExtractionEntity
 import com.drbrosdev.extractor.data.payload.CreateExtraction
 import com.drbrosdev.extractor.data.payload.EmbedUpdate
 import com.drbrosdev.extractor.data.payload.NewEmbed
-import com.drbrosdev.extractor.data.relation.ImageDataWithEmbeddings
+import com.drbrosdev.extractor.data.relation.ImageEmbeddingsRelation
 import kotlinx.coroutines.flow.Flow
 
 interface ExtractorRepository {
@@ -15,7 +15,7 @@ interface ExtractorRepository {
 
     suspend fun getAllIds(): Set<Long>
 
-    fun findImageDataByMediaId(mediaImageId: Long): Flow<ImageDataWithEmbeddings?>
+    fun findImageDataByMediaId(mediaImageId: Long): Flow<ImageEmbeddingsRelation?>
 
     suspend fun updateTextEmbed(embedUpdate: EmbedUpdate)
 

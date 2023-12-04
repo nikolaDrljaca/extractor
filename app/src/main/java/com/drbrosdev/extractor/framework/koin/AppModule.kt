@@ -4,8 +4,9 @@ import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.data.datastore
 import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.data.repository.DefaultImageEmbeddingRepository
 import com.drbrosdev.extractor.data.repository.ExtractorRepository
-import kotlinx.coroutines.Dispatchers
+import com.drbrosdev.extractor.data.repository.ImageEmbeddingRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -33,9 +34,15 @@ private val dataModule = module {
             visualEmbeddingDao = get(),
             textEmbeddingDao = get(),
             userEmbeddingDao = get(),
-            imageDataWithEmbeddingsDao = get()
+            imageEmbeddingsDao = get()
         )
     } bind ExtractorRepository::class
+
+    factory {
+        DefaultImageEmbeddingRepository(
+            imageEmbeddingsDao = get()
+        )
+    } bind ImageEmbeddingRepository::class
 }
 
 

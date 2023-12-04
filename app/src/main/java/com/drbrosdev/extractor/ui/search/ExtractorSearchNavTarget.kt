@@ -74,7 +74,7 @@ private fun SearchScreenPreview() {
             onExtractorHomeClicked = {},
             onDone = {},
             searchViewState = ExtractorSearchViewState("", LabelType.ALL),
-            dateFilterState = ExtractorDateFilterState()
+            dateFilterState = ExtractorDateFilterState(),
         )
     }
 }

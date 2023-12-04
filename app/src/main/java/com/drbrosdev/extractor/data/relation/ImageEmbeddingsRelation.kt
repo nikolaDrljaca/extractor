@@ -8,7 +8,7 @@ import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
 import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 
 
-data class ImageDataWithEmbeddings(
+data class ImageEmbeddingsRelation(
     @Embedded val imageEntity: ExtractionEntity,
 
     @Relation(
