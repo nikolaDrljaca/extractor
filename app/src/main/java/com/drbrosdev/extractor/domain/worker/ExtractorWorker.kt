@@ -4,14 +4,14 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
+import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 
 class ExtractorWorker(
     context: Context,
     workerParameters: WorkerParameters,
     private val extractor: BulkExtractor,
-    private val mediaImageRepository: MediaImageRepository,
+    private val mediaImageRepository: MediaStoreImageRepository,
     private val extractionEntityDao: ExtractionEntityDao
 ) : CoroutineWorker(context, workerParameters) {
 

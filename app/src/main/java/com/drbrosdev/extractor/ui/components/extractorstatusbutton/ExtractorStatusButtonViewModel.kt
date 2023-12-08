@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import androidx.work.await
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.worker.WorkNames
+import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 
 
 class ExtractorStatusButtonViewModel(
-    private val mediaImageRepository: MediaImageRepository,
+    private val mediaImageRepository: MediaStoreImageRepository,
     private val extractionEntityDao: ExtractionEntityDao,
     private val workManager: WorkManager
 ) : ViewModel() {

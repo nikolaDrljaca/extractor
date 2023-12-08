@@ -37,20 +37,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.LabelType
-import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilter
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchView
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.toUri
 
 
 @Composable
 fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 112.dp),
-    images: List<MediaImage>,
+    images: List<Extraction>,
     onClick: (index: Int) -> Unit,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
@@ -65,9 +66,9 @@ fun ExtractorImageGrid(
         horizontalArrangement = Arrangement.spacedBy(1.dp),
         contentPadding = contentPadding
     ) {
-        itemsIndexed(images, key = { _, it -> it.mediaImageId }) { index, it ->
+        itemsIndexed(images, key = { _, it -> it.mediaImageId.id }) { index, it ->
             ExtractorImageItem(
-                imageUri = it.uri,
+                imageUri = it.uri.toUri(),
                 size = imageSize,
                 onClick = { onClick(index) },
             )

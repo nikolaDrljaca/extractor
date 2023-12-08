@@ -1,11 +1,11 @@
 package com.drbrosdev.extractor.ui.search
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.LabelType
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
@@ -27,7 +27,6 @@ class ExtractorSearchViewModel(
     query: String,
     labelType: LabelType,
     private val imageSearch: ImageSearchByLabel,
-    private val mediaImageRepository: MediaImageRepository,
     private val stateHandle: SavedStateHandle,
 ) : ViewModel() {
     val searchViewState = ExtractorSearchViewState(
@@ -36,7 +35,6 @@ class ExtractorSearchViewModel(
     )
 
     val dateFilterState = ExtractorDateFilterState()
-
 
     private val _state = MutableStateFlow<ExtractorSearchScreenUiState>(
         ExtractorSearchScreenUiState.FirstSearch
@@ -79,7 +77,7 @@ class ExtractorSearchViewModel(
 
     fun getImageUris(): List<Uri> {
         return when (val out = state.value) {
-            is ExtractorSearchScreenUiState.Success -> out.images.map { it.uri }
+            is ExtractorSearchScreenUiState.Success -> out.images.map { it.uri.uri.toUri() }
             else -> emptyList()
         }
     }
@@ -101,9 +99,7 @@ class ExtractorSearchViewModel(
                 lastQuery.update { LastQuery(searchViewState.query, searchViewState.labelType) }
             }
 
-            val thumbnails = mediaImageRepository.getThumbnails(result)
-
-            _state.createFrom(result, thumbnails)
+            _state.createFrom(result)
         }
     }
 

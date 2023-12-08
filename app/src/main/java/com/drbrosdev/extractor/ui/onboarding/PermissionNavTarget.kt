@@ -13,13 +13,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.findActivity
-import com.drbrosdev.extractor.openAppSettings
 import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
 import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
 import com.drbrosdev.extractor.ui.components.shared.OnboardingCardHeadline
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerOnbCard
+import com.drbrosdev.extractor.util.findActivity
+import com.drbrosdev.extractor.util.openAppSettings
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize

@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import androidx.work.await
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
 import com.drbrosdev.extractor.domain.worker.WorkNames
+import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ExtractorStatusDialogViewModel(
-    private val mediaImageRepository: MediaImageRepository,
+    private val mediaImageRepository: MediaStoreImageRepository,
     private val extractionEntityDao: ExtractionEntityDao,
     private val bulkExtractor: BulkExtractor,
     private val workManager: WorkManager

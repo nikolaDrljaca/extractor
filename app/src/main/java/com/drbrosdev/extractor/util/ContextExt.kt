@@ -8,12 +8,12 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.framework.mediastore.MediaStoreImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-suspend fun Context.launchShareIntent(media: MediaImage) =
+suspend fun Context.launchShareIntent(media: MediaStoreImage) =
     withContext(Dispatchers.Default) {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = media.mimeType
@@ -23,7 +23,7 @@ suspend fun Context.launchShareIntent(media: MediaImage) =
         startActivity(Intent.createChooser(intent, "Share Image via..."))
     }
 
-suspend fun Context.launchEditIntent(media: MediaImage) =
+suspend fun Context.launchEditIntent(media: MediaStoreImage) =
     withContext(Dispatchers.Default) {
         val intent = Intent(Intent.ACTION_EDIT).apply {
             addCategory(Intent.CATEGORY_DEFAULT)
@@ -34,7 +34,7 @@ suspend fun Context.launchEditIntent(media: MediaImage) =
         startActivity(Intent.createChooser(intent, getString(R.string.edit)))
     }
 
-suspend fun Context.launchUseAsIntent(media: MediaImage) =
+suspend fun Context.launchUseAsIntent(media: MediaStoreImage) =
     withContext(Dispatchers.Default) {
         val intent = Intent(Intent.ACTION_ATTACH_DATA).apply {
             addCategory(Intent.CATEGORY_DEFAULT)

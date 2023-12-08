@@ -1,8 +1,7 @@
 package com.drbrosdev.extractor.framework.koin
 
-import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
-import com.drbrosdev.extractor.domain.repository.DefaultMediaImageRepository
-import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByLabel
+import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
@@ -30,7 +29,7 @@ val viewModelModule = module {
 
     viewModel {
         ExtractorStatusButtonViewModel(
-            mediaImageRepository = get<DefaultMediaImageRepository>(),
+            mediaImageRepository = get<DefaultMediaStoreImageRepository>(),
             extractionEntityDao = get(),
             workManager = get()
         )
@@ -44,7 +43,7 @@ val viewModelModule = module {
 
     viewModel {
         ExtractorImageViewModel(
-            mediaImageRepository = get<DefaultMediaImageRepository>()
+            loadMediaImageInfo = get()
         )
     }
 
@@ -52,9 +51,8 @@ val viewModelModule = module {
         com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel(
             query = it.get(),
             labelType = it.get(),
-            imageSearch = get<DefaultImageSearchByLabel>(),
+            imageSearch = get(),
             stateHandle = get(),
-            mediaImageRepository = get()
         )
     }
 
@@ -62,13 +60,12 @@ val viewModelModule = module {
         ExtractorImageInfoViewModel(
             mediaImageId = it.get(),
             extractorDataRepository = get<DefaultExtractorRepository>(),
-            mediaImageRepository = get<DefaultMediaImageRepository>()
         )
     }
 
     viewModel {
         ExtractorStatusDialogViewModel(
-            mediaImageRepository = get<DefaultMediaImageRepository>(),
+            mediaImageRepository = get<DefaultMediaStoreImageRepository>(),
             extractionEntityDao = get(),
             bulkExtractor = get(),
             workManager = get()

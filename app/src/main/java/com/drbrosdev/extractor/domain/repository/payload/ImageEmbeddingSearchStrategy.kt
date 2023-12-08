@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.data.payload
+package com.drbrosdev.extractor.domain.repository.payload
 
 sealed class ImageEmbeddingSearchStrategy {
     abstract val query: String

@@ -1,8 +1,7 @@
 package com.drbrosdev.extractor.ui.search
 
-import android.graphics.Bitmap
 import androidx.compose.runtime.Stable
-import com.drbrosdev.extractor.domain.model.MediaImage
+import com.drbrosdev.extractor.domain.model.Extraction
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +12,7 @@ import kotlinx.coroutines.flow.update
 sealed class ExtractorSearchScreenUiState {
 
     data class Success(
-        val images: ImmutableList<MediaImage>,
-        val thumbnails: List<Bitmap>
+        val images: ImmutableList<Extraction>,
     ) : ExtractorSearchScreenUiState()
 
     data object Loading : ExtractorSearchScreenUiState()
@@ -25,11 +23,10 @@ sealed class ExtractorSearchScreenUiState {
 }
 
 fun MutableStateFlow<ExtractorSearchScreenUiState>.createFrom(
-    mediaImages: List<MediaImage>,
-    thumbnails: List<Bitmap>
+    mediaImages: List<Extraction>,
 ) = update {
     when {
         mediaImages.isEmpty() -> ExtractorSearchScreenUiState.Empty
-        else -> ExtractorSearchScreenUiState.Success(mediaImages.toImmutableList(), thumbnails)
+        else -> ExtractorSearchScreenUiState.Success(mediaImages.toImmutableList())
     }
 }
