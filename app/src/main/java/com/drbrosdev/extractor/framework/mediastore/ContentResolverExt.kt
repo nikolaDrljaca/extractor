@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain
+package com.drbrosdev.extractor.framework.mediastore
 
 import android.content.ContentResolver
 import android.database.ContentObserver
@@ -6,7 +6,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
-import com.drbrosdev.extractor.domain.model.MediaImage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -17,17 +16,16 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-
-fun ContentResolver.mediaImagesFlow() = observe(
+fun ContentResolver.mediaStoreImagesFlow() = observe(
     uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-).map { runMediaImageQuery() }
+).map { runMediaStoreImageQuery() }
 
 
-suspend fun ContentResolver.runMediaImageQuery(
+suspend fun ContentResolver.runMediaStoreImageQuery(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     selection: String? = null
-): List<MediaImage> = withContext(dispatcher) {
-    val out = mutableListOf<MediaImage>()
+): List<MediaStoreImage> = withContext(dispatcher) {
+    val out = mutableListOf<MediaStoreImage>()
     val projection = arrayOf(
         MediaStore.Images.Media._ID,
         MediaStore.Images.Media.DISPLAY_NAME,
@@ -46,7 +44,7 @@ suspend fun ContentResolver.runMediaImageQuery(
         MediaStore.Images.Media.DATE_ADDED + " DESC"
     )?.use { cursor ->
         while (cursor.moveToNext()) {
-            out.add(cursor.toMediaImage())
+            out.add(cursor.toMediaStoreImage())
         }
     }
     out
@@ -56,7 +54,7 @@ suspend fun ContentResolver.runMediaImageQuery(
 suspend fun ContentResolver.findByUri(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     uri: Uri
-): MediaImage? = withContext(dispatcher) {
+): MediaStoreImage? = withContext(dispatcher) {
     val projection = arrayOf(
         MediaStore.Images.Media._ID,
         MediaStore.Images.Media.DISPLAY_NAME,
@@ -75,7 +73,7 @@ suspend fun ContentResolver.findByUri(
         null
     )?.use { cursor ->
         if (cursor.moveToFirst()) {
-            return@withContext cursor.toMediaImage()
+            return@withContext cursor.toMediaStoreImage()
         }
     }
 
@@ -100,7 +98,7 @@ suspend fun ContentResolver.getCount(
     0
 }
 
-private fun Cursor.toMediaImage(): MediaImage {
+private fun Cursor.toMediaStoreImage(): MediaStoreImage {
     val id = getLong(getColumnIndexOrThrow(MediaStore.Images.Media._ID))
     val displayName = getString(getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME))
     val dateAdded = getLong(getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED))
@@ -127,7 +125,7 @@ private fun Cursor.toMediaImage(): MediaImage {
     val extension = path.substringAfterLast(".")
     val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension).toString()
 
-    return MediaImage(
+    return MediaStoreImage(
         mediaImageId = id,
         displayName = displayName,
         dateAdded = formatted,
@@ -152,4 +150,3 @@ private fun ContentResolver.observe(uri: Uri) = callbackFlow {
     trySend(false)
     awaitClose { unregisterContentObserver(observer) }
 }
-

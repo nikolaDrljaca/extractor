@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.framework.koin
 
-import com.drbrosdev.extractor.data.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.RememberSearch
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
@@ -9,10 +10,11 @@ import com.drbrosdev.extractor.domain.usecase.image.create.DefaultInputImageFact
 import com.drbrosdev.extractor.domain.usecase.image.create.InputImageFactory
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByLabel
 import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
-import com.drbrosdev.extractor.domain.usecase.label.extractor.ImageLabelExtractor
-import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitImageLabelExtractor
-import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitTextExtractor
-import com.drbrosdev.extractor.domain.usecase.text.extractor.TextExtractor
+import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitVisualEmbedExtractor
+import com.drbrosdev.extractor.domain.usecase.label.extractor.VisualEmbedExtractor
+import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitTextEmbedExtractor
+import com.drbrosdev.extractor.domain.usecase.text.extractor.TextEmbedExtractor
+import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -26,24 +28,23 @@ val useCaseModule = module {
     } bind InputImageFactory::class
 
     factory {
-        MLKitImageLabelExtractor(
+        MLKitVisualEmbedExtractor(
             dispatcher = get(named(CoroutineModuleName.Default))
         )
-    } bind ImageLabelExtractor::class
+    } bind VisualEmbedExtractor::class
 
     factory {
-        MlKitTextExtractor(
+        MlKitTextEmbedExtractor(
             dispatcher = get(named(CoroutineModuleName.Default))
         )
-    } bind TextExtractor::class
+    } bind TextEmbedExtractor::class
 
     factory {
         DefaultExtractor(
-            labelExtractor = get(),
-            textExtractor = get(),
+            visualEmbedExtractor = get(),
+            textEmbedExtractor = get(),
             inputImageFactory = get(),
             dispatcher = get(named(CoroutineModuleName.Default)),
-            extractorRepository = get()
         )
     } bind Extractor::class
 
@@ -51,7 +52,7 @@ val useCaseModule = module {
         BulkExtractor(
             dispatcher = get(named(CoroutineModuleName.Default)),
             mediaImageRepository = get(),
-            extractorDataRepository = get<DefaultExtractorRepository>(),
+            extractorRepository = get<DefaultExtractorRepository>(),
             extractor = get()
         )
     }
@@ -66,9 +67,15 @@ val useCaseModule = module {
     factory {
         DefaultImageSearchByLabel(
             dispatcher = get(named(CoroutineModuleName.IO)),
-            mediaImageRepository = get(),
-            imageEmbeddingRepository = get(),
+            imageEmbedDao = get(),
             rememberSearch = get()
         )
     } bind ImageSearchByLabel::class
+
+    factory {
+        LoadMediaImageInfo(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>()
+        )
+    }
 }

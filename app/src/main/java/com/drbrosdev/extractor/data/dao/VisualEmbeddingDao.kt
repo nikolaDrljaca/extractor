@@ -25,14 +25,14 @@ interface VisualEmbeddingDao {
     @Query("select * from visual_embedding where id=:id")
     suspend fun findById(id: Long): VisualEmbeddingEntity?
 
-    @Query("select * from visual_embedding where id=:mediaId")
+    @Query("select * from visual_embedding where image_entity_id=:mediaId")
     suspend fun findByMediaId(mediaId: Long): List<VisualEmbeddingEntity>
 
     @Insert
     suspend fun insert(value: VisualEmbeddingEntity)
 
     @Insert
-    suspend fun insertAll(vararg embeds: VisualEmbeddingEntity)
+    suspend fun insertAll(values: List<VisualEmbeddingEntity>)
 
     @Update
     suspend fun update(value: VisualEmbeddingEntity)

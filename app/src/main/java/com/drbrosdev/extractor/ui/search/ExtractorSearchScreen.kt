@@ -115,7 +115,7 @@ fun ExtractorSearchScreen(
 
                     is ExtractorSearchScreenUiState.Success ->
                         ExtractorImageGrid(
-                            thumbnails = it.thumbnails,
+                            images = it.images,
                             onClick = onNavToDetail,
                             gridState = gridState,
                         )

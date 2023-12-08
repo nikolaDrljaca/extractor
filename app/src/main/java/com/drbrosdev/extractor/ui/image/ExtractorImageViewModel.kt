@@ -3,8 +3,8 @@ package com.drbrosdev.extractor.ui.image
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.domain.model.MediaImage
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
+import com.drbrosdev.extractor.framework.mediastore.MediaStoreImage
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorBottomBarItem
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,10 +15,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ExtractorImageViewModel(
-    private val mediaImageRepository: MediaImageRepository,
+    private val loadMediaImageInfo: LoadMediaImageInfo
 ) : ViewModel() {
 
-    private val _currentMediaImage = MutableStateFlow<MediaImage?>(null)
+    private val _currentMediaImage = MutableStateFlow<MediaStoreImage?>(null)
     val currentMediaImageInfo = _currentMediaImage.asStateFlow()
 
     private val eventChannel = Channel<ExtractorImageEvents>()
@@ -27,7 +27,7 @@ class ExtractorImageViewModel(
 
     fun loadImageDetails(uri: Uri) {
         viewModelScope.launch {
-            _currentMediaImage.update { mediaImageRepository.findByUri(uri) }
+            _currentMediaImage.update { loadMediaImageInfo(uri) }
         }
     }
 

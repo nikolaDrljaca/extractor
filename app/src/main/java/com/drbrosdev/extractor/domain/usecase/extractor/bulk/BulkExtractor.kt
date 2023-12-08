@@ -1,21 +1,24 @@
 package com.drbrosdev.extractor.domain.usecase.extractor.bulk
 
 import arrow.fx.coroutines.parMap
-import com.drbrosdev.extractor.data.repository.ExtractorRepository
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.domain.model.MediaImageId
+import com.drbrosdev.extractor.domain.model.MediaImageUri
+import com.drbrosdev.extractor.domain.repository.ExtractorRepository
+import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
+import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import com.drbrosdev.extractor.util.CONCURRENCY
+import com.drbrosdev.extractor.util.mediaImageUri
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 
 class BulkExtractor(
     private val dispatcher: CoroutineDispatcher,
-    private val mediaImageRepository: MediaImageRepository,
+    private val mediaImageRepository: MediaStoreImageRepository,
     private val extractor: Extractor,
-    private val extractorDataRepository: ExtractorRepository
+    private val extractorRepository: ExtractorRepository
 ) {
     suspend fun execute() {
-        val storedIds = extractorDataRepository.getAllIds()
+        val storedIds = extractorRepository.getAllIds()
         val onDeviceIds = mediaImageRepository.getAllIds()
 
         val isOnDevice = onDeviceIds.subtract(storedIds)
@@ -27,24 +30,39 @@ class BulkExtractor(
         val mediaImages = mediaImageRepository.findAllById(onDeviceIds.toList())
             .associateBy { it.mediaImageId }
 
-        withContext(dispatcher) {
-            when {
-                isOnDevice.size > isInStorage.size -> {
-                    //perform extraction
-                    isOnDevice.parMap(concurrency = CONCURRENCY) {
-                        extractor.execute(mediaImages[it]!!)
-                    }
+        when {
+            isOnDevice.size > isInStorage.size -> {
+                //perform extraction
+                val result = isOnDevice.parMap(
+                    concurrency = CONCURRENCY,
+                    context = dispatcher
+                ) {
+                    //NOTE: Watch for the throw
+                    val mediaStoreImage = mediaImages[it]!!
+                    val embeds = extractor.execute(mediaStoreImage.mediaImageUri())
+                        .getOrThrow()
+
+                    NewExtraction(
+                        mediaImageId = MediaImageId(it),
+                        extractorImageUri = MediaImageUri(mediaStoreImage.uri.toString()),
+                        path = mediaStoreImage.path,
+                        dateAdded = mediaStoreImage.dateAdded,
+                        textEmbed = embeds.textEmbed,
+                        visualEmbeds = embeds.visualEmbeds
+                    )
                 }
 
-                isOnDevice.size < isInStorage.size -> {
-                    //delete diff
-                    isInStorage.parMap(concurrency = CONCURRENCY) {
-                        extractorDataRepository.deleteExtractionData(it)
-                    }
-                }
-
-                else -> Unit
+                extractorRepository.createExtractionData(result)
             }
+
+            isOnDevice.size < isInStorage.size -> {
+                //delete diff
+                isInStorage.parMap(concurrency = CONCURRENCY, context = dispatcher) {
+                    extractorRepository.deleteExtractionData(it)
+                }
+            }
+
+            else -> Unit
         }
     }
 }

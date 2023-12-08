@@ -58,7 +58,7 @@ fun ExtractorImageInfoScreen(
                     text = "Extractor Image Info",
                     style = MaterialTheme.typography.titleLarge
                 )
-                Text(text = "# ID: ${model.mediaImageId}")
+                Text(text = "# ID: ${model.mediaImageId.id}")
             }
 
             EmbeddingsForm(

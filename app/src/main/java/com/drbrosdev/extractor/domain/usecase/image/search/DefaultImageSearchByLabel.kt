@@ -1,33 +1,32 @@
 package com.drbrosdev.extractor.domain.usecase.image.search
 
-import com.drbrosdev.extractor.data.payload.ImageEmbeddingSearchStrategy
-import com.drbrosdev.extractor.data.repository.ImageEmbeddingRepository
+import arrow.fx.coroutines.parMap
+import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.domain.model.DateRange
+import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.LabelType
-import com.drbrosdev.extractor.domain.model.MediaImage
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.isIn
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.domain.repository.payload.ImageEmbeddingSearchStrategy
 import com.drbrosdev.extractor.domain.usecase.RememberSearch
 import com.drbrosdev.extractor.util.runCatching
+import com.drbrosdev.extractor.util.toExtraction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 class DefaultImageSearchByLabel(
     private val dispatcher: CoroutineDispatcher,
-    private val mediaImageRepository: MediaImageRepository,
-    private val imageEmbeddingRepository: ImageEmbeddingRepository,
+    private val imageEmbedDao: ImageEmbeddingsDao,
     private val rememberSearch: RememberSearch
 ) : ImageSearchByLabel {
 
-    override suspend fun search(params: ImageSearchByLabel.Params): List<MediaImage> =
+    override suspend fun search(params: ImageSearchByLabel.Params): List<Extraction> =
         withContext(dispatcher) {
             val result = with(params) {
                 query
                     .prepareQuery()
                     .mapToSearchStrategy(type)
                     .findBy(labelType)
-                    .toMediaImage()
                     .filterByDateRange(dateRange)
             }
 
@@ -57,22 +56,18 @@ class DefaultImageSearchByLabel(
         }
     }
 
-    private suspend fun ImageEmbeddingSearchStrategy.findBy(labelType: LabelType): List<Long> {
+    private suspend fun ImageEmbeddingSearchStrategy.findBy(labelType: LabelType): List<Extraction> {
         val imageEmbeddingRelations = when (labelType) {
-            LabelType.ALL -> imageEmbeddingRepository.findBy(this)
-            LabelType.TEXT -> imageEmbeddingRepository.findByTextEmbed(this)
-            LabelType.IMAGE -> imageEmbeddingRepository.findByVisualEmbed(this)
+            LabelType.ALL -> imageEmbedDao.findByLabel(query)
+            LabelType.TEXT -> imageEmbedDao.findByTextEmbedding(query)
+            LabelType.IMAGE -> imageEmbedDao.findByVisualEmbedding(query)
         }
 
         return imageEmbeddingRelations
-            .map { it.imageEntity.mediaStoreId }
+            .parMap(context = dispatcher) { it.imageEntity.toExtraction() }
     }
 
-    private suspend fun List<Long>.toMediaImage(): List<MediaImage> {
-        return mediaImageRepository.findAllById(this)
-    }
-
-    private fun List<MediaImage>.filterByDateRange(range: DateRange?) = when {
+    private fun List<Extraction>.filterByDateRange(range: DateRange?) = when {
         range != null -> this.filter { it.dateAdded isIn range }
         else -> this
     }

@@ -23,6 +23,9 @@ interface TextEmbeddingDao {
     @Insert
     suspend fun insert(value: TextEmbeddingEntity)
 
+    @Insert
+    suspend fun insertAll(values: List<TextEmbeddingEntity>)
+
     @Update
     suspend fun update(value: TextEmbeddingEntity)
 

@@ -1,12 +1,13 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
-import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
-import com.drbrosdev.extractor.data.relation.ImageEmbeddingsRelation
+import com.drbrosdev.extractor.domain.model.Embed
+import com.drbrosdev.extractor.domain.model.ImageEmbeds
+import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.ui.components.embeddingsform.EmbeddingsFormState
 
 
 data class ExtractorImageInfoUiState(
-    val mediaImageId: Long = 0L,
+    val mediaImageId: MediaImageId = MediaImageId(0L),
     val userEmbedding: String? = null,
     val textEmbedding: String = "",
     val visualEmbedding: List<VisualEmbedUiModel> = emptyList(),
@@ -17,24 +18,23 @@ data class ExtractorImageInfoUiState(
 data class VisualEmbedUiModel(
     val text: String,
     val isChecked: Boolean,
-    val id: Long
 )
 
-fun VisualEmbeddingEntity.mapToVisualEmbedUiModel(): VisualEmbedUiModel {
+fun Embed.Visual.mapToUiModel(): VisualEmbedUiModel {
     return VisualEmbedUiModel(
         text = this.value,
         isChecked = false,
-        id = this.id
     )
 }
 
-fun ImageEmbeddingsRelation.mapToInfoModel(): ExtractorImageInfoUiState {
+
+fun ImageEmbeds.mapToInfoModel(mediaImageId: Long): ExtractorImageInfoUiState {
     return ExtractorImageInfoUiState(
-        mediaImageId = this.imageEntity.mediaStoreId,
-        userEmbedding = this.userEmbeddingEntity?.value,
-        textEmbedding = this.textEmbeddingEntity.value,
-        visualEmbedding = this.visualEmbeddingEntities.map {
-            it.mapToVisualEmbedUiModel()
+        mediaImageId = MediaImageId(mediaImageId),
+        userEmbedding = this.userEmbeds?.value,
+        textEmbedding = this.textEmbed.value,
+        visualEmbedding = this.visualEmbeds.map {
+            it.mapToUiModel()
         },
     )
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.PreviousSearchDao
@@ -24,8 +25,9 @@ import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
         VisualEmbeddingEntity::class,
         UserEmbeddingEntity::class
     ],
-    version = 5
+    version = 6,
 )
+@TypeConverters(DatabaseConverters::class)
 abstract class ExtractorDatabase : RoomDatabase() {
 
     abstract fun previousSearchDao(): PreviousSearchDao

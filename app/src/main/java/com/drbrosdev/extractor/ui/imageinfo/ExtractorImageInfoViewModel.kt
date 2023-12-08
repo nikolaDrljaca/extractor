@@ -2,39 +2,35 @@ package com.drbrosdev.extractor.ui.imageinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.data.payload.EmbedUpdate
-import com.drbrosdev.extractor.data.repository.ExtractorRepository
-import com.drbrosdev.extractor.domain.repository.MediaImageRepository
+import com.drbrosdev.extractor.domain.model.MediaImageId
+import com.drbrosdev.extractor.domain.repository.ExtractorRepository
+import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ExtractorImageInfoViewModel(
     private val mediaImageId: Long,
-    private val mediaImageRepository: MediaImageRepository,
     private val extractorDataRepository: ExtractorRepository
 ) : ViewModel() {
     private val checkedVisualEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
     val imageInfoModel = extractorDataRepository
-        .findImageDataByMediaId(mediaImageId = mediaImageId)
+        .findImageDataByMediaId(mediaImageId = MediaImageId(mediaImageId))
         .filterNotNull()
-        .map { it.mapToInfoModel() }
         .combine(checkedVisualEmbeds) { imageInfoUiModel, checkedEmbeds ->
             ExtractorImageInfoUiState(
-                mediaImageId = imageInfoUiModel.mediaImageId,
-                userEmbedding = imageInfoUiModel.userEmbedding,
-                textEmbedding = imageInfoUiModel.textEmbedding,
-                visualEmbedding = imageInfoUiModel.visualEmbedding.map {
+                mediaImageId = MediaImageId(mediaImageId),
+                userEmbedding = imageInfoUiModel.userEmbeds?.value,
+                textEmbedding = imageInfoUiModel.textEmbed.value,
+                visualEmbedding = imageInfoUiModel.visualEmbeds.map {
                     VisualEmbedUiModel(
-                        text = it.text,
-                        isChecked = checkedEmbeds.getOrDefault(it.text, false),
-                        id = it.id
+                        text = it.value,
+                        isChecked = checkedEmbeds.getOrDefault(it.value, false),
                     )
                 }
             )
@@ -54,20 +50,20 @@ class ExtractorImageInfoViewModel(
             extractorDataRepository.updateTextEmbed(
                 EmbedUpdate(
                     value = imageInfoModel.value.embeddingsFormState.textEmbedding.trim(),
-                    mediaImageId = mediaImageId
+                    mediaImageId = MediaImageId(mediaImageId)
                 )
             )
 
             extractorDataRepository.updateOrInsertUserEmbed(
                 EmbedUpdate(
                     value = imageInfoModel.value.embeddingsFormState.userEmbedding.trim(),
-                    mediaImageId = mediaImageId
+                    mediaImageId = MediaImageId(mediaImageId)
                 )
             )
 
             imageInfoModel.value.visualEmbedding
                 .filter { it.isChecked }
-                .forEach { extractorDataRepository.deleteVisualEmbedding(it.id) }
+                .forEach { extractorDataRepository.deleteVisualEmbed(MediaImageId(mediaImageId), it.text) }
         }
     }
 }
