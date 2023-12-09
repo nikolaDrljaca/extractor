@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.ui.components.extractorsearchview
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,7 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -27,6 +26,8 @@ import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toLabelType
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTypeSwitch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextField
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.KeyboardState
+import com.drbrosdev.extractor.util.rememberKeyboardState
 
 
 @Composable
@@ -39,20 +40,19 @@ fun ExtractorSearchView(
     val interactionSource = remember { MutableInteractionSource() }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val keyboardState = rememberKeyboardState()
 
-    LaunchedEffect(key1 = Unit) {
+    SideEffect {
         /*
         TODO: @nikola Note this bug.
-        Because Compose is what it is, we have to manually clear focus
-        during an interaction event due to the fact that the BaseTextField is not doing it on its own.
+        Because Compose is what it is, textFields are not dropping focus automatically thus
+        not allowing the keyboard to show up AFTER the field was focused for the first time and the
+        keyboard was dismissed.
+        We listen to the show/hide state of the keyboard, and if its hidden we FORCE clear focus
          */
-        interactionSource.interactions.collect {
-            when (it) {
-                is PressInteraction.Release -> {
-                    focusManager.clearFocus()
-                    focusRequester.requestFocus()
-                }
-            }
+        if (keyboardState.value == KeyboardState.HIDDEN) {
+            println("running side effect")
+            focusManager.clearFocus()
         }
     }
 

@@ -32,7 +32,7 @@ fun ExtractorTextField(
     text: String,
     onChange: (String) -> Unit,
     onDoneSubmit: () -> Unit,
-    interactionSource:  MutableInteractionSource = remember {
+    interactionSource: MutableInteractionSource = remember {
         MutableInteractionSource()
     },
     textColor: Color = when {
@@ -97,7 +97,6 @@ fun ExtractorTextField(
             )
         ),
     )
-
 }
 
 @Preview

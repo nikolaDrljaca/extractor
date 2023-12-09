@@ -9,12 +9,16 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
@@ -136,5 +140,20 @@ fun Modifier.noRippleClickable(
         interactionSource = remember { MutableInteractionSource() },
         onClick = onClick
     )
+}
+
+enum class KeyboardState {
+    VISIBLE,
+    HIDDEN
+}
+
+@Composable
+fun rememberKeyboardState(): State<KeyboardState> {
+    val isImeVisible = if (WindowInsets.ime.getBottom(LocalDensity.current) > 0) {
+        KeyboardState.VISIBLE
+    } else {
+        KeyboardState.HIDDEN
+    }
+    return rememberUpdatedState(isImeVisible)
 }
     
