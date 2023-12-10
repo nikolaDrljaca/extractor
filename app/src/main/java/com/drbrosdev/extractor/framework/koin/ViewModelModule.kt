@@ -1,8 +1,6 @@
 package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
-import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
-import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
@@ -28,14 +26,6 @@ val viewModelModule = module {
     }
 
     viewModel {
-        ExtractorStatusButtonViewModel(
-            mediaImageRepository = get<DefaultMediaStoreImageRepository>(),
-            extractionEntityDao = get(),
-            workManager = get()
-        )
-    }
-
-    viewModel {
         PreviousSearchesViewModel(
             previousSearchDao = get()
         )
@@ -53,6 +43,7 @@ val viewModelModule = module {
             labelType = it.get(),
             imageSearch = get(),
             stateHandle = get(),
+            extractionProgress = get()
         )
     }
 
@@ -65,10 +56,8 @@ val viewModelModule = module {
 
     viewModel {
         ExtractorStatusDialogViewModel(
-            mediaImageRepository = get<DefaultMediaStoreImageRepository>(),
-            extractionEntityDao = get(),
             bulkExtractor = get(),
-            workManager = get()
+            extractionProgress = get()
         )
     }
 

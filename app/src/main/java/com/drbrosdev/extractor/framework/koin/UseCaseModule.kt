@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.framework.koin
 
+import com.drbrosdev.extractor.domain.ExtractionProgress
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.RememberSearch
@@ -76,6 +77,15 @@ val useCaseModule = module {
         LoadMediaImageInfo(
             dispatcher = get(named(CoroutineModuleName.Default)),
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>()
+        )
+    }
+
+    factory {
+        ExtractionProgress(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            extractionEntityDao = get(),
+            mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
+            workManager = get()
         )
     }
 }

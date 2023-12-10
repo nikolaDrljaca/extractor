@@ -156,4 +156,11 @@ fun rememberKeyboardState(): State<KeyboardState> {
     }
     return rememberUpdatedState(isImeVisible)
 }
-    
+
+fun Modifier.thenIf(condition : Boolean, modifier : Modifier.() -> Modifier) : Modifier {
+    return if (condition) {
+        then(modifier(Modifier))
+    } else {
+        this
+    }
+}

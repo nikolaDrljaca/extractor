@@ -33,7 +33,7 @@ class BulkExtractor(
         when {
             isOnDevice.size > isInStorage.size -> {
                 //perform extraction
-                val result = isOnDevice.parMap(
+                isOnDevice.parMap(
                     concurrency = CONCURRENCY,
                     context = dispatcher
                 ) {
@@ -42,7 +42,7 @@ class BulkExtractor(
                     val embeds = extractor.execute(mediaStoreImage.mediaImageUri())
                         .getOrThrow()
 
-                    NewExtraction(
+                    val data = NewExtraction(
                         mediaImageId = MediaImageId(it),
                         extractorImageUri = MediaImageUri(mediaStoreImage.uri.toString()),
                         path = mediaStoreImage.path,
@@ -50,9 +50,8 @@ class BulkExtractor(
                         textEmbed = embeds.textEmbed,
                         visualEmbeds = embeds.visualEmbeds
                     )
+                    extractorRepository.createExtractionData(data)
                 }
-
-                extractorRepository.createExtractionData(result)
             }
 
             isOnDevice.size < isInStorage.size -> {

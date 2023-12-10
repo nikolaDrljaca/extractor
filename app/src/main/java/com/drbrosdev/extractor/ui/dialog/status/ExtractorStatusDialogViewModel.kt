@@ -2,34 +2,36 @@ package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkManager
-import androidx.work.await
-import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
+import com.drbrosdev.extractor.domain.ExtractionProgress
+import com.drbrosdev.extractor.domain.ExtractionStatus
 import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
-import com.drbrosdev.extractor.domain.worker.WorkNames
-import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ExtractorStatusDialogViewModel(
-    private val mediaImageRepository: MediaStoreImageRepository,
-    private val extractionEntityDao: ExtractionEntityDao,
     private val bulkExtractor: BulkExtractor,
-    private val workManager: WorkManager
+    private val extractionProgress: ExtractionProgress
 ) : ViewModel() {
     private val isLoading = MutableStateFlow(false)
     private var extractionJob: Job? = null
 
-    val state = flow {
-        while (true) {
-            emit(updateState())
-            delay(1000L)
+    val state = extractionProgress().map {
+        when (it) {
+            is ExtractionStatus.Done -> ExtractorStatusDialogUiModel(
+                onDeviceCount = it.onDeviceCount,
+                inStorageCount = it.inStorageCount,
+                isExtractionRunning = isLoading.value
+            )
+            is ExtractionStatus.Running -> ExtractorStatusDialogUiModel(
+                onDeviceCount = it.onDeviceCount,
+                inStorageCount = it.inStorageCount,
+                isExtractionRunning = true
+            )
         }
     }
         .stateIn(
@@ -48,23 +50,6 @@ class ExtractorStatusDialogViewModel(
                 isLoading.update { false }
             }
         }
-    }
-
-    private suspend fun updateState(): ExtractorStatusDialogUiModel {
-        val onDevice = mediaImageRepository.getCount()
-        val inStorage = extractionEntityDao.getCount()
-        val workInfo = workManager.getWorkInfosForUniqueWork(WorkNames.EXTRACTOR_WORK).await()
-
-        val isWorking = when {
-            workInfo.isNotEmpty() -> !workInfo.first().state.isFinished
-            else -> false
-        }
-
-        return ExtractorStatusDialogUiModel(
-            onDeviceCount = onDevice,
-            inStorageCount = inStorage,
-            isExtractionRunning = isWorking or isLoading.value
-        )
     }
 }
 

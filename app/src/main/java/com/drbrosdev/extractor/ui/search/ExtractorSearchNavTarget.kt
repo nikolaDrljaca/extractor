@@ -9,10 +9,11 @@ import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
-import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonViewModel
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.LocalDialogNavController
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
@@ -34,16 +35,14 @@ data class ExtractorSearchNavTarget(
         }
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        val extractorStatusButtonViewModel: ExtractorStatusButtonViewModel = koinViewModel()
-        val extractorStatusButtonState by extractorStatusButtonViewModel.state.collectAsStateWithLifecycle()
-
         val navController = LocalNavController.current
+        val dialogNavController = LocalDialogNavController.current
         val keyboardController = LocalSoftwareKeyboardController.current
 
         //TODO: Loading state, animated placeholders or spinners
         ExtractorSearchScreen(
             state = state,
-            extractorStatusButtonState = extractorStatusButtonState,
+            extractorStatusButtonState = viewModel.extractorStatusButtonState,
             searchViewState = viewModel.searchViewState,
             dateFilterState = viewModel.dateFilterState,
             onNavToDetail = { selectedIndex ->
@@ -58,6 +57,9 @@ data class ExtractorSearchNavTarget(
             onDone = {
                 keyboardController?.hide()
                 viewModel.performSearch(SearchStrategy.DIRTY_CHECKING)
+            },
+            onStatusButtonClick = {
+                dialogNavController.navigate(ExtractorStatusDialogNavTarget)
             }
         )
     }
@@ -70,11 +72,12 @@ private fun SearchScreenPreview() {
         ExtractorSearchScreen(
             state = ExtractorSearchScreenUiState.Loading,
             onNavToDetail = {},
-            extractorStatusButtonState = ExtractorStatusButtonState.Idle,
+            extractorStatusButtonState = ExtractorStatusButtonState(),
             onExtractorHomeClicked = {},
             onDone = {},
             searchViewState = ExtractorSearchViewState("", LabelType.ALL),
             dateFilterState = ExtractorDateFilterState(),
+            onStatusButtonClick = {}
         )
     }
 }

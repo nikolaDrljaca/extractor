@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.createExtractorBrush
+import com.drbrosdev.extractor.util.thenIf
 
 
 @Composable
@@ -26,31 +27,33 @@ fun ExtractorStatusButton(
     modifier: Modifier = Modifier,
     state: ExtractorStatusButtonState,
 ) {
-    val brushModifier = when (state) {
-        is ExtractorStatusButtonState.Idle -> Modifier
-        is ExtractorStatusButtonState.Working -> Modifier.background(createExtractorBrush())
+    val brushModifier = when (state.status) {
+        is ExtractorStatusButtonState.Status.Idle -> Modifier
+        is ExtractorStatusButtonState.Status.Working -> Modifier.background(createExtractorBrush())
     }
 
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(14.dp))
-            .clickable { onClick() }
+            .thenIf(state.status is ExtractorStatusButtonState.Status.Working) {
+                clickable { onClick() }
+            }
             .then(brushModifier)
             .size(40.dp)
             .then(modifier),
         contentAlignment = Alignment.Center
     ) {
-        when (state) {
-            is ExtractorStatusButtonState.Idle ->
+        when (val status = state.status) {
+            is ExtractorStatusButtonState.Status.Idle ->
                 Box(modifier = Modifier.size(40.dp))
 
-            is ExtractorStatusButtonState.Working ->
+            is ExtractorStatusButtonState.Status.Working ->
                 Box(
                     modifier = Modifier.padding(4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "${state.donePercentage}%",
+                        text = "${status.donePercentage}%",
                         color = Color.White,
                         style = MaterialTheme.typography.labelSmall
                     )
@@ -66,12 +69,14 @@ private fun CurrentPreview() {
         Column {
             ExtractorStatusButton(
                 onClick = { /*TODO*/ },
-                state = ExtractorStatusButtonState.Idle,
+                state = ExtractorStatusButtonState()
             )
 
             ExtractorStatusButton(
                 onClick = { /*TODO*/ },
-                state = ExtractorStatusButtonState.Working(34),
+                state = ExtractorStatusButtonState(
+                    ExtractorStatusButtonState.Status.Working(34)
+                )
             )
         }
     }

@@ -5,6 +5,8 @@ import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.drbrosdev.extractor.domain.ExtractionProgress
+import com.drbrosdev.extractor.domain.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
@@ -16,6 +18,7 @@ import com.drbrosdev.extractor.ui.components.extractorsearchview.isBlank
 import com.drbrosdev.extractor.ui.components.extractorsearchview.labelTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlow
+import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -27,8 +30,11 @@ class ExtractorSearchViewModel(
     query: String,
     labelType: LabelType,
     private val imageSearch: ImageSearchByLabel,
+    private val extractionProgress: ExtractionProgress,
     private val stateHandle: SavedStateHandle,
 ) : ViewModel() {
+    val extractorStatusButtonState = ExtractorStatusButtonState()
+
     val searchViewState = ExtractorSearchViewState(
         initialQuery = stateHandle["query"] ?: query,
         initialLabelType = labelType,
@@ -42,6 +48,16 @@ class ExtractorSearchViewModel(
     val state = _state.asStateFlow()
 
     private val lastQuery = MutableStateFlow(LastQuery(query, labelType))
+
+    private val progressJob = extractionProgress()
+        .onEach {
+            val status = when (it) {
+                is ExtractionStatus.Done -> ExtractorStatusButtonState.Status.Idle
+                is ExtractionStatus.Running -> ExtractorStatusButtonState.Status.Working(it.percentage)
+            }
+            extractorStatusButtonState.update(status)
+        }
+        .launchIn(viewModelScope)
 
     private val labelTypeUpdateFlow = searchViewState.labelTypeAsFlow()
         .onEach { performSearch(SearchStrategy.NORMAL) }

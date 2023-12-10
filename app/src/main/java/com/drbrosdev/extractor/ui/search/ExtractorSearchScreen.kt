@@ -52,6 +52,7 @@ fun ExtractorSearchScreen(
     onNavToDetail: (selectedIndex: Int) -> Unit,
     onExtractorHomeClicked: () -> Unit,
     onDone: () -> Unit,
+    onStatusButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     state: ExtractorSearchScreenUiState,
     dateFilterState: ExtractorDateFilterState,
@@ -128,7 +129,7 @@ fun ExtractorSearchScreen(
                 state = extractorTopBarState.value,
                 leadingSlot = {
                     ExtractorStatusButton(
-                        onClick = {},
+                        onClick = onStatusButtonClick,
                         state = extractorStatusButtonState
                     )
                 },
