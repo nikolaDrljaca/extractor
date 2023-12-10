@@ -17,6 +17,7 @@ import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.navigateToSearchScreen
 import dev.olshevski.navigation.reimagined.navigate
+import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
@@ -60,6 +61,7 @@ object ExtractorHomeNavTarget : NavTarget {
                     }
                 }
             },
+            onBack = { navController.pop() }
         )
     }
 }
@@ -73,6 +75,7 @@ private fun SearchScreenPreview() {
                 onPreviousSearchEvents = {},
                 onStatClick = { query, type -> },
                 onSyncClick = {},
+                onBack = {},
                 previousSearches = emptyList(),
                 statsUiState = ExtractorStatsUiState.Loading,
             )

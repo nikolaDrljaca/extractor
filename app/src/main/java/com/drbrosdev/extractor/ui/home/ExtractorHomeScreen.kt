@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.ui.home
 
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -8,8 +7,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,7 +32,6 @@ import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButto
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStats
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorHomeScreen(
     statsUiState: ExtractorStatsUiState,
@@ -39,6 +39,7 @@ fun ExtractorHomeScreen(
     onPreviousSearchEvents: (PreviousSearchesEvents) -> Unit,
     onStatClick: (String, LabelType) -> Unit,
     onSyncClick: () -> Unit,
+    onBack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -58,6 +59,12 @@ fun ExtractorHomeScreen(
         ExtractorTopBar(
             modifier = Modifier.layoutId(ViewIds.TOP_BAR),
             leadingSlot = {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = ""
+                    )
+                }
                 ExtractorHeader(headerText = stringResource(id = R.string.extractor_home))
             },
             trailingSlot = {

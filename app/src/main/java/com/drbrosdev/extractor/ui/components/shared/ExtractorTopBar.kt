@@ -71,7 +71,9 @@ fun ExtractorTopBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row { leadingSlot() }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ){ leadingSlot() }
                 Row { centerSlot?.invoke(this) }
                 Row {
                     when {
