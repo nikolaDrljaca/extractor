@@ -109,7 +109,7 @@ fun ExtractorSearchScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "Loading")
+                        Text(text = stringResource(R.string.loading))
                     }
                     is ExtractorSearchScreenUiState.FirstSearch -> ExtractorFirstSearch(modifier = Modifier.fillMaxSize())
                     is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()

@@ -91,7 +91,7 @@ private fun OnboardingScreen(
                 color = Color.White
             )
             Text(
-                text = "Welcome!",
+                text = stringResource(R.string.welcome),
                 style = MaterialTheme.typography.displayLarge,
                 color = Color.White
             )

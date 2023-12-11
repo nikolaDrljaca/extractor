@@ -5,6 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 import com.drbrosdev.extractor.util.DialogNavTarget
@@ -24,7 +26,7 @@ object ExtractorStatusDialogNavTarget : DialogNavTarget {
             state = state,
             onClick = { viewModel.startExtractionSync() },
             headline = {
-                Text(text = "Status", style = MaterialTheme.typography.displaySmall)
+                Text(text = stringResource(R.string.status_dialog_status), style = MaterialTheme.typography.displaySmall)
             }
         )
     }

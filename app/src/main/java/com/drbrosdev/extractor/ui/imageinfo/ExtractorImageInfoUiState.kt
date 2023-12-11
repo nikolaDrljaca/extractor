@@ -12,7 +12,7 @@ data class ExtractorImageInfoUiState(
     val textEmbedding: String = "",
     val visualEmbedding: List<VisualEmbedUiModel> = emptyList(),
 ) {
-    val embeddingsFormState = EmbeddingsFormState.create(textEmbedding, userEmbedding ?: "")
+    val embeddingsFormState = EmbeddingsFormState(textEmbedding, userEmbedding ?: "")
 }
 
 data class VisualEmbedUiModel(

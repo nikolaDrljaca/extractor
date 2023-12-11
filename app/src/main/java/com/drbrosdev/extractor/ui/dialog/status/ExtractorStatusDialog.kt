@@ -54,7 +54,7 @@ fun ExtractorStatusDialog(
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             if (state.isExtractionRunning) {
-                Text(text = "Current Extraction", modifier = Modifier.padding(vertical = 4.dp))
+                Text(text = stringResource(R.string.status_dialog_current_extraction), modifier = Modifier.padding(vertical = 4.dp))
                 LinearProgressIndicator(
                     progress = { state.percentage },
                     modifier = Modifier
@@ -86,7 +86,7 @@ fun ExtractorStatusDialog(
                 modifier = Modifier.padding(vertical = 4.dp)
             ) {
                 Text(
-                    text = "Process is already running.",
+                    text = stringResource(R.string.process_is_already_running),
                     style = MaterialTheme.typography.labelSmall.copy(
                         color = Color.Gray
                     )
@@ -138,7 +138,7 @@ private fun ExtractorCountChips(
             )
         ) {
             Column(modifier = Modifier.padding(14.dp)) {
-                Text(text = "In Storage", style = MaterialTheme.typography.bodyMedium)
+                Text(text = stringResource(R.string.status_in_storage), style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "$inStorageCount",
@@ -158,7 +158,7 @@ private fun ExtractorCountChips(
             modifier = Modifier.weight(1f)
         ) {
             Column(modifier = Modifier.padding(14.dp)) {
-                Text(text = "On Device", style = MaterialTheme.typography.bodyMedium)
+                Text(text = stringResource(R.string.status_on_device), style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "$onDeviceCount",

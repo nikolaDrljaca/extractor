@@ -25,7 +25,7 @@ object PrivacyNoteOnbCard : OnbNavTarget {
             body = stringResource(id = R.string.lorem),
             headline = {
                 OnboardingCardHeadline(
-                    headline = "A Note on Privacy",
+                    headline = stringResource(R.string.a_note_on_privacy),
                     onBack = { navController.pop() }
                 )
 
@@ -35,7 +35,7 @@ object PrivacyNoteOnbCard : OnbNavTarget {
                     onClick = { navController.navigate(PermissionOnbCard) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Understood!")
+                    Text(text = stringResource(R.string.understood))
                 }
             },
             modifier = Modifier.zIndex(1f)

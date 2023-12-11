@@ -25,10 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import arrow.core.None
 import arrow.core.Some
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.dialog.datepicker.ExtractorDatePicker
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
@@ -106,20 +108,20 @@ fun ExtractorDateFilter(
         ) {
             ExtractorDateFilterCard(
                 onClick = state::showStartSelection,
-                header = "Start Date",
+                header = stringResource(R.string.start_date),
                 modifier = Modifier.weight(1f),
                 side = ExtractorDateFilterCardSide.LEFT,
-                dateAsString = state.startDate.getAsString("Start Date"),
+                dateAsString = state.startDate.getAsString(stringResource(id = R.string.start_date)),
                 containerColor = startCardColor,
                 borderColor = startCardBorderColor
             )
 
             ExtractorDateFilterCard(
                 onClick = state::showEndSelection,
-                header = "End Date",
+                header = stringResource(R.string.end_date),
                 modifier = Modifier.weight(1f),
                 side = ExtractorDateFilterCardSide.RIGHT,
-                dateAsString = state.endDate.getAsString("End Date"),
+                dateAsString = state.endDate.getAsString(stringResource(id = R.string.end_date)),
                 containerColor = endCardColor,
                 borderColor = endCardBorderColor
             )

@@ -51,7 +51,6 @@ fun ExtractorSearchView(
         We listen to the show/hide state of the keyboard, and if its hidden we FORCE clear focus
          */
         if (keyboardState.value == KeyboardState.HIDDEN) {
-            println("running side effect")
             focusManager.clearFocus()
         }
     }

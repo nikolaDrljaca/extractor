@@ -19,18 +19,19 @@ object WelcomeOnbCard : OnbNavTarget {
     @Composable
     override fun Content() {
         val navController = LocalOnbNavController.current
+        val appName = stringResource(id = R.string.app_name)
 
         OnboardingCard(
             body = stringResource(id = R.string.lorem),
             headline = {
-                OnboardingCardHeadline(headline = "What is <app name>?")
+                OnboardingCardHeadline(headline = stringResource(R.string.what_is_app, appName))
             },
             actionButton = {
                 ExtractorActionButton(
                     onClick = { navController.navigate(PrivacyNoteOnbCard) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = "Let's get started!")
+                    Text(text = stringResource(R.string.let_s_get_started))
                 }
             },
             modifier = Modifier.zIndex(2f)
