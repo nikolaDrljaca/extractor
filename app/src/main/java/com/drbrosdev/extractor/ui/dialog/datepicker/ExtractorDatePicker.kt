@@ -14,6 +14,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
@@ -31,12 +33,12 @@ fun ExtractorDatePicker(
         onDismissRequest = onDismiss,
         confirmButton = {
             DialogButton(onClick = { onConfirm(state.selectedDateMillis) }) {
-                Text(text = "Select")
+                Text(text = stringResource(R.string.datepicker_select))
             }
         },
         dismissButton = {
             DialogButton(onClick = onDismiss) {
-                Text(text = "Close")
+                Text(text = stringResource(R.string.datepicker_close))
             }
         },
         colors = DatePickerDefaults.colors()

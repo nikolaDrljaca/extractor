@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.domain.model.LabelType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -25,8 +27,8 @@ class ExtractorStatsViewModel(
             ExtractorStatsUiState.View(
                 statEmbeds = it.map { out -> StatEmbed(out.value, LabelType.IMAGE) }
             )
-
         }
+        .flowOn(Dispatchers.Default)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ExtractorStatsUiState.Loading)
 
 }

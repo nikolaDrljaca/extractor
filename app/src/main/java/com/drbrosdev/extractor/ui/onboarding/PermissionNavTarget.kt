@@ -42,7 +42,7 @@ object PermissionOnbCard : OnbNavTarget {
             body = stringResource(id = R.string.lorem),
             headline = {
                 OnboardingCardHeadline(
-                    headline = "Permission",
+                    headline = stringResource(R.string.permission),
                     onBack = { navController.pop() }
                 )
             },
@@ -57,7 +57,7 @@ object PermissionOnbCard : OnbNavTarget {
                     OutlinedExtractorActionButton(onClick = {
                         activity.openAppSettings()
                     }) {
-                        Text(text = "Open Settings")
+                        Text(text = stringResource(R.string.open_settings))
                     }
 
                     ExtractorActionButton(onClick = {
@@ -72,7 +72,7 @@ object PermissionOnbCard : OnbNavTarget {
                         }
                         //do something
                     }) {
-                        Text(text = "Grant Permission")
+                        Text(text = stringResource(R.string.grant_permission))
                     }
                 }
             }

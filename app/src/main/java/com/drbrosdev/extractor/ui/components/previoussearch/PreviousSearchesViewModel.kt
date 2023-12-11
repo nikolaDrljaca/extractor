@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.dao.PreviousSearchDao
 import com.drbrosdev.extractor.domain.model.toEntity
 import com.drbrosdev.extractor.domain.model.toPreviousSearch
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -19,6 +21,7 @@ class PreviousSearchesViewModel(
             searches.map { it.toPreviousSearch().toItemState() }
                 .reversed()
         }
+        .flowOn(Dispatchers.Default)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     fun deletePreviousSearch(value: PreviousSearchItemState) {

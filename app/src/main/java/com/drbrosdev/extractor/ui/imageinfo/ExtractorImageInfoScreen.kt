@@ -55,10 +55,10 @@ fun ExtractorImageInfoScreen(
                 modifier = Modifier.layoutId(ViewIds.IMAGE_INFO)
             ) {
                 Text(
-                    text = "Extractor Image Info",
+                    text = stringResource(R.string.extractor_image_info),
                     style = MaterialTheme.typography.titleLarge
                 )
-                Text(text = "# ID: ${model.mediaImageId.id}")
+                Text(text = stringResource(R.string.info_screen_image_id, model.mediaImageId.id))
             }
 
             EmbeddingsForm(
@@ -73,14 +73,14 @@ fun ExtractorImageInfoScreen(
                 modifier = Modifier.layoutId(ViewIds.SAVE_BUTTON),
                 contentPadding = ExtractorButtonDefaults.paddingValues(vertical = 4.dp)
             ) {
-                Text(text = "Save")
+                Text(text = stringResource(R.string.info_screen_save))
             }
 
             Column(
                 modifier = Modifier.layoutId(ViewIds.NOTE)
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(text = "Note")
+                Text(text = stringResource(R.string.info_screen_note_head))
                 Text(
                     text = stringResource(R.string.extractor_info_about_image),
                     style = MaterialTheme.typography.labelMedium,
