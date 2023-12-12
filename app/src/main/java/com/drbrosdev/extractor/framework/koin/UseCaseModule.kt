@@ -83,7 +83,7 @@ val useCaseModule = module {
     factory {
         ExtractionProgress(
             dispatcher = get(named(CoroutineModuleName.Default)),
-            extractionEntityDao = get(),
+            extractionDao = get(),
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
             workManager = get()
         )

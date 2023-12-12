@@ -12,7 +12,7 @@ val domainModule = module {
     factory {
         DefaultExtractorRepository(
             dispatcher = get(named(CoroutineModuleName.IO)),
-            extractionEntityDao = get(),
+            extractionDao = get(),
             visualEmbeddingDao = get(),
             textEmbeddingDao = get(),
             userEmbeddingDao = get(),

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
 @Dao
-interface ExtractionEntityDao {
+interface ExtractionDao {
 
     //TODO: CRUD methods on ImageExtractionEntity should have their own dao
     @Query("select * from image_extraction_entity")

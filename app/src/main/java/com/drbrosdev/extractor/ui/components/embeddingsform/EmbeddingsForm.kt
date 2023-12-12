@@ -7,17 +7,11 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.mapSaver
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +22,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorImageLabelChip
 import com.drbrosdev.extractor.ui.imageinfo.VisualEmbedUiModel
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EmbeddingsForm(
     onClearVisual: (String) -> Unit,
@@ -77,51 +71,6 @@ fun EmbeddingsForm(
     }
 }
 
-class EmbeddingsFormState(
-    initTextEmbedding: String,
-    initUserEmbedding: String,
-) {
-    var textEmbedding by mutableStateOf(initTextEmbedding)
-        private set
-
-    var userEmbedding by mutableStateOf(initUserEmbedding)
-        private set
-
-    fun setTextValue(value: String) {
-        textEmbedding = value
-    }
-
-    fun setUserValue(value: String) {
-        userEmbedding = value
-    }
-
-    companion object {
-         val Saver = run {
-            val textKey = "text_key_embed"
-            val userKey = "user_key_embed"
-            mapSaver(
-                save = { mapOf(textKey to it.textEmbedding, userKey to it.userEmbedding) },
-                restore = {
-                    EmbeddingsFormState(
-                        initTextEmbedding = it[textKey] as String,
-                        initUserEmbedding = it[userKey] as String
-                    )
-                }
-            )
-        }
-    }
-}
-
-
-@Composable
-fun rememberEmbeddingsFormState(
-    textEmbedding: String = "",
-    userEmbedding: String = ""
-): EmbeddingsFormState {
-    return rememberSaveable(saver = EmbeddingsFormState.Saver) {
-        EmbeddingsFormState(textEmbedding, userEmbedding)
-    }
-}
 
 @Preview
 @Composable
