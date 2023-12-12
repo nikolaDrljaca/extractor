@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
+import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.PreviousSearchDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
@@ -32,7 +32,7 @@ abstract class ExtractorDatabase : RoomDatabase() {
 
     abstract fun previousSearchDao(): PreviousSearchDao
 
-    abstract fun extractionEntityDao(): ExtractionEntityDao
+    abstract fun extractionEntityDao(): ExtractionDao
 
     abstract fun imageDataWithEmbeddingsDao(): ImageEmbeddingsDao
 

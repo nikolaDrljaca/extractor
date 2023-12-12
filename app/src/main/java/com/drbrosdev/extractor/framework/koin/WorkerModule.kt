@@ -14,7 +14,7 @@ val workerModule = module {
             workerParameters = get(),
             extractor = get(),
             mediaImageRepository = get<DefaultMediaStoreImageRepository>(),
-            extractionEntityDao = get(),
+            extractionDao = get(),
         )
     }
     single { WorkManager.getInstance(androidContext()) }

@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.domain
 
 import androidx.work.WorkManager
 import androidx.work.await
-import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
+import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.domain.worker.WorkNames
 import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import com.drbrosdev.extractor.ui.dialog.status.safeDiv
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flowOn
 
 class ExtractionProgress(
     private val dispatcher: CoroutineDispatcher,
-    private val extractionEntityDao: ExtractionEntityDao,
+    private val extractionDao: ExtractionDao,
     private val mediaStoreImageRepository: MediaStoreImageRepository,
     private val workManager: WorkManager
 ) {
@@ -23,7 +23,7 @@ class ExtractionProgress(
         while (true) {
             val isWorking = workManager.getWorkInfosForUniqueWork(WorkNames.EXTRACTOR_WORK).await()
             val onDevice = mediaStoreImageRepository.getCount()
-            val inStorage = extractionEntityDao.getCount()
+            val inStorage = extractionDao.getCount()
 
             when {
                 isWorking.isEmpty() -> {

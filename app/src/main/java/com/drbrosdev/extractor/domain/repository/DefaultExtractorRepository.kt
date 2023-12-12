@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.domain.repository
 
-import com.drbrosdev.extractor.data.dao.ExtractionEntityDao
+import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.map
 
 class DefaultExtractorRepository(
     private val dispatcher: CoroutineDispatcher,
-    private val extractionEntityDao: ExtractionEntityDao,
+    private val extractionDao: ExtractionDao,
     private val visualEmbeddingDao: VisualEmbeddingDao,
     private val textEmbeddingDao: TextEmbeddingDao,
     private val userEmbeddingDao: UserEmbeddingDao,
@@ -29,7 +29,7 @@ class DefaultExtractorRepository(
 ) : ExtractorRepository {
 
     override suspend fun deleteExtractionData(mediaImageId: Long) {
-        val countDeleted = extractionEntityDao.deleteByMediaId(mediaImageId)
+        val countDeleted = extractionDao.deleteByMediaId(mediaImageId)
         if (countDeleted == 0) return
 
         visualEmbeddingDao.deleteByMediaId(mediaImageId)
@@ -38,7 +38,7 @@ class DefaultExtractorRepository(
     }
 
     override suspend fun getAllIds(): Set<Long> {
-        return extractionEntityDao.findAllIds().toSet()
+        return extractionDao.findAllIds().toSet()
     }
 
     override fun findImageDataByMediaId(mediaImageId: MediaImageId): Flow<ImageEmbeds?> {
@@ -99,7 +99,7 @@ class DefaultExtractorRepository(
         }
 
         //NOTE: Ordering is important for relationships
-        extractionEntityDao.insert(extractionEntity)
+        extractionDao.insert(extractionEntity)
         textEmbeddingDao.insert(textEntity)
         visualEmbeddingDao.insertAll(visualEntities)
     }
@@ -113,7 +113,7 @@ class DefaultExtractorRepository(
                 path = it.path
             )
         }
-        extractionEntityDao.insertAll(extractionEntities)
+        extractionDao.insertAll(extractionEntities)
 
         val textEmbeds = data.map {
             TextEmbeddingEntity(

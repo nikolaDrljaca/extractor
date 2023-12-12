@@ -22,6 +22,7 @@ analysis effort is ongoing for switching to more open source models.
   - (Optionally) start in debug mode: `shift + F9 `
 
 *Optionally* Download from the Play Store below
+
 <a href="https://play.google.com/store/apps/dev?id=5135118414842948265" target="_blank">
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="70"/>
 </a>
