@@ -53,4 +53,9 @@
     <string name="grant_permission">Grant Permission</string>
     <string name="welcome">Welcome!</string>
     <string name="loading">Loading…</string>
+    <string name="visual_albums">Visual Albums</string>
+    <string name="text_albums">Text albums</string>
+    <string name="my_albums">My albums</string>
+    <string name="initialize">Initialize</string>
+    <string name="init_album_category_expl">Tap \'Initialize\' to create albums based on most common found keywords.</string>
 </resources>
