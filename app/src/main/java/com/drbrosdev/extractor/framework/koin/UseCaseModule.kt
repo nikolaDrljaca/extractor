@@ -1,7 +1,9 @@
 package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.domain.ExtractionProgress
+import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.RememberSearch
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
@@ -86,6 +88,15 @@ val useCaseModule = module {
             extractionDao = get(),
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
             workManager = get()
+        )
+    }
+
+    factory {
+        CompileVisualAlbum(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            visualEmbeddingDao = get(),
+            imageEmbeddingsDao = get(),
+            albumRepository = get<DefaultAlbumRepository>()
         )
     }
 }

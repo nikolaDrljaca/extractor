@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class DefaultAlbumRepository(
     private val dispatcher: CoroutineDispatcher,
@@ -70,8 +71,10 @@ class DefaultAlbumRepository(
     }
 
     override suspend fun getCommonVisualAlbums(): List<Album> {
-        return albumRelationDao.findVisual()
-            .map { it.toAlbum() }
+        val albumRelations = albumRelationDao.findVisual()
+        return withContext(dispatcher) {
+            albumRelations.map { it.toAlbum() }
+        }
     }
 
     override fun getAllUserAlbumsAsFlow(): Flow<List<Album>> {

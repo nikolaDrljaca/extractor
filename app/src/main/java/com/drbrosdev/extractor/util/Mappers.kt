@@ -9,6 +9,7 @@ import com.drbrosdev.extractor.data.relation.AlbumRelation
 import com.drbrosdev.extractor.data.relation.ImageEmbeddingsRelation
 import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.model.AlbumEntry
+import com.drbrosdev.extractor.domain.model.AlbumPreview
 import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
@@ -99,5 +100,13 @@ fun AlbumRelation.toAlbum(): Album {
         searchType = this.configuration.searchType.toSearchType(),
         labelType = this.configuration.labelType.toLabelType(),
         entries = this.entries.map { it.toAlbumEntry() }
+    )
+}
+
+fun Album.toPreview(): AlbumPreview {
+    return AlbumPreview(
+        id = this.id,
+        name = this.name,
+        thumbnail = this.entries.first().uri
     )
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +36,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
+import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
@@ -49,17 +51,13 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchScreen(
+    modifier: Modifier = Modifier,
     onNavToDetail: (selectedIndex: Int) -> Unit,
     onExtractorHomeClicked: () -> Unit,
     onDone: () -> Unit,
     onStatusButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    state: ExtractorSearchScreenUiState,
-    dateFilterState: ExtractorDateFilterState,
-    searchViewState: ExtractorSearchViewState,
-    extractorStatusButtonState: ExtractorStatusButtonState,
-) {
-    val scaffoldState = rememberBottomSheetScaffoldState(
+    onCreateAlbumClick: () -> Unit,
+    scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             confirmValueChange = {
                 when (it) {
@@ -69,7 +67,13 @@ fun ExtractorSearchScreen(
                 }
             }
         )
-    )
+    ),
+    state: ExtractorSearchScreenUiState,
+    dateFilterState: ExtractorDateFilterState,
+    searchViewState: ExtractorSearchViewState,
+    extractorStatusButtonState: ExtractorStatusButtonState,
+    loaderButtonState: ExtractorLoaderButtonState,
+) {
     val gridState = rememberLazyGridState()
     val extractorTopBarState = remember {
         derivedStateOf {
@@ -83,8 +87,10 @@ fun ExtractorSearchScreen(
         sheetContent = {
             ExtractorSearchBottomSheet(
                 onDone = onDone,
+                onCreateAlbumClick = onCreateAlbumClick,
                 searchViewState = searchViewState,
                 dateFilterState = dateFilterState,
+                loaderButtonState = loaderButtonState
             )
         },
         sheetContainerColor = MaterialTheme.colorScheme.primary,
@@ -111,6 +117,7 @@ fun ExtractorSearchScreen(
                     ) {
                         Text(text = stringResource(R.string.loading))
                     }
+
                     is ExtractorSearchScreenUiState.FirstSearch -> ExtractorFirstSearch(modifier = Modifier.fillMaxSize())
                     is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()
 

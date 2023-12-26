@@ -1,9 +1,11 @@
 package com.drbrosdev.extractor.framework.koin
 
+import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
+import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
 import com.drbrosdev.extractor.ui.image.ExtractorImageViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
@@ -43,7 +45,8 @@ val viewModelModule = module {
             labelType = it.get(),
             imageSearch = get(),
             stateHandle = get(),
-            extractionProgress = get()
+            extractionProgress = get(),
+            albumRepository = get<DefaultAlbumRepository>()
         )
     }
 
@@ -64,6 +67,14 @@ val viewModelModule = module {
     viewModel {
         ExtractorStatsViewModel(
             visualEmbedDao = get()
+        )
+    }
+
+    viewModel {
+        ExtractorHomeViewModel(
+            savedStateHandle = get(),
+            compileVisualAlbum = get(),
+            albumRepository = get<DefaultAlbumRepository>()
         )
     }
 }

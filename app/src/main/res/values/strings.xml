@@ -58,4 +58,9 @@
     <string name="my_albums">My albums</string>
     <string name="initialize">Initialize</string>
     <string name="init_album_category_expl">Tap \'Initialize\' to create albums based on most common found keywords.</string>
+    <string name="create_own_album">Create your own albums from the search screen!</string>
+    <string name="go_to_search">Go To Search</string>
+    <string name="oops_no_albums_found">Oops! No albums found.</string>
+    <string name="create_album">Create Album</string>
+    <string name="album_created">Album Created!</string>
 </resources>

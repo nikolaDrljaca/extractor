@@ -8,29 +8,35 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.ExtractionProgress
 import com.drbrosdev.extractor.domain.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.repository.AlbumRepository
+import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRangeAsFlow
+import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.isBlank
 import com.drbrosdev.extractor.ui.components.extractorsearchview.labelTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ExtractorSearchViewModel(
     query: String,
     labelType: LabelType,
     private val imageSearch: ImageSearchByLabel,
     private val extractionProgress: ExtractionProgress,
+    private val albumRepository: AlbumRepository,
     private val stateHandle: SavedStateHandle,
 ) : ViewModel() {
     val extractorStatusButtonState = ExtractorStatusButtonState()
@@ -41,6 +47,8 @@ class ExtractorSearchViewModel(
     )
 
     val dateFilterState = ExtractorDateFilterState()
+
+    val loaderButtonState = ExtractorLoaderButtonState()
 
     private val _state = MutableStateFlow<ExtractorSearchScreenUiState>(
         ExtractorSearchScreenUiState.FirstSearch
@@ -95,6 +103,31 @@ class ExtractorSearchViewModel(
         return when (val out = state.value) {
             is ExtractorSearchScreenUiState.Success -> out.images.map { it.uri.uri.toUri() }
             else -> emptyList()
+        }
+    }
+
+    fun compileUserAlbum() {
+        viewModelScope.launch {
+            loaderButtonState.startLoader()
+
+            withContext(Dispatchers.Default) {
+                val newAlbum = NewAlbum(
+                    keyword = searchViewState.query,
+                    name = searchViewState.query,
+                    searchType = searchViewState.searchType,
+                    labelType = searchViewState.labelType,
+                    origin = NewAlbum.Origin.USER_GENERATED,
+                    entries = state.value.getImages().map {
+                        NewAlbum.Entry(
+                            uri = it.uri,
+                            id = it.mediaImageId
+                        )
+                    }
+                )
+                albumRepository.createAlbum(newAlbum)
+            }
+
+            loaderButtonState.finishLoader()
         }
     }
 

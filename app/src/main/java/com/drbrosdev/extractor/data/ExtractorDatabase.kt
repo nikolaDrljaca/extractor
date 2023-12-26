@@ -35,7 +35,7 @@ import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
         AlbumEntryEntity::class,
         AlbumConfigurationEntity::class
     ],
-    version = 7,
+    version = 8,
 )
 @TypeConverters(DatabaseConverters::class)
 abstract class ExtractorDatabase : RoomDatabase() {

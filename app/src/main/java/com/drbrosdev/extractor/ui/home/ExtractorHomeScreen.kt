@@ -1,6 +1,8 @@
 package com.drbrosdev.extractor.ui.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -23,6 +25,9 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.ui.components.categoryview.ExtractorAlbumsViewDefaults
+import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryView
+import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
@@ -30,7 +35,13 @@ import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButto
 @Composable
 fun ExtractorHomeScreen(
     onSyncClick: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onInitUserPreviews: () -> Unit,
+    onInitVisualPreview: () -> Unit,
+    onInitTextPreview: () -> Unit,
+    visualAlbums: ExtractorCategoryViewState,
+    userAlbums: ExtractorCategoryViewState,
+    textAlbums: ExtractorCategoryViewState,
 ) {
     val scrollState = rememberScrollState()
 
@@ -42,8 +53,35 @@ fun ExtractorHomeScreen(
         constraintSet = homeScreenConstraintSet()
     ) {
         Column(
-            modifier = Modifier.layoutId(ViewIds.ALBUM_CAT)
+            modifier = Modifier.layoutId(ViewIds.ALBUM_CAT),
+            verticalArrangement = Arrangement.spacedBy(space = 6.dp)
         ) {
+            ExtractorCategoryView(
+                onViewAllClicked = {},
+                onAlbumPreviewClick = {},
+                onInitClick = onInitVisualPreview,
+                contentPadding = PaddingValues(horizontal = 12.dp),
+                category = ExtractorAlbumsViewDefaults.Category.VISUAL,
+                state = visualAlbums,
+            )
+
+            ExtractorCategoryView(
+                onViewAllClicked = { /*TODO*/ },
+                onAlbumPreviewClick = {},
+                onInitClick = onInitTextPreview,
+                contentPadding = PaddingValues(horizontal = 12.dp),
+                category = ExtractorAlbumsViewDefaults.Category.TEXT,
+                state = textAlbums
+            )
+
+            ExtractorCategoryView(
+                onViewAllClicked = { /*TODO*/ },
+                onAlbumPreviewClick = {},
+                onInitClick = onInitUserPreviews,
+                contentPadding = PaddingValues(horizontal = 12.dp),
+                category = ExtractorAlbumsViewDefaults.Category.USER,
+                state = userAlbums
+            )
         }
 
         ExtractorTopBar(
@@ -94,13 +132,13 @@ private fun homeScreenConstraintSet() = ConstraintSet {
     constrain(settingsButton) {
         start.linkTo(buttonGuideline, margin = 4.dp)
         top.linkTo(topBar.bottom, margin = 8.dp)
-        end.linkTo(parent.end, margin = 16.dp)
+        end.linkTo(parent.end, margin = 12.dp)
         width = Dimension.fillToConstraints
     }
 
     constrain(syncButton) {
         top.linkTo(topBar.bottom, margin = 8.dp)
-        start.linkTo(parent.start, margin = 16.dp)
+        start.linkTo(parent.start, margin = 12.dp)
         end.linkTo(buttonGuideline, margin = 4.dp)
         width = Dimension.fillToConstraints
     }

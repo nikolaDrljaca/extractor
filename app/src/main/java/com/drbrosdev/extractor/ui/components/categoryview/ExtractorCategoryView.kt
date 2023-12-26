@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,8 +41,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.drbrosdev.extractor.R
@@ -49,16 +50,18 @@ import com.drbrosdev.extractor.domain.model.AlbumPreview
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.ui.components.shared.AnimatedBorderContent
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CombinedPreview
 import com.drbrosdev.extractor.util.toUri
-import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun ExtractorCategoryView(
     modifier: Modifier = Modifier,
     onViewAllClicked: () -> Unit,
-    onAlbumClicked: (Long) -> Unit,
-    category: ExtractorAlbumsViewDefaults.Category = ExtractorAlbumsViewDefaults.Category.VISUAL,
-    state: ExtractorCategoryViewState
+    onAlbumPreviewClick: (Long) -> Unit,
+    onInitClick: () -> Unit,
+    contentPadding: PaddingValues = PaddingValues(),
+    category: ExtractorAlbumsViewDefaults.Category,
+    state: ExtractorCategoryViewState,
 ) {
     Column(
         modifier = Modifier
@@ -69,7 +72,8 @@ fun ExtractorCategoryView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 8.dp)
+                .padding(vertical = 6.dp)
+                .padding(contentPadding)
                 .fillMaxWidth()
         ) {
             Text(
@@ -102,12 +106,22 @@ fun ExtractorCategoryView(
         ) {
             when (it) {
                 is ExtractorCategoryViewState.Content -> ExtractorCategoryContentView(
-                    onAlbumPreviewClick = onAlbumClicked,
+                    onAlbumPreviewClick = onAlbumPreviewClick,
                     items = it.albums
                 )
 
-                ExtractorCategoryViewState.Initial -> ExtractorCategoryInitialView()
-                ExtractorCategoryViewState.Loading -> ExtractorCategoryLoadingView()
+                ExtractorCategoryViewState.Initial -> ExtractorCategoryInitialView(
+                    modifier = Modifier.padding(contentPadding),
+                    onInitClick = onInitClick,
+                    category = category
+                )
+
+                ExtractorCategoryViewState.Loading -> ExtractorCategoryLoadingView(
+                    modifier = Modifier.padding(contentPadding),
+                )
+                ExtractorCategoryViewState.Empty -> ExtractorCategoryEmptyView(
+                    modifier = Modifier.padding(contentPadding),
+                )
             }
         }
 
@@ -126,26 +140,52 @@ object ExtractorAlbumsViewDefaults {
 
 @Composable
 private fun ExtractorCategoryInitialView(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onInitClick: () -> Unit,
+    category: ExtractorAlbumsViewDefaults.Category,
 ) {
     Column(
-        modifier = Modifier.then(modifier),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
         verticalArrangement = Arrangement.spacedBy(
             space = 12.dp,
             alignment = Alignment.CenterVertically
         ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextButton(onClick = { /*TODO*/ }) {
-            Icon(imageVector = Icons.Rounded.Add, contentDescription = "")
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(R.string.initialize))
-        }
+        when (category) {
+            ExtractorAlbumsViewDefaults.Category.USER -> {
+                TextButton(onClick = onInitClick) {
+                    Icon(
+                        painterResource(id = R.drawable.round_image_search_24),
+                        contentDescription = ""
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = stringResource(R.string.go_to_search))
+                }
+                Text(
+                    text = stringResource(R.string.create_own_album),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.width(IntrinsicSize.Max),
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
 
-        Text(
-            text = stringResource(R.string.init_album_category_expl),
-            textAlign = TextAlign.Center
-        )
+            else -> {
+                TextButton(onClick = onInitClick) {
+                    Icon(imageVector = Icons.Rounded.Add, contentDescription = "")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = stringResource(R.string.initialize))
+                }
+
+                Text(
+                    text = stringResource(R.string.init_album_category_expl),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+        }
     }
 }
 
@@ -179,6 +219,40 @@ private fun ExtractorCategoryLoadingView(
 }
 
 @Composable
+private fun ExtractorCategoryEmptyView(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(
+                space = 12.dp,
+                alignment = Alignment.CenterVertically
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "\uD83D\uDE41",
+                textAlign = TextAlign.Center,
+                modifier = Modifier.width(IntrinsicSize.Max),
+                fontSize = 24.sp,
+            )
+            Text(
+                text = stringResource(R.string.oops_no_albums_found),
+                color = Color.Gray,
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.width(IntrinsicSize.Max),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
 private fun ExtractorCategoryContentView(
     modifier: Modifier = Modifier,
     onAlbumPreviewClick: (Long) -> Unit,
@@ -190,7 +264,10 @@ private fun ExtractorCategoryContentView(
         contentPadding = PaddingValues(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(space = 8.dp)
     ) {
-        items(items) {
+        items(
+            items = items,
+            key = { it.id }
+        ) {
             AlbumThumbnailView(
                 onClick = { onAlbumPreviewClick(it.id) },
                 imageUri = it.thumbnail.toUri(),
@@ -222,8 +299,7 @@ private fun AlbumThumbnailView(
                 .clickable { onClick() }
                 .then(modifier),
             model = ImageRequest.Builder(LocalContext.current)
-//                .data(imageUri)
-                .data(R.drawable.baseline_image_24)
+                .data(imageUri)
                 .size(scaleSize, scaleSize)
                 .crossfade(true)
                 .build(),
@@ -249,13 +325,13 @@ private fun AlbumThumbnailView(
 
 }
 
-@Preview
+@CombinedPreview
 @Composable
 private fun CurrentPreview() {
     val items = listOf(
-        AlbumPreview(0L, "some", MediaImageUri("")),
-        AlbumPreview(0L, "some", MediaImageUri("")),
-        AlbumPreview(0L, "some", MediaImageUri("")),
+        AlbumPreview(1L, "some", MediaImageUri("")),
+        AlbumPreview(2L, "some", MediaImageUri("")),
+        AlbumPreview(3L, "some", MediaImageUri("")),
     )
 
     ExtractorTheme(dynamicColor = false) {
@@ -266,22 +342,34 @@ private fun CurrentPreview() {
             ) {
                 ExtractorCategoryView(
                     onViewAllClicked = { },
-                    onAlbumClicked = {},
-                    state = ExtractorCategoryViewState.Initial
+                    onAlbumPreviewClick = {},
+                    state = ExtractorCategoryViewState.Initial,
+                    category = ExtractorAlbumsViewDefaults.Category.USER,
+                    onInitClick = {}
                 )
 
                 ExtractorCategoryView(
                     onViewAllClicked = { },
-                    onAlbumClicked = {},
-                    state = ExtractorCategoryViewState.Loading
+                    onAlbumPreviewClick = {},
+                    state = ExtractorCategoryViewState.Loading,
+                    category = ExtractorAlbumsViewDefaults.Category.VISUAL,
+                    onInitClick = {}
                 )
 
                 ExtractorCategoryView(
                     onViewAllClicked = { },
-                    onAlbumClicked = {},
-                    state = ExtractorCategoryViewState.Content(
-                        albums = items.toImmutableList()
-                    )
+                    onAlbumPreviewClick = {},
+                    state = ExtractorCategoryViewState.Empty,
+                    category = ExtractorAlbumsViewDefaults.Category.VISUAL,
+                    onInitClick = {}
+                )
+
+                ExtractorCategoryView(
+                    onViewAllClicked = { },
+                    state = ExtractorCategoryViewState.Content(albums = items),
+                    onAlbumPreviewClick = {},
+                    category = ExtractorAlbumsViewDefaults.Category.TEXT,
+                    onInitClick = {}
                 )
             }
         }

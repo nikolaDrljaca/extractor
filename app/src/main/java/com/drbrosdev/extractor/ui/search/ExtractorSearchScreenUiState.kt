@@ -1,18 +1,16 @@
 package com.drbrosdev.extractor.ui.search
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.Extraction
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 
-@Stable
+@Immutable
 sealed class ExtractorSearchScreenUiState {
 
     data class Success(
-        val images: ImmutableList<Extraction>,
+        val images: List<Extraction>,
     ) : ExtractorSearchScreenUiState()
 
     data object Loading : ExtractorSearchScreenUiState()
@@ -27,6 +25,13 @@ fun MutableStateFlow<ExtractorSearchScreenUiState>.createFrom(
 ) = update {
     when {
         mediaImages.isEmpty() -> ExtractorSearchScreenUiState.Empty
-        else -> ExtractorSearchScreenUiState.Success(mediaImages.toImmutableList())
+        else -> ExtractorSearchScreenUiState.Success(mediaImages)
+    }
+}
+
+fun ExtractorSearchScreenUiState.getImages(): List<Extraction> {
+    return when(this) {
+        is ExtractorSearchScreenUiState.Success -> this.images
+        else -> error("Accessing image list outside of Success state.")
     }
 }
