@@ -54,8 +54,8 @@
     <string name="welcome">Welcome!</string>
     <string name="loading">Loading…</string>
     <string name="visual_albums">Visual Albums</string>
-    <string name="text_albums">Text albums</string>
-    <string name="my_albums">My albums</string>
+    <string name="text_albums">Text Albums</string>
+    <string name="my_albums">My Albums</string>
     <string name="initialize">Initialize</string>
     <string name="init_album_category_expl">Tap \'Initialize\' to create albums based on most common found keywords.</string>
     <string name="create_own_album">Create your own albums from the search screen!</string>

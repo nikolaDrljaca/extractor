@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -52,6 +53,8 @@ import com.drbrosdev.extractor.ui.components.shared.AnimatedBorderContent
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 import com.drbrosdev.extractor.util.toUri
+
+private const val IMAGE_SIZE = 130
 
 @Composable
 fun ExtractorCategoryView(
@@ -107,7 +110,7 @@ fun ExtractorCategoryView(
             when (it) {
                 is ExtractorCategoryViewState.Content -> ExtractorCategoryContentView(
                     onAlbumPreviewClick = onAlbumPreviewClick,
-                    items = it.albums
+                    items = it.albums,
                 )
 
                 ExtractorCategoryViewState.Initial -> ExtractorCategoryInitialView(
@@ -119,6 +122,7 @@ fun ExtractorCategoryView(
                 ExtractorCategoryViewState.Loading -> ExtractorCategoryLoadingView(
                     modifier = Modifier.padding(contentPadding),
                 )
+
                 ExtractorCategoryViewState.Empty -> ExtractorCategoryEmptyView(
                     modifier = Modifier.padding(contentPadding),
                 )
@@ -146,6 +150,7 @@ private fun ExtractorCategoryInitialView(
 ) {
     Column(
         modifier = Modifier
+            .requiredHeight(IMAGE_SIZE.dp)
             .fillMaxWidth()
             .then(modifier),
         verticalArrangement = Arrangement.spacedBy(
@@ -224,6 +229,7 @@ private fun ExtractorCategoryEmptyView(
 ) {
     Box(
         modifier = Modifier
+            .requiredHeight(IMAGE_SIZE.dp)
             .fillMaxWidth()
             .then(modifier),
         contentAlignment = Alignment.Center
@@ -260,7 +266,9 @@ private fun ExtractorCategoryContentView(
 ) {
 
     LazyRow(
-        modifier = Modifier.then(modifier),
+        modifier = Modifier
+            .requiredHeight(IMAGE_SIZE.dp)
+            .then(modifier),
         contentPadding = PaddingValues(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(space = 8.dp)
     ) {
@@ -285,7 +293,7 @@ private fun AlbumThumbnailView(
     imageUri: Uri,
     albumName: String
 ) {
-    val size = 130
+    val size = IMAGE_SIZE
     val sizeModifier = Modifier.size(size.dp)
     val scaleSize = size * 2
     val shape = RoundedCornerShape(12.dp)

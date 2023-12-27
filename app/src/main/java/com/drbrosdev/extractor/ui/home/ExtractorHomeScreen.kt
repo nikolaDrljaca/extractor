@@ -1,7 +1,5 @@
 package com.drbrosdev.extractor.ui.home
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,37 +50,35 @@ fun ExtractorHomeScreen(
             .verticalScroll(scrollState),
         constraintSet = homeScreenConstraintSet()
     ) {
-        Column(
-            modifier = Modifier.layoutId(ViewIds.ALBUM_CAT),
-            verticalArrangement = Arrangement.spacedBy(space = 6.dp)
-        ) {
-            ExtractorCategoryView(
-                onViewAllClicked = {},
-                onAlbumPreviewClick = {},
-                onInitClick = onInitVisualPreview,
-                contentPadding = PaddingValues(horizontal = 12.dp),
-                category = ExtractorAlbumsViewDefaults.Category.VISUAL,
-                state = visualAlbums,
-            )
+        ExtractorCategoryView(
+            onViewAllClicked = { /*TODO*/ },
+            onAlbumPreviewClick = {},
+            onInitClick = onInitUserPreviews,
+            contentPadding = PaddingValues(horizontal = 12.dp),
+            category = ExtractorAlbumsViewDefaults.Category.USER,
+            state = userAlbums,
+            modifier = Modifier.layoutId(ViewIds.USER_ALBUM)
+        )
 
-            ExtractorCategoryView(
-                onViewAllClicked = { /*TODO*/ },
-                onAlbumPreviewClick = {},
-                onInitClick = onInitTextPreview,
-                contentPadding = PaddingValues(horizontal = 12.dp),
-                category = ExtractorAlbumsViewDefaults.Category.TEXT,
-                state = textAlbums
-            )
+        ExtractorCategoryView(
+            onViewAllClicked = {},
+            onAlbumPreviewClick = {},
+            onInitClick = onInitVisualPreview,
+            contentPadding = PaddingValues(horizontal = 12.dp),
+            category = ExtractorAlbumsViewDefaults.Category.VISUAL,
+            state = visualAlbums,
+            modifier = Modifier.layoutId(ViewIds.VISUAL_ALBUM)
+        )
 
-            ExtractorCategoryView(
-                onViewAllClicked = { /*TODO*/ },
-                onAlbumPreviewClick = {},
-                onInitClick = onInitUserPreviews,
-                contentPadding = PaddingValues(horizontal = 12.dp),
-                category = ExtractorAlbumsViewDefaults.Category.USER,
-                state = userAlbums
-            )
-        }
+        ExtractorCategoryView(
+            onViewAllClicked = { /*TODO*/ },
+            onAlbumPreviewClick = {},
+            onInitClick = onInitTextPreview,
+            contentPadding = PaddingValues(horizontal = 12.dp),
+            category = ExtractorAlbumsViewDefaults.Category.TEXT,
+            state = textAlbums,
+            modifier = Modifier.layoutId(ViewIds.TEXT_ALBUM)
+        )
 
         ExtractorTopBar(
             modifier = Modifier.layoutId(ViewIds.TOP_BAR),
@@ -123,9 +119,12 @@ fun ExtractorHomeScreen(
 
 private fun homeScreenConstraintSet() = ConstraintSet {
     val topBar = createRefFor(ViewIds.TOP_BAR)
-    val albumCategory = createRefFor(ViewIds.ALBUM_CAT)
     val settingsButton = createRefFor(ViewIds.SETTINGS_BUTTON)
     val syncButton = createRefFor(ViewIds.SYNC_BUTTON)
+
+    val userAlbum = createRefFor(ViewIds.USER_ALBUM)
+    val textAlbum = createRefFor(ViewIds.TEXT_ALBUM)
+    val visualAlbum = createRefFor(ViewIds.VISUAL_ALBUM)
 
     val buttonGuideline = createGuidelineFromStart(0.5f)
 
@@ -150,18 +149,34 @@ private fun homeScreenConstraintSet() = ConstraintSet {
         width = Dimension.fillToConstraints
     }
 
-    constrain(albumCategory) {
+    constrain(userAlbum) {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        top.linkTo(settingsButton.bottom, margin = 18.dp)
+        top.linkTo(settingsButton.bottom, margin = 8.dp)
+        width = Dimension.fillToConstraints
+    }
+
+    constrain(visualAlbum) {
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+        top.linkTo(userAlbum.bottom)
+        width = Dimension.fillToConstraints
+    }
+
+    constrain(textAlbum) {
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+        top.linkTo(visualAlbum.bottom)
         width = Dimension.fillToConstraints
     }
 }
 
 private object ViewIds {
     const val TOP_BAR = "topBar"
-    const val ALBUM_CAT = "commonV"
     const val SYNC_BUTTON = "syncButton"
     const val SETTINGS_BUTTON = "settingsButton"
+    const val USER_ALBUM = "userAlbum"
+    const val TEXT_ALBUM = "textAlbum"
+    const val VISUAL_ALBUM = "visualAlbum"
 }
 
