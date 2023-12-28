@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.drbrosdev.extractor.ui.album.ExtractorAlbumNavTarget
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -42,7 +43,10 @@ object ExtractorHomeNavTarget : NavTarget {
             textAlbums = textAlbums,
             onInitTextPreview = {},
             onInitUserPreviews = { navController.pop() },
-            onInitVisualPreview = viewModel::compileVisualAlbums
+            onInitVisualPreview = viewModel::compileVisualAlbums,
+            onAlbumPreviewClick = {
+                navController.navigate(ExtractorAlbumNavTarget(it))
+            }
         )
     }
 }
@@ -60,7 +64,8 @@ private fun SearchScreenPreview() {
                 textAlbums = ExtractorCategoryViewState.Initial,
                 onInitTextPreview = {},
                 onInitUserPreviews = {},
-                onInitVisualPreview = {}
+                onInitVisualPreview = {},
+                onAlbumPreviewClick = {}
             )
         }
     }

@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,6 +24,7 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorAlbumsViewDefaults
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryView
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
+import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
@@ -37,6 +36,7 @@ fun ExtractorHomeScreen(
     onInitUserPreviews: () -> Unit,
     onInitVisualPreview: () -> Unit,
     onInitTextPreview: () -> Unit,
+    onAlbumPreviewClick: (albumId: Long) -> Unit,
     visualAlbums: ExtractorCategoryViewState,
     userAlbums: ExtractorCategoryViewState,
     textAlbums: ExtractorCategoryViewState,
@@ -52,7 +52,7 @@ fun ExtractorHomeScreen(
     ) {
         ExtractorCategoryView(
             onViewAllClicked = { /*TODO*/ },
-            onAlbumPreviewClick = {},
+            onAlbumPreviewClick = onAlbumPreviewClick,
             onInitClick = onInitUserPreviews,
             contentPadding = PaddingValues(horizontal = 12.dp),
             category = ExtractorAlbumsViewDefaults.Category.USER,
@@ -62,7 +62,7 @@ fun ExtractorHomeScreen(
 
         ExtractorCategoryView(
             onViewAllClicked = {},
-            onAlbumPreviewClick = {},
+            onAlbumPreviewClick = onAlbumPreviewClick,
             onInitClick = onInitVisualPreview,
             contentPadding = PaddingValues(horizontal = 12.dp),
             category = ExtractorAlbumsViewDefaults.Category.VISUAL,
@@ -71,8 +71,8 @@ fun ExtractorHomeScreen(
         )
 
         ExtractorCategoryView(
-            onViewAllClicked = { /*TODO*/ },
-            onAlbumPreviewClick = {},
+            onViewAllClicked = { /*TODO @nikola*/ },
+            onAlbumPreviewClick = { /*TODO @nikola*/},
             onInitClick = onInitTextPreview,
             contentPadding = PaddingValues(horizontal = 12.dp),
             category = ExtractorAlbumsViewDefaults.Category.TEXT,
@@ -83,12 +83,7 @@ fun ExtractorHomeScreen(
         ExtractorTopBar(
             modifier = Modifier.layoutId(ViewIds.TOP_BAR),
             leadingSlot = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = ""
-                    )
-                }
+                BackIconButton(onBack = onBack)
                 ExtractorHeader(headerText = stringResource(id = R.string.extractor_home))
             },
             trailingSlot = {

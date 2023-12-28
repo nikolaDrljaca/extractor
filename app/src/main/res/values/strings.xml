@@ -16,7 +16,7 @@
     <string name="match_keyword">Match keyword</string>
     <string name="visual_embeddings">Visual Keywords</string>
     <string name="text_embeddings">Text Keywords</string>
-    <string name="user_embeddings">User Keywords</string>
+    <string name="user_embeddings">My Keywords</string>
     <string name="type_your_search_terms_here">Type your search terms here…</string>
     <string name="start_date">Start Date</string>
     <string name="end_date">End Date</string>
@@ -63,4 +63,5 @@
     <string name="oops_no_albums_found">Oops! No albums found.</string>
     <string name="create_album">Create Album</string>
     <string name="album_created">Album Created!</string>
+    <string name="dropdown_delete">Delete</string>
 </resources>

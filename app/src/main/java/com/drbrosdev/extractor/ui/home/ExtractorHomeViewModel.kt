@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
@@ -32,15 +31,14 @@ class ExtractorHomeViewModel(
 
     val visualAlbums = _visualAlbums.asStateFlow()
 
+    //TODO: @nikola wire in text albums after compilation is in place
     private val _textAlbums =
         MutableStateFlow<ExtractorCategoryViewState>(ExtractorCategoryViewState.Initial)
     val textAlbums = _textAlbums.asStateFlow()
 
     private val getVisualAlbumsJob = albumRepository
         .getCommonVisualAlbumsAsFlow()
-        .onStart { _visualAlbums.update { ExtractorCategoryViewState.Loading } }
         .onEach { albums ->
-            val out = albums.map { it.toPreview() }
             _visualAlbums.update {
                 when {
                     albums.isEmpty() -> ExtractorCategoryViewState.Initial

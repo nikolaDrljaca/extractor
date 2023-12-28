@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.util
 
 import android.net.Uri
+import androidx.core.net.toUri
 import com.drbrosdev.extractor.data.entity.AlbumConfigurationEntity
 import com.drbrosdev.extractor.data.entity.AlbumEntity
 import com.drbrosdev.extractor.data.entity.AlbumEntryEntity
@@ -21,7 +22,7 @@ import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.framework.mediastore.MediaStoreImage
 
 
-fun MediaImageUri.toUri(): Uri = Uri.parse(Uri.decode(this.uri))
+fun MediaImageUri.toUri(): Uri = this.uri.toUri()
 
 fun MediaStoreImage.mediaImageUri() = MediaImageUri(this.uri.toString())
 
