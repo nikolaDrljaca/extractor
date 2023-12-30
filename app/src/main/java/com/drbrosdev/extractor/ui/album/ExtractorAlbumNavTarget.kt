@@ -29,7 +29,7 @@ data class ExtractorAlbumNavTarget(
         ExtractorAlbumScreen(
             onImageClick = { index ->
                 val destination = ExtractorImageNavTarget(
-                    images = viewModel.getImageUris(),
+                    images = viewModel.imageUris.value,
                     initialIndex = index
                 )
                 navController.navigate(destination)
