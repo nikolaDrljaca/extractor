@@ -6,6 +6,7 @@ import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.RememberSearch
+import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
 import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
@@ -97,6 +98,12 @@ val useCaseModule = module {
             visualEmbeddingDao = get(),
             imageEmbeddingsDao = get(),
             albumRepository = get<DefaultAlbumRepository>()
+        )
+    }
+
+    factory {
+        SpawnExtractorWork(
+            workManager = get()
         )
     }
 }

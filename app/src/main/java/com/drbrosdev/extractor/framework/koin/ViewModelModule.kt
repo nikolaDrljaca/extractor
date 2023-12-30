@@ -17,7 +17,7 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel {
         StartWorkerViewModel(
-            workManager = get(),
+            spawnExtractorWork = get(),
             datastore = get(),
         )
     }
@@ -60,7 +60,7 @@ val viewModelModule = module {
 
     viewModel {
         ExtractorStatusDialogViewModel(
-            bulkExtractor = get(),
+            spawnExtractorWork = get(),
             extractionProgress = get()
         )
     }

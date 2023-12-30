@@ -40,5 +40,7 @@ interface ExtractionDao {
     suspend fun deleteByMediaId(mediaId: Long): Int
 
     @Query("select count(*) from image_extraction_entity")
-    suspend fun getCount(): Int
+    fun getCountAsFlow(): Flow<Int>
+
+    suspend fun getCount(): Int = getCountAsFlow().first()
 }
