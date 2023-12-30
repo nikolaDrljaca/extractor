@@ -117,6 +117,9 @@ dependencies {
     val zoomableVersion = "1.5.0"
     implementation("net.engawapg.lib:zoomable:$zoomableVersion")
 
+    //splash screen API
+    implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     implementation("io.arrow-kt:arrow-core:1.2.0")
