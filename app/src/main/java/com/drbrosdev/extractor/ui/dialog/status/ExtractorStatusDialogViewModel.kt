@@ -46,7 +46,12 @@ data class ExtractorStatusDialogUiModel(
     val isExtractionRunning: Boolean = false
 ) {
     val percentage = inStorageCount safeDiv onDeviceCount
-    val shouldAllowExtraction = !isExtractionRunning or (onDeviceCount != inStorageCount)
+
+    val shouldAllowExtraction = when {
+        isExtractionRunning -> false
+        onDeviceCount == inStorageCount -> false
+        else -> true
+    }
 }
 
 infix fun Int.safeDiv(other: Int): Float {
