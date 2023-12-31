@@ -9,6 +9,9 @@ different architectures/tech stacks/whatever(s).
 They might not be the most optimal or industry standard, but they have been chosen because they work
 or the authors know how to work with them.
 
+These ideas are inspired by Adams page [here](https://github.com/AdamMc331/TOA/blob/development/documentation/Architecture.md).
+Give the page a read as most this are applicable to this architecture as well.
+
 ## Architecture
 
 Overall, the application takes a mix of a layered and 'clean' architecture decisions, with some
@@ -201,10 +204,10 @@ and thus marking as a routing destination. Acts as the top-level stateful compos
 to bind with view models and navigation providers.
 - (required) Top level *stateless* composable: `<feature_name>Screen` -> Actual user interface code.
 - `<feature_name>ViewModel` if applicable.
-- `<feature_name>UiState` if applicable.
+- `<feature_name>UiState` if applicable. **Should be annotated with `@Immutable`.**
 
 
-**ALWAYS** have a `@Preview` in this file to preview the screen ui.
+**ALWAYS** have a `@Preview` in this file - in `<feature_name>Screen` to preview the screen ui.
 
 Components package contains a package per molecule.
 Have a look at `ExtractorSearchView` and `Stateful.md`.

@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.components.extractorloaderbutton
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
@@ -8,6 +9,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
 
+@Stable
 class ExtractorLoaderButtonState(
     initial: Target = Target.INITIAL
 ) {
