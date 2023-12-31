@@ -75,7 +75,7 @@ fun ExtractorStatusDialog(
 
             ExtractorActionButton(
                 onClick = onClick,
-                enabled = !state.isExtractionRunning,
+                enabled = state.shouldAllowExtraction,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Start Sync")
