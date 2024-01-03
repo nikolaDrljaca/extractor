@@ -28,6 +28,12 @@ class DefaultAlbumRepository(
     private val albumRelationDao: AlbumRelationDao
 ) : AlbumRepository {
 
+    override suspend fun deleteAlbumById(albumId: Long) = withContext(dispatcher) {
+        albumDao.deleteById(albumId)
+        albumEntryDao.deleteByAlbumEntityId(albumId)
+        albumConfigurationDao.deleteByAlbumEntityId(albumId)
+    }
+
     override suspend fun createAlbum(newAlbum: NewAlbum) {
         val albumId = albumDao.insert(
             AlbumEntity(
@@ -54,14 +60,14 @@ class DefaultAlbumRepository(
         }
     }
 
-    override fun findAlbumByIdAsFlow(albumId: Long): Flow<Album> {
+    override fun findAlbumByIdAsFlow(albumId: Long): Flow<Album?> {
         return albumRelationDao.findAlbumByIdAsFlow(albumId)
-            .map { it.toAlbum() }
+            .map { it?.toAlbum() }
             .flowOn(dispatcher)
     }
 
-    override suspend fun findAlbumById(albumId: Long): Album {
-        return albumRelationDao.findAlbumById(albumId).toAlbum()
+    override suspend fun findAlbumById(albumId: Long): Album? {
+        return albumRelationDao.findAlbumById(albumId)?.toAlbum()
     }
 
     override fun getCommonVisualAlbumsAsFlow(): Flow<List<Album>> {

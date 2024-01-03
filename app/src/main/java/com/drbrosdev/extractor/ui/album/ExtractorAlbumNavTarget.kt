@@ -2,10 +2,13 @@ package com.drbrosdev.extractor.ui.album
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
+import com.drbrosdev.extractor.util.launchShareIntent
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
@@ -25,6 +28,7 @@ data class ExtractorAlbumNavTarget(
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         val navController = LocalNavController.current
+        val context = LocalContext.current
 
         ExtractorAlbumScreen(
             onImageClick = { index ->
@@ -35,8 +39,28 @@ data class ExtractorAlbumNavTarget(
                 navController.navigate(destination)
             },
             state = state,
-            onDropdownAction = {},
-            onBack = { navController.pop() }
+            onDropdownAction = { action ->
+                when (action) {
+                    AlbumHeaderDropdownAction.Delete -> {
+                        viewModel.onDeleteAction()
+                    }
+
+                    AlbumHeaderDropdownAction.Share -> {
+                        context.launchShareIntent(viewModel.imageUris.value)
+                    }
+                }
+            },
+            onBack = { navController.pop() },
+            onDialogAction = {
+                when (it) {
+                    ConfirmationDialogActions.Confirm -> {
+                        viewModel.onDeleteAlbum()
+                        navController.pop()
+                    }
+                    ConfirmationDialogActions.Deny -> viewModel.onDismissDialog()
+                    ConfirmationDialogActions.Dismiss -> viewModel.onDismissDialog()
+                }
+            }
         )
     }
 }

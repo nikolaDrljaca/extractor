@@ -23,9 +23,7 @@ class ExtractorLoaderButtonState(
 
     suspend fun withLoader(block: suspend () -> Unit) {
         current = Target.LOADING
-        isEnabled = false
         block()
-        isEnabled = true
         current = Target.SUCCESS
         delay(1000L)
         current = Target.INITIAL

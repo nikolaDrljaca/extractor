@@ -47,6 +47,8 @@ import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
+import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialog
+import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageItem
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
@@ -56,6 +58,7 @@ import com.drbrosdev.extractor.util.toUri
 fun ExtractorAlbumScreen(
     modifier: Modifier = Modifier,
     onImageClick: (index: Int) -> Unit,
+    onDialogAction: (ConfirmationDialogActions) -> Unit,
     onDropdownAction: (AlbumHeaderDropdownAction) -> Unit,
     onBack: () -> Unit,
     state: ExtractorAlbumScreenState,
@@ -66,6 +69,15 @@ fun ExtractorAlbumScreen(
     when (state) {
         ExtractorAlbumScreenState.Loading -> ExtractorAlbumScreenLoading()
         is ExtractorAlbumScreenState.Content -> {
+            if (state.isConfirmDeleteShown) {
+                ConfirmationDialog(
+                    icon = { Icon(imageVector = Icons.Rounded.Delete, contentDescription = "") },
+                    onAction = onDialogAction
+                ) {
+                    Text(text = stringResource(R.string.album_delete_perm))
+                }
+            }
+
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = imageSize.dp),
                 modifier = Modifier
@@ -120,9 +132,10 @@ fun ExtractorAlbumScreen(
 private fun ExtractorAlbumScreenLoading(
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .then(modifier),
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .then(modifier),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
@@ -198,8 +211,11 @@ private fun AlbumHeaderDropdownMenu(
             onDismissRequest = { isDropdownOpen = false }
         ) {
             DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.bottom_bar_share)) },
-                onClick = { onAction(AlbumHeaderDropdownAction.Share) },
+                text = { Text(text = stringResource(R.string.dropdown_share_all)) },
+                onClick = {
+                    onAction(AlbumHeaderDropdownAction.Share)
+                    isDropdownOpen = false
+                },
                 leadingIcon = { Icon(imageVector = Icons.Rounded.Share, contentDescription = "") }
             )
 
@@ -210,7 +226,10 @@ private fun AlbumHeaderDropdownMenu(
                         color = MaterialTheme.colorScheme.error
                     )
                 },
-                onClick = { onAction(AlbumHeaderDropdownAction.Delete) },
+                onClick = {
+                    onAction(AlbumHeaderDropdownAction.Delete)
+                    isDropdownOpen = false
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Rounded.Delete,
@@ -248,7 +267,8 @@ private fun CurrentPreview() {
                 onImageClick = {},
                 state = data,
                 onDropdownAction = {},
-                onBack = {}
+                onBack = {},
+                onDialogAction = {}
             )
         }
     }

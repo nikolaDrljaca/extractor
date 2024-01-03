@@ -8,9 +8,9 @@ interface AlbumRepository {
 
     suspend fun createAlbum(newAlbum: NewAlbum)
 
-    fun findAlbumByIdAsFlow(albumId: Long): Flow<Album>
+    fun findAlbumByIdAsFlow(albumId: Long): Flow<Album?>
 
-    suspend fun findAlbumById(albumId: Long) : Album
+    suspend fun findAlbumById(albumId: Long) : Album?
 
     fun getCommonVisualAlbumsAsFlow(): Flow<List<Album>>
 
@@ -19,5 +19,7 @@ interface AlbumRepository {
     fun getAllUserAlbumsAsFlow(): Flow<List<Album>>
 
     suspend fun getAllUserAlbums(): List<Album>
+
+    suspend fun deleteAlbumById(albumId: Long)
 }
 

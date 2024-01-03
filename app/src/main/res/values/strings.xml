@@ -63,5 +63,10 @@
     <string name="oops_no_albums_found">Oops! No albums found.</string>
     <string name="create_album">Create Album</string>
     <string name="album_created">Album Created!</string>
-    <string name="dropdown_delete">Delete</string>
+    <string name="dropdown_delete">Delete Album</string>
+    <string name="dropdown_share_all">Share All</string>
+    <string name="confirm_dialog_confirm">Confirm</string>
+    <string name="confirm_dialog_deny">Dismiss</string>
+    <string name="confirm_dialog_sure">Are you sure?</string>
+    <string name="album_delete_perm">This will delete the album permanently.</string>
 </resources>

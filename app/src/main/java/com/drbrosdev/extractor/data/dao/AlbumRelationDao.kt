@@ -12,14 +12,6 @@ import kotlinx.coroutines.flow.first
 @Dao
 interface AlbumRelationDao {
 
-//    @Query(
-//        """
-//        select * from album as a
-//        join album_configuration as ac on a.album_id = ac.album_entity_id
-//        join album_entry as ae on ae.album_entity_id = a.album_id
-//        where a.album_id=:albumId
-//    """
-//    )
     @Query("""
         select * 
         from album as a, album_configuration, album_entry
@@ -28,9 +20,9 @@ interface AlbumRelationDao {
     """)
     @Transaction
     @RewriteQueriesToDropUnusedColumns
-    fun findAlbumByIdAsFlow(albumId: Long): Flow<AlbumRelation>
+    fun findAlbumByIdAsFlow(albumId: Long): Flow<AlbumRelation?>
 
-    suspend fun findAlbumById(albumId: Long): AlbumRelation = findAlbumByIdAsFlow(albumId).first()
+    suspend fun findAlbumById(albumId: Long): AlbumRelation? = findAlbumByIdAsFlow(albumId).first()
 
     @Query("""
         select * 
@@ -54,7 +46,6 @@ interface AlbumRelationDao {
     fun findVisualAsFlow(origin: AlbumEntity.Origin = AlbumEntity.Origin.VISUAL_COMPUTED): Flow<List<AlbumRelation>>
 
     suspend fun findVisual(): List<AlbumRelation> = findVisualAsFlow().first()
-
 
     @Query("""
         select * 

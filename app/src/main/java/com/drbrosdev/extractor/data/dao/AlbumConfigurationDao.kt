@@ -34,6 +34,9 @@ interface AlbumConfigurationDao {
     @Query("delete from album_configuration where id=:configurationId")
     suspend fun deleteById(configurationId: Long)
 
+    @Query("delete from album_configuration where album_entity_id=:albumEntityId")
+    suspend fun deleteByAlbumEntityId(albumEntityId: Long)
+
     @Update
     suspend fun update(configuration: AlbumConfigurationEntity)
 }
