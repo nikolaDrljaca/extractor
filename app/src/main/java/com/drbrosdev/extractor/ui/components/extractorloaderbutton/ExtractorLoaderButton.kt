@@ -6,9 +6,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -31,7 +34,6 @@ fun ExtractorLoaderButton(
     onClick: () -> Unit,
     state: ExtractorLoaderButtonState,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
     colors: ButtonColors = ExtractorLoaderButtonDefaults.colors(
         containerColor = Color.White,
@@ -52,7 +54,7 @@ fun ExtractorLoaderButton(
         modifier = Modifier
             .then(modifier),
         colors = colors,
-        enabled = enabled,
+        enabled = state.isEnabled,
         contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp)
     ) {
@@ -118,13 +120,25 @@ object ExtractorLoaderButtonDefaults {
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
-        ExtractorLoaderButton(
-            onClick = { /*TODO*/ },
-            state = ExtractorLoaderButtonState(),
-            content = { Text(text = "Loader") },
-            loadingContent = {},
-            successContent = {}
-        )
+        Column {
+            ExtractorLoaderButton(
+                onClick = { /*TODO*/ },
+                state = ExtractorLoaderButtonState(),
+                content = { Text(text = "Loader") },
+                loadingContent = {},
+                successContent = {}
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            ExtractorLoaderButton(
+                onClick = { /*TODO*/ },
+                state = ExtractorLoaderButtonState(isEnabled = false),
+                content = { Text(text = "Loader") },
+                loadingContent = {},
+                successContent = {}
+            )
+        }
     }
 }
 

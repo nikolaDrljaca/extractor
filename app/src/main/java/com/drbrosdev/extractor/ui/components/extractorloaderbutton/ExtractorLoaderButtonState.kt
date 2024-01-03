@@ -11,20 +11,32 @@ import kotlinx.coroutines.delay
 
 @Stable
 class ExtractorLoaderButtonState(
-    initial: Target = Target.INITIAL
+    initial: Target = Target.INITIAL,
+    isEnabled: Boolean = true,
 ) {
 
     var current by mutableStateOf(initial)
         private set
 
-    fun startLoader() {
+    var isEnabled by mutableStateOf(true)
+        private set
+
+    suspend fun withLoader(block: suspend () -> Unit) {
         current = Target.LOADING
+        isEnabled = false
+        block()
+        isEnabled = true
+        current = Target.SUCCESS
+        delay(1000L)
+        current = Target.INITIAL
     }
 
-    suspend fun finishLoader() {
-        current = Target.SUCCESS
-        delay(1500L)
-        current = Target.INITIAL
+    fun disable() {
+        isEnabled = false
+    }
+
+    fun enable() {
+        isEnabled = true
     }
 
     enum class Target {

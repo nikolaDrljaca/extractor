@@ -83,6 +83,15 @@ class ExtractorSearchViewModel(
         .onEach { performSearch(SearchStrategy.NORMAL) }
         .launchIn(viewModelScope)
 
+    private val loaderButtonEnabledJob = state
+        .onEach {
+            when (it) {
+                is ExtractorSearchScreenUiState.Success -> loaderButtonState.enable()
+                else -> loaderButtonState.disable()
+            }
+        }
+        .launchIn(viewModelScope)
+
     fun performSearch(searchStrategy: SearchStrategy) {
         when (searchStrategy) {
             SearchStrategy.NORMAL -> runSearch()
@@ -106,28 +115,31 @@ class ExtractorSearchViewModel(
         }
     }
 
-    fun compileUserAlbum() {
+    fun onCompileUserAlbum() {
         viewModelScope.launch {
-            loaderButtonState.startLoader()
-
-            withContext(Dispatchers.Default) {
-                val newAlbum = NewAlbum(
-                    keyword = searchViewState.query,
-                    name = searchViewState.query,
-                    searchType = searchViewState.searchType,
-                    labelType = searchViewState.labelType,
-                    origin = NewAlbum.Origin.USER_GENERATED,
-                    entries = state.value.getImages().map {
-                        NewAlbum.Entry(
-                            uri = it.uri,
-                            id = it.mediaImageId
-                        )
-                    }
-                )
-                albumRepository.createAlbum(newAlbum)
+            when (state.value) {
+                is ExtractorSearchScreenUiState.Success -> compileUserAlbum()
+                else -> Unit
             }
+        }
+    }
 
-            loaderButtonState.finishLoader()
+    private suspend fun compileUserAlbum() = withContext(Dispatchers.Default) {
+        loaderButtonState.withLoader {
+            val newAlbum = NewAlbum(
+                keyword = searchViewState.query,
+                name = searchViewState.query,
+                searchType = searchViewState.searchType,
+                labelType = searchViewState.labelType,
+                origin = NewAlbum.Origin.USER_GENERATED,
+                entries = state.value.getImages().map {
+                    NewAlbum.Entry(
+                        uri = it.uri,
+                        id = it.mediaImageId
+                    )
+                }
+            )
+            albumRepository.createAlbum(newAlbum)
         }
     }
 

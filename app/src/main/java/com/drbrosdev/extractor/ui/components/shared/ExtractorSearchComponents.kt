@@ -51,7 +51,6 @@ import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoad
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchView
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
-import com.drbrosdev.extractor.ui.components.extractorsearchview.isNotBlank
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.toUri
 
@@ -138,29 +137,27 @@ fun ExtractorSearchBottomSheet(
 
         ExtractorDateFilter(state = dateFilterState)
 
-        if (searchViewState.isNotBlank()) {
-            Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
-            ExtractorLoaderButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onCreateAlbumClick,
-                state = loaderButtonState,
-                loadingContent = {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        trackColor = Color.Transparent,
-                        color = Color.Black,
-                        strokeCap = StrokeCap.Round
-                    )
-                },
-                successContent = {
-                    Icon(imageVector = Icons.Rounded.Check, contentDescription = "")
-                    Text(text = stringResource(R.string.album_created))
-                }
-            ) {
-                Icon(imageVector = Icons.Rounded.Add, contentDescription = "")
-                Text(text = stringResource(R.string.create_album))
+        ExtractorLoaderButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onCreateAlbumClick,
+            state = loaderButtonState,
+            loadingContent = {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    trackColor = Color.Transparent,
+                    color = Color.Black,
+                    strokeCap = StrokeCap.Round
+                )
+            },
+            successContent = {
+                Icon(imageVector = Icons.Rounded.Check, contentDescription = "")
+                Text(text = stringResource(R.string.album_created))
             }
+        ) {
+            Icon(imageVector = Icons.Rounded.Add, contentDescription = "")
+            Text(text = stringResource(R.string.create_album))
         }
 
         Spacer(modifier = Modifier.height(18.dp))

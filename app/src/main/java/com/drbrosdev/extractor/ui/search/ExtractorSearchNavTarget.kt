@@ -65,7 +65,7 @@ data class ExtractorSearchNavTarget(
             onStatusButtonClick = {
                 dialogNavController.navigate(ExtractorStatusDialogNavTarget)
             },
-            onCreateAlbumClick = { viewModel.compileUserAlbum() }
+            onCreateAlbumClick = { viewModel.onCompileUserAlbum() }
         )
     }
 }
