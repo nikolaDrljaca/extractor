@@ -69,4 +69,5 @@
     <string name="confirm_dialog_deny">Dismiss</string>
     <string name="confirm_dialog_sure">Are you sure?</string>
     <string name="album_delete_perm">This will delete the album permanently.</string>
+    <string name="album_view_all">View All</string>
 </resources>

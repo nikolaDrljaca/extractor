@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -83,10 +84,10 @@ fun ExtractorCategoryView(
                 text = stringResource(id = category.stringRes),
                 style = MaterialTheme.typography.titleLarge
             )
-            when (state) {
-                is ExtractorCategoryViewState.Content -> {
+            when {
+                (state is ExtractorCategoryViewState.Content && category == ExtractorAlbumsViewDefaults.Category.USER) -> {
                     TextButton(onClick = onViewAllClicked) {
-                        Text(text = "View All")
+                        Text(text = stringResource(R.string.album_view_all))
                     }
                 }
 
@@ -258,6 +259,7 @@ private fun ExtractorCategoryEmptyView(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ExtractorCategoryContentView(
     modifier: Modifier = Modifier,
@@ -270,13 +272,14 @@ private fun ExtractorCategoryContentView(
             .requiredHeight(IMAGE_SIZE.dp)
             .then(modifier),
         contentPadding = PaddingValues(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(space = 8.dp)
+        horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
     ) {
         items(
             items = items,
             key = { it.id }
         ) {
             AlbumThumbnailView(
+                modifier = Modifier.animateItemPlacement(),
                 onClick = { onAlbumPreviewClick(it.id) },
                 imageUri = it.thumbnail.toUri(),
                 albumName = it.name

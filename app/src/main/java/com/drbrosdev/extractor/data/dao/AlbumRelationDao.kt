@@ -28,6 +28,7 @@ interface AlbumRelationDao {
         select * 
         from album
         where origin=:origin
+        order by album_id desc
     """)
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -40,6 +41,7 @@ interface AlbumRelationDao {
         from album as a, album_configuration, album_entry
         where a.origin=:origin
         group by a.album_id
+        order by a.album_id desc
     """)
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -52,6 +54,7 @@ interface AlbumRelationDao {
         from album as a, album_configuration, album_entry
         where a.origin=:origin
         group by a.album_id
+        order by a.album_id desc
     """)
     @Transaction
     @RewriteQueriesToDropUnusedColumns

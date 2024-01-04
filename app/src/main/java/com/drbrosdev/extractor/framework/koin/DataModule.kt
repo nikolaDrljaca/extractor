@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.framework.koin
 
+import com.drbrosdev.extractor.TransactionProvider
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.data.datastore
@@ -19,6 +20,12 @@ val dataModule = module {
     single { get<ExtractorDatabase>().albumEntryDao() }
     single { get<ExtractorDatabase>().albumConfigurationDao() }
     single { get<ExtractorDatabase>().albumRelationDao() }
+
+    single {
+        TransactionProvider(
+            database = get<ExtractorDatabase>()
+        )
+    }
 
     factory {
         ExtractorDataStore(androidContext().datastore)

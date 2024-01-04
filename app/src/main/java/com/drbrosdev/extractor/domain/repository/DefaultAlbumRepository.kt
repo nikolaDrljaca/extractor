@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.domain.repository
 
 import arrow.fx.coroutines.parMap
+import com.drbrosdev.extractor.TransactionProvider
 import com.drbrosdev.extractor.data.dao.AlbumConfigurationDao
 import com.drbrosdev.extractor.data.dao.AlbumDao
 import com.drbrosdev.extractor.data.dao.AlbumEntryDao
@@ -25,7 +26,8 @@ class DefaultAlbumRepository(
     private val albumEntryDao: AlbumEntryDao,
     private val albumConfigurationDao: AlbumConfigurationDao,
     private val albumDao: AlbumDao,
-    private val albumRelationDao: AlbumRelationDao
+    private val albumRelationDao: AlbumRelationDao,
+    private val runner: TransactionProvider
 ) : AlbumRepository {
 
     override suspend fun deleteAlbumById(albumId: Long) = withContext(dispatcher) {
@@ -34,7 +36,7 @@ class DefaultAlbumRepository(
         albumConfigurationDao.deleteByAlbumEntityId(albumId)
     }
 
-    override suspend fun createAlbum(newAlbum: NewAlbum) {
+    override suspend fun createAlbum(newAlbum: NewAlbum) = runner.runTransaction {
         val albumId = albumDao.insert(
             AlbumEntity(
                 name = newAlbum.name,
@@ -50,7 +52,7 @@ class DefaultAlbumRepository(
         )
         albumConfigurationDao.insert(configuration)
 
-        newAlbum.entries.parMap(context = dispatcher) {
+        val out = newAlbum.entries.parMap(context = dispatcher) {
             val entry = AlbumEntryEntity(
                 albumId = albumId,
                 uri = it.uri.uri,

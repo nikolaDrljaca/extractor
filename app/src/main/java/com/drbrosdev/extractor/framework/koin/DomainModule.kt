@@ -28,7 +28,8 @@ val domainModule = module {
             albumEntryDao = get(),
             albumConfigurationDao = get(),
             albumDao = get(),
-            albumRelationDao = get()
+            albumRelationDao = get(),
+            runner = get()
         )
     } bind AlbumRepository::class
 }
