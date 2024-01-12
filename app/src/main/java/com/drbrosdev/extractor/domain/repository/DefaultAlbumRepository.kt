@@ -17,6 +17,7 @@ import com.drbrosdev.extractor.util.toAlbumOrigin
 import com.drbrosdev.extractor.util.toAlbumSearchType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -64,12 +65,14 @@ class DefaultAlbumRepository(
 
     override fun findAlbumByIdAsFlow(albumId: Long): Flow<Album?> {
         return albumRelationDao.findAlbumByIdAsFlow(albumId)
+            .distinctUntilChanged()
             .map { it?.toAlbum() }
             .flowOn(dispatcher)
     }
 
     override fun getCommonTextAlbumsAsFlow(): Flow<List<Album>> {
         return albumRelationDao.findTextualAsFlow()
+            .distinctUntilChanged()
             .map { it.map { entity -> entity.toAlbum() } }
             .flowOn(dispatcher)
     }
@@ -87,6 +90,7 @@ class DefaultAlbumRepository(
 
     override fun getCommonVisualAlbumsAsFlow(): Flow<List<Album>> {
         return albumRelationDao.findVisualAsFlow()
+            .distinctUntilChanged()
             .map { it.map { entity -> entity.toAlbum() } }
             .flowOn(dispatcher)
     }
@@ -100,6 +104,7 @@ class DefaultAlbumRepository(
 
     override fun getAllUserAlbumsAsFlow(): Flow<List<Album>> {
         return albumRelationDao.findAllAsFlow()
+            .distinctUntilChanged()
             .map { it.map { entity -> entity.toAlbum() } }
             .flowOn(dispatcher)
     }
