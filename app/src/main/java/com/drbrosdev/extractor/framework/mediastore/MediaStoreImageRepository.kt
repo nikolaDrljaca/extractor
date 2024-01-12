@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.framework.mediastore
 
 import android.graphics.Bitmap
 import android.net.Uri
+import kotlinx.coroutines.flow.Flow
 
 
 interface MediaStoreImageRepository {
@@ -12,6 +13,8 @@ interface MediaStoreImageRepository {
     suspend fun findAllById(ids: List<Long>): List<MediaStoreImage>
 
     suspend fun getCount(): Int
+
+    fun getCountAsFlow(): Flow<Int>
 
     suspend fun findByUri(uri: Uri): MediaStoreImage?
 

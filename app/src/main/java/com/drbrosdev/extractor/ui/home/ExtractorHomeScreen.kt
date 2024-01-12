@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.home
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -7,10 +8,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,24 +21,25 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.LabelType
-import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchItemState
-import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearches
-import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesEvents
+import com.drbrosdev.extractor.ui.components.categoryview.ExtractorAlbumsViewDefaults
+import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryView
+import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
+import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
-import com.drbrosdev.extractor.ui.components.stats.ExtractorStats
-import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsUiState
 
 @Composable
 fun ExtractorHomeScreen(
-    statsUiState: ExtractorStatsUiState,
-    previousSearches: List<PreviousSearchItemState>,
-    onPreviousSearchEvents: (PreviousSearchesEvents) -> Unit,
-    onStatClick: (String, LabelType) -> Unit,
     onSyncClick: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onInitUserPreviews: () -> Unit,
+    onInitVisualPreview: () -> Unit,
+    onInitTextPreview: () -> Unit,
+    onAlbumPreviewClick: (albumId: Long) -> Unit,
+    visualAlbums: ExtractorCategoryViewState,
+    userAlbums: ExtractorCategoryViewState,
+    textAlbums: ExtractorCategoryViewState,
 ) {
     val scrollState = rememberScrollState()
 
@@ -50,32 +50,45 @@ fun ExtractorHomeScreen(
             .verticalScroll(scrollState),
         constraintSet = homeScreenConstraintSet()
     ) {
-        ExtractorStats(
-            modifier = Modifier.layoutId(ViewIds.COMMON_V),
-            state = statsUiState,
-            onStatClick = onStatClick
+        ExtractorCategoryView(
+            onViewAllClicked = { /*TODO*/ },
+            onAlbumPreviewClick = onAlbumPreviewClick,
+            onInitClick = onInitUserPreviews,
+            contentPadding = PaddingValues(horizontal = 12.dp),
+            category = ExtractorAlbumsViewDefaults.Category.USER,
+            state = userAlbums,
+            modifier = Modifier.layoutId(ViewIds.USER_ALBUM)
+        )
+
+        ExtractorCategoryView(
+            onViewAllClicked = {},
+            onAlbumPreviewClick = onAlbumPreviewClick,
+            onInitClick = onInitVisualPreview,
+            contentPadding = PaddingValues(horizontal = 12.dp),
+            category = ExtractorAlbumsViewDefaults.Category.VISUAL,
+            state = visualAlbums,
+            modifier = Modifier.layoutId(ViewIds.VISUAL_ALBUM)
+        )
+
+        ExtractorCategoryView(
+            onViewAllClicked = { /*TODO @nikola*/ },
+            onAlbumPreviewClick = onAlbumPreviewClick,
+            onInitClick = onInitTextPreview,
+            contentPadding = PaddingValues(horizontal = 12.dp),
+            category = ExtractorAlbumsViewDefaults.Category.TEXT,
+            state = textAlbums,
+            modifier = Modifier.layoutId(ViewIds.TEXT_ALBUM)
         )
 
         ExtractorTopBar(
             modifier = Modifier.layoutId(ViewIds.TOP_BAR),
             leadingSlot = {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = ""
-                    )
-                }
+                BackIconButton(onBack = onBack)
                 ExtractorHeader(headerText = stringResource(id = R.string.extractor_home))
             },
             trailingSlot = {
                 Spacer(modifier = Modifier.width(12.dp))
             }
-        )
-
-        PreviousSearches(
-            modifier = Modifier.layoutId(ViewIds.PREV_SEARCH),
-            onEvent = onPreviousSearchEvents,
-            searches = previousSearches
         )
 
         OutlinedExtractorActionButton(
@@ -96,70 +109,31 @@ fun ExtractorHomeScreen(
             Text(text = stringResource(R.string.settings))
         }
 
-        OutlinedExtractorActionButton(
-            onClick = { /*TODO*/ },
-            modifier = Modifier.layoutId(ViewIds.IMPORT_BUTTON)
-        ) {
-            Icon(painter = painterResource(id = R.drawable.round_archive_24), contentDescription = "")
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(R.string.import_data))
-        }
-
-        OutlinedExtractorActionButton(
-            onClick = { /*TODO*/ },
-            modifier = Modifier.layoutId(ViewIds.EXPORT_BUTTON)
-        ) {
-            Icon(painter = painterResource(id = R.drawable.round_unarchive_24), contentDescription = "")
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(R.string.export_data))
-        }
-
     }
 }
 
 private fun homeScreenConstraintSet() = ConstraintSet {
-    val previousSearch = createRefFor(ViewIds.PREV_SEARCH)
     val topBar = createRefFor(ViewIds.TOP_BAR)
-    val common = createRefFor(ViewIds.COMMON_V)
     val settingsButton = createRefFor(ViewIds.SETTINGS_BUTTON)
     val syncButton = createRefFor(ViewIds.SYNC_BUTTON)
-    val importButton = createRefFor(ViewIds.IMPORT_BUTTON)
-    val exportButton = createRefFor(ViewIds.EXPORT_BUTTON)
+
+    val userAlbum = createRefFor(ViewIds.USER_ALBUM)
+    val textAlbum = createRefFor(ViewIds.TEXT_ALBUM)
+    val visualAlbum = createRefFor(ViewIds.VISUAL_ALBUM)
 
     val buttonGuideline = createGuidelineFromStart(0.5f)
 
     constrain(settingsButton) {
         start.linkTo(buttonGuideline, margin = 4.dp)
         top.linkTo(topBar.bottom, margin = 8.dp)
-        end.linkTo(parent.end, margin = 16.dp)
+        end.linkTo(parent.end, margin = 12.dp)
         width = Dimension.fillToConstraints
     }
 
     constrain(syncButton) {
         top.linkTo(topBar.bottom, margin = 8.dp)
-        start.linkTo(parent.start, margin = 16.dp)
+        start.linkTo(parent.start, margin = 12.dp)
         end.linkTo(buttonGuideline, margin = 4.dp)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(importButton) {
-        top.linkTo(syncButton.bottom, margin = 8.dp)
-        start.linkTo(parent.start, margin = 16.dp)
-        end.linkTo(buttonGuideline, margin = 4.dp)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(exportButton) {
-        start.linkTo(buttonGuideline, margin = 4.dp)
-        top.linkTo(settingsButton.bottom, margin = 8.dp)
-        end.linkTo(parent.end, margin = 16.dp)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(previousSearch) {
-        start.linkTo(parent.start, margin = 16.dp)
-        end.linkTo(parent.end, margin = 16.dp)
-        top.linkTo(common.bottom, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
 
@@ -170,21 +144,34 @@ private fun homeScreenConstraintSet() = ConstraintSet {
         width = Dimension.fillToConstraints
     }
 
-    constrain(common) {
-        start.linkTo(parent.start, margin = 16.dp)
-        end.linkTo(parent.end, margin = 16.dp)
-        top.linkTo(exportButton.bottom, margin = 18.dp)
+    constrain(userAlbum) {
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+        top.linkTo(settingsButton.bottom, margin = 8.dp)
+        width = Dimension.fillToConstraints
+    }
+
+    constrain(visualAlbum) {
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+        top.linkTo(userAlbum.bottom)
+        width = Dimension.fillToConstraints
+    }
+
+    constrain(textAlbum) {
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+        top.linkTo(visualAlbum.bottom)
         width = Dimension.fillToConstraints
     }
 }
 
 private object ViewIds {
-    const val PREV_SEARCH = "prevSearch_1"
     const val TOP_BAR = "topBar"
-    const val COMMON_V = "commonV"
     const val SYNC_BUTTON = "syncButton"
     const val SETTINGS_BUTTON = "settingsButton"
-    const val IMPORT_BUTTON = "import"
-    const val EXPORT_BUTTON = "export"
+    const val USER_ALBUM = "userAlbum"
+    const val TEXT_ALBUM = "textAlbum"
+    const val VISUAL_ALBUM = "visualAlbum"
 }
 

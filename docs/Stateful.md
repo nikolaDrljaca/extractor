@@ -21,6 +21,7 @@ For more details, take a look at the `/src/main/java/com.drbrosdev.extractor/ui/
 
 ### Short Example
 ```kotlin
+@Stable
 class FormState(initialValue: String) {
     var textValue by mutableStateOf(initialValue)
         private set

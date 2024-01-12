@@ -25,8 +25,8 @@ import com.drbrosdev.extractor.util.shimmerBrush
 fun ExtractorImageItem(
     modifier: Modifier = Modifier,
     imageUri: Uri,
+    onClick: () -> Unit,
     size: Int? = null,
-    onClick: () -> Unit
 ) {
     val sizeModifier = if (size != null) {
         Modifier.size(size.dp)
@@ -41,9 +41,9 @@ fun ExtractorImageItem(
     AsyncImage(
         modifier = Modifier
             .then(sizeModifier)
+            .then(modifier)
             .clip(RoundedCornerShape(2.dp))
-            .clickable { onClick() }
-            .then(modifier),
+            .clickable { onClick() },
         model = ImageRequest.Builder(LocalContext.current)
             .data(imageUri)
             .size(scaleSize, scaleSize)

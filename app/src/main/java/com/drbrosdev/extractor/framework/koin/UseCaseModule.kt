@@ -1,9 +1,13 @@
 package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.domain.ExtractionProgress
+import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
+import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.RememberSearch
+import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
 import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
@@ -85,6 +89,30 @@ val useCaseModule = module {
             dispatcher = get(named(CoroutineModuleName.Default)),
             extractionDao = get(),
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
+            workManager = get()
+        )
+    }
+
+    factory {
+        CompileVisualAlbum(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            visualEmbeddingDao = get(),
+            imageEmbeddingsDao = get(),
+            albumRepository = get<DefaultAlbumRepository>()
+        )
+    }
+
+    factory {
+        CompileTextAlbums(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            textEmbeddingDao = get(),
+            imageEmbeddingsDao = get(),
+            albumRepository = get<DefaultAlbumRepository>()
+        )
+    }
+
+    factory {
+        SpawnExtractorWork(
             workManager = get()
         )
     }

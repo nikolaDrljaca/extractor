@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
 import com.drbrosdev.extractor.R
@@ -22,6 +23,14 @@ suspend fun Context.launchShareIntent(media: MediaStoreImage) =
         }
         startActivity(Intent.createChooser(intent, "Share Image via..."))
     }
+
+fun Context.launchShareIntent(mediaImages: List<Uri>) {
+    val intent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+        type = "image/*"
+        putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(mediaImages))
+    }
+    startActivity(Intent.createChooser(intent, "Share Images via..."))
+}
 
 suspend fun Context.launchEditIntent(media: MediaStoreImage) =
     withContext(Dispatchers.Default) {

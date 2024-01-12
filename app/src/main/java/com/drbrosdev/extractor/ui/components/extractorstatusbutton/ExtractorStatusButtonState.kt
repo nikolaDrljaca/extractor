@@ -1,11 +1,13 @@
 package com.drbrosdev.extractor.ui.components.extractorstatusbutton
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
+@Stable
 class ExtractorStatusButtonState(
     initialStatus: Status = Status.Idle
 ) {

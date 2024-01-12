@@ -22,6 +22,10 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,6 +47,8 @@ import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilter
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
+import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButton
+import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchView
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -109,8 +116,10 @@ fun ExtractorImageGrid(
 @Composable
 fun ExtractorSearchBottomSheet(
     onDone: () -> Unit,
+    onCreateAlbumClick: () -> Unit,
     searchViewState: ExtractorSearchViewState,
     dateFilterState: ExtractorDateFilterState,
+    loaderButtonState: ExtractorLoaderButtonState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -127,6 +136,29 @@ fun ExtractorSearchBottomSheet(
         )
 
         ExtractorDateFilter(state = dateFilterState)
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        ExtractorLoaderButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onCreateAlbumClick,
+            state = loaderButtonState,
+            loadingContent = {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    trackColor = Color.Transparent,
+                    color = Color.Black,
+                    strokeCap = StrokeCap.Round
+                )
+            },
+            successContent = {
+                Icon(imageVector = Icons.Rounded.Check, contentDescription = "")
+                Text(text = stringResource(R.string.album_created))
+            }
+        ) {
+            Icon(imageVector = Icons.Rounded.Add, contentDescription = "")
+            Text(text = stringResource(R.string.create_album))
+        }
 
         Spacer(modifier = Modifier.height(18.dp))
     }
@@ -226,8 +258,10 @@ private fun SheetPreview() {
         Surface(color = MaterialTheme.colorScheme.primary) {
             ExtractorSearchBottomSheet(
                 onDone = {},
+                onCreateAlbumClick = {},
                 searchViewState = ExtractorSearchViewState("", LabelType.ALL),
                 dateFilterState = ExtractorDateFilterState(),
+                loaderButtonState = ExtractorLoaderButtonState()
             )
         }
     }

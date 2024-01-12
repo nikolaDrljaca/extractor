@@ -1,5 +1,7 @@
 package com.drbrosdev.extractor.framework.koin
 
+import com.drbrosdev.extractor.domain.repository.AlbumRepository
+import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import org.koin.core.qualifier.named
@@ -19,4 +21,15 @@ val domainModule = module {
             imageEmbeddingsDao = get()
         )
     } bind ExtractorRepository::class
+
+    factory {
+        DefaultAlbumRepository(
+            dispatcher = get(named(CoroutineModuleName.IO)),
+            albumEntryDao = get(),
+            albumConfigurationDao = get(),
+            albumDao = get(),
+            albumRelationDao = get(),
+            runner = get()
+        )
+    } bind AlbumRepository::class
 }

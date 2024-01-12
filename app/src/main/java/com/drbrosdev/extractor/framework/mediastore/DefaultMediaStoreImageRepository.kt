@@ -11,7 +11,10 @@ import android.util.Size
 import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.util.CONCURRENCY
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 
@@ -39,6 +42,12 @@ class DefaultMediaStoreImageRepository(
 
     override suspend fun getCount(): Int {
         return contentResolver.getCount()
+    }
+
+    override fun getCountAsFlow(): Flow<Int> {
+        return contentResolver.mediaStoreImagesFlow()
+            .map { it.size }
+            .flowOn(dispatcher)
     }
 
     override suspend fun findByUri(uri: Uri): MediaStoreImage? {

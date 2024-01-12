@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.search
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -7,6 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.model.LabelType
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
+import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
@@ -28,6 +30,7 @@ data class ExtractorSearchNavTarget(
     private val labelType: LabelType = LabelType.ALL
 ) : NavTarget {
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val viewModel: ExtractorSearchViewModel = koinViewModel {
@@ -45,6 +48,7 @@ data class ExtractorSearchNavTarget(
             extractorStatusButtonState = viewModel.extractorStatusButtonState,
             searchViewState = viewModel.searchViewState,
             dateFilterState = viewModel.dateFilterState,
+            loaderButtonState = viewModel.loaderButtonState,
             onNavToDetail = { selectedIndex ->
                 navController.navigate(
                     ExtractorImageNavTarget(
@@ -60,24 +64,28 @@ data class ExtractorSearchNavTarget(
             },
             onStatusButtonClick = {
                 dialogNavController.navigate(ExtractorStatusDialogNavTarget)
-            }
+            },
+            onCreateAlbumClick = { viewModel.onCompileUserAlbum() }
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ScreenPreview
 @Composable
 private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         ExtractorSearchScreen(
-            state = ExtractorSearchScreenUiState.Loading,
             onNavToDetail = {},
-            extractorStatusButtonState = ExtractorStatusButtonState(),
             onExtractorHomeClicked = {},
             onDone = {},
+            onStatusButtonClick = {},
+            onCreateAlbumClick = {},
+            extractorStatusButtonState = ExtractorStatusButtonState(),
+            state = ExtractorSearchScreenUiState.Loading,
             searchViewState = ExtractorSearchViewState("", LabelType.ALL),
             dateFilterState = ExtractorDateFilterState(),
-            onStatusButtonClick = {}
+            loaderButtonState = ExtractorLoaderButtonState()
         )
     }
 }

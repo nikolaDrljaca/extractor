@@ -1,15 +1,14 @@
 package com.drbrosdev.extractor.domain
 
+import androidx.lifecycle.asFlow
 import androidx.work.WorkManager
-import androidx.work.await
 import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.domain.worker.WorkNames
 import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import com.drbrosdev.extractor.ui.dialog.status.safeDiv
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 
 class ExtractionProgress(
@@ -19,33 +18,19 @@ class ExtractionProgress(
     private val workManager: WorkManager
 ) {
 
-    operator fun invoke(): Flow<ExtractionStatus> = flow {
-        while (true) {
-            val isWorking = workManager.getWorkInfosForUniqueWork(WorkNames.EXTRACTOR_WORK).await()
-            val onDevice = mediaStoreImageRepository.getCount()
-            val inStorage = extractionDao.getCount()
-
+    operator fun invoke(): Flow<ExtractionStatus> =
+        combine(
+            workManager.getWorkInfosForUniqueWorkLiveData(WorkNames.EXTRACTOR_WORK).asFlow(),
+            extractionDao.getCountAsFlow(),
+            mediaStoreImageRepository.getCountAsFlow()
+        ) { isWorking, inStorage, onDevice ->
             when {
-                isWorking.isEmpty() -> {
-                    emit(ExtractionStatus.Done(onDevice, inStorage))
-                    break
-                }
-
-                isWorking.first().state.isFinished -> {
-                    emit(ExtractionStatus.Done(onDevice, inStorage))
-                    break
-                }
+                isWorking.isEmpty() -> ExtractionStatus.Done(onDevice, inStorage)
+                isWorking.first().state.isFinished -> ExtractionStatus.Done(onDevice, inStorage)
+                else -> ExtractionStatus.Running(onDevice, inStorage)
             }
-
-            val out = ExtractionStatus.Running(
-                onDeviceCount = onDevice,
-                inStorageCount = inStorage
-            )
-
-            emit(out)
-            delay(1000L)
         }
-    }.flowOn(dispatcher)
+            .flowOn(dispatcher)
 }
 
 sealed class ExtractionStatus {

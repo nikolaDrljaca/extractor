@@ -13,7 +13,7 @@ import com.drbrosdev.extractor.util.LocalBottomSheetNavController
 import com.drbrosdev.extractor.util.LocalDialogNavController
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
-import com.drbrosdev.extractor.util.SlideTransitionSpec
+import com.drbrosdev.extractor.util.DefaultTransitionSpec
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.DialogNavHost
 import dev.olshevski.navigation.reimagined.NavBackHandler
@@ -49,7 +49,7 @@ fun Root(
 
     AnimatedNavHost(
         controller = navController,
-        transitionSpec = SlideTransitionSpec,
+        transitionSpec = DefaultTransitionSpec,
     ) {
         CompositionLocalProvider(
             LocalNavController provides navController,

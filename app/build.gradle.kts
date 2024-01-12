@@ -117,8 +117,8 @@ dependencies {
     val zoomableVersion = "1.5.0"
     implementation("net.engawapg.lib:zoomable:$zoomableVersion")
 
-    //immutable collections yaaay compose
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.6")
+    //splash screen API
+    implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
