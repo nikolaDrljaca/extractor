@@ -85,8 +85,16 @@ fun ExtractorCategoryView(
                 style = MaterialTheme.typography.titleLarge
             )
 
-            TextButton(onClick = onViewAllClicked) {
-                Text(text = stringResource(R.string.album_view_all))
+            when (state) {
+                is ExtractorCategoryViewState.Content -> {
+                    TextButton(onClick = onViewAllClicked) {
+                        Text(text = stringResource(R.string.album_view_all))
+                    }
+                }
+
+                else -> {
+                    Spacer(modifier = Modifier.height(48.dp))
+                }
             }
         }
 
@@ -348,6 +356,14 @@ private fun CurrentPreview() {
             ) {
                 ExtractorCategoryView(
                     onViewAllClicked = { },
+                    state = ExtractorCategoryViewState.Content(albums = items),
+                    onAlbumPreviewClick = {},
+                    category = ExtractorAlbumsViewDefaults.Category.TEXT,
+                    onInitClick = {}
+                )
+
+                ExtractorCategoryView(
+                    onViewAllClicked = { },
                     onAlbumPreviewClick = {},
                     state = ExtractorCategoryViewState.Initial,
                     category = ExtractorAlbumsViewDefaults.Category.USER,
@@ -367,14 +383,6 @@ private fun CurrentPreview() {
                     onAlbumPreviewClick = {},
                     state = ExtractorCategoryViewState.Empty,
                     category = ExtractorAlbumsViewDefaults.Category.VISUAL,
-                    onInitClick = {}
-                )
-
-                ExtractorCategoryView(
-                    onViewAllClicked = { },
-                    state = ExtractorCategoryViewState.Content(albums = items),
-                    onAlbumPreviewClick = {},
-                    category = ExtractorAlbumsViewDefaults.Category.TEXT,
                     onInitClick = {}
                 )
             }
