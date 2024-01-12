@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.domain.repository
 
 import arrow.fx.coroutines.parMap
-import com.drbrosdev.extractor.TransactionProvider
+import com.drbrosdev.extractor.data.TransactionProvider
 import com.drbrosdev.extractor.data.dao.AlbumConfigurationDao
 import com.drbrosdev.extractor.data.dao.AlbumDao
 import com.drbrosdev.extractor.data.dao.AlbumEntryDao
@@ -49,7 +49,7 @@ class DefaultAlbumRepository(
             albumId = albumId,
             keyword = newAlbum.keyword,
             searchType = newAlbum.searchType.toAlbumSearchType(),
-            labelType = newAlbum.labelType.toAlbumLabelType()
+            labelType = newAlbum.keywordType.toAlbumLabelType()
         )
         albumConfigurationDao.insert(configuration)
 

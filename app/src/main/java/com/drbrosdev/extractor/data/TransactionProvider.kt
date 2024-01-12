@@ -1,7 +1,6 @@
-package com.drbrosdev.extractor
+package com.drbrosdev.extractor.data
 
 import androidx.room.withTransaction
-import com.drbrosdev.extractor.data.ExtractorDatabase
 
 class TransactionProvider(
     private val database: ExtractorDatabase

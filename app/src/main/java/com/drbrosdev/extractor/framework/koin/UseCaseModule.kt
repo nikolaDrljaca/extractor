@@ -6,15 +6,15 @@ import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
-import com.drbrosdev.extractor.domain.usecase.RememberSearch
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
+import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
 import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.image.create.DefaultInputImageFactory
 import com.drbrosdev.extractor.domain.usecase.image.create.InputImageFactory
-import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByLabel
-import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByKeyword
+import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByKeyword
 import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitVisualEmbedExtractor
 import com.drbrosdev.extractor.domain.usecase.label.extractor.VisualEmbedExtractor
 import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitTextEmbedExtractor
@@ -62,20 +62,13 @@ val useCaseModule = module {
         )
     }
 
-    factory {
-        RememberSearch(
-            dispatcher = get(named(CoroutineModuleName.IO)),
-            dao = get()
-        )
-    }
 
     factory {
-        DefaultImageSearchByLabel(
+        DefaultImageSearchByKeyword(
             dispatcher = get(named(CoroutineModuleName.IO)),
             imageEmbedDao = get(),
-            rememberSearch = get()
         )
-    } bind ImageSearchByLabel::class
+    } bind ImageSearchByKeyword::class
 
     factory {
         LoadMediaImageInfo(
@@ -103,11 +96,18 @@ val useCaseModule = module {
     }
 
     factory {
+        TokenizeText(
+            dispatcher = get(named(CoroutineModuleName.Default))
+        )
+    }
+
+    factory {
         CompileTextAlbums(
             dispatcher = get(named(CoroutineModuleName.Default)),
             textEmbeddingDao = get(),
             imageEmbeddingsDao = get(),
-            albumRepository = get<DefaultAlbumRepository>()
+            albumRepository = get<DefaultAlbumRepository>(),
+            tokenizeText = get()
         )
     }
 

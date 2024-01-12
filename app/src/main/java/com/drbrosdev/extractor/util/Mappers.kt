@@ -14,7 +14,7 @@ import com.drbrosdev.extractor.domain.model.AlbumPreview
 import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
@@ -63,10 +63,10 @@ fun SearchType.toAlbumSearchType(): AlbumConfigurationEntity.SearchType = when (
     SearchType.PARTIAL -> AlbumConfigurationEntity.SearchType.PARTIAL
 }
 
-fun LabelType.toAlbumLabelType(): AlbumConfigurationEntity.LabelType = when (this) {
-    LabelType.ALL -> AlbumConfigurationEntity.LabelType.ALL
-    LabelType.TEXT -> AlbumConfigurationEntity.LabelType.TEXT
-    LabelType.IMAGE -> AlbumConfigurationEntity.LabelType.IMAGE
+fun KeywordType.toAlbumLabelType(): AlbumConfigurationEntity.LabelType = when (this) {
+    KeywordType.ALL -> AlbumConfigurationEntity.LabelType.ALL
+    KeywordType.TEXT -> AlbumConfigurationEntity.LabelType.TEXT
+    KeywordType.IMAGE -> AlbumConfigurationEntity.LabelType.IMAGE
 }
 
 fun NewAlbum.Origin.toAlbumOrigin(): AlbumEntity.Origin = when (this) {
@@ -75,10 +75,10 @@ fun NewAlbum.Origin.toAlbumOrigin(): AlbumEntity.Origin = when (this) {
     NewAlbum.Origin.USER_GENERATED -> AlbumEntity.Origin.USER_GENERATED
 }
 
-fun AlbumConfigurationEntity.LabelType.toLabelType(): LabelType = when (this) {
-    AlbumConfigurationEntity.LabelType.ALL -> LabelType.ALL
-    AlbumConfigurationEntity.LabelType.TEXT -> LabelType.TEXT
-    AlbumConfigurationEntity.LabelType.IMAGE -> LabelType.IMAGE
+fun AlbumConfigurationEntity.LabelType.toLabelType(): KeywordType = when (this) {
+    AlbumConfigurationEntity.LabelType.ALL -> KeywordType.ALL
+    AlbumConfigurationEntity.LabelType.TEXT -> KeywordType.TEXT
+    AlbumConfigurationEntity.LabelType.IMAGE -> KeywordType.IMAGE
 }
 
 fun AlbumConfigurationEntity.SearchType.toSearchType(): SearchType = when (this) {
@@ -99,7 +99,7 @@ fun AlbumRelation.toAlbum(): Album {
         name = this.albumEntity.name,
         keyword = this.configuration.keyword,
         searchType = this.configuration.searchType.toSearchType(),
-        labelType = this.configuration.labelType.toLabelType(),
+        keywordType = this.configuration.labelType.toLabelType(),
         entries = this.entries.map { it.toAlbumEntry() }
     )
 }

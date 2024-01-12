@@ -6,24 +6,28 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 
 @Dao
 interface TextEmbeddingDao {
 
-    @Query("select count(*) from text_embedding")
+    @Query("SELECT count(*) FROM text_embedding")
     suspend fun getCount(): Int
 
-    @Query("select * from text_embedding where id=:id")
+    @Query("SELECT * FROM text_embedding WHERE id=:id")
     suspend fun findById(id: Long): TextEmbeddingEntity?
 
-    @Query("select * from text_embedding where image_entity_id=:mediaId")
+    @Query("SELECT * FROM text_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun findByMediaId(mediaId: Long): TextEmbeddingEntity?
 
-    @Query("""
-        select group_concat(value)
-        from text_embedding
-    """)
+    @Query(
+        """
+        SELECT group_concat(value)
+        FROM text_embedding
+    """
+    )
     suspend fun findAllTextEmbedValues(): String
 
     @Insert
@@ -35,13 +39,26 @@ interface TextEmbeddingDao {
     @Update
     suspend fun update(value: TextEmbeddingEntity)
 
-    @Query("UPDATE text_embedding SET value=:value WHERE image_entity_id=:imageEntityId")
+    @Query("UPDATE text_embedding SET value=:value WHERE extraction_entity_id=:imageEntityId")
     suspend fun update(value: String, imageEntityId: Long)
 
     @Delete
     suspend fun delete(value: TextEmbeddingEntity)
 
-    @Query("delete from text_embedding where image_entity_id=:mediaId")
+    @Query("DELETE FROM text_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
+
+    @Query(
+        """
+        SELECT t.id, t.extraction_entity_id, t.value
+        FROM text_embedding AS t
+        JOIN text_embedding_fts AS fts ON t.id = fts.rowid
+        WHERE fts.value MATCH :query
+    """
+    )
+    fun findByValueFtsAsFlow(query: String): Flow<List<TextEmbeddingEntity>>
+
+    suspend fun findByValue(query: String): List<TextEmbeddingEntity> =
+        findByValueFtsAsFlow(query).first()
 }
 

@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.framework.koin
 
-import com.drbrosdev.extractor.TransactionProvider
+import com.drbrosdev.extractor.data.TransactionProvider
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.ExtractorDatabase
 import com.drbrosdev.extractor.data.datastore
@@ -10,7 +10,6 @@ import org.koin.dsl.module
 val dataModule = module {
     single { ExtractorDatabase.createExtractorDatabase(androidContext()) }
 
-    single { get<ExtractorDatabase>().previousSearchDao() }
     single { get<ExtractorDatabase>().extractionEntityDao() }
     single { get<ExtractorDatabase>().imageDataWithEmbeddingsDao() }
     single { get<ExtractorDatabase>().textEmbeddingDao() }

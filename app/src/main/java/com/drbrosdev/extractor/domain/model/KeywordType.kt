@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.domain.model
 
-enum class LabelType {
+enum class KeywordType {
     ALL,
     TEXT,
     IMAGE

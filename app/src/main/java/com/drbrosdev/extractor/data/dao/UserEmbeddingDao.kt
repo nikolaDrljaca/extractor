@@ -10,13 +10,13 @@ import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
 @Dao
 interface UserEmbeddingDao {
 
-    @Query("select count(*) from user_embedding")
+    @Query("SELECT count(*) FROM user_embedding")
     suspend fun getCount(): Int
 
-    @Query("select * from user_embedding where id=:id")
+    @Query("SELECT * FROM user_embedding WHERE id=:id")
     suspend fun findById(id: Long): UserEmbeddingEntity?
 
-    @Query("select * from user_embedding where image_entity_id=:mediaId")
+    @Query("SELECT * FROM user_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun findByMediaId(mediaId: Long): UserEmbeddingEntity?
 
     @Insert
@@ -25,12 +25,12 @@ interface UserEmbeddingDao {
     @Update
     suspend fun update(value: UserEmbeddingEntity)
 
-    @Query("UPDATE user_embedding SET value=:value WHERE image_entity_id=:imageEntityId")
+    @Query("UPDATE user_embedding SET value=:value WHERE extraction_entity_id=:imageEntityId")
     suspend fun update(value: String, imageEntityId: Long)
 
     @Delete
     suspend fun delete(value: UserEmbeddingEntity)
 
-    @Query("delete from user_embedding where image_entity_id=:mediaId")
+    @Query("DELETE FROM user_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
 }

@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.ui.components.extractorlabelfilter
 
 import androidx.annotation.DrawableRes
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 
 
 sealed class ImageLabelFilterChipData(
@@ -25,10 +25,10 @@ sealed class ImageLabelFilterChipData(
 }
 
 
-fun ImageLabelFilterChipData.toLabelType(): LabelType {
+fun ImageLabelFilterChipData.toLabelType(): KeywordType {
     return when(this) {
-        is ImageLabelFilterChipData.All -> LabelType.ALL
-        is ImageLabelFilterChipData.Image -> LabelType.IMAGE
-        is ImageLabelFilterChipData.Text -> LabelType.TEXT
+        is ImageLabelFilterChipData.All -> KeywordType.ALL
+        is ImageLabelFilterChipData.Image -> KeywordType.IMAGE
+        is ImageLabelFilterChipData.Text -> KeywordType.TEXT
     }
 }
