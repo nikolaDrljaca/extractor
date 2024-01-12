@@ -72,7 +72,7 @@ fun ExtractorHomeScreen(
 
         ExtractorCategoryView(
             onViewAllClicked = { /*TODO @nikola*/ },
-            onAlbumPreviewClick = { /*TODO @nikola*/},
+            onAlbumPreviewClick = onAlbumPreviewClick,
             onInitClick = onInitTextPreview,
             contentPadding = PaddingValues(horizontal = 12.dp),
             category = ExtractorAlbumsViewDefaults.Category.TEXT,

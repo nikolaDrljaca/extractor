@@ -16,6 +16,10 @@ interface AlbumRepository {
 
     suspend fun getCommonVisualAlbums(): List<Album>
 
+    fun getCommonTextAlbumsAsFlow(): Flow<List<Album>>
+
+    suspend fun getCommonTextAlbums(): List<Album>
+
     fun getAllUserAlbumsAsFlow(): Flow<List<Album>>
 
     suspend fun getAllUserAlbums(): List<Album>

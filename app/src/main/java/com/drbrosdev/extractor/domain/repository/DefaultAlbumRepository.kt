@@ -68,6 +68,19 @@ class DefaultAlbumRepository(
             .flowOn(dispatcher)
     }
 
+    override fun getCommonTextAlbumsAsFlow(): Flow<List<Album>> {
+        return albumRelationDao.findTextualAsFlow()
+            .map { it.map { entity -> entity.toAlbum() } }
+            .flowOn(dispatcher)
+    }
+
+    override suspend fun getCommonTextAlbums(): List<Album> {
+        val albumRelations = albumRelationDao.findTextual()
+        return withContext(dispatcher) {
+            albumRelations.map { it.toAlbum() }
+        }
+    }
+
     override suspend fun findAlbumById(albumId: Long): Album? {
         return albumRelationDao.findAlbumById(albumId)?.toAlbum()
     }

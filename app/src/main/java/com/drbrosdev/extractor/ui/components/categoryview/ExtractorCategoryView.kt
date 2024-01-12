@@ -84,14 +84,9 @@ fun ExtractorCategoryView(
                 text = stringResource(id = category.stringRes),
                 style = MaterialTheme.typography.titleLarge
             )
-            when {
-                (state is ExtractorCategoryViewState.Content && category == ExtractorAlbumsViewDefaults.Category.USER) -> {
-                    TextButton(onClick = onViewAllClicked) {
-                        Text(text = stringResource(R.string.album_view_all))
-                    }
-                }
 
-                else -> Unit
+            TextButton(onClick = onViewAllClicked) {
+                Text(text = stringResource(R.string.album_view_all))
             }
         }
 

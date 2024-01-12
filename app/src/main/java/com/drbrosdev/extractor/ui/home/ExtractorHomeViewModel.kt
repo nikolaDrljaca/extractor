@@ -4,29 +4,38 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
+import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.util.toPreview
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ExtractorHomeViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val compileVisualAlbum: CompileVisualAlbum,
+    private val compileTextAlbum: CompileTextAlbums,
     private val albumRepository: AlbumRepository
 ) : ViewModel() {
 
-    //TODO: @nikola wire in text albums after compilation is in place
-    private val _textAlbums =
-        MutableStateFlow<ExtractorCategoryViewState>(ExtractorCategoryViewState.Initial)
-    val textAlbums = _textAlbums.asStateFlow()
+    val textAlbums = albumRepository
+        .getCommonTextAlbumsAsFlow()
+        .map { albums ->
+            when {
+                albums.isEmpty() -> ExtractorCategoryViewState.Initial
+                else -> ExtractorCategoryViewState.Content(albums = albums.map { it.toPreview() })
+            }
+        }
+        .flowOn(Dispatchers.Default)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            ExtractorCategoryViewState.Initial
+        )
 
     val visualAlbums = albumRepository
         .getCommonVisualAlbumsAsFlow()
@@ -36,7 +45,6 @@ class ExtractorHomeViewModel(
                 else -> ExtractorCategoryViewState.Content(albums = albums.map { it.toPreview() })
             }
         }
-        .onStart { emit(ExtractorCategoryViewState.Loading) }
         .flowOn(Dispatchers.Default)
         .stateIn(
             viewModelScope,
@@ -52,7 +60,6 @@ class ExtractorHomeViewModel(
                 else -> ExtractorCategoryViewState.Content(albums = it.map { album -> album.toPreview() })
             }
         }
-        .onStart { emit(ExtractorCategoryViewState.Loading) }
         .flowOn(Dispatchers.Default)
         .stateIn(
             viewModelScope,
@@ -63,6 +70,12 @@ class ExtractorHomeViewModel(
     fun compileVisualAlbums() {
         viewModelScope.launch {
             compileVisualAlbum()
+        }
+    }
+
+    fun compileTextAlbums() {
+        viewModelScope.launch {
+            compileTextAlbum()
         }
     }
 }

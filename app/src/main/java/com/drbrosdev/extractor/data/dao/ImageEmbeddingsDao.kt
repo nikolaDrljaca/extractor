@@ -43,7 +43,6 @@ interface ImageEmbeddingsDao {
 
     suspend fun findByVisualEmbedding(query: String) = findByVisualEmbeddingFlow(query).first()
 
-
     @Query(
         """
             SELECT DISTINCT * FROM image_extraction_entity 

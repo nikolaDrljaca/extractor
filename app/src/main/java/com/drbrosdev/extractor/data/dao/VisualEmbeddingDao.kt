@@ -20,7 +20,13 @@ interface VisualEmbeddingDao {
     @Query("select count(id) from visual_embedding")
     suspend fun getCount(): Int
 
-    @Query("select value, count(*) as usageCount from visual_embedding group by value order by usageCount desc limit :amount")
+    @Query("""
+        select value, count(*) as usageCount
+        from visual_embedding
+        group by value
+        order by usageCount desc
+        limit :amount
+    """)
     fun getMostUsedAsFlow(amount: Int): Flow<List<VisualEmbedUsage>>
 
     suspend fun getMostUsed(amount: Int) = getMostUsedAsFlow(amount).first()

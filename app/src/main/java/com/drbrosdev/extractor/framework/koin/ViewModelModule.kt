@@ -75,6 +75,7 @@ val viewModelModule = module {
         ExtractorHomeViewModel(
             savedStateHandle = get(),
             compileVisualAlbum = get(),
+            compileTextAlbum = get(),
             albumRepository = get<DefaultAlbumRepository>()
         )
     }

@@ -20,6 +20,12 @@ interface TextEmbeddingDao {
     @Query("select * from text_embedding where image_entity_id=:mediaId")
     suspend fun findByMediaId(mediaId: Long): TextEmbeddingEntity?
 
+    @Query("""
+        select group_concat(value)
+        from text_embedding
+    """)
+    suspend fun findAllTextEmbedValues(): String
+
     @Insert
     suspend fun insert(value: TextEmbeddingEntity)
 

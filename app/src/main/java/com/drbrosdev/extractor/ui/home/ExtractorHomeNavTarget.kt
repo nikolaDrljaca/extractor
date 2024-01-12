@@ -41,7 +41,7 @@ object ExtractorHomeNavTarget : NavTarget {
             visualAlbums = visualAlbums,
             userAlbums = userAlbums,
             textAlbums = textAlbums,
-            onInitTextPreview = {},
+            onInitTextPreview = viewModel::compileTextAlbums,
             onInitUserPreviews = { navController.pop() },
             onInitVisualPreview = viewModel::compileVisualAlbums,
             onAlbumPreviewClick = {

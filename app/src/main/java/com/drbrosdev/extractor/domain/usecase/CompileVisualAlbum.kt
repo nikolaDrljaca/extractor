@@ -33,12 +33,12 @@ class CompileVisualAlbum(
             }
             // do not create albums with no entries, therefore filter out empty embeddings list
             .filter { (embeddings, _) -> embeddings.isNotEmpty() }
-            .map { it.createNewAlbumPayload() }
+            .map { it.createNewAlbumFromPayload() }
             .onEach { newAlbum -> albumRepository.createAlbum(newAlbum) }
             .launchIn(this)
     }
 
-    private fun Payload.createNewAlbumPayload(): NewAlbum {
+    private fun CompileAlbumPayload.createNewAlbumFromPayload(): NewAlbum {
         val (embeds, embedUsage) = this
         val entries = embeds.map {
             NewAlbum.Entry(
@@ -58,4 +58,4 @@ class CompileVisualAlbum(
     }
 }
 
-private typealias Payload = Pair<List<ImageEmbeddingsRelation>, String>
+typealias CompileAlbumPayload = Pair<List<ImageEmbeddingsRelation>, String>
