@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageLabelChip
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
@@ -33,7 +33,7 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorStats(
-    onStatClick: (String, LabelType) -> Unit,
+    onStatClick: (String, KeywordType) -> Unit,
     modifier: Modifier = Modifier,
     state: ExtractorStatsUiState
 ) {
@@ -81,7 +81,7 @@ fun ExtractorStats(
                                 text = it.value,
                                 isChecked = false,
                                 trailingIcon = {
-                                    TrailingIcon(labelType = it.type)
+                                    TrailingIcon(keywordType = it.type)
                                 }
                             )
                         }
@@ -96,12 +96,12 @@ fun ExtractorStats(
 @Composable
 private fun TrailingIcon(
     modifier: Modifier = Modifier,
-    labelType: LabelType
+    keywordType: KeywordType
 ) {
-    val resId = when (labelType) {
-        LabelType.ALL -> R.drawable.round_tag_24
-        LabelType.TEXT -> R.drawable.round_text_fields_24
-        LabelType.IMAGE -> R.drawable.round_image_search_24
+    val resId = when (keywordType) {
+        KeywordType.ALL -> R.drawable.round_tag_24
+        KeywordType.TEXT -> R.drawable.round_text_fields_24
+        KeywordType.IMAGE -> R.drawable.round_image_search_24
     }
 
     Icon(
@@ -117,7 +117,7 @@ private fun TrailingIcon(
 @Composable
 private fun CurrentPreview() {
     val embeds = buildList {
-        repeat(7) { count -> add(StatEmbed("Embed #$count", LabelType.IMAGE)) }
+        repeat(7) { count -> add(StatEmbed("Embed #$count", KeywordType.IMAGE)) }
     }
 
     ExtractorTheme {

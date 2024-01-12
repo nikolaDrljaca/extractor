@@ -4,39 +4,27 @@ import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.isIn
 import com.drbrosdev.extractor.domain.repository.payload.ImageEmbeddingSearchStrategy
-import com.drbrosdev.extractor.domain.usecase.RememberSearch
-import com.drbrosdev.extractor.util.runCatching
 import com.drbrosdev.extractor.util.toExtraction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-class DefaultImageSearchByLabel(
+class DefaultImageSearchByKeyword(
     private val dispatcher: CoroutineDispatcher,
     private val imageEmbedDao: ImageEmbeddingsDao,
-    private val rememberSearch: RememberSearch
-) : ImageSearchByLabel {
+) : ImageSearchByKeyword {
 
-    override suspend fun search(params: ImageSearchByLabel.Params): List<Extraction> =
+    override suspend fun search(params: ImageSearchByKeyword.Params): List<Extraction> =
         withContext(dispatcher) {
             val result = with(params) {
                 query
                     .prepareQuery()
                     .mapToSearchStrategy(type)
-                    .findBy(labelType)
+                    .findBy(keywordType)
                     .filterByDateRange(dateRange)
-            }
-
-            if (params.query.isNotBlank()) runCatching {
-                val rememberSearchParams = RememberSearch.Params(
-                    query = params.query,
-                    resultCount = result.size,
-                    labelType = params.labelType
-                )
-                rememberSearch(rememberSearchParams)
             }
 
             result
@@ -56,11 +44,12 @@ class DefaultImageSearchByLabel(
         }
     }
 
-    private suspend fun ImageEmbeddingSearchStrategy.findBy(labelType: LabelType): List<Extraction> {
-        val imageEmbeddingRelations = when (labelType) {
-            LabelType.ALL -> imageEmbedDao.findByLabel(query)
-            LabelType.TEXT -> imageEmbedDao.findByTextEmbedding(query)
-            LabelType.IMAGE -> imageEmbedDao.findByVisualEmbedding(query)
+    private suspend fun ImageEmbeddingSearchStrategy.findBy(keywordType: KeywordType): List<Extraction> {
+        println(query)
+        val imageEmbeddingRelations = when (keywordType) {
+            KeywordType.ALL -> imageEmbedDao.findByKeyword(query)
+            KeywordType.TEXT -> imageEmbedDao.findByTextEmbeddingFts(query)
+            KeywordType.IMAGE -> imageEmbedDao.findByVisualEmbedding(query)
         }
 
         return imageEmbeddingRelations

@@ -18,12 +18,12 @@ interface AlbumEntryDao {
     @Insert
     suspend fun insertAll(entities: List<AlbumEntryEntity>)
 
-    @Query("select * from album_entry")
+    @Query("SELECT * FROM album_entry")
     fun findAllAsFlow(): Flow<List<AlbumEntryEntity>>
 
     suspend fun findAll(): List<AlbumEntryEntity> = findAllAsFlow().first()
 
-    @Query("select count(*) from album_entry")
+    @Query("SELECT count(*) FROM album_entry")
     fun getCountAsFlow(): Flow<Long>
 
     suspend fun getCount(): Long = getCountAsFlow().first()
@@ -31,10 +31,10 @@ interface AlbumEntryDao {
     @Delete
     suspend fun delete(entry: AlbumEntryEntity)
 
-    @Query("delete from album_entry where id=:entryId")
+    @Query("DELETE FROM album_entry WHERE id=:entryId")
     suspend fun deleteById(entryId: Long)
 
-    @Query("delete from album_entry where album_entity_id=:albumEntityId")
+    @Query("DELETE FROM album_entry WHERE album_entity_id=:albumEntityId")
     suspend fun deleteByAlbumEntityId(albumEntityId: Long)
 
     @Update

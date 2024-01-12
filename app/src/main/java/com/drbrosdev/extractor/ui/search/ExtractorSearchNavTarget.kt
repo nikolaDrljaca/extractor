@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
@@ -27,14 +27,14 @@ import org.koin.core.parameter.parametersOf
 @Parcelize
 data class ExtractorSearchNavTarget(
     private val query: String = "",
-    private val labelType: LabelType = LabelType.ALL
+    private val keywordType: KeywordType = KeywordType.ALL
 ) : NavTarget {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val viewModel: ExtractorSearchViewModel = koinViewModel {
-            parametersOf(query, labelType)
+            parametersOf(query, keywordType)
         }
         val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -83,7 +83,7 @@ private fun SearchScreenPreview() {
             onCreateAlbumClick = {},
             extractorStatusButtonState = ExtractorStatusButtonState(),
             state = ExtractorSearchScreenUiState.Loading,
-            searchViewState = ExtractorSearchViewState("", LabelType.ALL),
+            searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
             dateFilterState = ExtractorDateFilterState(),
             loaderButtonState = ExtractorLoaderButtonState()
         )

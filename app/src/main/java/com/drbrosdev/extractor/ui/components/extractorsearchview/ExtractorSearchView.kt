@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.ImageLabelFilterChips
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toLabelType
@@ -103,7 +103,7 @@ private fun CurrentPreview() {
             onDone = {},
             state = ExtractorSearchViewState(
                 "",
-                LabelType.ALL,
+                KeywordType.ALL,
                 SearchType.PARTIAL
             )
         )

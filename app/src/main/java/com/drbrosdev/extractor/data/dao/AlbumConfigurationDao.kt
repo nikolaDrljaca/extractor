@@ -18,12 +18,12 @@ interface AlbumConfigurationDao {
     @Insert
     suspend fun insertAll(entities: List<AlbumConfigurationEntity>)
 
-    @Query("select * from album_configuration")
+    @Query("SELECT * FROM album_configuration")
     fun findAllAsFlow(): Flow<List<AlbumConfigurationEntity>>
 
     suspend fun findAll(): List<AlbumConfigurationEntity> = findAllAsFlow().first()
 
-    @Query("select count(*) from album_configuration")
+    @Query("SELECT count(*) FROM album_configuration")
     fun getCountAsFlow(): Flow<Long>
 
     suspend fun getCount(): Long = getCountAsFlow().first()
@@ -31,10 +31,10 @@ interface AlbumConfigurationDao {
     @Delete
     suspend fun delete(configuration: AlbumConfigurationEntity)
 
-    @Query("delete from album_configuration where id=:configurationId")
+    @Query("DELETE FROM album_configuration WHERE id=:configurationId")
     suspend fun deleteById(configurationId: Long)
 
-    @Query("delete from album_configuration where album_entity_id=:albumEntityId")
+    @Query("DELETE FROM album_configuration WHERE album_entity_id=:albumEntityId")
     suspend fun deleteByAlbumEntityId(albumEntityId: Long)
 
     @Update

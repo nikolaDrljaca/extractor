@@ -5,7 +5,7 @@ data class Album(
     val name: String,
     val keyword: String,
     val searchType: SearchType,
-    val labelType: LabelType,
+    val keywordType: KeywordType,
     val entries: List<AlbumEntry>
 )
 

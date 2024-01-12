@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.model.AlbumEntry
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
@@ -251,7 +251,7 @@ private fun CurrentPreview() {
             name = "Some album",
             keyword = "keyword",
             searchType = SearchType.PARTIAL,
-            labelType = LabelType.IMAGE,
+            keywordType = KeywordType.IMAGE,
             entries = listOf(
                 AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(11L)),
                 AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(12L)),

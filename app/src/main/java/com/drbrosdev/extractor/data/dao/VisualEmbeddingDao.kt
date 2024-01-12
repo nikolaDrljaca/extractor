@@ -17,24 +17,24 @@ interface VisualEmbeddingDao {
         val usageCount: Int
     )
 
-    @Query("select count(id) from visual_embedding")
+    @Query("SELECT count(id) FROM visual_embedding")
     suspend fun getCount(): Int
 
     @Query("""
-        select value, count(*) as usageCount
-        from visual_embedding
-        group by value
-        order by usageCount desc
-        limit :amount
+        SELECT value, count(*) AS usageCount
+        FROM visual_embedding
+        GROUP BY value
+        ORDER BY usageCount DESC
+        LIMIT :amount
     """)
     fun getMostUsedAsFlow(amount: Int): Flow<List<VisualEmbedUsage>>
 
     suspend fun getMostUsed(amount: Int) = getMostUsedAsFlow(amount).first()
 
-    @Query("select * from visual_embedding where id=:id")
+    @Query("SELECT * FROM visual_embedding WHERE id=:id")
     suspend fun findById(id: Long): VisualEmbeddingEntity?
 
-    @Query("select * from visual_embedding where image_entity_id=:mediaId")
+    @Query("SELECT * FROM visual_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun findByMediaId(mediaId: Long): List<VisualEmbeddingEntity>
 
     @Insert
@@ -49,12 +49,12 @@ interface VisualEmbeddingDao {
     @Delete
     suspend fun delete(value: VisualEmbeddingEntity)
 
-    @Query("delete from visual_embedding where id=:id")
+    @Query("DELETE FROM visual_embedding WHERE id=:id")
     suspend fun deleteById(id: Long)
 
-    @Query("delete from visual_embedding where image_entity_id=:mediaId")
+    @Query("DELETE FROM visual_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
 
-    @Query("delete from visual_embedding where value=:value")
+    @Query("DELETE FROM visual_embedding WHERE value=:value")
     suspend fun deleteByValue(value: String)
 }

@@ -13,19 +13,19 @@ data class ImageEmbeddingsRelation(
 
     @Relation(
         parentColumn = "media_store_id",
-        entityColumn = "image_entity_id"
+        entityColumn = "extraction_entity_id"
     )
     val textEmbeddingEntity: TextEmbeddingEntity,
 
     @Relation(
         parentColumn = "media_store_id",
-        entityColumn = "image_entity_id"
+        entityColumn = "extraction_entity_id"
     )
     val visualEmbeddingEntities: List<VisualEmbeddingEntity>,
 
     @Relation(
         parentColumn = "media_store_id",
-        entityColumn = "image_entity_id"
+        entityColumn = "extraction_entity_id"
     )
     val userEmbeddingEntity: UserEmbeddingEntity?,
 )

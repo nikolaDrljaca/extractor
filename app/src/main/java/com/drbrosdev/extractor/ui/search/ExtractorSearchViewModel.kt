@@ -7,10 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.ExtractionProgress
 import com.drbrosdev.extractor.domain.ExtractionStatus
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByLabel
+import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByKeyword
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
@@ -33,8 +33,8 @@ import kotlinx.coroutines.withContext
 
 class ExtractorSearchViewModel(
     query: String,
-    labelType: LabelType,
-    private val imageSearch: ImageSearchByLabel,
+    keywordType: KeywordType,
+    private val imageSearch: ImageSearchByKeyword,
     private val extractionProgress: ExtractionProgress,
     private val albumRepository: AlbumRepository,
     private val stateHandle: SavedStateHandle,
@@ -43,7 +43,7 @@ class ExtractorSearchViewModel(
 
     val searchViewState = ExtractorSearchViewState(
         initialQuery = stateHandle["query"] ?: query,
-        initialLabelType = labelType,
+        initialKeywordType = keywordType,
     )
 
     val dateFilterState = ExtractorDateFilterState()
@@ -55,7 +55,7 @@ class ExtractorSearchViewModel(
     )
     val state = _state.asStateFlow()
 
-    private val lastQuery = MutableStateFlow(LastQuery(query, labelType))
+    private val lastQuery = MutableStateFlow(LastQuery(query, keywordType))
 
     private val progressJob = extractionProgress()
         .onEach {
@@ -130,7 +130,7 @@ class ExtractorSearchViewModel(
                 keyword = searchViewState.query,
                 name = searchViewState.query,
                 searchType = searchViewState.searchType,
-                labelType = searchViewState.labelType,
+                keywordType = searchViewState.labelType,
                 origin = NewAlbum.Origin.USER_GENERATED,
                 entries = state.value.getImages().map {
                     NewAlbum.Entry(
@@ -149,9 +149,9 @@ class ExtractorSearchViewModel(
         _state.update { ExtractorSearchScreenUiState.Loading }
 
         viewModelScope.launch {
-            val searchQuery = ImageSearchByLabel.Params(
+            val searchQuery = ImageSearchByKeyword.Params(
                 query = searchViewState.query,
-                labelType = searchViewState.labelType,
+                keywordType = searchViewState.labelType,
                 dateRange = dateFilterState.dateRange(),
                 type = searchViewState.searchType
             )
@@ -164,11 +164,11 @@ class ExtractorSearchViewModel(
         }
     }
 
-    private data class LastQuery(val query: String, val labelType: LabelType)
+    private data class LastQuery(val query: String, val keywordType: KeywordType)
 
-    private fun LastQuery.isOldQuery(query: String, labelType: LabelType): Boolean {
+    private fun LastQuery.isOldQuery(query: String, keywordType: KeywordType): Boolean {
         return when {
-            (query == this.query) and (labelType == this.labelType) -> true
+            (query == this.query) and (keywordType == this.keywordType) -> true
             else -> false
         }
     }

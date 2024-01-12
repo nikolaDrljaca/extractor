@@ -44,7 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilter
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButton
@@ -259,7 +259,7 @@ private fun SheetPreview() {
             ExtractorSearchBottomSheet(
                 onDone = {},
                 onCreateAlbumClick = {},
-                searchViewState = ExtractorSearchViewState("", LabelType.ALL),
+                searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
                 dateFilterState = ExtractorDateFilterState(),
                 loaderButtonState = ExtractorLoaderButtonState()
             )

@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.first
 interface AlbumRelationDao {
 
     @Query("""
-        select * 
-        from album as a, album_configuration, album_entry
-        where a.album_id=:albumId
-        group by a.album_id
+        SELECT * 
+        FROM album AS a, album_configuration, album_entry
+        WHERE a.album_id=:albumId
+        GROUP BY a.album_id
     """)
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -25,10 +25,10 @@ interface AlbumRelationDao {
     suspend fun findAlbumById(albumId: Long): AlbumRelation? = findAlbumByIdAsFlow(albumId).first()
 
     @Query("""
-        select * 
-        from album
-        where origin=:origin
-        order by album_id desc
+        SELECT * 
+        FROM album
+        WHERE origin=:origin
+        ORDER BY album_id DESC
     """)
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -37,11 +37,11 @@ interface AlbumRelationDao {
     suspend fun findAll(): List<AlbumRelation> = findAllAsFlow().first()
 
     @Query("""
-        select * 
-        from album as a, album_configuration, album_entry
-        where a.origin=:origin
-        group by a.album_id
-        order by a.album_id desc
+        SELECT * 
+        FROM album AS a, album_configuration, album_entry
+        WHERE a.origin=:origin
+        GROUP BY a.album_id
+        ORDER BY a.album_id DESC 
     """)
     @Transaction
     @RewriteQueriesToDropUnusedColumns
@@ -50,11 +50,11 @@ interface AlbumRelationDao {
     suspend fun findVisual(): List<AlbumRelation> = findVisualAsFlow().first()
 
     @Query("""
-        select * 
-        from album as a, album_configuration, album_entry
-        where a.origin=:origin
-        group by a.album_id
-        order by a.album_id desc
+        SELECT * 
+        FROM album AS a, album_configuration, album_entry
+        WHERE a.origin=:origin
+        GROUP BY a.album_id
+        ORDER BY a.album_id DESC
     """)
     @Transaction
     @RewriteQueriesToDropUnusedColumns

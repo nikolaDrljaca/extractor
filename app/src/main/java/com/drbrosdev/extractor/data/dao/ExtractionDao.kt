@@ -13,15 +13,15 @@ import kotlinx.coroutines.flow.first
 interface ExtractionDao {
 
     //TODO: CRUD methods on ImageExtractionEntity should have their own dao
-    @Query("select * from image_extraction_entity")
+    @Query("SELECT * FROM image_extraction_entity")
     fun findAllAsFlow(): Flow<List<ExtractionEntity>>
 
     suspend fun findAll(): List<ExtractionEntity> = findAllAsFlow().first()
 
-    @Query("select * from image_extraction_entity where media_store_id=:id")
+    @Query("SELECT * FROM image_extraction_entity WHERE media_store_id=:id")
     suspend fun findById(id: Long): ExtractionEntity?
 
-    @Query("select media_store_id from image_extraction_entity")
+    @Query("SELECT media_store_id FROM image_extraction_entity")
     suspend fun findAllIds(): List<Long>
 
     @Insert
@@ -36,10 +36,10 @@ interface ExtractionDao {
     @Delete
     suspend fun delete(value: ExtractionEntity)
 
-    @Query("delete from image_extraction_entity where media_store_id=:mediaId")
+    @Query("DELETE FROM image_extraction_entity WHERE media_store_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long): Int
 
-    @Query("select count(*) from image_extraction_entity")
+    @Query("SELECT count(*) FROM image_extraction_entity")
     fun getCountAsFlow(): Flow<Int>
 
     suspend fun getCount(): Int = getCountAsFlow().first()

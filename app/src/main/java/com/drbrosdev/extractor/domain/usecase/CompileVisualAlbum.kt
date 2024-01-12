@@ -3,7 +3,7 @@ package com.drbrosdev.extractor.domain.usecase
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.relation.ImageEmbeddingsRelation
-import com.drbrosdev.extractor.domain.model.LabelType
+import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
@@ -51,7 +51,7 @@ class CompileVisualAlbum(
             keyword = embedUsage,
             name = embedUsage,
             searchType = SearchType.FULL,
-            labelType = LabelType.IMAGE,
+            keywordType = KeywordType.IMAGE,
             entries = entries,
             origin = NewAlbum.Origin.VISUAL_COMPUTED
         )

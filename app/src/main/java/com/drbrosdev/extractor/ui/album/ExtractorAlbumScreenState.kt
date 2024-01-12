@@ -11,7 +11,7 @@ sealed interface ExtractorAlbumScreenState {
         val isConfirmDeleteShown: Boolean = false
     ) : ExtractorAlbumScreenState {
         val metadata =
-            "${album.labelType.name.lowercase()} \u00B7 ${album.searchType.name.lowercase()} \u00B7 ${album.entries.size}"
+            "${album.keywordType.name.lowercase()} \u00B7 ${album.searchType.name.lowercase()} \u00B7 ${album.entries.size}"
     }
 
     data object Loading : ExtractorAlbumScreenState

@@ -3,7 +3,6 @@ package com.drbrosdev.extractor.framework.koin
 import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.ui.album.ExtractorAlbumViewModel
-import com.drbrosdev.extractor.ui.components.previoussearch.PreviousSearchesViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
@@ -28,11 +27,6 @@ val viewModelModule = module {
         )
     }
 
-    viewModel {
-        PreviousSearchesViewModel(
-            previousSearchDao = get()
-        )
-    }
 
     viewModel {
         ExtractorImageViewModel(
@@ -43,7 +37,7 @@ val viewModelModule = module {
     viewModel {
         com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel(
             query = it.get(),
-            labelType = it.get(),
+            keywordType = it.get(),
             imageSearch = get(),
             stateHandle = get(),
             extractionProgress = get(),

@@ -55,7 +55,7 @@ class DefaultExtractorRepository(
     override suspend fun updateOrInsertUserEmbed(embedUpdate: EmbedUpdate) {
         val existing = userEmbeddingDao.findByMediaId(embedUpdate.mediaImageId.id)
         if (existing == null) {
-            val newUserEmbed = UserEmbeddingEntity(imageEntityId = embedUpdate.mediaImageId.id, value = embedUpdate.value)
+            val newUserEmbed = UserEmbeddingEntity(extractionEntityId = embedUpdate.mediaImageId.id, value = embedUpdate.value)
             userEmbeddingDao.insert(newUserEmbed)
         } else {
             userEmbeddingDao.update(embedUpdate.value, embedUpdate.mediaImageId.id)
@@ -68,7 +68,7 @@ class DefaultExtractorRepository(
 
     override suspend fun insertVisualEmbed(newEmbed: NewEmbed) = with(newEmbed) {
         val visualEmbed = VisualEmbeddingEntity(
-            imageEntityId = mediaImageId.id,
+            extractionEntityId = mediaImageId.id,
             value = value
         )
         visualEmbeddingDao.insert(visualEmbed)
@@ -89,13 +89,13 @@ class DefaultExtractorRepository(
         )
 
         val textEntity = TextEmbeddingEntity(
-            imageEntityId = mediaImageId.id,
+            extractionEntityId = mediaImageId.id,
             value = textEmbed.value
         )
 
         val visualEntities = visualEmbeds.map {
             VisualEmbeddingEntity(
-                imageEntityId = mediaImageId.id,
+                extractionEntityId = mediaImageId.id,
                 value = it.value
             )
         }
@@ -119,7 +119,7 @@ class DefaultExtractorRepository(
 
         val textEmbeds = data.map {
             TextEmbeddingEntity(
-                imageEntityId = it.mediaImageId.id,
+                extractionEntityId = it.mediaImageId.id,
                 value = it.textEmbed.value
             )
         }
@@ -128,7 +128,7 @@ class DefaultExtractorRepository(
         val visualEmbeds = data.flatMap { create ->
             create.visualEmbeds.map {
                 VisualEmbeddingEntity(
-                    imageEntityId = create.mediaImageId.id,
+                    extractionEntityId = create.mediaImageId.id,
                     value = it.value
                 )
             }

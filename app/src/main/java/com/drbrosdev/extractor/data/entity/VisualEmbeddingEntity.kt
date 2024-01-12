@@ -9,6 +9,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "visual_embedding")
 data class VisualEmbeddingEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    @ColumnInfo(name = "image_entity_id") val imageEntityId: Long,
+    @ColumnInfo(name = "extraction_entity_id") val extractionEntityId: Long,
     val value: String
 )
