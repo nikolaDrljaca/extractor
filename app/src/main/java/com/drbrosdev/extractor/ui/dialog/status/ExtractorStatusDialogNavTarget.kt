@@ -7,8 +7,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.CombinedPreview
 import com.drbrosdev.extractor.util.DialogNavTarget
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
@@ -32,21 +30,3 @@ object ExtractorStatusDialogNavTarget : DialogNavTarget {
     }
 }
 
-@CombinedPreview
-@Composable
-private fun CurrentPreview() {
-    ExtractorTheme(dynamicColor = false) {
-        ExtractorStatusDialog(
-            state = ExtractorStatusDialogUiModel(),
-            onClick = {},
-        )
-
-        ExtractorStatusDialog(
-            state = ExtractorStatusDialogUiModel(),
-            onClick = {},
-            headline = {
-                Text(text = "Status", style = MaterialTheme.typography.displaySmall)
-            }
-        )
-    }
-}

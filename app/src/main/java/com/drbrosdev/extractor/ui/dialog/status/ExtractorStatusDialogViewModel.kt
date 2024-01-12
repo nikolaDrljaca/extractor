@@ -47,6 +47,8 @@ data class ExtractorStatusDialogUiModel(
 ) {
     val percentage = inStorageCount safeDiv onDeviceCount
 
+    val percentageText = "${percentage.times(100).toInt()}%"
+
     val shouldAllowExtraction = when {
         isExtractionRunning -> false
         onDeviceCount == inStorageCount -> false

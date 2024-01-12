@@ -1,19 +1,21 @@
 package com.drbrosdev.extractor.ui.dialog.status
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,9 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CombinedPreview
 
 @Composable
 fun ExtractorStatusDialog(
@@ -33,6 +38,7 @@ fun ExtractorStatusDialog(
     headline: (@Composable () -> Unit)? = null,
     state: ExtractorStatusDialogUiModel
 ) {
+
     Surface(
         modifier = Modifier
             .then(modifier),
@@ -53,18 +59,6 @@ fun ExtractorStatusDialog(
             )
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
-            if (state.isExtractionRunning) {
-                Text(text = stringResource(R.string.status_dialog_current_extraction), modifier = Modifier.padding(vertical = 4.dp))
-                LinearProgressIndicator(
-                    progress = { state.percentage },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp),
-                    strokeCap = StrokeCap.Round,
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
             ExtractorCountChips(
                 modifier = Modifier.fillMaxWidth(),
                 inStorageCount = state.inStorageCount,
@@ -78,19 +72,23 @@ fun ExtractorStatusDialog(
                 enabled = state.shouldAllowExtraction,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Start Sync")
-            }
-
-            AnimatedVisibility(
-                visible = state.isExtractionRunning,
-                modifier = Modifier.padding(vertical = 4.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.process_is_already_running),
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = Color.Gray
-                    )
-                )
+                with(state) {
+                    when {
+                        isExtractionRunning -> {
+                            Text(text = state.percentageText)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeCap = StrokeCap.Round,
+                                trackColor = Color.Transparent,
+                                color = Color.LightGray
+                            )
+                        }
+                        onDeviceCount == 0 -> Text(text = stringResource(R.string.no_images_found))
+                        onDeviceCount == inStorageCount -> Text(text = stringResource(R.string.all_done))
+                        else -> Text(text = stringResource(id = R.string.start_sync))
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -138,7 +136,10 @@ private fun ExtractorCountChips(
             )
         ) {
             Column(modifier = Modifier.padding(14.dp)) {
-                Text(text = stringResource(R.string.status_in_storage), style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = stringResource(R.string.status_in_storage),
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "$inStorageCount",
@@ -158,7 +159,10 @@ private fun ExtractorCountChips(
             modifier = Modifier.weight(1f)
         ) {
             Column(modifier = Modifier.padding(14.dp)) {
-                Text(text = stringResource(R.string.status_on_device), style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = stringResource(R.string.status_on_device),
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "$onDeviceCount",
@@ -167,5 +171,50 @@ private fun ExtractorCountChips(
             }
         }
 
+    }
+}
+
+@CombinedPreview
+@Composable
+private fun CurrentPreview() {
+    ExtractorTheme(dynamicColor = false) {
+        ExtractorStatusDialog(
+            state = ExtractorStatusDialogUiModel(),
+            onClick = {},
+            headline = {
+                Text(text = "Status", style = MaterialTheme.typography.displaySmall)
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun CurrentPreview2() {
+    ExtractorTheme(dynamicColor = false) {
+        val state = ExtractorStatusDialogUiModel(
+            inStorageCount = 23,
+            onDeviceCount = 162
+        )
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            ExtractorStatusDialog(
+                state = state,
+                onClick = {},
+                headline = {
+                    Text(text = "Status", style = MaterialTheme.typography.displaySmall)
+                }
+            )
+
+            ExtractorStatusDialog(
+                state = state.copy(isExtractionRunning = true),
+                onClick = {},
+                headline = {
+                    Text(text = "Status", style = MaterialTheme.typography.displaySmall)
+                }
+            )
+        }
     }
 }
