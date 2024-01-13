@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,6 +27,10 @@ data class ExtractorImageInfoNavTarget(
         }
         val imageInfoModel by viewModel.imageInfoModel.collectAsState()
         val sheetNavigator = LocalBottomSheetNavController.current
+
+        LaunchedEffect(key1 = Unit) {
+            sheetState.expand()
+        }
 
         ExtractorImageInfoScreen(
             model = imageInfoModel,
