@@ -29,7 +29,7 @@ enum class ExtractorTopBarState {
 fun ExtractorTopBar(
     modifier: Modifier = Modifier,
     state: ExtractorTopBarState = ExtractorTopBarState.NORMAL,
-    leadingSlot: @Composable RowScope.() -> Unit,
+    leadingSlot: (@Composable RowScope.() -> Unit)? = null,
     centerSlot: (@Composable RowScope.() -> Unit)? = null,
     trailingSlot: (@Composable RowScope.() -> Unit)? = null
 ) {
@@ -73,7 +73,7 @@ fun ExtractorTopBar(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
-                ){ leadingSlot() }
+                ){ leadingSlot?.invoke(this) }
                 Row { centerSlot?.invoke(this) }
                 Row {
                     when {

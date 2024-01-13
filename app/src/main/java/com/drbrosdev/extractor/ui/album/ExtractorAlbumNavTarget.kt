@@ -46,12 +46,14 @@ data class ExtractorAlbumNavTarget(
                     }
 
                     AlbumHeaderDropdownAction.Share -> {
-                        context.launchShareIntent(viewModel.imageUris.value)
+                        viewModel.onShareAction {
+                            context.launchShareIntent(viewModel.imageUris.value)
+                        }
                     }
                 }
             },
             onBack = { navController.pop() },
-            onDialogAction = {
+            onDeleteDialogAction = {
                 when (it) {
                     ConfirmationDialogActions.Confirm -> {
                         viewModel.onDeleteAlbum()
@@ -59,6 +61,16 @@ data class ExtractorAlbumNavTarget(
                     }
                     ConfirmationDialogActions.Deny -> viewModel.onDismissDialog()
                     ConfirmationDialogActions.Dismiss -> viewModel.onDismissDialog()
+                }
+            },
+            onShareDialogAction = {
+                when (it) {
+                    ConfirmationDialogActions.Confirm -> {
+                        context.launchShareIntent(viewModel.imageUris.value)
+                        viewModel.onDismissShareDialog()
+                    }
+                    ConfirmationDialogActions.Deny -> viewModel.onDismissShareDialog()
+                    ConfirmationDialogActions.Dismiss -> viewModel.onDismissShareDialog()
                 }
             }
         )

@@ -29,17 +29,24 @@ class ExtractorAlbumViewModel(
     val imageUris = _imageUris.asStateFlow()
 
     private val confirmDeleteDialog = MutableStateFlow(false)
+    private val confirmShareDialog = MutableStateFlow(false)
 
-    val state = albumRepository.findAlbumByIdAsFlow(albumId)
+    private val albumFlow = albumRepository.findAlbumByIdAsFlow(albumId)
         .filterNotNull()
         .onEach { album -> _imageUris.update { getUris(album.entries) } }
-        .combine(confirmDeleteDialog) { album, showConfirm ->
-            ExtractorAlbumScreenState.Content(
-                album = album,
-                isConfirmDeleteShown = showConfirm
-            )
-        }
         .flowOn(Dispatchers.Default)
+
+    val state = combine(
+        albumFlow,
+        confirmDeleteDialog,
+        confirmShareDialog
+    ) { album, showDelete, showShare ->
+        ExtractorAlbumScreenState.Content(
+            album = album,
+            isConfirmDeleteShown = showDelete,
+            isConfirmShareShown = showShare
+        )
+    }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -60,4 +67,20 @@ class ExtractorAlbumViewModel(
             albumRepository.deleteAlbumById(albumId)
         }
     }
+
+    fun onDismissShareDialog() {
+        confirmShareDialog.update { false }
+    }
+
+    fun onShareAction(action: () -> Unit) {
+        when {
+            _imageUris.value.size > 30 -> confirmShareDialog.update { true }
+            else -> {
+                confirmShareDialog.update { false }
+                action()
+            }
+        }
+    }
+
+
 }
