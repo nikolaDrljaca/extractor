@@ -44,7 +44,8 @@ val viewModelModule = module {
             extractionProgress = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             generateSuggestedKeywords = get(),
-            spawnExtractorWork = get()
+            spawnExtractorWork = get(),
+            datastore = get()
         )
     }
 

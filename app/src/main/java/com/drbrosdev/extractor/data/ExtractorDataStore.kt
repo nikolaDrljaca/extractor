@@ -20,14 +20,25 @@ class ExtractorDataStore(
             it[ONBOARDING_FINISHED] ?: false
         }
 
+    val shouldShowSearchSheet: Flow<Boolean>
+        get() = datastore.data.map {
+            it[SHOULD_SHOW_SEARCH_SHEET] ?: true
+        }
+
     suspend fun finishOnboarding() {
         datastore.edit {
             it[ONBOARDING_FINISHED] = true
         }
     }
 
+    suspend fun hasSeenSearchSheet() {
+        datastore.edit {
+            it[SHOULD_SHOW_SEARCH_SHEET] = false
+        }
+    }
+
     private companion object {
         val ONBOARDING_FINISHED = booleanPreferencesKey(name = "onb_fin")
-
+        val SHOULD_SHOW_SEARCH_SHEET = booleanPreferencesKey(name = "show_search_sheet")
     }
 }

@@ -5,6 +5,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
@@ -19,14 +20,15 @@ import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFi
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRangeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
+import com.drbrosdev.extractor.ui.components.extractorloaderbutton.isSuccess
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.isBlank
+import com.drbrosdev.extractor.ui.components.extractorsearchview.isNotBlank
 import com.drbrosdev.extractor.ui.components.extractorsearchview.keywordTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -34,7 +36,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ExtractorSearchViewModel(
     query: String,
@@ -44,7 +45,8 @@ class ExtractorSearchViewModel(
     private val albumRepository: AlbumRepository,
     private val stateHandle: SavedStateHandle,
     private val generateSuggestedKeywords: GenerateSuggestedKeywords,
-    private val spawnExtractorWork: SpawnExtractorWork
+    private val spawnExtractorWork: SpawnExtractorWork,
+    private val datastore: ExtractorDataStore
 ) : ViewModel() {
     val extractorStatusButtonState = ExtractorStatusButtonState()
 
@@ -65,6 +67,8 @@ class ExtractorSearchViewModel(
     val state = _state.asStateFlow()
 
     private val lastQuery = MutableStateFlow(LastQuery(query, keywordType))
+
+    val shouldShowSheetFlow = datastore.shouldShowSearchSheet
 
     private val progressJob = extractionProgress()
         .distinctUntilChanged()
@@ -111,11 +115,13 @@ class ExtractorSearchViewModel(
     private val labelTypeUpdateFlow = searchViewState.keywordTypeAsFlow()
         .distinctUntilChanged()
         .onEach { performSearch(SearchStrategy.NORMAL) }
+        .onEach { loaderButtonState.initial() }
         .launchIn(viewModelScope)
 
     private val searchTypeUpdateFlow = searchViewState.searchTypeAsFlow()
         .distinctUntilChanged()
         .onEach { performSearch(SearchStrategy.NORMAL) }
+        .onEach { loaderButtonState.initial() }
         .launchIn(viewModelScope)
 
     private val saveQueryJob = searchViewState.queryAsFlow()
@@ -131,7 +137,13 @@ class ExtractorSearchViewModel(
     private val loaderButtonEnabledJob = state
         .onEach {
             when (it) {
-                is ExtractorSearchScreenUiState.Content -> loaderButtonState.enable()
+                is ExtractorSearchScreenUiState.Content -> {
+                    when {
+                        searchViewState.isNotBlank() -> loaderButtonState.enable()
+                        else -> loaderButtonState.disable()
+                    }
+                }
+
                 else -> loaderButtonState.disable()
             }
         }
@@ -161,16 +173,17 @@ class ExtractorSearchViewModel(
     }
 
     fun onCompileUserAlbum() {
-        viewModelScope.launch {
-            when (state.value) {
-                is ExtractorSearchScreenUiState.Content -> compileUserAlbum()
-                else -> Unit
-            }
+        when (state.value) {
+            is ExtractorSearchScreenUiState.Content -> compileUserAlbum()
+            else -> Unit
         }
     }
 
-    private suspend fun compileUserAlbum() = withContext(Dispatchers.Default) {
-        loaderButtonState.withLoader {
+    private fun compileUserAlbum() {
+        if (loaderButtonState.isSuccess()) return
+
+        loaderButtonState.loading()
+        viewModelScope.launch {
             val newAlbum = NewAlbum(
                 keyword = searchViewState.query,
                 name = searchViewState.query,
@@ -186,6 +199,9 @@ class ExtractorSearchViewModel(
             )
             albumRepository.createAlbum(newAlbum)
         }
+            .invokeOnCompletion {
+                loaderButtonState.success()
+            }
     }
 
     private fun runSearch() {
@@ -239,5 +255,10 @@ class ExtractorSearchViewModel(
 
     fun spawnWork() = spawnExtractorWork()
 
+    fun onShowSheetDone() {
+        viewModelScope.launch {
+            datastore.hasSeenSearchSheet()
+        }
+    }
 }
 

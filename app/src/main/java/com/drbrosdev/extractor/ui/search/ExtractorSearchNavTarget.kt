@@ -1,7 +1,9 @@
 package com.drbrosdev.extractor.ui.search
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -11,6 +13,7 @@ import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFi
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
+import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
@@ -20,6 +23,8 @@ import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
 import dev.olshevski.navigation.reimagined.navigate
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -42,7 +47,23 @@ data class ExtractorSearchNavTarget(
         val dialogNavController = LocalDialogNavController.current
         val keyboardController = LocalSoftwareKeyboardController.current
 
+        val scaffoldState = rememberBottomSheetScaffoldState(
+            bottomSheetState = rememberExtractorSearchBottomSheetState()
+        )
+
+        //Showcase the Search sheet on first launch
+        LaunchedEffect(key1 = Unit) {
+            val shouldShow = viewModel.shouldShowSheetFlow.first()
+            if (shouldShow) {
+                scaffoldState.bottomSheetState.expand()
+                delay(1500L)
+                scaffoldState.bottomSheetState.partialExpand()
+                viewModel.onShowSheetDone()
+            }
+        }
+
         ExtractorSearchScreen(
+            scaffoldState = scaffoldState,
             state = state,
             extractorStatusButtonState = viewModel.extractorStatusButtonState,
             searchViewState = viewModel.searchViewState,

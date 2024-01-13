@@ -17,10 +17,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
@@ -41,11 +39,12 @@ import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoad
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
+import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheet
+import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
 import com.drbrosdev.extractor.ui.components.shared.DragHandle
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageGrid
-import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchSheet
 import com.drbrosdev.extractor.ui.components.shared.ExtractorStillIndexing
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
@@ -63,15 +62,7 @@ fun ExtractorSearchScreen(
     onSuggestedSearchClick: (SuggestedSearch) -> Unit,
     onStartSyncClick: () -> Unit,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberStandardBottomSheetState(
-            confirmValueChange = {
-                when (it) {
-                    SheetValue.Hidden -> false
-                    SheetValue.Expanded -> true
-                    SheetValue.PartiallyExpanded -> true
-                }
-            }
-        )
+        bottomSheetState = rememberExtractorSearchBottomSheetState()
     ),
     state: ExtractorSearchScreenUiState,
     dateFilterState: ExtractorDateFilterState,
@@ -126,7 +117,9 @@ fun ExtractorSearchScreen(
                     }
 
                     is ExtractorSearchScreenUiState.StillIndexing -> ExtractorStillIndexing(
-                        modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 12.dp),
                     )
                     is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()
 
