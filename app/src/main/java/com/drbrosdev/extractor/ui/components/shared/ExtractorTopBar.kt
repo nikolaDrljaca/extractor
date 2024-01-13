@@ -44,7 +44,7 @@ fun ExtractorTopBar(
     val spacerHeight by transition.animateDp(label = "") {
         when (it) {
             ExtractorTopBarState.NORMAL -> 36.dp
-            ExtractorTopBarState.ELEVATED -> 12.dp
+            ExtractorTopBarState.ELEVATED -> 24.dp
         }
     }
 
