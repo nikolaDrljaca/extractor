@@ -11,7 +11,7 @@ object ExtractorLicensesNavTarget : NavTarget {
 
     @Composable
     override fun Content() {
-
+        //TODO implement
         ExtractorLicensesScreen()
     }
 }
