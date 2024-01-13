@@ -33,4 +33,13 @@ interface UserEmbeddingDao {
 
     @Query("DELETE FROM user_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
+
+    @Query("""
+        SELECT group_concat(value)
+        FROM user_embedding AS ue
+        WHERE ue.value IS NOT NULL AND ue.value != ''
+        ORDER BY random()
+        LIMIT :amount
+    """)
+    suspend fun getValueConcatAtRandom(amount: Int) : String?
 }

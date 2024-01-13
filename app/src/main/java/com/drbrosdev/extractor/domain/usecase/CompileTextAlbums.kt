@@ -23,15 +23,16 @@ class CompileTextAlbums(
     private val textEmbeddingDao: TextEmbeddingDao,
     private val imageEmbeddingsDao: ImageEmbeddingsDao,
     private val albumRepository: AlbumRepository,
-    private val tokenizeText: TokenizeText
+    private val tokenizeText: TokenizeText,
+    private val validateToken: ValidateToken
 ) {
 
     suspend operator fun invoke() = withContext(dispatcher) {
         val allText = textEmbeddingDao.findAllTextEmbedValues()
 
         val tokens = tokenizeText(allText)
+            .filter { validateToken(it) }
             .map { it.text }
-            .filter { it.filterWithStopWords(stopWords) }
             .toList()
 
         val job = tokens
@@ -39,7 +40,6 @@ class CompileTextAlbums(
             .generateMostCommon()
             .asFlow()
             .map { topWord ->
-                //TODO @nikola Full strategy text search does not work, query?
                 val strategy = ImageEmbeddingSearchStrategy.Partial(topWord)
                 val embeddings = imageEmbeddingsDao.findByTextEmbeddingFts(strategy.query)
                 embeddings to topWord
@@ -52,13 +52,6 @@ class CompileTextAlbums(
             .flowOn(dispatcher)
             .launchIn(this)
 
-    }
-
-    private fun String.filterWithStopWords(stopWords: Set<String>) = when {
-        length < 3 -> false
-        toDoubleOrNull() != null -> false
-        this in stopWords -> false
-        else -> true
     }
 
     private fun List<String>.createFrequencyMap(): Map<String, Int> {
@@ -90,13 +83,4 @@ class CompileTextAlbums(
             origin = NewAlbum.Origin.TEXT_COMPUTED
         )
     }
-
-    private val stopWords = setOf(
-        "a", "an", "and", "are", "as", "at", "be", "for", "from", "has",
-        "he", "in", "is", "it", "its", "of", "on", "that", "the", "to",
-        "was", "were", "will", "with", "by", "can", "do", "does", "doing",
-        "done", "had", "has", "have", "having", "if", "into", "is", "it",
-        "its", "not", "now", "or", "our", "should", "so", "than", "that", "the", "their", "there",
-        "you", "your", "this", "com"
-    )
 }

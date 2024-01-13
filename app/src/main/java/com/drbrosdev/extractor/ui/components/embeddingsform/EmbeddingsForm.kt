@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.EmbeddingTextField
-import com.drbrosdev.extractor.ui.components.shared.ExtractorImageLabelChip
+import com.drbrosdev.extractor.ui.components.shared.ExtractorChip
 import com.drbrosdev.extractor.ui.imageinfo.VisualEmbedUiModel
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
@@ -41,7 +41,7 @@ fun EmbeddingsForm(
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             visualEmbeddings.forEach {
-                ExtractorImageLabelChip(
+                ExtractorChip(
                     isChecked = it.isChecked,
                     text = it.text,
                     onDismiss = { onClearVisual(it.text) },

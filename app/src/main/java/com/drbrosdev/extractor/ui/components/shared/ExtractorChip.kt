@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
-fun ExtractorImageLabelChip(
+fun ExtractorChip(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     trailingIcon: (@Composable () -> Unit)? = null,
@@ -56,7 +56,7 @@ fun ExtractorImageLabelChip(
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         Column {
-            ExtractorImageLabelChip(
+            ExtractorChip(
                 text = "Sample",
                 isChecked = false,
                 onDismiss = {},
@@ -69,7 +69,7 @@ private fun CurrentPreview() {
                 }
             )
 
-            ExtractorImageLabelChip(
+            ExtractorChip(
                 text = "Sample",
                 isChecked = true,
                 onDismiss = {}

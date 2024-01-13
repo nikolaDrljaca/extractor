@@ -2,13 +2,13 @@ package com.drbrosdev.extractor.ui.search
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.BottomSheetScaffold
@@ -35,18 +35,21 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
+import com.drbrosdev.extractor.ui.components.shared.DragHandle
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
-import com.drbrosdev.extractor.ui.components.shared.ExtractorFirstSearch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageGrid
-import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchBottomSheet
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchSheet
+import com.drbrosdev.extractor.ui.components.shared.ExtractorStillIndexing
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
+import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +60,8 @@ fun ExtractorSearchScreen(
     onDone: () -> Unit,
     onStatusButtonClick: () -> Unit,
     onCreateAlbumClick: () -> Unit,
+    onSuggestedSearchClick: (SuggestedSearch) -> Unit,
+    onStartSyncClick: () -> Unit,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
             confirmValueChange = {
@@ -85,7 +90,7 @@ fun ExtractorSearchScreen(
 
     BottomSheetScaffold(
         sheetContent = {
-            ExtractorSearchBottomSheet(
+            ExtractorSearchSheet(
                 onDone = onDone,
                 onCreateAlbumClick = onCreateAlbumClick,
                 searchViewState = searchViewState,
@@ -94,7 +99,7 @@ fun ExtractorSearchScreen(
             )
         },
         sheetContainerColor = MaterialTheme.colorScheme.primary,
-        sheetDragHandle = { Spacer(Modifier.height(20.dp)) },
+        sheetDragHandle = { DragHandle() },
         sheetContentColor = Color.White,
         sheetPeekHeight = 100.dp + bottomPadding,
         scaffoldState = scaffoldState
@@ -108,25 +113,43 @@ fun ExtractorSearchScreen(
             AnimatedContent(
                 targetState = state,
                 label = "",
-                modifier = Modifier.layoutId(ViewIds.MAIN_CONTENT)
+                modifier = Modifier
+                    .layoutId(ViewIds.MAIN_CONTENT)
             ) {
                 when (it) {
                     ExtractorSearchScreenUiState.Loading -> Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(text = stringResource(R.string.loading))
                     }
 
-                    is ExtractorSearchScreenUiState.FirstSearch -> ExtractorFirstSearch(modifier = Modifier.fillMaxSize())
+                    is ExtractorSearchScreenUiState.StillIndexing -> ExtractorStillIndexing(
+                        modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp),
+                    )
                     is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()
 
-                    is ExtractorSearchScreenUiState.Success ->
+                    is ExtractorSearchScreenUiState.Content ->
                         ExtractorImageGrid(
                             images = it.images,
                             onClick = onNavToDetail,
                             gridState = gridState,
                         )
+
+                    is ExtractorSearchScreenUiState.ShowSuggestions -> Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .offset(y = -(110.dp + bottomPadding)),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        ExtractorSuggestedSearch(
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                            onClick = onSuggestedSearchClick,
+                            onStartSyncClick = onStartSyncClick,
+                            state = it.suggestedSearchState
+                        )
+                    }
                 }
             }
 

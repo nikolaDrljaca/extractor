@@ -73,4 +73,10 @@
     <string name="start_sync">Start Sync</string>
     <string name="no_images_found">No images found</string>
     <string name="all_done">All Done!</string>
+    <string name="still_indexing_search_screen">Indexing is still in progress. You can search but your results will be incomplete.</string>
+    <string name="start_your_search_here">Start your search here!</string>
+    <string name="suggestion_info">These are suggestions based on your image data.</string>
+    <string name="or_start_a_search_below">Or start a search below ↓</string>
+    <string name="suggestion_data_reset">Looks like app data was reset.</string>
+    <string name="suggestion_start_sync">Start Sync before searching!</string>
 </resources>

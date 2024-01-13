@@ -13,8 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,10 +33,10 @@ fun ExtractorSearchView(
     state: ExtractorSearchViewState,
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(16.dp)
+    contentPadding: PaddingValues = PaddingValues(16.dp),
+    textFieldPadding: PaddingValues = PaddingValues()
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val keyboardState = rememberKeyboardState()
 
@@ -73,14 +71,14 @@ fun ExtractorSearchView(
                 onDoneSubmit = onDone,
                 textColor = Color.White,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
+                    .padding(textFieldPadding)
+                    .fillMaxWidth(),
                 interactionSource = interactionSource
             )
 
             ImageLabelFilterChips(
                 onFilterChanged = {
-                    state.updateLabelType(it.toLabelType())
+                    state.updateKeywordType(it.toLabelType())
                 },
                 contentColor = Color.White,
                 initial = state.initialLabelTypeIndex()

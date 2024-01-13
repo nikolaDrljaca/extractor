@@ -1,11 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
 import android.graphics.Bitmap
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,12 +26,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -114,13 +107,13 @@ fun ExtractorImageGrid(
 }
 
 @Composable
-fun ExtractorSearchBottomSheet(
+fun ExtractorSearchSheet(
+    modifier: Modifier = Modifier,
     onDone: () -> Unit,
     onCreateAlbumClick: () -> Unit,
     searchViewState: ExtractorSearchViewState,
     dateFilterState: ExtractorDateFilterState,
     loaderButtonState: ExtractorLoaderButtonState,
-    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = Modifier
@@ -132,7 +125,8 @@ fun ExtractorSearchBottomSheet(
         ExtractorSearchView(
             onDone = onDone,
             state = searchViewState,
-            contentPadding = PaddingValues()
+            contentPadding = PaddingValues(),
+            textFieldPadding = PaddingValues(bottom = 16.dp)
         )
 
         ExtractorDateFilter(state = dateFilterState)
@@ -165,23 +159,13 @@ fun ExtractorSearchBottomSheet(
 }
 
 @Composable
-fun ExtractorFirstSearch(
+fun ExtractorStillIndexing(
     modifier: Modifier = Modifier,
+    contentAlignment: Alignment = Alignment.Center,
     contentColor: Color = Color.Gray
 ) {
-    val transition = rememberInfiniteTransition(label = "")
 
-    val moveAnimation by transition.animateFloat(
-        label = "",
-        initialValue = 3f,
-        targetValue = 40f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000),
-            repeatMode = RepeatMode.Reverse
-        ),
-    )
-
-    Box(modifier = Modifier.then(modifier), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.then(modifier), contentAlignment = contentAlignment) {
         Column(
             verticalArrangement = Arrangement.spacedBy(
                 space = 8.dp,
@@ -190,19 +174,10 @@ fun ExtractorFirstSearch(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = stringResource(R.string.type_below_to_start_a_search),
+                text = stringResource(R.string.still_indexing_search_screen),
                 color = contentColor,
                 style = MaterialTheme.typography.titleMedium,
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.round_arrow_downward_24),
-                contentDescription = "",
-                tint = contentColor,
-                modifier = Modifier
-                    .size(64.dp)
-                    .graphicsLayer {
-                        translationY = moveAnimation
-                    }
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -244,7 +219,7 @@ fun ExtractorEmptySearch(
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         Column {
-            ExtractorFirstSearch()
+            ExtractorStillIndexing()
             ExtractorEmptySearch()
         }
     }
@@ -256,7 +231,7 @@ private fun CurrentPreview() {
 private fun SheetPreview() {
     ExtractorTheme(dynamicColor = false) {
         Surface(color = MaterialTheme.colorScheme.primary) {
-            ExtractorSearchBottomSheet(
+            ExtractorSearchSheet(
                 onDone = {},
                 onCreateAlbumClick = {},
                 searchViewState = ExtractorSearchViewState("", KeywordType.ALL),

@@ -102,7 +102,7 @@ val Typography = Typography(
     ),
     bodySmall = TextStyle(
         fontFamily = InstrumentSansFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Light,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.4.sp

@@ -42,7 +42,6 @@ data class ExtractorSearchNavTarget(
         val dialogNavController = LocalDialogNavController.current
         val keyboardController = LocalSoftwareKeyboardController.current
 
-        //TODO: Loading state, animated placeholders or spinners
         ExtractorSearchScreen(
             state = state,
             extractorStatusButtonState = viewModel.extractorStatusButtonState,
@@ -65,7 +64,13 @@ data class ExtractorSearchNavTarget(
             onStatusButtonClick = {
                 dialogNavController.navigate(ExtractorStatusDialogNavTarget)
             },
-            onCreateAlbumClick = { viewModel.onCompileUserAlbum() }
+            onCreateAlbumClick = { viewModel.onCompileUserAlbum() },
+            onSuggestedSearchClick = {
+                viewModel.performSuggestedSearch(it)
+            },
+            onStartSyncClick = {
+                viewModel.spawnWork()
+            }
         )
     }
 }
@@ -81,11 +86,13 @@ private fun SearchScreenPreview() {
             onDone = {},
             onStatusButtonClick = {},
             onCreateAlbumClick = {},
+            onSuggestedSearchClick = {},
+            onStartSyncClick = {},
             extractorStatusButtonState = ExtractorStatusButtonState(),
             state = ExtractorSearchScreenUiState.Loading,
             searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
             dateFilterState = ExtractorDateFilterState(),
-            loaderButtonState = ExtractorLoaderButtonState()
+            loaderButtonState = ExtractorLoaderButtonState(),
         )
     }
 }

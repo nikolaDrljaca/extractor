@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain
+package com.drbrosdev.extractor.domain.usecase
 
 import androidx.lifecycle.asFlow
 import androidx.work.WorkManager
