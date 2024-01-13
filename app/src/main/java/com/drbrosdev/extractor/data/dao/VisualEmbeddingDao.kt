@@ -57,4 +57,12 @@ interface VisualEmbeddingDao {
 
     @Query("DELETE FROM visual_embedding WHERE value=:value")
     suspend fun deleteByValue(value: String)
+
+    @Query("""
+        SELECT DISTINCT value
+        FROM visual_embedding
+        ORDER BY random()
+        LIMIT :amount
+    """)
+    suspend fun getValuesAtRandom(amount: Int): List<String>
 }

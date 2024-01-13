@@ -2,8 +2,8 @@ package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.domain.ExtractionProgress
-import com.drbrosdev.extractor.domain.ExtractionStatus
+import com.drbrosdev.extractor.domain.usecase.ExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.ExtractionStatus
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map

@@ -1,13 +1,15 @@
 package com.drbrosdev.extractor.framework.koin
 
-import com.drbrosdev.extractor.domain.ExtractionProgress
 import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
+import com.drbrosdev.extractor.domain.usecase.ExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
+import com.drbrosdev.extractor.domain.usecase.ValidateToken
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
 import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
@@ -102,12 +104,30 @@ val useCaseModule = module {
     }
 
     factory {
+        ValidateToken(
+            dispatcher = get(named(CoroutineModuleName.Default))
+        )
+    }
+
+    factory {
+        GenerateSuggestedKeywords(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            visualEmbeddingDao = get(),
+            textEmbeddingDao = get(),
+            userEmbeddingDao = get(),
+            tokenizeText = get(),
+            validateToken = get()
+        )
+    }
+
+    factory {
         CompileTextAlbums(
             dispatcher = get(named(CoroutineModuleName.Default)),
             textEmbeddingDao = get(),
             imageEmbeddingsDao = get(),
             albumRepository = get<DefaultAlbumRepository>(),
-            tokenizeText = get()
+            tokenizeText = get(),
+            validateToken = get()
         )
     }
 

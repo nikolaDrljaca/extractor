@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.ui.components.shared.ExtractorImageLabelChip
+import com.drbrosdev.extractor.ui.components.shared.ExtractorChip
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 
@@ -76,7 +76,7 @@ fun ExtractorStats(
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     ) {
                         state.statEmbeds.forEach {
-                            ExtractorImageLabelChip(
+                            ExtractorChip(
                                 onDismiss = { onStatClick(it.value, it.type) },
                                 text = it.value,
                                 isChecked = false,

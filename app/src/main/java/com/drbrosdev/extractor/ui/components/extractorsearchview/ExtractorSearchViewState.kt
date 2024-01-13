@@ -21,7 +21,7 @@ class ExtractorSearchViewState(
     var query by mutableStateOf(initialQuery)
         private set
 
-    var labelType by mutableStateOf(initialKeywordType)
+    var keywordType by mutableStateOf(initialKeywordType)
         private set
 
     var searchType by mutableStateOf(initialSearchType)
@@ -40,8 +40,8 @@ class ExtractorSearchViewState(
         query = new
     }
 
-    fun updateLabelType(new: KeywordType) {
-        labelType = new
+    fun updateKeywordType(new: KeywordType) {
+        keywordType = new
     }
 
     companion object {
@@ -67,7 +67,7 @@ fun ExtractorSearchViewState.isNotBlank(): Boolean {
 }
 
 fun ExtractorSearchViewState.initialLabelTypeIndex(): Int {
-    return when (labelType) {
+    return when (keywordType) {
         KeywordType.ALL -> 0
         KeywordType.TEXT -> 1
         KeywordType.IMAGE -> 2
@@ -94,8 +94,8 @@ fun ExtractorSearchViewState.queryAsFlow(): Flow<String> {
     return snapshotFlow { this.query }
 }
 
-fun ExtractorSearchViewState.labelTypeAsFlow(): Flow<KeywordType> {
-    return snapshotFlow { this.labelType }
+fun ExtractorSearchViewState.keywordTypeAsFlow(): Flow<KeywordType> {
+    return snapshotFlow { this.keywordType }
 }
 
 fun ExtractorSearchViewState.searchTypeAsFlow(): Flow<SearchType> {

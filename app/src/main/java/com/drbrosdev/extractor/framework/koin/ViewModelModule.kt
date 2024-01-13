@@ -10,6 +10,7 @@ import com.drbrosdev.extractor.ui.image.ExtractorImageViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
+import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -35,13 +36,15 @@ val viewModelModule = module {
     }
 
     viewModel {
-        com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel(
+        ExtractorSearchViewModel(
             query = it.get(),
             keywordType = it.get(),
             imageSearch = get(),
             stateHandle = get(),
             extractionProgress = get(),
-            albumRepository = get<DefaultAlbumRepository>()
+            albumRepository = get<DefaultAlbumRepository>(),
+            generateSuggestedKeywords = get(),
+            spawnExtractorWork = get()
         )
     }
 
