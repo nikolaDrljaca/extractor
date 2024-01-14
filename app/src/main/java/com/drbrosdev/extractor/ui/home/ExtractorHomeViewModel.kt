@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
+import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
+import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettingsProvider
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.util.toPreview
 import kotlinx.coroutines.Dispatchers
@@ -19,8 +21,16 @@ class ExtractorHomeViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val compileVisualAlbum: CompileVisualAlbum,
     private val compileTextAlbum: CompileTextAlbums,
-    private val albumRepository: AlbumRepository
+    private val albumRepository: AlbumRepository,
+    private val homeScreenSettingsProvider: ExtractorHomeScreenSettingsProvider
 ) : ViewModel() {
+
+    val settings = homeScreenSettingsProvider()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            ExtractorHomeScreenSettings()
+        )
 
     val textAlbums = albumRepository
         .getCommonTextAlbumsAsFlow()

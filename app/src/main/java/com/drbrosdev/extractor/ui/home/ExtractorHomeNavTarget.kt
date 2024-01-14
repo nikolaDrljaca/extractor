@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
 import com.drbrosdev.extractor.ui.album.ExtractorAlbumNavTarget
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
@@ -33,6 +34,7 @@ object ExtractorHomeNavTarget : NavTarget {
         val visualAlbums by viewModel.visualAlbums.collectAsStateWithLifecycle()
         val userAlbums by viewModel.userAlbums.collectAsStateWithLifecycle()
         val textAlbums by viewModel.textAlbums.collectAsStateWithLifecycle()
+        val settings by viewModel.settings.collectAsStateWithLifecycle()
 
 
         ExtractorHomeScreen(
@@ -41,6 +43,7 @@ object ExtractorHomeNavTarget : NavTarget {
             visualAlbums = visualAlbums,
             userAlbums = userAlbums,
             textAlbums = textAlbums,
+            settings = settings,
             onInitTextPreview = viewModel::compileTextAlbums,
             onInitUserPreviews = { navController.pop() },
             onInitVisualPreview = viewModel::compileVisualAlbums,
@@ -62,10 +65,11 @@ private fun SearchScreenPreview() {
                 visualAlbums = ExtractorCategoryViewState.Initial,
                 userAlbums = ExtractorCategoryViewState.Initial,
                 textAlbums = ExtractorCategoryViewState.Initial,
+                settings = ExtractorHomeScreenSettings(),
                 onInitTextPreview = {},
                 onInitUserPreviews = {},
                 onInitVisualPreview = {},
-                onAlbumPreviewClick = {}
+                onAlbumPreviewClick = {},
             )
         }
     }

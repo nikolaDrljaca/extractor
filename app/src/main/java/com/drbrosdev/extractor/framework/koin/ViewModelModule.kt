@@ -74,7 +74,8 @@ val viewModelModule = module {
             savedStateHandle = get(),
             compileVisualAlbum = get(),
             compileTextAlbum = get(),
-            albumRepository = get<DefaultAlbumRepository>()
+            albumRepository = get<DefaultAlbumRepository>(),
+            homeScreenSettingsProvider = get()
         )
     }
 

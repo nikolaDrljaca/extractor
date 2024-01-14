@@ -21,6 +21,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorAlbumsViewDefaults
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryView
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
@@ -40,6 +41,7 @@ fun ExtractorHomeScreen(
     visualAlbums: ExtractorCategoryViewState,
     userAlbums: ExtractorCategoryViewState,
     textAlbums: ExtractorCategoryViewState,
+    settings: ExtractorHomeScreenSettings
 ) {
     val scrollState = rememberScrollState()
 
@@ -60,25 +62,29 @@ fun ExtractorHomeScreen(
             modifier = Modifier.layoutId(ViewIds.USER_ALBUM)
         )
 
-        ExtractorCategoryView(
-            onViewAllClicked = {},
-            onAlbumPreviewClick = onAlbumPreviewClick,
-            onInitClick = onInitVisualPreview,
-            contentPadding = PaddingValues(horizontal = 12.dp),
-            category = ExtractorAlbumsViewDefaults.Category.VISUAL,
-            state = visualAlbums,
-            modifier = Modifier.layoutId(ViewIds.VISUAL_ALBUM)
-        )
+        if (settings.shouldShowVisualAlbums) {
+            ExtractorCategoryView(
+                onViewAllClicked = {},
+                onAlbumPreviewClick = onAlbumPreviewClick,
+                onInitClick = onInitVisualPreview,
+                contentPadding = PaddingValues(horizontal = 12.dp),
+                category = ExtractorAlbumsViewDefaults.Category.VISUAL,
+                state = visualAlbums,
+                modifier = Modifier.layoutId(ViewIds.VISUAL_ALBUM)
+            )
+        }
 
-        ExtractorCategoryView(
-            onViewAllClicked = { /*TODO @nikola*/ },
-            onAlbumPreviewClick = onAlbumPreviewClick,
-            onInitClick = onInitTextPreview,
-            contentPadding = PaddingValues(horizontal = 12.dp),
-            category = ExtractorAlbumsViewDefaults.Category.TEXT,
-            state = textAlbums,
-            modifier = Modifier.layoutId(ViewIds.TEXT_ALBUM)
-        )
+        if (settings.shouldShowTextAlbums) {
+            ExtractorCategoryView(
+                onViewAllClicked = { /*TODO @nikola*/ },
+                onAlbumPreviewClick = onAlbumPreviewClick,
+                onInitClick = onInitTextPreview,
+                contentPadding = PaddingValues(horizontal = 12.dp),
+                category = ExtractorAlbumsViewDefaults.Category.TEXT,
+                state = textAlbums,
+                modifier = Modifier.layoutId(ViewIds.TEXT_ALBUM)
+            )
+        }
 
         ExtractorTopBar(
             modifier = Modifier.layoutId(ViewIds.TOP_BAR),
