@@ -34,6 +34,7 @@ import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButto
 fun ExtractorHomeScreen(
     onSyncClick: () -> Unit,
     onBack: () -> Unit,
+    onSettingsClick: () -> Unit,
     onInitUserPreviews: () -> Unit,
     onInitVisualPreview: () -> Unit,
     onInitTextPreview: () -> Unit,
@@ -107,7 +108,7 @@ fun ExtractorHomeScreen(
         }
 
         OutlinedExtractorActionButton(
-            onClick = { /*TODO*/ },
+            onClick = onSettingsClick,
             modifier = Modifier.layoutId(ViewIds.SETTINGS_BUTTON)
         ) {
             Icon(imageVector = Icons.Rounded.Settings, contentDescription = "")

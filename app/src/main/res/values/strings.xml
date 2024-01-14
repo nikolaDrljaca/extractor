@@ -80,4 +80,9 @@
     <string name="suggestion_data_reset">Looks like app data was reset.</string>
     <string name="suggestion_start_sync">Start Sync before searching!</string>
     <string name="too_many_images">You are about to share %1$s images. This many images can cause unintended behaviour. Proceed with caution.</string>
+    <string name="action_website">Website</string>
+    <string name="action_github">Source Code</string>
+    <string name="action_share">Share</string>
+    <string name="action_rate">Rate</string>
+    <string name="action_bug">Bug</string>
 </resources>
