@@ -210,8 +210,8 @@ enum class Action(
         nameResource = R.string.action_website,
         iconResource = R.drawable.round_public_24
     ),
-    GITHUB(
-        nameResource = R.string.action_github,
+    POLICY(
+        nameResource = R.string.action_policy,
         iconResource = R.drawable.round_public_24
     ),
     SHARE(
