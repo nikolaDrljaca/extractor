@@ -46,6 +46,8 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.BuildConfig
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettings
+import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettingsState
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorActionChip
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
@@ -57,6 +59,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 fun ExtractorSettingsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    settingsState: ExtractorSettingsState
 ) {
     val lazyListState = rememberLazyListState()
     val extractorTopBarState = remember {
@@ -92,7 +95,12 @@ fun ExtractorSettingsScreen(
             }
 
             item(key = "settings_tabs") {
-                SettingsTabs()
+                SettingsTabs(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .fillMaxWidth(),
+                    settingsState = settingsState
+                )
             }
 
             item {
@@ -128,17 +136,29 @@ val tabItems = listOf(
     SettingsTabItem.About,
 )
 
+@Composable
+fun settingsItemAsString(item: SettingsTabItem): String {
+    return when (item) {
+        SettingsTabItem.About -> stringResource(id = R.string.settings_tab_about)
+        SettingsTabItem.Licenses -> stringResource(id = R.string.settings_tab_licenses)
+        SettingsTabItem.Settings -> stringResource(id = R.string.settings_tab_settings)
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsTabs(
     modifier: Modifier = Modifier,
+    settingsState: ExtractorSettingsState
 ) {
     var selectedIndex by remember {
         mutableStateOf(0)
     }
 
+
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .then(modifier)
     ) {
         PrimaryTabRow(
             selectedTabIndex = selectedIndex,
@@ -151,7 +171,9 @@ private fun SettingsTabs(
             divider = {},
             modifier = Modifier.fillMaxWidth(0.7f)
         ) {
-            tabItems.forEachIndexed { index, item ->
+            tabItems.forEachIndexed { index, _ ->
+                val tabText = settingsItemAsString(item = tabItems[index])
+
                 Tab(
                     modifier = Modifier
                         .padding(4.dp)
@@ -163,7 +185,7 @@ private fun SettingsTabs(
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground
                 ) {
                     Text(
-                        text = "Tab $index",
+                        text = tabText,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         ),
@@ -172,17 +194,32 @@ private fun SettingsTabs(
                 }
             }
         }
+
         Spacer(modifier = Modifier.height(12.dp))
 
-        //switch content based on index
-        Box(
-            modifier = Modifier
-                .size(250.dp)
-                .background(Color.Gray),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "Tab $selectedIndex selected")
+        when (tabItems[selectedIndex]) {
+            SettingsTabItem.Settings -> ExtractorSettings(
+                onConfigurePrecisionClick = { /*TODO*/ },
+                state = settingsState
+            )
+
+            SettingsTabItem.About -> Placeholder()
+            SettingsTabItem.Licenses -> Placeholder()
         }
+    }
+}
+
+@Composable
+private fun Placeholder(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = Modifier
+            .size(250.dp)
+            .background(Color.Gray),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = "Tab selected")
     }
 }
 

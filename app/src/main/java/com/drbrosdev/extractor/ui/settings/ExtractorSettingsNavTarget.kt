@@ -3,10 +3,12 @@ package com.drbrosdev.extractor.ui.settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettingsState
+import com.drbrosdev.extractor.ui.components.extractorsettings.rememberExtractorSettingsState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
+import com.drbrosdev.extractor.util.ScreenPreview
 import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
 
@@ -19,12 +21,16 @@ object ExtractorSettingsNavTarget : NavTarget {
         val navController = LocalNavController.current
 
         ExtractorSettingsScreen(
-            onBack = { navController.pop() }
+            onBack = { navController.pop() },
+            settingsState = rememberExtractorSettingsState(
+                initialEnabledText = false,
+                initialEnabledVisual = true
+            )
         )
     }
 }
 
-@Preview
+@ScreenPreview
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
@@ -32,7 +38,11 @@ private fun CurrentPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             ExtractorSettingsScreen(
-                onBack = {}
+                onBack = {},
+                settingsState = ExtractorSettingsState(
+                    initialEnabledVisual = false,
+                    initialEnabledText = true
+                )
             )
         }
     }

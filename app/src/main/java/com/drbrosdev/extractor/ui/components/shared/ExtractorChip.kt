@@ -45,7 +45,7 @@ fun ExtractorChip(
             borderColor = Color.Transparent,
             selectedBorderColor = Color.White,
             selected = isChecked,
-            enabled = true
+            enabled = false
         ),
         shape = CircleShape,
         colors = InputChipDefaults.inputChipColors(
@@ -96,7 +96,7 @@ object ExtractorActionChipDefaults {
     @Composable
     fun actionChipColors(
         contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-        leadingIconColor: Color = MaterialTheme.colorScheme.primary,
+        leadingIconColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
         containerColor: Color = MaterialTheme.colorScheme.surfaceVariant
     ): SelectableChipColors {
         return InputChipDefaults.inputChipColors(
