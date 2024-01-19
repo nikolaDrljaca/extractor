@@ -6,13 +6,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +42,7 @@ fun ExtractorImageGrid(
     contentPadding: PaddingValues = PaddingValues(vertical = 112.dp),
     images: List<Extraction>,
     onClick: (index: Int) -> Unit,
+    onReset: () -> Unit,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
     val imageSize = 96
@@ -57,6 +63,33 @@ fun ExtractorImageGrid(
                 onClick = { onClick(index) },
             )
         }
+
+        item(
+            key = "reset",
+            span = { GridItemSpan(maxLineSpan) }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(
+                    8.dp,
+                    alignment = Alignment.CenterVertically
+                ),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ExtractorTextButton(
+                    onClick = onReset,
+                ) {
+                    Icon(imageVector = Icons.Rounded.Refresh, contentDescription = "")
+                    Text(text = "Reset")
+                }
+                Text(
+                    text = "This will reload suggestions.",
+                    style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
+                )
+            }
+        }
     }
 }
 
@@ -65,6 +98,7 @@ fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 112.dp),
     onClick: (index: Int) -> Unit,
+    onReset: () -> Unit,
     thumbnails: List<Bitmap>,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
@@ -85,6 +119,33 @@ fun ExtractorImageGrid(
                 size = imageSize,
                 onClick = { onClick(index) },
             )
+        }
+
+        item(
+            key = "reset",
+            span = { GridItemSpan(maxLineSpan) }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(
+                    8.dp,
+                    alignment = Alignment.CenterVertically
+                ),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ExtractorTextButton(
+                    onClick = onReset,
+                ) {
+                    Icon(imageVector = Icons.Rounded.Refresh, contentDescription = "")
+                    Text(text = "Reset")
+                }
+                Text(
+                    text = "This will reload suggestions.",
+                    style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
+                )
+            }
         }
     }
 }

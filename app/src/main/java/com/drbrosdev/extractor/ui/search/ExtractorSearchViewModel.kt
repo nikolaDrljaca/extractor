@@ -267,5 +267,21 @@ class ExtractorSearchViewModel(
             datastore.hasSeenSearchSheet()
         }
     }
+
+    fun resetSearch() {
+        _state.update {
+            ExtractorSearchScreenUiState.ShowSuggestions(
+                ExtractorSuggestedSearchState.Loading
+            )
+        }
+        viewModelScope.launch {
+            val suggested = generateSuggestedKeywords()
+            _state.update {
+                ExtractorSearchScreenUiState.ShowSuggestions(
+                    ExtractorSuggestedSearchState.Content(suggested.take(6))
+                )
+            }
+        }
+    }
 }
 

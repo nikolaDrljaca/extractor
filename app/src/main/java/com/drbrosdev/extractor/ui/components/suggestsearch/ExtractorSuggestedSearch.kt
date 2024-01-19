@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -172,6 +174,7 @@ private fun SuggestedSearchLoading(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SuggestedSearchItem(
     modifier: Modifier = Modifier,
@@ -190,7 +193,12 @@ private fun SuggestedSearchItem(
         Column(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
         ) {
-            Text(text = suggestedSearch.query, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = suggestedSearch.query,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 1,
+                modifier = Modifier.basicMarquee()
+            )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "${suggestedSearch.keywordType.name.lowercase()} \u00B7 ${suggestedSearch.searchType.name.lowercase()}",

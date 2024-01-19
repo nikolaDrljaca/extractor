@@ -61,6 +61,7 @@ fun ExtractorSearchScreen(
     onCreateAlbumClick: () -> Unit,
     onSuggestedSearchClick: (SuggestedSearch) -> Unit,
     onStartSyncClick: () -> Unit,
+    onResetSearch: () -> Unit,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberExtractorSearchBottomSheetState()
     ),
@@ -127,6 +128,7 @@ fun ExtractorSearchScreen(
                         ExtractorImageGrid(
                             images = it.images,
                             onClick = onNavToDetail,
+                            onReset = onResetSearch,
                             gridState = gridState,
                         )
 

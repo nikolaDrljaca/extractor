@@ -11,7 +11,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -112,6 +114,24 @@ fun OutlinedExtractorActionButton(
 }
 
 @Composable
+fun ExtractorTextButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit
+) {
+    TextButton(
+        onClick = onClick,
+        colors = ButtonDefaults.textButtonColors(
+            contentColor = MaterialTheme.colorScheme.onBackground
+        ),
+        modifier = Modifier
+            .then(modifier)
+    ) {
+        content()
+    }
+}
+
+@Composable
 fun BottomSheetButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -132,7 +152,6 @@ fun BottomSheetButton(
         content()
     }
 }
-
 
 
 object ExtractorButtonDefaults {
@@ -169,18 +188,23 @@ object ExtractorButtonDefaults {
 @Composable
 private fun ButtonsPreview() {
     ExtractorTheme(dynamicColor = false) {
-        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            OutlinedExtractorActionButton(onClick = { /*TODO*/ }) {
-                Text(text = "Action")
-            }
-            ExtractorActionButton(onClick = { /*TODO*/ }) {
-                Text(text = "Action")
-            }
-            ExtractorButton(onClick = { /*TODO*/ }) {
-                Text(text = "Action")
-            }
-            BottomSheetButton(onClick = { /*TODO*/ }) {
-                Text(text = "Action")
+        Surface {
+            Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                OutlinedExtractorActionButton(onClick = { /*TODO*/ }) {
+                    Text(text = "Action")
+                }
+                ExtractorActionButton(onClick = { /*TODO*/ }) {
+                    Text(text = "Action")
+                }
+                ExtractorButton(onClick = { /*TODO*/ }) {
+                    Text(text = "Action")
+                }
+                BottomSheetButton(onClick = { /*TODO*/ }) {
+                    Text(text = "Action")
+                }
+                ExtractorTextButton(onClick = { /*TODO*/ }) {
+                    Text(text = "Action")
+                }
             }
         }
     }

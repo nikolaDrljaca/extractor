@@ -5,6 +5,7 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.model.KeywordType
@@ -25,6 +26,7 @@ import com.drbrosdev.extractor.util.ScreenPreview
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -50,6 +52,8 @@ data class ExtractorSearchNavTarget(
         val scaffoldState = rememberBottomSheetScaffoldState(
             bottomSheetState = rememberExtractorSearchBottomSheetState()
         )
+
+        val scope = rememberCoroutineScope()
 
         //Showcase the Search sheet on first launch
         LaunchedEffect(key1 = Unit) {
@@ -91,6 +95,10 @@ data class ExtractorSearchNavTarget(
             },
             onStartSyncClick = {
                 viewModel.spawnWork()
+            },
+            onResetSearch = {
+                viewModel.resetSearch()
+                scope.launch { scaffoldState.bottomSheetState.partialExpand() }
             }
         )
     }
@@ -114,6 +122,7 @@ private fun SearchScreenPreview() {
             searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
             dateFilterState = ExtractorDateFilterState(),
             loaderButtonState = ExtractorLoaderButtonState(),
+            onResetSearch = {}
         )
     }
 }
