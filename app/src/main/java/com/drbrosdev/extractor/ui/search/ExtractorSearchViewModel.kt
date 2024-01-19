@@ -212,6 +212,7 @@ class ExtractorSearchViewModel(
 
     private fun runSearch() {
         if (searchViewState.isBlank()) return
+        if (_state.value is ExtractorSearchScreenUiState.StillIndexing) return
 
         _state.update { ExtractorSearchScreenUiState.Loading }
 
