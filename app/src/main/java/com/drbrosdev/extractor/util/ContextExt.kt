@@ -6,6 +6,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
 import com.drbrosdev.extractor.R
@@ -30,6 +31,11 @@ fun Context.launchShareIntent(mediaImages: List<Uri>) {
         putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(mediaImages))
     }
     startActivity(Intent.createChooser(intent, "Share Images via..."))
+}
+
+fun Context.launchViewIntent(link: String) {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+    startActivity(intent)
 }
 
 suspend fun Context.launchEditIntent(media: MediaStoreImage) =
@@ -71,4 +77,8 @@ fun Context.checkAndRequestPermission(
     if (result != PackageManager.PERMISSION_GRANTED) {
         launcher.launch(permission)
     }
+}
+
+fun Context.showToast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, message, duration).show()
 }

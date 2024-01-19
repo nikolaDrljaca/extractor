@@ -11,6 +11,7 @@ import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
+import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -74,7 +75,8 @@ val viewModelModule = module {
             savedStateHandle = get(),
             compileVisualAlbum = get(),
             compileTextAlbum = get(),
-            albumRepository = get<DefaultAlbumRepository>()
+            albumRepository = get<DefaultAlbumRepository>(),
+            homeScreenSettingsProvider = get()
         )
     }
 
@@ -83,6 +85,12 @@ val viewModelModule = module {
             stateHandle = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             albumId = params.get()
+        )
+    }
+
+    viewModel {
+        ExtractorSettingsViewModel(
+            settingsDatastore = get()
         )
     }
 }

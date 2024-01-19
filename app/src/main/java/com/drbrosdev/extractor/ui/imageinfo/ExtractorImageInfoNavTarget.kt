@@ -2,9 +2,9 @@ package com.drbrosdev.extractor.ui.imageinfo
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.BottomSheetNavTarget
 import com.drbrosdev.extractor.util.LocalBottomSheetNavController
@@ -25,7 +25,7 @@ data class ExtractorImageInfoNavTarget(
         val viewModel: ExtractorImageInfoViewModel = koinViewModel {
             parametersOf(mediaImageId)
         }
-        val imageInfoModel by viewModel.imageInfoModel.collectAsState()
+        val imageInfoModel by viewModel.imageInfoModel.collectAsStateWithLifecycle()
         val sheetNavigator = LocalBottomSheetNavController.current
 
         LaunchedEffect(key1 = Unit) {

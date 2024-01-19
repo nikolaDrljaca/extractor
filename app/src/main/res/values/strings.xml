@@ -80,4 +80,15 @@
     <string name="suggestion_data_reset">Looks like app data was reset.</string>
     <string name="suggestion_start_sync">Start Sync before searching!</string>
     <string name="too_many_images">You are about to share %1$s images. This many images can cause unintended behaviour. Proceed with caution.</string>
+    <string name="action_website">Website</string>
+    <string name="action_policy">Privacy Policy</string>
+    <string name="action_share">Share</string>
+    <string name="action_rate">Rate</string>
+    <string name="action_bug">Bug</string>
+    <string name="enable_visual_albums">Enable Visual Albums</string>
+    <string name="enable_text_albums">Enable Text Albums</string>
+    <string name="configure_precision">Configure Precision</string>
+    <string name="settings_tab_settings">Settings</string>
+    <string name="settings_tab_licenses">Licenses</string>
+    <string name="settings_tab_about">About</string>
 </resources>

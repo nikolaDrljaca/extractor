@@ -5,10 +5,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.LocalBottomSheetNavController
@@ -32,9 +32,11 @@ data class ExtractorImageNavTarget(
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-        val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
         val viewModel: ExtractorImageViewModel = koinViewModel()
-        val currentImageInfo by viewModel.currentMediaImageInfo.collectAsState()
+
+        val currentImageInfo by viewModel.currentMediaImageInfo.collectAsStateWithLifecycle()
+        val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
+
         val context = LocalContext.current
         val navController = LocalNavController.current
         val bottomSheetNavigator = LocalBottomSheetNavController.current

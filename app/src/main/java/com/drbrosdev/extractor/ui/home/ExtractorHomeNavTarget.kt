@@ -1,13 +1,16 @@
 package com.drbrosdev.extractor.ui.home
 
+import androidx.activity.ComponentActivity
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
 import com.drbrosdev.extractor.ui.album.ExtractorAlbumNavTarget
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
+import com.drbrosdev.extractor.ui.settings.ExtractorSettingsNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.LocalDialogNavController
 import com.drbrosdev.extractor.util.LocalNavController
@@ -24,15 +27,19 @@ object ExtractorHomeNavTarget : NavTarget {
 
     @Composable
     override fun Content() {
-        val viewModel: ExtractorHomeViewModel = koinViewModel()
+        // Bind the viewModel to the ActivityScope so it does not load data every time
+        // Flows are hot anyways
+        val viewModel: ExtractorHomeViewModel = koinViewModel(
+            viewModelStoreOwner = LocalContext.current as ComponentActivity
+        )
 
         val navController = LocalNavController.current
         val dialogNavController = LocalDialogNavController.current
-        val keyboardController = LocalSoftwareKeyboardController.current
 
         val visualAlbums by viewModel.visualAlbums.collectAsStateWithLifecycle()
         val userAlbums by viewModel.userAlbums.collectAsStateWithLifecycle()
         val textAlbums by viewModel.textAlbums.collectAsStateWithLifecycle()
+        val settings by viewModel.settings.collectAsStateWithLifecycle()
 
 
         ExtractorHomeScreen(
@@ -41,11 +48,15 @@ object ExtractorHomeNavTarget : NavTarget {
             visualAlbums = visualAlbums,
             userAlbums = userAlbums,
             textAlbums = textAlbums,
+            settings = settings,
             onInitTextPreview = viewModel::compileTextAlbums,
             onInitUserPreviews = { navController.pop() },
             onInitVisualPreview = viewModel::compileVisualAlbums,
             onAlbumPreviewClick = {
                 navController.navigate(ExtractorAlbumNavTarget(it))
+            },
+            onSettingsClick = {
+                navController.navigate(ExtractorSettingsNavTarget)
             }
         )
     }
@@ -62,10 +73,12 @@ private fun SearchScreenPreview() {
                 visualAlbums = ExtractorCategoryViewState.Initial,
                 userAlbums = ExtractorCategoryViewState.Initial,
                 textAlbums = ExtractorCategoryViewState.Initial,
+                settings = ExtractorHomeScreenSettings(),
                 onInitTextPreview = {},
                 onInitUserPreviews = {},
                 onInitVisualPreview = {},
-                onAlbumPreviewClick = {}
+                onAlbumPreviewClick = {},
+                onSettingsClick = {}
             )
         }
     }

@@ -19,6 +19,7 @@ import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByK
 import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByKeyword
 import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitVisualEmbedExtractor
 import com.drbrosdev.extractor.domain.usecase.label.extractor.VisualEmbedExtractor
+import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettingsProvider
 import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitTextEmbedExtractor
 import com.drbrosdev.extractor.domain.usecase.text.extractor.TextEmbedExtractor
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
@@ -63,7 +64,6 @@ val useCaseModule = module {
             extractor = get()
         )
     }
-
 
     factory {
         DefaultImageSearchByKeyword(
@@ -134,6 +134,13 @@ val useCaseModule = module {
     factory {
         SpawnExtractorWork(
             workManager = get()
+        )
+    }
+
+    factory {
+        ExtractorHomeScreenSettingsProvider(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            settingsDatastore = get()
         )
     }
 }

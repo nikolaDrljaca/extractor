@@ -1,9 +1,11 @@
 package com.drbrosdev.extractor.framework.koin
 
-import com.drbrosdev.extractor.data.TransactionProvider
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.ExtractorDatabase
+import com.drbrosdev.extractor.data.TransactionProvider
 import com.drbrosdev.extractor.data.datastore
+import com.drbrosdev.extractor.data.settings.ExtractorSettingsDatastore
+import com.drbrosdev.extractor.data.settings.settingsDatastore
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -28,5 +30,9 @@ val dataModule = module {
 
     factory {
         ExtractorDataStore(androidContext().datastore)
+    }
+
+    factory {
+        ExtractorSettingsDatastore(androidContext().settingsDatastore)
     }
 }
