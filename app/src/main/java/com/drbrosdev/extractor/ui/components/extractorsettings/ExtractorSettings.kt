@@ -77,14 +77,14 @@ fun ExtractorSettings(
     }
 }
 
-private enum class ExtractorSettingsItemPosition {
+enum class ExtractorSettingsItemPosition {
     FIRST,
     NORMAL,
     LAST
 }
 
 @Composable
-private fun ExtractorSettingsItem(
+fun ExtractorSettingsItem(
     modifier: Modifier = Modifier,
     itemPosition: ExtractorSettingsItemPosition = ExtractorSettingsItemPosition.NORMAL,
     onClick: () -> Unit,
