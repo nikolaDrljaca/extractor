@@ -2,11 +2,15 @@ package com.drbrosdev.extractor.ui.components.extractorstatusbutton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Warning
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,13 +33,18 @@ fun ExtractorStatusButton(
 ) {
     val brushModifier = when (state.status) {
         is ExtractorStatusButtonState.Status.Idle -> Modifier
-        is ExtractorStatusButtonState.Status.Working -> Modifier.background(createExtractorBrush())
+        is ExtractorStatusButtonState.Status.ExtractionRunning -> Modifier.background(
+            createExtractorBrush()
+        )
+
+        is ExtractorStatusButtonState.Status.OutOfSync ->
+            Modifier.background(color = MaterialTheme.colorScheme.error)
     }
 
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(14.dp))
-            .thenIf(state.status is ExtractorStatusButtonState.Status.Working) {
+            .thenIf(state.status !is ExtractorStatusButtonState.Status.Idle) {
                 clickable { onClick() }
             }
             .then(brushModifier)
@@ -47,7 +56,7 @@ fun ExtractorStatusButton(
             is ExtractorStatusButtonState.Status.Idle ->
                 Box(modifier = Modifier.size(40.dp))
 
-            is ExtractorStatusButtonState.Status.Working ->
+            is ExtractorStatusButtonState.Status.ExtractionRunning ->
                 Box(
                     modifier = Modifier.padding(4.dp),
                     contentAlignment = Alignment.Center
@@ -58,6 +67,17 @@ fun ExtractorStatusButton(
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
+
+            ExtractorStatusButtonState.Status.OutOfSync -> Box(
+                modifier = Modifier.padding(4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onError
+                )
+            }
         }
     }
 }
@@ -66,7 +86,9 @@ fun ExtractorStatusButton(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme {
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             ExtractorStatusButton(
                 onClick = { /*TODO*/ },
                 state = ExtractorStatusButtonState()
@@ -75,7 +97,14 @@ private fun CurrentPreview() {
             ExtractorStatusButton(
                 onClick = { /*TODO*/ },
                 state = ExtractorStatusButtonState(
-                    ExtractorStatusButtonState.Status.Working(34)
+                    ExtractorStatusButtonState.Status.ExtractionRunning(34)
+                )
+            )
+
+            ExtractorStatusButton(
+                onClick = { /*TODO*/ },
+                state = ExtractorStatusButtonState(
+                    ExtractorStatusButtonState.Status.OutOfSync
                 )
             )
         }

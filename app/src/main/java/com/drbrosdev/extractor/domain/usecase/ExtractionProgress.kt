@@ -40,7 +40,9 @@ sealed class ExtractionStatus {
     data class Done(
         override val onDeviceCount: Int,
         override val inStorageCount: Int
-    ) : ExtractionStatus()
+    ) : ExtractionStatus() {
+        val isDataIncomplete = onDeviceCount != inStorageCount
+    }
 
     data class Running(
         override val onDeviceCount: Int,

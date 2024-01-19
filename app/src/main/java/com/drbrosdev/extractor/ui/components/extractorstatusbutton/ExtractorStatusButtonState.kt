@@ -22,7 +22,9 @@ class ExtractorStatusButtonState(
 
         data object Idle : Status
 
-        data class Working(val donePercentage: Int) : Status
+        data class ExtractionRunning(val donePercentage: Int) : Status
+
+        data object OutOfSync: Status
     }
 
     companion object {
@@ -30,12 +32,14 @@ class ExtractorStatusButtonState(
             save = {
                 when (val status = it.status) {
                     Status.Idle -> -1
-                    is Status.Working -> status.donePercentage
+                    is Status.ExtractionRunning -> status.donePercentage
+                    Status.OutOfSync -> -2
                 }
             },
             restore = {
                 val state = when (it) {
-                    -1 -> Status.Working(it)
+                    -1 -> Status.ExtractionRunning(it)
+                    -2 -> Status.OutOfSync
                     else -> Status.Idle
                 }
                 ExtractorStatusButtonState(state)

@@ -75,8 +75,14 @@ class ExtractorSearchViewModel(
         //handle create album button state
         .onEach {
             val status = when (it) {
-                is ExtractionStatus.Done -> ExtractorStatusButtonState.Status.Idle
-                is ExtractionStatus.Running -> ExtractorStatusButtonState.Status.Working(it.percentage)
+                is ExtractionStatus.Done -> when {
+                    it.isDataIncomplete -> ExtractorStatusButtonState.Status.OutOfSync
+                    else -> ExtractorStatusButtonState.Status.Idle
+                }
+
+                is ExtractionStatus.Running -> ExtractorStatusButtonState.Status.ExtractionRunning(
+                    it.percentage
+                )
             }
             extractorStatusButtonState.update(status)
         }
