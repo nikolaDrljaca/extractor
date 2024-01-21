@@ -39,7 +39,7 @@ import com.drbrosdev.extractor.util.toUri
 @Composable
 fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = 112.dp),
+    contentPadding: PaddingValues = PaddingValues(vertical = 120.dp),
     images: List<Extraction>,
     onClick: (index: Int) -> Unit,
     onReset: () -> Unit,
