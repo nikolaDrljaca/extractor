@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +42,7 @@ fun ExtractorImageBottomBar(
             .padding(horizontal = 24.dp, vertical = 12.dp)
             .then(modifier),
     ) {
-        ExtractorBottomBarItem.values().forEachIndexed { index, barItem ->
+        ExtractorBottomBarItem.entries.forEachIndexed { _, barItem ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(
@@ -57,7 +57,7 @@ fun ExtractorImageBottomBar(
                 Icon(
                     painter = painterResource(id = barItem.iconRes),
                     contentDescription = "",
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.requiredSize(32.dp),
                     tint = Color.White
                 )
 

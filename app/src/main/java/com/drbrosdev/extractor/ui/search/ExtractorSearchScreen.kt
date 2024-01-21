@@ -162,7 +162,7 @@ fun ExtractorSearchScreen(
                 trailingSlot = {
                     IconButton(onClick = onExtractorHomeClicked) {
                         Icon(
-                            painter = painterResource(id = R.drawable.baseline_android_24),
+                            painter = painterResource(id = R.drawable.extractor_icon),
                             contentDescription = "",
                             modifier = Modifier.size(32.dp),
                         )
