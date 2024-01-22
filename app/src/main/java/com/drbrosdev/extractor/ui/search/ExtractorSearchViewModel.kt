@@ -95,7 +95,7 @@ class ExtractorSearchViewModel(
                             val suggested = generateSuggestedKeywords()
                             _state.update {
                                 ExtractorSearchScreenUiState.ShowSuggestions(
-                                    ExtractorSuggestedSearchState.Content(suggested.take(6))
+                                    ExtractorSuggestedSearchState.Content(suggested)
                                 )
                             }
                         }
@@ -278,7 +278,7 @@ class ExtractorSearchViewModel(
             val suggested = generateSuggestedKeywords()
             _state.update {
                 ExtractorSearchScreenUiState.ShowSuggestions(
-                    ExtractorSuggestedSearchState.Content(suggested.take(6))
+                    ExtractorSuggestedSearchState.Content(suggested)
                 )
             }
         }

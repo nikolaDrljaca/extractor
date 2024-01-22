@@ -62,12 +62,16 @@ interface TextEmbeddingDao {
         findByValueFtsAsFlow(query).first()
 
     @Query("""
+        WITH out AS (
+            SELECT value 
+            FROM text_embedding AS te
+            WHERE te.value IS NOT NULL AND te.value !=''
+            ORDER BY random()
+            LIMIT 10
+        )
         SELECT group_concat(value)
-        FROM text_embedding AS te
-        WHERE te.value IS NOT NULL AND te.value != ''
-        ORDER BY random()
-        LIMIT :amount
+        FROM out
     """)
-    suspend fun getValueConcatAtRandom(amount: Int) : String?
+    suspend fun getValueConcatAtRandom() : String?
 }
 
