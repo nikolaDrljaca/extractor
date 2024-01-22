@@ -8,7 +8,6 @@ import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -25,47 +24,19 @@ class GenerateSuggestedKeywords(
     private val validateToken: ValidateToken
 ) {
 
-    suspend operator fun invoke(amount: Int = AMOUNT): List<SuggestedSearch> = withContext(dispatcher) {
-        val out = mutableListOf<SuggestedSearch>()
-
+    suspend operator fun invoke(): List<SuggestedSearch> = withContext(dispatcher) {
         val textSuggestions = async {
-            val textEmbedValues = textEmbeddingDao.getValueConcatAtRandom(amount)
-            textEmbedValues?.let {
-                tokenizeText(it)
-                    .filter { token -> validateToken(token) }
-                    .take(2)
-                    .map { token ->
-                        SuggestedSearch(
-                            query = token.text,
-                            keywordType = KeywordType.TEXT,
-                            searchType = SearchType.PARTIAL
-                        )
-                    }
-                    .flowOn(dispatcher)
-                    .toList()
-            } ?: emptyList()
+            textEmbeddingDao.getValueConcatAtRandom()
+                .produceSuggestions(TAKE_TEXT)
         }
 
         val userSuggestions = async {
-            val userEmbedValues = userEmbeddingDao.getValueConcatAtRandom(amount)
-            userEmbedValues?.let {
-                tokenizeText(it)
-                    .filter { token -> validateToken(token) }
-                    .take(2)
-                    .map { token ->
-                        SuggestedSearch(
-                            query = token.text,
-                            keywordType = KeywordType.TEXT,
-                            searchType = SearchType.PARTIAL
-                        )
-                    }
-                    .flowOn(dispatcher)
-                    .toList()
-            } ?: emptyList()
+            userEmbeddingDao.getValueConcatAtRandom()
+                .produceSuggestions(TAKE_USER)
         }
 
         val visualSuggestions = async {
-            visualEmbeddingDao.getValuesAtRandom(amount)
+            visualEmbeddingDao.getValuesAtRandom(TAKE_VISUAL)
                 .map { value ->
                     SuggestedSearch(
                         query = value,
@@ -75,14 +46,30 @@ class GenerateSuggestedKeywords(
                 }
         }
 
-        awaitAll(textSuggestions, userSuggestions, visualSuggestions).forEach {
-            out.addAll(it)
-        }
+        val textOut = textSuggestions.await()
+        val userOut = userSuggestions.await()
+        val visual = visualSuggestions.await()
 
-        out
+        textOut + userOut + visual
     }
 
+    private suspend fun String?.produceSuggestions(size: Int) = this?.let {
+        tokenizeText(it).filter { token -> validateToken(token) }
+            .take(size)
+            .map { token ->
+                SuggestedSearch(
+                    query = token.text,
+                    keywordType = KeywordType.TEXT,
+                    searchType = SearchType.PARTIAL
+                )
+            }
+            .flowOn(dispatcher)
+            .toList()
+    } ?: emptyList()
+
     companion object {
-        const val AMOUNT = 4
+        private const val TAKE_TEXT = 4
+        private const val TAKE_USER = 2
+        private const val TAKE_VISUAL = 2
     }
 }

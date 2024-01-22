@@ -35,11 +35,15 @@ interface UserEmbeddingDao {
     suspend fun deleteByMediaId(mediaId: Long)
 
     @Query("""
+        WITH out AS (
+            SELECT value 
+            FROM user_embedding AS ue
+            WHERE ue.value IS NOT NULL AND ue.value !=''
+            ORDER BY random()
+            LIMIT 10
+        )
         SELECT group_concat(value)
-        FROM user_embedding AS ue
-        WHERE ue.value IS NOT NULL AND ue.value != ''
-        ORDER BY random()
-        LIMIT :amount
+        FROM out
     """)
-    suspend fun getValueConcatAtRandom(amount: Int) : String?
+    suspend fun getValueConcatAtRandom() : String?
 }

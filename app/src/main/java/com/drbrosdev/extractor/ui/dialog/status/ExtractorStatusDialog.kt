@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,6 +40,7 @@ fun ExtractorStatusDialog(
     headline: (@Composable () -> Unit)? = null,
     state: ExtractorStatusDialogUiModel
 ) {
+    val scrollState = rememberScrollState()
 
     Surface(
         modifier = Modifier
@@ -46,7 +49,9 @@ fun ExtractorStatusDialog(
         tonalElevation = AlertDialogDefaults.TonalElevation
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(scrollState),
         ) {
             headline?.let {
                 it()
@@ -84,6 +89,7 @@ fun ExtractorStatusDialog(
                                 color = Color.LightGray
                             )
                         }
+
                         onDeviceCount == 0 -> Text(text = stringResource(R.string.no_images_found))
                         onDeviceCount == inStorageCount -> Text(text = stringResource(R.string.all_done))
                         else -> Text(text = stringResource(id = R.string.start_sync))
