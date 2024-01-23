@@ -47,6 +47,7 @@ interface ImageEmbeddingsDao {
         SELECT DISTINCT * FROM image_extraction_entity
         JOIN result_set ON result_set.extraction_entity_id = image_extraction_entity.media_store_id
         GROUP BY image_extraction_entity.media_store_id
+        ORDER BY image_extraction_entity.date_added DESC
     """
     )
     @Transaction
@@ -62,6 +63,7 @@ interface ImageEmbeddingsDao {
         JOIN image_extraction_entity AS im ON im.media_store_id = ve.extraction_entity_id
         WHERE ve.value LIKE :query
         GROUP BY im.media_store_id
+        ORDER BY im.date_added DESC
     """
     )
     @Transaction
@@ -83,6 +85,7 @@ interface ImageEmbeddingsDao {
         JOIN text_embeds AS t ON im.media_store_id = t.extraction_entity_id
         WHERE t.value IS NOT NULL
         GROUP BY im.media_store_id
+        ORDER BY im.date_added DESC
     """
     )
     @Transaction
@@ -104,6 +107,7 @@ interface ImageEmbeddingsDao {
         LEFT JOIN user_embeds AS u ON im.media_store_id = u.extraction_entity_id
         WHERE u.value IS NOT NULL
         GROUP BY im.media_store_id
+        ORDER BY im.date_added DESC
     """
     )
     @Transaction

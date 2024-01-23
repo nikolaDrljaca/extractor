@@ -133,6 +133,7 @@ class ExtractorSearchViewModel(
     private val saveQueryJob = searchViewState.queryAsFlow()
         .distinctUntilChanged()
         .onEach { stateHandle["query"] = it }
+        .onEach { loaderButtonState.initial() }
         .launchIn(viewModelScope)
 
     private val dateFilterJob = dateFilterState.dateRangeAsFlow()
