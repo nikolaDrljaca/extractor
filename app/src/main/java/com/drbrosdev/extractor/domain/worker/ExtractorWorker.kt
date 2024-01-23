@@ -6,6 +6,8 @@ import androidx.work.WorkerParameters
 import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.domain.usecase.extractor.BulkExtractor
 import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
+import com.drbrosdev.extractor.util.logInfo
+import kotlin.time.measureTime
 
 class ExtractorWorker(
     context: Context,
@@ -16,13 +18,17 @@ class ExtractorWorker(
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
-        extractor.execute()
+        val time = measureTime {
+            extractor.execute()
+        }
 
         val deviceImageCount = mediaImageRepository.getCount()
         val localImageCount = extractionDao.getCount()
         if (deviceImageCount != localImageCount) {
             return Result.retry()
         }
+
+        logInfo("Extraction Worker processed $localImageCount images in ${time.inWholeMinutes}(minutes) - ${time.inWholeMilliseconds}(ms)")
 
         return Result.success()
     }

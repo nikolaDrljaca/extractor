@@ -7,6 +7,8 @@ import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
 import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import com.drbrosdev.extractor.util.CONCURRENCY
+import com.drbrosdev.extractor.util.logError
+import com.drbrosdev.extractor.util.logInfo
 import com.drbrosdev.extractor.util.mediaImageUri
 import kotlinx.coroutines.CoroutineDispatcher
 
@@ -31,6 +33,7 @@ class BulkExtractor(
 
         when {
             isOnDevice.size > isInStorage.size -> {
+                logInfo("Processing extraction for ${isOnDevice.size} images from device.")
                 //perform extraction
                 isOnDevice.parMap(
                     concurrency = CONCURRENCY,
@@ -39,6 +42,12 @@ class BulkExtractor(
                     //NOTE: Watch for the throw
                     val mediaStoreImage = mediaImages[it]!!
                     val embeds = extractor.execute(mediaStoreImage.mediaImageUri())
+                        .onFailure { exception ->
+                            logError(
+                                "Extraction failed for image",
+                                exception
+                            )
+                        }
                         .getOrThrow()
 
                     val data = NewExtraction(

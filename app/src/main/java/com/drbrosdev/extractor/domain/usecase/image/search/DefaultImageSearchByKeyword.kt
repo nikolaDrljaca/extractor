@@ -8,6 +8,7 @@ import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.isIn
 import com.drbrosdev.extractor.domain.repository.payload.ImageEmbeddingSearchStrategy
+import com.drbrosdev.extractor.util.logInfo
 import com.drbrosdev.extractor.util.toExtraction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -45,7 +46,7 @@ class DefaultImageSearchByKeyword(
     }
 
     private suspend fun ImageEmbeddingSearchStrategy.findBy(keywordType: KeywordType): List<Extraction> {
-        println(query)
+        logInfo("Search query/keyword: $query")
         val imageEmbeddingRelations = when (keywordType) {
             KeywordType.ALL -> imageEmbedDao.findByKeyword(query)
             KeywordType.TEXT -> imageEmbedDao.findByTextEmbeddingFts(query)
