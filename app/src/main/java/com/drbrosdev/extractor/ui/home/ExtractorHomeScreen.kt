@@ -39,6 +39,7 @@ fun ExtractorHomeScreen(
     onInitVisualPreview: () -> Unit,
     onInitTextPreview: () -> Unit,
     onAlbumPreviewClick: (albumId: Long) -> Unit,
+    onViewAllUserAlbums: () -> Unit,
     visualAlbums: ExtractorCategoryViewState,
     userAlbums: ExtractorCategoryViewState,
     textAlbums: ExtractorCategoryViewState,
@@ -54,7 +55,7 @@ fun ExtractorHomeScreen(
         constraintSet = homeScreenConstraintSet()
     ) {
         ExtractorCategoryView(
-            onViewAllClicked = { /*TODO*/ },
+            onViewAllClicked = onViewAllUserAlbums,
             onAlbumPreviewClick = onAlbumPreviewClick,
             onInitClick = onInitUserPreviews,
             contentPadding = PaddingValues(horizontal = 12.dp),
@@ -77,7 +78,7 @@ fun ExtractorHomeScreen(
 
         if (settings.shouldShowTextAlbums) {
             ExtractorCategoryView(
-                onViewAllClicked = { /*TODO @nikola*/ },
+                onViewAllClicked = {  },
                 onAlbumPreviewClick = onAlbumPreviewClick,
                 onInitClick = onInitTextPreview,
                 contentPadding = PaddingValues(horizontal = 12.dp),

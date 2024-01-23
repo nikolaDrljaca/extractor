@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.drbrosdev.extractor.data.dao.ExtractionDao
-import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.BulkExtractor
 import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 
 class ExtractorWorker(

@@ -10,9 +10,9 @@ import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.ValidateToken
+import com.drbrosdev.extractor.domain.usecase.extractor.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
-import com.drbrosdev.extractor.domain.usecase.extractor.bulk.BulkExtractor
 import com.drbrosdev.extractor.domain.usecase.image.create.DefaultInputImageFactory
 import com.drbrosdev.extractor.domain.usecase.image.create.InputImageFactory
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByKeyword

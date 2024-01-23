@@ -1,11 +1,10 @@
-package com.drbrosdev.extractor.domain.usecase.extractor.bulk
+package com.drbrosdev.extractor.domain.usecase.extractor
 
 import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
-import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
 import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import com.drbrosdev.extractor.util.CONCURRENCY
 import com.drbrosdev.extractor.util.mediaImageUri

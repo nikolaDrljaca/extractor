@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,23 +20,14 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,6 +44,8 @@ import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialog
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
+import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumDropdownMenu
+import com.drbrosdev.extractor.ui.components.shared.ExtractorDropdownAction
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageItem
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
@@ -67,7 +59,7 @@ fun ExtractorAlbumScreen(
     onImageClick: (index: Int) -> Unit,
     onDeleteDialogAction: (ConfirmationDialogActions) -> Unit,
     onShareDialogAction: (ConfirmationDialogActions) -> Unit,
-    onDropdownAction: (AlbumHeaderDropdownAction) -> Unit,
+    onDropdownAction: (ExtractorDropdownAction) -> Unit,
     onBack: () -> Unit,
     state: ExtractorAlbumScreenState,
 ) {
@@ -179,7 +171,7 @@ private fun ExtractorAlbumScreenLoading(
 @Composable
 private fun AlbumHeader(
     modifier: Modifier = Modifier,
-    onDropdownAction: (AlbumHeaderDropdownAction) -> Unit,
+    onDropdownAction: (ExtractorDropdownAction) -> Unit,
     onBack: () -> Unit,
     keyword: String,
     metadata: String
@@ -207,71 +199,10 @@ private fun AlbumHeader(
             )
         }
 
-        AlbumHeaderDropdownMenu(onAction = onDropdownAction)
+        ExtractorAlbumDropdownMenu(onAction = onDropdownAction)
     }
 }
 
-sealed interface AlbumHeaderDropdownAction {
-
-    data object Delete : AlbumHeaderDropdownAction
-
-    data object Share : AlbumHeaderDropdownAction
-}
-
-@Composable
-private fun AlbumHeaderDropdownMenu(
-    modifier: Modifier = Modifier,
-    onAction: (AlbumHeaderDropdownAction) -> Unit
-) {
-    var isDropdownOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    Box(
-        modifier = Modifier
-            .wrapContentSize(Alignment.TopStart)
-            .then(modifier)
-    ) {
-
-        IconButton(onClick = { isDropdownOpen = true }) {
-            Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "")
-        }
-
-        DropdownMenu(
-            expanded = isDropdownOpen,
-            onDismissRequest = { isDropdownOpen = false }
-        ) {
-            DropdownMenuItem(
-                text = { Text(text = stringResource(R.string.dropdown_share_all)) },
-                onClick = {
-                    onAction(AlbumHeaderDropdownAction.Share)
-                    isDropdownOpen = false
-                },
-                leadingIcon = { Icon(imageVector = Icons.Rounded.Share, contentDescription = "") }
-            )
-
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        text = stringResource(R.string.dropdown_delete),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                },
-                onClick = {
-                    onAction(AlbumHeaderDropdownAction.Delete)
-                    isDropdownOpen = false
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Rounded.Delete,
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
-            )
-        }
-    }
-}
 
 @Composable
 @ScreenPreview

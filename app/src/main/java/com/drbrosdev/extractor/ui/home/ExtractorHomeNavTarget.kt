@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
 import com.drbrosdev.extractor.ui.album.ExtractorAlbumNavTarget
+import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsNavTarget
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsNavTarget
@@ -57,6 +58,9 @@ object ExtractorHomeNavTarget : NavTarget {
             },
             onSettingsClick = {
                 navController.navigate(ExtractorSettingsNavTarget)
+            },
+            onViewAllUserAlbums = {
+                navController.navigate(ExtractorAlbumsNavTarget)
             }
         )
     }
@@ -78,7 +82,8 @@ private fun SearchScreenPreview() {
                 onInitUserPreviews = {},
                 onInitVisualPreview = {},
                 onAlbumPreviewClick = {},
-                onSettingsClick = {}
+                onSettingsClick = {},
+                onViewAllUserAlbums = {}
             )
         }
     }
