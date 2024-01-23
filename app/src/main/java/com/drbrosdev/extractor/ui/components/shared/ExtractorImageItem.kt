@@ -58,6 +58,38 @@ fun ExtractorImageItem(
 @Composable
 fun ExtractorImageItem(
     modifier: Modifier = Modifier,
+    imageUri: Uri,
+    size: Int? = null,
+) {
+    val sizeModifier = if (size != null) {
+        Modifier.size(size.dp)
+    } else {
+        Modifier
+    }
+    val scaleSize = when {
+        size != null -> size * 2
+        else -> 200
+    }
+
+    AsyncImage(
+        modifier = Modifier
+            .then(sizeModifier)
+            .then(modifier)
+            .clip(RoundedCornerShape(2.dp)),
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUri)
+            .size(scaleSize, scaleSize)
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        placeholder = painterResource(id = R.drawable.baseline_image_24)
+    )
+}
+
+@Composable
+fun ExtractorImageItem(
+    modifier: Modifier = Modifier,
     byteArray: ByteArray,
     size: Int? = null,
     onClick: () -> Unit

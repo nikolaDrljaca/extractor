@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
+import com.drbrosdev.extractor.ui.components.shared.ExtractorDropdownAction
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
@@ -41,11 +42,11 @@ data class ExtractorAlbumNavTarget(
             state = state,
             onDropdownAction = { action ->
                 when (action) {
-                    AlbumHeaderDropdownAction.Delete -> {
+                    ExtractorDropdownAction.Delete -> {
                         viewModel.onDeleteAction()
                     }
 
-                    AlbumHeaderDropdownAction.Share -> {
+                    ExtractorDropdownAction.Share -> {
                         viewModel.onShareAction {
                             context.launchShareIntent(viewModel.imageUris.value)
                         }
