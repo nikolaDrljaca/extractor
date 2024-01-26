@@ -44,7 +44,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageItem
@@ -122,7 +124,7 @@ fun ExtractorAlbumsScreen(
             state = extractorTopBarState.value,
             leadingSlot = {
                 BackIconButton(onBack = onBack)
-                ExtractorHeader(headerText = "My Albums")
+                ExtractorHeader(headerText = stringResource(id = R.string.my_albums))
             },
             trailingSlot = {
                 Spacer(modifier = Modifier.width(12.dp))
