@@ -155,7 +155,7 @@ private fun homeScreenConstraintSet() = ConstraintSet {
     constrain(userAlbum) {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        top.linkTo(settingsButton.bottom, margin = 8.dp)
+        top.linkTo(settingsButton.bottom, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
 

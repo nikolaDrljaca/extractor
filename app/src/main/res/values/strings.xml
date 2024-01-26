@@ -79,7 +79,7 @@
     <string name="or_start_a_search_below">Or start a search below ↓</string>
     <string name="suggestion_data_reset">Looks like app data was reset.</string>
     <string name="suggestion_start_sync">Start Sync before searching!</string>
-    <string name="too_many_images">You are about to share %1$s images. This many images can cause unintended behaviour. Proceed with caution.</string>
+    <string name="too_many_images">You are about to share %1$s images. Some apps might not handle this properly.</string>
     <string name="action_website">Website</string>
     <string name="action_policy">Privacy Policy</string>
     <string name="action_share">Share</string>
@@ -98,4 +98,7 @@
     <string name="media_perm_action">"Consider allowing required permissions. You can tap 'Grant Permission' to do so, and if the system does not prompt you, you will have to grant access manually by opening the system app settings. "</string>
     <string name="required_permission">Required Permission</string>
     <string name="not_granted">Not Granted</string>
+    <string name="snackbar_delete">Album deleted.</string>
+    <string name="snackbar_share">Sharing %1$s images. Some apps might not handle this properly.</string>
+    <string name="snackbar_undo">Undo</string>
 </resources>

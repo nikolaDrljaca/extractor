@@ -98,7 +98,8 @@ val viewModelModule = module {
     viewModel {
         ExtractorAlbumsViewModel(
             savedStateHandle = get(),
-            albumRepository = get<DefaultAlbumRepository>()
+            albumRepository = get<DefaultAlbumRepository>(),
+            stringProvider = get()
         )
     }
 }

@@ -51,6 +51,7 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.AlbumPreview
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.ui.components.shared.AnimatedBorderContent
+import com.drbrosdev.extractor.ui.components.shared.ExtractorTextButton
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 import com.drbrosdev.extractor.util.toUri
@@ -76,7 +77,7 @@ fun ExtractorCategoryView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(vertical = 6.dp)
+                .padding(bottom = 6.dp)
                 .padding(contentPadding)
                 .fillMaxWidth()
         ) {
@@ -87,7 +88,7 @@ fun ExtractorCategoryView(
 
             when {
                 state is ExtractorCategoryViewState.Content && category == ExtractorAlbumsViewDefaults.Category.USER -> {
-                    TextButton(onClick = onViewAllClicked) {
+                    ExtractorTextButton(onClick = onViewAllClicked) {
                         Text(text = stringResource(R.string.album_view_all))
                     }
                 }

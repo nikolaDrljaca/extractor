@@ -1,20 +1,24 @@
 package com.drbrosdev.extractor.ui.allalbum
 
 import android.net.Uri
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.util.toUri
 
 
 sealed class ExtractorAlbumsScreenState {
+    abstract val snackBarHostState: SnackbarHostState
 
     @Immutable
     data class Content(
         val albums: List<AlbumItemUiModel>,
-        val isConfirmDeleteShown: Boolean
+        override val snackBarHostState: SnackbarHostState
     ) : ExtractorAlbumsScreenState()
 
-    data object Loading : ExtractorAlbumsScreenState()
+    data class Loading(
+        override val snackBarHostState: SnackbarHostState
+    ) : ExtractorAlbumsScreenState()
 }
 
 

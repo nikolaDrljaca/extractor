@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -59,6 +60,7 @@ fun ExtractorImageItem(
 fun ExtractorImageItem(
     modifier: Modifier = Modifier,
     imageUri: Uri,
+    clipSize: Dp = 2.dp,
     size: Int? = null,
 ) {
     val sizeModifier = if (size != null) {
@@ -75,7 +77,7 @@ fun ExtractorImageItem(
         modifier = Modifier
             .then(sizeModifier)
             .then(modifier)
-            .clip(RoundedCornerShape(2.dp)),
+            .clip(RoundedCornerShape(clipSize)),
         model = ImageRequest.Builder(LocalContext.current)
             .data(imageUri)
             .size(scaleSize, scaleSize)

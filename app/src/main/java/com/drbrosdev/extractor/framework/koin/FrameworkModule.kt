@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.framework.koin
 
+import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import org.koin.android.ext.koin.androidContext
@@ -15,5 +16,11 @@ val frameworkModule = module {
             dispatcher = get(named(CoroutineModuleName.IO))
         )
     } bind MediaStoreImageRepository::class
+
+    single {
+        StringResourceProvider(
+            context = androidContext()
+        )
+    }
 
 }
