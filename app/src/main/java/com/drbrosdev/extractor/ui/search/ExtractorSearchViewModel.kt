@@ -19,6 +19,8 @@ import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRangeAsFlow
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndicesAsFlow
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.isSuccess
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
@@ -29,6 +31,7 @@ import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
+import com.drbrosdev.extractor.util.logInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -58,6 +61,8 @@ class ExtractorSearchViewModel(
     val dateFilterState = ExtractorDateFilterState()
 
     val loaderButtonState = ExtractorLoaderButtonState()
+
+    val gridState = ExtractorImageGridState()
 
     private val _state = MutableStateFlow<ExtractorSearchScreenUiState>(
         ExtractorSearchScreenUiState.ShowSuggestions(

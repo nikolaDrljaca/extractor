@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
@@ -73,6 +74,7 @@ data class ExtractorSearchNavTarget(
             searchViewState = viewModel.searchViewState,
             dateFilterState = viewModel.dateFilterState,
             loaderButtonState = viewModel.loaderButtonState,
+            imageGridState = viewModel.gridState,
             onNavToDetail = { selectedIndex ->
                 navController.navigate(
                     ExtractorImageNavTarget(
@@ -99,7 +101,7 @@ data class ExtractorSearchNavTarget(
             onResetSearch = {
                 viewModel.resetSearch()
                 scope.launch { scaffoldState.bottomSheetState.partialExpand() }
-            }
+            },
         )
     }
 }
@@ -116,13 +118,14 @@ private fun SearchScreenPreview() {
             onStatusButtonClick = {},
             onCreateAlbumClick = {},
             onSuggestedSearchClick = {},
+            onResetSearch = {},
             onStartSyncClick = {},
             extractorStatusButtonState = ExtractorStatusButtonState(),
             state = ExtractorSearchScreenUiState.Loading,
             searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
             dateFilterState = ExtractorDateFilterState(),
             loaderButtonState = ExtractorLoaderButtonState(),
-            onResetSearch = {}
+            imageGridState = ExtractorImageGridState(),
         )
     }
 }

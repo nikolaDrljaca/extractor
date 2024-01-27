@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +34,8 @@ import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGrid
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
@@ -44,7 +45,6 @@ import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearch
 import com.drbrosdev.extractor.ui.components.shared.DragHandle
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
-import com.drbrosdev.extractor.ui.components.shared.ExtractorImageGrid
 import com.drbrosdev.extractor.ui.components.shared.ExtractorStillIndexing
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
@@ -70,11 +70,11 @@ fun ExtractorSearchScreen(
     searchViewState: ExtractorSearchViewState,
     extractorStatusButtonState: ExtractorStatusButtonState,
     loaderButtonState: ExtractorLoaderButtonState,
+    imageGridState: ExtractorImageGridState
 ) {
-    val gridState = rememberLazyGridState()
     val extractorTopBarState = remember {
         derivedStateOf {
-            if (gridState.firstVisibleItemIndex > 0) ExtractorTopBarState.ELEVATED
+            if (imageGridState.lazyGridState.firstVisibleItemIndex > 0) ExtractorTopBarState.ELEVATED
             else ExtractorTopBarState.NORMAL
         }
     }
@@ -129,7 +129,7 @@ fun ExtractorSearchScreen(
                             images = it.images,
                             onClick = onNavToDetail,
                             onReset = onResetSearch,
-                            gridState = gridState,
+                            state = imageGridState,
                         )
 
                     is ExtractorSearchScreenUiState.ShowSuggestions -> Box(

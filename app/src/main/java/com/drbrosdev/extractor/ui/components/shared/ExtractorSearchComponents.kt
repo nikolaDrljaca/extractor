@@ -1,23 +1,11 @@
 package com.drbrosdev.extractor.ui.components.shared
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,125 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.toUri
-
-
-@Composable
-fun ExtractorImageGrid(
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = 120.dp),
-    images: List<Extraction>,
-    onClick: (index: Int) -> Unit,
-    onReset: () -> Unit,
-    gridState: LazyGridState = rememberLazyGridState(),
-) {
-    val imageSize = 96
-
-    LazyVerticalGrid(
-        modifier = Modifier
-            .then(modifier),
-        columns = GridCells.Adaptive(minSize = imageSize.dp),
-        state = gridState,
-        verticalArrangement = Arrangement.spacedBy(1.dp),
-        horizontalArrangement = Arrangement.spacedBy(1.dp),
-        contentPadding = contentPadding
-    ) {
-        itemsIndexed(images, key = { _, it -> it.mediaImageId.id }) { index, it ->
-            ExtractorImageItem(
-                imageUri = it.uri.toUri(),
-                size = imageSize,
-                onClick = { onClick(index) },
-            )
-        }
-
-        item(
-            key = "reset",
-            span = { GridItemSpan(maxLineSpan) }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(
-                    8.dp,
-                    alignment = Alignment.CenterVertically
-                ),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ExtractorTextButton(
-                    onClick = onReset,
-                ) {
-                    Icon(imageVector = Icons.Rounded.Refresh, contentDescription = "")
-                    Text(text = "Reset")
-                }
-                Text(
-                    text = "This will reload suggestions.",
-                    style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ExtractorImageGrid(
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = 112.dp),
-    onClick: (index: Int) -> Unit,
-    onReset: () -> Unit,
-    thumbnails: List<Bitmap>,
-    gridState: LazyGridState = rememberLazyGridState(),
-) {
-    val imageSize = 96
-
-    LazyVerticalGrid(
-        modifier = Modifier
-            .then(modifier),
-        columns = GridCells.Adaptive(minSize = imageSize.dp),
-        state = gridState,
-        verticalArrangement = Arrangement.spacedBy(1.dp),
-        horizontalArrangement = Arrangement.spacedBy(1.dp),
-        contentPadding = contentPadding
-    ) {
-        itemsIndexed(thumbnails) { index, it ->
-            ExtractorImageItem(
-                bitmap = it,
-                size = imageSize,
-                onClick = { onClick(index) },
-            )
-        }
-
-        item(
-            key = "reset",
-            span = { GridItemSpan(maxLineSpan) }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(
-                    8.dp,
-                    alignment = Alignment.CenterVertically
-                ),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ExtractorTextButton(
-                    onClick = onReset,
-                ) {
-                    Icon(imageVector = Icons.Rounded.Refresh, contentDescription = "")
-                    Text(text = "Reset")
-                }
-                Text(
-                    text = "This will reload suggestions.",
-                    style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
-                )
-            }
-        }
-    }
-}
-
 
 @Composable
 fun ExtractorStillIndexing(
@@ -211,7 +81,9 @@ fun ExtractorEmptySearch(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
-        Column {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             ExtractorStillIndexing()
             ExtractorEmptySearch()
         }

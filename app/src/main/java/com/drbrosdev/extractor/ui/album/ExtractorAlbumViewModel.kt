@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.AlbumEntry
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,8 @@ class ExtractorAlbumViewModel(
         .filterNotNull()
         .onEach { album -> _imageUris.update { getUris(album.entries) } }
         .flowOn(Dispatchers.Default)
+
+    val gridState = ExtractorImageGridState()
 
     val state = combine(
         albumFlow,

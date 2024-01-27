@@ -101,4 +101,6 @@
     <string name="snackbar_delete">Album deleted.</string>
     <string name="snackbar_share">Sharing %1$s images. Some apps might not handle this properly.</string>
     <string name="snackbar_undo">Undo</string>
+    <string name="reset">Reset</string>
+    <string name="reload_suggestions">This will reload suggestions.</string>
 </resources>

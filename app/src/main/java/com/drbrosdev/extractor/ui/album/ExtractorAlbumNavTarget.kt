@@ -40,6 +40,7 @@ data class ExtractorAlbumNavTarget(
                 navController.navigate(destination)
             },
             state = state,
+            imageGridState = viewModel.gridState,
             onDropdownAction = { action ->
                 when (action) {
                     ExtractorDropdownAction.Delete -> {
