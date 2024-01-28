@@ -1,15 +1,16 @@
 package com.drbrosdev.extractor.ui.album
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Info
@@ -41,6 +42,7 @@ import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialog
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
 import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumDropdownMenu
 import com.drbrosdev.extractor.ui.components.shared.ExtractorDropdownAction
+import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -57,8 +59,6 @@ fun ExtractorAlbumScreen(
     state: ExtractorAlbumScreenState,
     imageGridState: ExtractorImageGridState
 ) {
-    val imageSize = 96
-    val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
     val extractorTopBarState = remember {
         derivedStateOf {
             if (imageGridState.lazyGridState.firstVisibleItemIndex > 0) ExtractorTopBarState.ELEVATED
@@ -99,41 +99,6 @@ fun ExtractorAlbumScreen(
                     state = imageGridState
                 )
 
-//                LazyVerticalGrid(
-//                    state = gridState,
-//                    columns = GridCells.Adaptive(minSize = imageSize.dp),
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .then(modifier),
-//                    contentPadding = systemBarsPadding
-//                ) {
-//                    item(
-//                        key = "top_spacer",
-//                        span = { GridItemSpan(maxCurrentLineSpan) }
-//                    ) {
-//                        Spacer(modifier = Modifier.height(64.dp))
-//                    }
-//
-//                    item(
-//                        key = "spacer",
-//                        span = { GridItemSpan(maxCurrentLineSpan) }
-//                    ) {
-//                        Spacer(modifier = Modifier.height(18.dp))
-//                    }
-//
-//                    itemsIndexed(
-//                        state.album.entries,
-//                        key = { _, it -> it.id.id }
-//                    ) { index, entry ->
-//                        ExtractorImageItem(
-//                            imageUri = entry.uri.toUri(),
-//                            onClick = { onImageClick(index) },
-//                            size = imageSize,
-//                            modifier = Modifier.padding(1.dp)
-//                        )
-//                    }
-//                }
-
                 ExtractorTopBar(
                     modifier = Modifier.align(Alignment.TopCenter),
                     state = extractorTopBarState.value,
@@ -146,6 +111,18 @@ fun ExtractorAlbumScreen(
                         )
                     }
                 )
+
+                AnimatedVisibility(
+                    visible = state.shouldShowSelectBar,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 16.dp)
+                        .navigationBarsPadding(),
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    ExtractorMultiselectActionBar(onAction = {})
+                }
             }
         }
     }

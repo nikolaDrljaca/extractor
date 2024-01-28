@@ -69,6 +69,9 @@ class ExtractorAlbumsViewModel(
 
     fun onShareAlbum(value: AlbumItemUiModel) {
         val size = value.thumbnails.size
+
+        if (size < 30) return
+
         viewModelScope.launch {
             snackBarHostState.showSnackbar(
                 message = stringProvider.get(

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.AlbumEntry
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndicesAsFlow
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -39,15 +41,20 @@ class ExtractorAlbumViewModel(
 
     val gridState = ExtractorImageGridState()
 
+    private val shouldShowSelectAction = gridState.checkedIndicesAsFlow()
+        .map { it.isNotEmpty() }
+
     val state = combine(
         albumFlow,
         confirmDeleteDialog,
-        confirmShareDialog
-    ) { album, showDelete, showShare ->
+        confirmShareDialog,
+        shouldShowSelectAction
+    ) { album, showDelete, showShare, showSelectBar ->
         ExtractorAlbumScreenState.Content(
             album = album,
             isConfirmDeleteShown = showDelete,
-            isConfirmShareShown = showShare
+            isConfirmShareShown = showShare,
+            shouldShowSelectBar = showSelectBar
         )
     }
         .stateIn(

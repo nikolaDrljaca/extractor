@@ -9,12 +9,10 @@ import kotlinx.coroutines.flow.map
 class ExtractorImageGridState(
     val lazyGridState: LazyGridState = LazyGridState(),
 ) {
-    private val _checkedItems = mutableStateMapOf<Int, ExtractorImageItemState>()
-
-    val checkedItems = _checkedItems.toMap()
+    val checkedItems = mutableStateMapOf<Int, ExtractorImageItemState>()
 
     operator fun get(index: Int): ExtractorImageItemState {
-        return _checkedItems.getOrDefault(index, ExtractorImageItemState.UNCHECKED)
+        return checkedItems.getOrDefault(index, ExtractorImageItemState.UNCHECKED)
     }
 
     fun onItemLongClick(index: Int) {
@@ -28,7 +26,7 @@ class ExtractorImageGridState(
      * @return If the state transition for the item at index was handled.
      */
     fun onItemClick(index: Int): Boolean {
-        val areAllUnchecked = _checkedItems.values
+        val areAllUnchecked = checkedItems.values
             .all { it == ExtractorImageItemState.UNCHECKED }
 
         if (areAllUnchecked) {
@@ -39,15 +37,24 @@ class ExtractorImageGridState(
         return true
     }
 
+    fun clearSelection() {
+        checkedItems.keys.forEach { index ->
+            checkedItems[index] = ExtractorImageItemState.UNCHECKED
+        }
+    }
+
     private fun transitionItemState(index: Int) {
-        val currentState = _checkedItems.getOrDefault(index, ExtractorImageItemState.UNCHECKED)
+        val currentState = checkedItems.getOrDefault(index, ExtractorImageItemState.UNCHECKED)
         val updatedState = when (currentState) {
             ExtractorImageItemState.CHECKED -> ExtractorImageItemState.UNCHECKED
             ExtractorImageItemState.UNCHECKED -> ExtractorImageItemState.CHECKED
         }
-        _checkedItems[index] = updatedState
+        checkedItems[index] = updatedState
     }
 }
 
 fun ExtractorImageGridState.checkedIndicesAsFlow() = snapshotFlow { checkedItems.toMap() }
     .map { it.keys.filter { index -> checkedItems[index] == ExtractorImageItemState.CHECKED } }
+
+fun ExtractorImageGridState.checkedIndices() = checkedItems.toMap().keys
+    .filter { index -> checkedItems[index] == ExtractorImageItemState.CHECKED }
