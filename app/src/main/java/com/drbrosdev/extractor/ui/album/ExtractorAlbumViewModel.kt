@@ -120,6 +120,10 @@ class ExtractorAlbumViewModel(
             )
 
             albumRepository.createAlbum(newAlbum)
-        }.invokeOnCompletion { onComplete() }
+
+            gridState.clearSelection()
+        }.invokeOnCompletion {
+            onComplete()
+        }
     }
 }
