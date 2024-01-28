@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.AlbumEntry
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
+import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndicesAsFlow
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.Dispatchers
@@ -92,5 +94,32 @@ class ExtractorAlbumViewModel(
         }
     }
 
+    fun onSelectionClear() {
+        gridState.clearSelection()
+    }
 
+    fun getSelectedUris(): List<Uri> {
+        return gridState.checkedIndices().map { imageUris.value[it] }
+    }
+
+    fun onSelectionCreate(onComplete: () -> Unit = {}) {
+        viewModelScope.launch {
+            val album = state.value.getAlbum()
+            val newAlbum = NewAlbum(
+                name = album.name,
+                keyword = album.keyword,
+                keywordType = album.keywordType,
+                searchType = album.searchType,
+                origin = NewAlbum.Origin.USER_GENERATED,
+                entries = gridState.checkedIndices().map { album.entries[it] }.map {
+                    NewAlbum.Entry(
+                        uri = it.uri,
+                        id = it.id
+                    )
+                }
+            )
+
+            albumRepository.createAlbum(newAlbum)
+        }.invokeOnCompletion { onComplete() }
+    }
 }

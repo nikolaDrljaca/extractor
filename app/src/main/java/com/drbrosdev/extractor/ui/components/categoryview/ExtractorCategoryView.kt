@@ -308,7 +308,7 @@ private fun AlbumThumbnailView(
     val scaleSize = size * 2
     val shape = RoundedCornerShape(12.dp)
     Box(
-        modifier = Modifier.clip(shape)
+        modifier = Modifier.clip(shape).then(sizeModifier)
     ) {
         AsyncImage(
             modifier = Modifier

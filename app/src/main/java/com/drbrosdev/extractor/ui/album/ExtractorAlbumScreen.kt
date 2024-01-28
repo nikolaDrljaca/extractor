@@ -17,7 +17,8 @@ import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -29,12 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.Album
-import com.drbrosdev.extractor.domain.model.AlbumEntry
-import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.MediaImageId
-import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGrid
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
@@ -45,8 +40,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorDropdownAction
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.ScreenPreview
+import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 
 @Composable
 fun ExtractorAlbumScreen(
@@ -56,6 +50,8 @@ fun ExtractorAlbumScreen(
     onShareDialogAction: (ConfirmationDialogActions) -> Unit,
     onDropdownAction: (ExtractorDropdownAction) -> Unit,
     onBack: () -> Unit,
+    onMultiselectAction: (MultiselectAction) -> Unit,
+    snackbarHostState: SnackbarHostState,
     state: ExtractorAlbumScreenState,
     imageGridState: ExtractorImageGridState
 ) {
@@ -121,8 +117,16 @@ fun ExtractorAlbumScreen(
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                    ExtractorMultiselectActionBar(onAction = {})
+                    ExtractorMultiselectActionBar(onAction = onMultiselectAction)
                 }
+
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .padding(bottom = 64.dp)
+                )
             }
         }
     }
@@ -177,40 +181,5 @@ private fun AlbumHeader(
         }
 
         ExtractorAlbumDropdownMenu(onAction = onDropdownAction)
-    }
-}
-
-
-@Composable
-@ScreenPreview
-private fun CurrentPreview() {
-    val data = ExtractorAlbumScreenState.Content(
-        album = Album(
-            id = 0L,
-            name = "Some album",
-            keyword = "keyword",
-            searchType = SearchType.PARTIAL,
-            keywordType = KeywordType.IMAGE,
-            entries = listOf(
-                AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(11L)),
-                AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(12L)),
-                AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(13L)),
-            )
-        )
-    )
-    ExtractorTheme(dynamicColor = false) {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
-            ExtractorAlbumScreen(
-                state = data,
-                imageGridState = ExtractorImageGridState(),
-                onImageClick = {},
-                onDropdownAction = {},
-                onBack = {},
-                onDeleteDialogAction = {},
-                onShareDialogAction = {}
-            )
-        }
     }
 }

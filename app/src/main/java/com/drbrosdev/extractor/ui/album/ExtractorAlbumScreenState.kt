@@ -18,3 +18,8 @@ sealed interface ExtractorAlbumScreenState {
 
     data object Loading : ExtractorAlbumScreenState
 }
+
+fun ExtractorAlbumScreenState.getAlbum() = when (this) {
+    is ExtractorAlbumScreenState.Content -> this.album
+    ExtractorAlbumScreenState.Loading -> error("Accessing album outside of content state.")
+}

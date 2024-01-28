@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,10 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CombinedPreview
 
 
 sealed interface MultiselectAction {
@@ -29,7 +30,7 @@ sealed interface MultiselectAction {
 
     data object CreateAlbum : MultiselectAction
 
-    data object Cancel: MultiselectAction
+    data object Cancel : MultiselectAction
 }
 
 @Composable
@@ -39,7 +40,7 @@ fun ExtractorMultiselectActionBar(
 ) {
     Surface(
         shape = RoundedCornerShape(14.dp),
-        color = Color.Black,
+        color = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
         modifier = Modifier.then(modifier)
     ) {
         Row(
@@ -73,6 +74,7 @@ fun ExtractorMultiselectActionBar(
 private fun MultiselectActionBarItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
     painter: Painter,
     text: String
 ) {
@@ -95,23 +97,25 @@ private fun MultiselectActionBarItem(
                 painter = painter,
                 contentDescription = "",
                 modifier = Modifier.requiredSize(32.dp),
-                tint = Color.White
+                tint = contentColor
             )
 
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelMedium.copy(
-                    color = Color.White
+                    color = contentColor
                 )
             )
         }
     }
 }
 
-@Preview
+@CombinedPreview
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
-        ExtractorMultiselectActionBar(onAction = {})
+        Column {
+            ExtractorMultiselectActionBar(onAction = {})
+        }
     }
 }
