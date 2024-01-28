@@ -47,7 +47,8 @@ val viewModelModule = module {
             albumRepository = get<DefaultAlbumRepository>(),
             generateSuggestedKeywords = get(),
             spawnExtractorWork = get(),
-            datastore = get()
+            datastore = get(),
+            stringProvider = get()
         )
     }
 

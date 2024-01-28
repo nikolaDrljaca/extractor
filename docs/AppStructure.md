@@ -9,7 +9,8 @@ different architectures/tech stacks/whatever(s).
 They might not be the most optimal or industry standard, but they have been chosen because they work
 or the authors know how to work with them.
 
-These ideas are inspired by Adams page [here](https://github.com/AdamMc331/TOA/blob/development/documentation/Architecture.md).
+These ideas are inspired by Adams
+page [here](https://github.com/AdamMc331/TOA/blob/development/documentation/Architecture.md).
 Give the page a read as most this are applicable to this architecture as well.
 
 ## Architecture
@@ -94,6 +95,9 @@ There are currently no remote data sources in the application.
 In cases where necessary, `Dao`s can be composite -> they can take other `Dao`s as dependencies
 to encapsulate service operations on related objects.
 
+> It is recommended that composite DAOs make use of transactions. This can be provided via DI.
+Look at `TransactionProvider`.
+
 Example:
 
 ```kotlin
@@ -164,6 +168,9 @@ Modeling logic this way allows the use of composition -> Use cases can be compos
 complex
 flows. For example: `Extractor` makes use of multiple other use cases to orchestrate its logic.
 
+> Note that the naming convention should always make use of a verb to indicate an action,
+ex: `ValidateToken`.
+
 Note however that use cases should not be used in situations where they lead to a data/domain layer
 CRUD call. In these situations it is more appropriate to use the Repository package.
 Use cases should be used where they make sense -> reusable units of logic.
@@ -184,28 +191,35 @@ more [here](https://github.com/thunderbird/thunderbird-android/blob/main/core/ui
 and [here](https://www.wearemobilefirst.com/blog/atomic-design)
 
 From the concepts of Atomic Design, we are concerned with:
+
 - Atoms: Stateless UI components such as custom buttons, text fields or any other custom elements.
-Example: Take a look into the `src/{package}/ui/components/shared/Buttons.kt`
-- Molecules: Small collection of atoms that create a more complex component with its related state. 
-As far as Composable functions go in this layer, they are stateless, but they are accompanied by a 
-state definition and they make use of it. For more details, read `Stateful.md`
+  Example: Take a look into the `src/{package}/ui/components/shared/Buttons.kt`
+- Molecules: Small collection of atoms that create a more complex component with its related state.
+  As far as Composable functions go in this layer, they are stateless, but they are accompanied by a
+  state definition and they make use of it. For more details, read `Stateful.md`
 - Organisms: Collection of molecules that compose into a page. A distinction is made here between an
-Organism and a Screen due to the fact that on larger form factors we might display more Organisms per screen.
+  Organism and a Screen due to the fact that on larger form factors we might display more Organisms
+  per screen.
 
-**NOTE: For now in our application an Organism=Screen, eg: `@Composable fun HomeScreen() {..}` is an organism and a screen**
+**NOTE: For now in our application an Organism=Screen, eg: `@Composable fun HomeScreen() {..}` is an
+organism and a screen**
 
-An Organisms state is managed by the `androidx.viewmodel`. It composes over the various states of molecules
-and provides orchestration between then while also acting as a **glue** object between the `ui` and `domain` layers.
+An Organisms state is managed by the `androidx.viewmodel`. It composes over the various states of
+molecules
+and provides orchestration between then while also acting as a **glue** object between the `ui`
+and `domain` layers.
 This project is strictly Android based and we are not yet concerned with multiplatform capabilities.
 
 For package structure, each screen/feature has a dedicated package with:
-- (required) Main entrypoint: `<feature_name>NavTarget` -> Class or object to implement the `NavTarget` interface
-and thus marking as a routing destination. Acts as the top-level stateful composable function and a glue object
-to bind with view models and navigation providers.
+
+- (required) Main entrypoint: `<feature_name>NavTarget` -> Class or object to implement
+  the `NavTarget` interface
+  and thus marking as a routing destination. Acts as the top-level stateful composable function and
+  a glue object
+  to bind with view models and navigation providers.
 - (required) Top level *stateless* composable: `<feature_name>Screen` -> Actual user interface code.
 - `<feature_name>ViewModel` if applicable.
 - `<feature_name>UiState` if applicable. **Should be annotated with `@Immutable`.**
-
 
 **ALWAYS** have a `@Preview` in this file - in `<feature_name>Screen` to preview the screen ui.
 
@@ -213,9 +227,10 @@ Components package contains a package per molecule.
 Have a look at `ExtractorSearchView` and `Stateful.md`.
 
 ### Framework Layer
+
 A bit of an outlier layer in what is generally accepted/considered 'clean' architecture.
 
-The idea is to create configurations, repositories or any other concerns that come from external 
+The idea is to create configurations, repositories or any other concerns that come from external
 libraries such as `koin` etc.
 
 For now the layer encapsulates `koin` for Dependency Injection and the Android `MediaStore` that

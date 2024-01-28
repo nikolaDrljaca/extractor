@@ -1,11 +1,15 @@
 package com.drbrosdev.extractor.ui.search
 
 import android.net.Uri
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.data.ExtractorDataStore
+import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
@@ -16,9 +20,13 @@ import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByKeyword
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
+import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRangeAsFlow
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndicesAsFlow
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.isSuccess
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
@@ -29,11 +37,16 @@ import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
+import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -46,8 +59,10 @@ class ExtractorSearchViewModel(
     private val stateHandle: SavedStateHandle,
     private val generateSuggestedKeywords: GenerateSuggestedKeywords,
     private val spawnExtractorWork: SpawnExtractorWork,
-    private val datastore: ExtractorDataStore
+    private val datastore: ExtractorDataStore,
+    private val stringProvider: StringResourceProvider
 ) : ViewModel() {
+    val snackbarHostState = SnackbarHostState()
     val extractorStatusButtonState = ExtractorStatusButtonState()
 
     val searchViewState = ExtractorSearchViewState(
@@ -59,6 +74,8 @@ class ExtractorSearchViewModel(
 
     val loaderButtonState = ExtractorLoaderButtonState()
 
+    val gridState = ExtractorImageGridState()
+
     private val _state = MutableStateFlow<ExtractorSearchScreenUiState>(
         ExtractorSearchScreenUiState.ShowSuggestions(
             ExtractorSuggestedSearchState.Loading
@@ -69,6 +86,20 @@ class ExtractorSearchViewModel(
     private val lastQuery = MutableStateFlow(LastQuery(query, keywordType))
 
     val shouldShowSheetFlow = datastore.shouldShowSearchSheet
+
+    val sheetContent = gridState.checkedIndicesAsFlow()
+        .map { checked ->
+            val content = when {
+                checked.isNotEmpty() -> SheetContent.MultiselectBar
+                else -> SheetContent.SearchView
+            }
+            content
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            SheetContent.SearchView
+        )
 
     private val progressJob = extractionProgress()
         .distinctUntilChanged()
@@ -180,16 +211,22 @@ class ExtractorSearchViewModel(
     }
 
     fun onCompileUserAlbum() {
+        if (loaderButtonState.isSuccess()) return
+        loaderButtonState.loading()
+
         when (state.value) {
-            is ExtractorSearchScreenUiState.Content -> compileUserAlbum()
+            is ExtractorSearchScreenUiState.Content -> compileUserAlbum(state.value.getImages()) {
+                loaderButtonState.success()
+            }
+
             else -> Unit
         }
     }
 
-    private fun compileUserAlbum() {
-        if (loaderButtonState.isSuccess()) return
-
-        loaderButtonState.loading()
+    private fun compileUserAlbum(
+        input: List<Extraction>,
+        onFinish: () -> Unit = {}
+    ) {
         viewModelScope.launch {
             val newAlbum = NewAlbum(
                 keyword = searchViewState.query,
@@ -197,7 +234,7 @@ class ExtractorSearchViewModel(
                 searchType = searchViewState.searchType,
                 keywordType = searchViewState.keywordType,
                 origin = NewAlbum.Origin.USER_GENERATED,
-                entries = state.value.getImages().map {
+                entries = input.map {
                     NewAlbum.Entry(
                         uri = it.uri,
                         id = it.mediaImageId
@@ -207,7 +244,7 @@ class ExtractorSearchViewModel(
             albumRepository.createAlbum(newAlbum)
         }
             .invokeOnCompletion {
-                loaderButtonState.success()
+                onFinish()
             }
     }
 
@@ -258,6 +295,7 @@ class ExtractorSearchViewModel(
             }
 
             _state.createFrom(result)
+            searchViewState.updateQuery(query)
         }
     }
 
@@ -270,6 +308,7 @@ class ExtractorSearchViewModel(
     }
 
     fun resetSearch() {
+        searchViewState.updateQuery("")
         _state.update {
             ExtractorSearchScreenUiState.ShowSuggestions(
                 ExtractorSuggestedSearchState.Loading
@@ -283,6 +322,41 @@ class ExtractorSearchViewModel(
                 )
             }
         }
+    }
+
+    fun onSelectionClear() {
+        gridState.clearSelection()
+    }
+
+    fun onSelectionCreate(
+        onComplete: () -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            val extractions = state.value.getImages()
+
+            val toCreate = gridState.checkedIndicesAsFlow()
+                .first()
+                .map { extractions[it] }
+
+            compileUserAlbum(toCreate) {
+                gridState.clearSelection()
+                //Show snack bar with action to view
+                viewModelScope.launch {
+                    val result = snackbarHostState.showSnackbar(
+                        message = stringProvider.get(R.string.snack_album_created),
+                        actionLabel = stringProvider.get(R.string.snack_view)
+                    )
+                    when (result) {
+                        SnackbarResult.Dismissed -> Unit
+                        SnackbarResult.ActionPerformed -> onComplete()
+                    }
+                }
+            }
+        }
+    }
+
+    fun getSelectedImageUris(): List<Uri> {
+        return gridState.checkedIndices().map { state.value.getImages()[it].uri.toUri() }
     }
 }
 

@@ -6,7 +6,7 @@ class TransactionProvider(
     private val database: ExtractorDatabase
 ) {
 
-    suspend fun <T> runTransaction(block: suspend () -> T): T {
+    suspend fun <T> transaction(block: suspend () -> T): T {
         return database.withTransaction(block)
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -293,6 +295,7 @@ private fun ExtractorCategoryContentView(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AlbumThumbnailView(
     modifier: Modifier = Modifier,
@@ -305,7 +308,7 @@ private fun AlbumThumbnailView(
     val scaleSize = size * 2
     val shape = RoundedCornerShape(12.dp)
     Box(
-        modifier = Modifier.clip(shape)
+        modifier = Modifier.clip(shape).then(sizeModifier)
     ) {
         AsyncImage(
             modifier = Modifier
@@ -333,8 +336,11 @@ private fun AlbumThumbnailView(
             text = albumName,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 4.dp),
-            style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
+                .basicMarquee()
+                .padding(bottom = 4.dp, start = 2.dp, end = 2.dp),
+            style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 

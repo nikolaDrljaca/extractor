@@ -1,20 +1,24 @@
 package com.drbrosdev.extractor.ui.search
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
+import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
@@ -23,6 +27,7 @@ import com.drbrosdev.extractor.util.LocalDialogNavController
 import com.drbrosdev.extractor.util.LocalNavController
 import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
+import com.drbrosdev.extractor.util.launchShareIntent
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -44,10 +49,12 @@ data class ExtractorSearchNavTarget(
             parametersOf(query, keywordType)
         }
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val sheetContent by viewModel.sheetContent.collectAsStateWithLifecycle()
 
         val navController = LocalNavController.current
         val dialogNavController = LocalDialogNavController.current
         val keyboardController = LocalSoftwareKeyboardController.current
+        val context = LocalContext.current
 
         val scaffoldState = rememberBottomSheetScaffoldState(
             bottomSheetState = rememberExtractorSearchBottomSheetState()
@@ -73,6 +80,9 @@ data class ExtractorSearchNavTarget(
             searchViewState = viewModel.searchViewState,
             dateFilterState = viewModel.dateFilterState,
             loaderButtonState = viewModel.loaderButtonState,
+            imageGridState = viewModel.gridState,
+            sheetContent = sheetContent,
+            snackbarHostState = viewModel.snackbarHostState,
             onNavToDetail = { selectedIndex ->
                 navController.navigate(
                     ExtractorImageNavTarget(
@@ -99,6 +109,19 @@ data class ExtractorSearchNavTarget(
             onResetSearch = {
                 viewModel.resetSearch()
                 scope.launch { scaffoldState.bottomSheetState.partialExpand() }
+            },
+            onMultiselectAction = {
+                when (it) {
+                    MultiselectAction.Cancel -> viewModel.onSelectionClear()
+                    MultiselectAction.CreateAlbum -> viewModel.onSelectionCreate {
+                        navController.navigate(ExtractorHomeNavTarget)
+                    }
+
+                    MultiselectAction.Share -> {
+                        val uris = viewModel.getSelectedImageUris()
+                        context.launchShareIntent(uris)
+                    }
+                }
             }
         )
     }
@@ -116,13 +139,17 @@ private fun SearchScreenPreview() {
             onStatusButtonClick = {},
             onCreateAlbumClick = {},
             onSuggestedSearchClick = {},
+            onResetSearch = {},
             onStartSyncClick = {},
+            onMultiselectAction = {},
             extractorStatusButtonState = ExtractorStatusButtonState(),
             state = ExtractorSearchScreenUiState.Loading,
             searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
             dateFilterState = ExtractorDateFilterState(),
             loaderButtonState = ExtractorLoaderButtonState(),
-            onResetSearch = {}
+            sheetContent = SheetContent.SearchView,
+            snackbarHostState = SnackbarHostState(),
+            imageGridState = ExtractorImageGridState(),
         )
     }
 }

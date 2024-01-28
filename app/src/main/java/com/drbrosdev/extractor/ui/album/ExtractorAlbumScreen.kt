@@ -1,29 +1,24 @@
 package com.drbrosdev.extractor.ui.album
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -35,23 +30,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.Album
-import com.drbrosdev.extractor.domain.model.AlbumEntry
-import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.MediaImageId
-import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGrid
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialog
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
 import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumDropdownMenu
 import com.drbrosdev.extractor.ui.components.shared.ExtractorDropdownAction
-import com.drbrosdev.extractor.ui.components.shared.ExtractorImageItem
+import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.ScreenPreview
-import com.drbrosdev.extractor.util.toUri
+import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 
 @Composable
 fun ExtractorAlbumScreen(
@@ -61,14 +50,14 @@ fun ExtractorAlbumScreen(
     onShareDialogAction: (ConfirmationDialogActions) -> Unit,
     onDropdownAction: (ExtractorDropdownAction) -> Unit,
     onBack: () -> Unit,
+    onMultiselectAction: (MultiselectAction) -> Unit,
+    snackbarHostState: SnackbarHostState,
     state: ExtractorAlbumScreenState,
+    imageGridState: ExtractorImageGridState
 ) {
-    val imageSize = 96
-    val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
-    val gridState = rememberLazyGridState()
     val extractorTopBarState = remember {
         derivedStateOf {
-            if (gridState.firstVisibleItemIndex > 0) ExtractorTopBarState.ELEVATED
+            if (imageGridState.lazyGridState.firstVisibleItemIndex > 0) ExtractorTopBarState.ELEVATED
             else ExtractorTopBarState.NORMAL
         }
     }
@@ -98,41 +87,13 @@ fun ExtractorAlbumScreen(
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
-
-                LazyVerticalGrid(
-                    state = gridState,
-                    columns = GridCells.Adaptive(minSize = imageSize.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .then(modifier),
-                    contentPadding = systemBarsPadding
-                ) {
-                    item(
-                        key = "top_spacer",
-                        span = { GridItemSpan(maxCurrentLineSpan) }
-                    ) {
-                        Spacer(modifier = Modifier.height(64.dp))
-                    }
-
-                    item(
-                        key = "spacer",
-                        span = { GridItemSpan(maxCurrentLineSpan) }
-                    ) {
-                        Spacer(modifier = Modifier.height(18.dp))
-                    }
-
-                    itemsIndexed(
-                        state.album.entries,
-                        key = { _, it -> it.id.id }
-                    ) { index, entry ->
-                        ExtractorImageItem(
-                            imageUri = entry.uri.toUri(),
-                            onClick = { onImageClick(index) },
-                            size = imageSize,
-                            modifier = Modifier.padding(1.dp)
-                        )
-                    }
-                }
+                ExtractorImageGrid(
+                    onClick = {
+                        onImageClick(it)
+                    },
+                    albumEntries = state.album.entries,
+                    state = imageGridState
+                )
 
                 ExtractorTopBar(
                     modifier = Modifier.align(Alignment.TopCenter),
@@ -145,6 +106,26 @@ fun ExtractorAlbumScreen(
                             metadata = state.metadata
                         )
                     }
+                )
+
+                AnimatedVisibility(
+                    visible = state.shouldShowSelectBar,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 16.dp)
+                        .navigationBarsPadding(),
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    ExtractorMultiselectActionBar(onAction = onMultiselectAction)
+                }
+
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                        .padding(bottom = 64.dp)
                 )
             }
         }
@@ -200,39 +181,5 @@ private fun AlbumHeader(
         }
 
         ExtractorAlbumDropdownMenu(onAction = onDropdownAction)
-    }
-}
-
-
-@Composable
-@ScreenPreview
-private fun CurrentPreview() {
-    val data = ExtractorAlbumScreenState.Content(
-        album = Album(
-            id = 0L,
-            name = "Some album",
-            keyword = "keyword",
-            searchType = SearchType.PARTIAL,
-            keywordType = KeywordType.IMAGE,
-            entries = listOf(
-                AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(11L)),
-                AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(12L)),
-                AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(13L)),
-            )
-        )
-    )
-    ExtractorTheme(dynamicColor = false) {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
-            ExtractorAlbumScreen(
-                onImageClick = {},
-                state = data,
-                onDropdownAction = {},
-                onBack = {},
-                onDeleteDialogAction = {},
-                onShareDialogAction = {}
-            )
-        }
     }
 }

@@ -16,13 +16,13 @@ sealed class ExtractorSearchScreenUiState {
 
     data object Loading : ExtractorSearchScreenUiState()
 
-    data object StillIndexing: ExtractorSearchScreenUiState()
+    data object StillIndexing : ExtractorSearchScreenUiState()
 
     data class ShowSuggestions(
         val suggestedSearchState: ExtractorSuggestedSearchState
-    ): ExtractorSearchScreenUiState()
+    ) : ExtractorSearchScreenUiState()
 
-    data object Empty: ExtractorSearchScreenUiState()
+    data object Empty : ExtractorSearchScreenUiState()
 }
 
 fun MutableStateFlow<ExtractorSearchScreenUiState>.createFrom(
@@ -35,8 +35,14 @@ fun MutableStateFlow<ExtractorSearchScreenUiState>.createFrom(
 }
 
 fun ExtractorSearchScreenUiState.getImages(): List<Extraction> {
-    return when(this) {
+    return when (this) {
         is ExtractorSearchScreenUiState.Content -> this.images
         else -> error("Accessing image list outside of Success state.")
     }
+}
+
+sealed interface SheetContent {
+    data object SearchView : SheetContent
+
+    data object MultiselectBar : SheetContent
 }
