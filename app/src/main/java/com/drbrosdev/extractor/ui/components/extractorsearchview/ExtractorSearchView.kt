@@ -96,7 +96,7 @@ fun ExtractorSearchView(
 @Preview
 @Composable
 private fun CurrentPreview() {
-    ExtractorTheme {
+    ExtractorTheme(dynamicColor = false) {
         ExtractorSearchView(
             onDone = {},
             state = ExtractorSearchViewState(

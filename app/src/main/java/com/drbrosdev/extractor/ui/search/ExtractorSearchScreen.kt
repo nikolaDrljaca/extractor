@@ -105,7 +105,8 @@ fun ExtractorSearchScreen(
                         onCreateAlbumClick = onCreateAlbumClick,
                         searchViewState = searchViewState,
                         dateFilterState = dateFilterState,
-                        loaderButtonState = loaderButtonState
+                        loaderButtonState = loaderButtonState,
+                        modifier = Modifier.navigationBarsPadding()
                     )
                 }
             }

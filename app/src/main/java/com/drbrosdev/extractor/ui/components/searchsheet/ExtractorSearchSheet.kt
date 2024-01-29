@@ -81,7 +81,7 @@ fun ExtractorSearchSheet(
             Text(text = stringResource(R.string.create_album))
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(4.dp))
     }
 }
 
