@@ -6,15 +6,14 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SelectableChipColors
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.ui.components.shared.ExtractorActionChip
-import com.drbrosdev.extractor.ui.components.shared.ExtractorActionChipDefaults
+import com.drbrosdev.extractor.ui.components.shared.ExtractorChip
+import com.drbrosdev.extractor.ui.components.shared.ExtractorChipDefaults
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
@@ -23,7 +22,7 @@ import com.drbrosdev.extractor.util.CombinedPreview
 fun ExtractorActionChips(
     onActionClick: (AboutLink) -> Unit,
     modifier: Modifier = Modifier,
-    colors: SelectableChipColors = ExtractorActionChipDefaults.actionChipColors()
+    colors: SelectableChipColors = ExtractorChipDefaults.surfaceChipColors()
 ) {
     FlowRow(
         modifier = Modifier
@@ -36,7 +35,7 @@ fun ExtractorActionChips(
         )
     ) {
         AboutLink.entries.forEach {
-            ExtractorActionChip(
+            ExtractorChip(
                 onClick = { onActionClick(it) },
                 leadingIcon = {
                     Icon(
@@ -44,10 +43,9 @@ fun ExtractorActionChips(
                         contentDescription = null
                     )
                 },
-                colors = colors
-            ) {
-                Text(text = stringResource(id = it.nameResource))
-            }
+                colors = colors,
+                text = stringResource(id = it.nameResource)
+            )
         }
     }
 }

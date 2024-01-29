@@ -98,7 +98,7 @@ fun ImageLabelFilterChips(
                     border = FilterChipDefaults.filterChipBorder(
                         enabled = true,
                         selected = selected == index,
-                        borderColor = Color.White
+                        borderColor = contentColor
                     )
                 )
             }

@@ -138,7 +138,7 @@ private fun ExtractorCountChips(
             modifier = Modifier.weight(1f),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White
+                contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ) {
             Column(modifier = Modifier.padding(14.dp)) {
