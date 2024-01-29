@@ -4,13 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.drbrosdev.extractor.ui.root.Root
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.ui.AppContent
 
 class MainActivity : ComponentActivity() {
 
@@ -20,14 +15,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ExtractorTheme(dynamicColor = true) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Root()
-                }
-            }
+//            ExtractorTheme(dynamicColor = true) {
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
+//                ) {
+//                    Root()
+//                }
+//            }
+            AppContent()
         }
     }
 }

@@ -14,7 +14,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,9 +41,6 @@ fun ExtractorSettings(
                 Switch(
                     checked = state.enabledVisualAlbums,
                     onCheckedChange = state::updateEnabledVisualAlbums,
-                    colors = SwitchDefaults.colors(
-                        checkedTrackColor = MaterialTheme.colorScheme.primary
-                    )
                 )
             }
         ) {
@@ -56,13 +52,21 @@ fun ExtractorSettings(
                 Switch(
                     checked = state.enabledTextAlbums,
                     onCheckedChange = state::updateEnabledTextAlbums,
-                    colors = SwitchDefaults.colors(
-                        checkedTrackColor = MaterialTheme.colorScheme.primary
-                    )
                 )
             }
         ) {
             Text(text = stringResource(R.string.enable_text_albums))
+        }
+
+        ExtractorSettingsItem(
+            trailingSlot =  {
+                Switch(
+                    checked = state.enableDynamicColor,
+                    onCheckedChange = state::updateEnableDynamicColor,
+                )
+            }
+        ) {
+            Text(text = stringResource(R.string.use_material_you_theme))
         }
 
         ExtractorSettingsItem(
@@ -160,7 +164,8 @@ private fun CurrentPreview() {
         ExtractorSettings(
             state = ExtractorSettingsState(
                 initialEnabledVisual = false,
-                initialEnabledText = true
+                initialEnabledText = true,
+                initialEnableDynamicColor = true
             ),
             onConfigurePrecisionClick = {}
         )
