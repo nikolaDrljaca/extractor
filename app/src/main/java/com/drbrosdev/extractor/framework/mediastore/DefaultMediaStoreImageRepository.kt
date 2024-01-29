@@ -9,6 +9,8 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Size
 import arrow.fx.coroutines.parMap
+import com.drbrosdev.extractor.domain.model.MediaStoreImage
+import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.util.CONCURRENCY
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow

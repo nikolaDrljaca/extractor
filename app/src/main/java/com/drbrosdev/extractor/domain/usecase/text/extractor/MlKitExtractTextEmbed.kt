@@ -10,9 +10,9 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 
-class MlKitTextEmbedExtractor(
+class MlKitExtractTextEmbed(
     private val dispatcher: CoroutineDispatcher
-) : TextEmbedExtractor<InputImage> {
+) : ExtractTextEmbed<InputImage> {
     private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     override suspend fun execute(image: InputImage): Result<Embed.Text> {
         return withContext(dispatcher) {

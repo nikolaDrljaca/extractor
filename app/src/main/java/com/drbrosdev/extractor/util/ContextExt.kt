@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.framework.mediastore.MediaStoreImage
+import com.drbrosdev.extractor.domain.model.MediaStoreImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

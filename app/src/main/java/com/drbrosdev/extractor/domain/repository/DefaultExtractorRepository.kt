@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.domain.repository
 
+import com.drbrosdev.extractor.data.TransactionProvider
 import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
@@ -27,6 +28,7 @@ class DefaultExtractorRepository(
     private val textEmbeddingDao: TextEmbeddingDao,
     private val userEmbeddingDao: UserEmbeddingDao,
     private val imageEmbeddingsDao: ImageEmbeddingsDao,
+    private val txRunner: TransactionProvider
 ) : ExtractorRepository {
 
     override suspend fun deleteExtractionData(mediaImageId: Long) {
@@ -101,9 +103,11 @@ class DefaultExtractorRepository(
         }
 
         //NOTE: Ordering is important for relationships
-        extractionDao.insert(extractionEntity)
-        textEmbeddingDao.insert(textEntity)
-        visualEmbeddingDao.insertAll(visualEntities)
+        txRunner.transaction {
+            extractionDao.insert(extractionEntity)
+            textEmbeddingDao.insert(textEntity)
+            visualEmbeddingDao.insertAll(visualEntities)
+        }
     }
 
     override suspend fun createExtractionData(data: List<NewExtraction>) {
@@ -115,7 +119,6 @@ class DefaultExtractorRepository(
                 path = it.path
             )
         }
-        extractionDao.insertAll(extractionEntities)
 
         val textEmbeds = data.map {
             TextEmbeddingEntity(
@@ -123,7 +126,6 @@ class DefaultExtractorRepository(
                 value = it.textEmbed.value
             )
         }
-        textEmbeddingDao.insertAll(textEmbeds)
 
         val visualEmbeds = data.flatMap { create ->
             create.visualEmbeds.map {
@@ -133,6 +135,11 @@ class DefaultExtractorRepository(
                 )
             }
         }
-        visualEmbeddingDao.insertAll(visualEmbeds)
+
+        txRunner.transaction {
+            textEmbeddingDao.insertAll(textEmbeds)
+            extractionDao.insertAll(extractionEntities)
+            visualEmbeddingDao.insertAll(visualEmbeds)
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase
 
+import com.drbrosdev.extractor.domain.model.Token
 import kotlinx.coroutines.CoroutineDispatcher
 
 class ValidateToken(

@@ -4,24 +4,23 @@ import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
-import com.drbrosdev.extractor.domain.usecase.ExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
-import com.drbrosdev.extractor.domain.usecase.LoadMediaImageInfo
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
+import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.ValidateToken
-import com.drbrosdev.extractor.domain.usecase.extractor.BulkExtractor
-import com.drbrosdev.extractor.domain.usecase.extractor.DefaultExtractor
-import com.drbrosdev.extractor.domain.usecase.extractor.Extractor
-import com.drbrosdev.extractor.domain.usecase.image.create.DefaultInputImageFactory
-import com.drbrosdev.extractor.domain.usecase.image.create.InputImageFactory
-import com.drbrosdev.extractor.domain.usecase.image.search.DefaultImageSearchByKeyword
-import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByKeyword
-import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitVisualEmbedExtractor
-import com.drbrosdev.extractor.domain.usecase.label.extractor.VisualEmbedExtractor
-import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettingsProvider
-import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitTextEmbedExtractor
-import com.drbrosdev.extractor.domain.usecase.text.extractor.TextEmbedExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
+import com.drbrosdev.extractor.domain.usecase.image.create.DefaultCreateInputImage
+import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
+import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByKeyword
+import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
+import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
+import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitExtractTextEmbed
+import com.drbrosdev.extractor.domain.usecase.text.extractor.ExtractTextEmbed
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
@@ -32,55 +31,48 @@ import org.koin.dsl.module
 val useCaseModule = module {
 
     factory {
-        DefaultInputImageFactory(context = androidContext())
-    } bind InputImageFactory::class
+        DefaultCreateInputImage(context = androidContext())
+    } bind CreateInputImage::class
 
     factory {
-        MLKitVisualEmbedExtractor(
+        MLKitExtractVisualEmbeds(
             dispatcher = get(named(CoroutineModuleName.Default))
         )
-    } bind VisualEmbedExtractor::class
+    } bind ExtractVisualEmbeds::class
 
     factory {
-        MlKitTextEmbedExtractor(
+        MlKitExtractTextEmbed(
             dispatcher = get(named(CoroutineModuleName.Default))
         )
-    } bind TextEmbedExtractor::class
+    } bind ExtractTextEmbed::class
 
     factory {
-        DefaultExtractor(
-            visualEmbedExtractor = get(),
-            textEmbedExtractor = get(),
-            inputImageFactory = get(),
+        DefaultRunExtractor(
+            extractVisualEmbeds = get(),
+            extractTextEmbed = get(),
+            createInputImage = get(),
             dispatcher = get(named(CoroutineModuleName.Default)),
         )
-    } bind Extractor::class
+    } bind RunExtractor::class
 
     factory {
-        BulkExtractor(
+        RunBulkExtractor(
             dispatcher = get(named(CoroutineModuleName.Default)),
             mediaImageRepository = get(),
             extractorRepository = get<DefaultExtractorRepository>(),
-            extractor = get()
+            runExtractor = get()
         )
     }
 
     factory {
-        DefaultImageSearchByKeyword(
+        DefaultSearchImageByKeyword(
             dispatcher = get(named(CoroutineModuleName.IO)),
             imageEmbedDao = get(),
         )
-    } bind ImageSearchByKeyword::class
+    } bind SearchImageByKeyword::class
 
     factory {
-        LoadMediaImageInfo(
-            dispatcher = get(named(CoroutineModuleName.Default)),
-            mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>()
-        )
-    }
-
-    factory {
-        ExtractionProgress(
+        TrackExtractionProgress(
             dispatcher = get(named(CoroutineModuleName.Default)),
             extractionDao = get(),
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
@@ -138,7 +130,7 @@ val useCaseModule = module {
     }
 
     factory {
-        ExtractorHomeScreenSettingsProvider(
+        ProvideHomeScreenSettings(
             dispatcher = get(named(CoroutineModuleName.Default)),
             settingsDatastore = get()
         )

@@ -4,18 +4,18 @@ import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
+import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
-import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
 import com.drbrosdev.extractor.util.CONCURRENCY
 import com.drbrosdev.extractor.util.logError
 import com.drbrosdev.extractor.util.logInfo
 import com.drbrosdev.extractor.util.mediaImageUri
 import kotlinx.coroutines.CoroutineDispatcher
 
-class BulkExtractor(
+class RunBulkExtractor(
     private val dispatcher: CoroutineDispatcher,
     private val mediaImageRepository: MediaStoreImageRepository,
-    private val extractor: Extractor,
+    private val runExtractor: RunExtractor,
     private val extractorRepository: ExtractorRepository
 ) {
     suspend fun execute() {
@@ -41,7 +41,7 @@ class BulkExtractor(
                 ) {
                     //NOTE: Watch for the throw
                     val mediaStoreImage = mediaImages[it]!!
-                    val embeds = extractor.execute(mediaStoreImage.mediaImageUri())
+                    val embeds = runExtractor.execute(mediaStoreImage.mediaImageUri())
                         .onFailure { exception ->
                             logError(
                                 "Extraction failed for image",

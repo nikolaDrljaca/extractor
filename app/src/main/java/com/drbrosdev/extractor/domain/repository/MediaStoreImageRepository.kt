@@ -1,7 +1,8 @@
-package com.drbrosdev.extractor.framework.mediastore
+package com.drbrosdev.extractor.domain.repository
 
 import android.graphics.Bitmap
 import android.net.Uri
+import com.drbrosdev.extractor.domain.model.MediaStoreImage
 import kotlinx.coroutines.flow.Flow
 
 

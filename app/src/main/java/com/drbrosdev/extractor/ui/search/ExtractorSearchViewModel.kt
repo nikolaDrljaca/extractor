@@ -10,15 +10,15 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.usecase.ExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.ExtractionStatus
 import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
-import com.drbrosdev.extractor.domain.usecase.image.search.ImageSearchByKeyword
+import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
@@ -53,8 +53,8 @@ import kotlinx.coroutines.launch
 class ExtractorSearchViewModel(
     query: String,
     keywordType: KeywordType,
-    private val imageSearch: ImageSearchByKeyword,
-    private val extractionProgress: ExtractionProgress,
+    private val imageSearch: SearchImageByKeyword,
+    private val trackExtractionProgress: TrackExtractionProgress,
     private val albumRepository: AlbumRepository,
     private val stateHandle: SavedStateHandle,
     private val generateSuggestedKeywords: GenerateSuggestedKeywords,
@@ -101,7 +101,7 @@ class ExtractorSearchViewModel(
             SheetContent.SearchView
         )
 
-    private val progressJob = extractionProgress()
+    private val progressJob = trackExtractionProgress()
         .distinctUntilChanged()
         //handle create album button state
         .onEach {
@@ -255,14 +255,14 @@ class ExtractorSearchViewModel(
         _state.update { ExtractorSearchScreenUiState.Loading }
 
         viewModelScope.launch {
-            val searchQuery = ImageSearchByKeyword.Params(
+            val searchQuery = SearchImageByKeyword.Params(
                 query = searchViewState.query,
                 keywordType = searchViewState.keywordType,
                 dateRange = dateFilterState.dateRange(),
                 type = searchViewState.searchType
             )
 
-            val result = imageSearch.search(searchQuery).also {
+            val result = imageSearch.execute(searchQuery).also {
                 lastQuery.update { LastQuery(searchViewState.query, searchViewState.keywordType) }
             }
 
@@ -283,14 +283,14 @@ class ExtractorSearchViewModel(
         _state.update { ExtractorSearchScreenUiState.Loading }
 
         viewModelScope.launch {
-            val searchQuery = ImageSearchByKeyword.Params(
+            val searchQuery = SearchImageByKeyword.Params(
                 query = query,
                 keywordType = keywordType,
                 dateRange = null,
                 type = searchType
             )
 
-            val result = imageSearch.search(searchQuery).also {
+            val result = imageSearch.execute(searchQuery).also {
                 lastQuery.update { LastQuery(searchViewState.query, searchViewState.keywordType) }
             }
 

@@ -4,11 +4,11 @@ import android.content.Context
 import com.drbrosdev.extractor.domain.model.InputImageType
 import com.google.mlkit.vision.common.InputImage
 
-class DefaultInputImageFactory(
+class DefaultCreateInputImage(
     private val context: Context
-) : InputImageFactory {
+) : CreateInputImage {
 
-    override fun create(type: InputImageType): InputImage {
+    override fun execute(type: InputImageType): InputImage {
         return when (type) {
             is InputImageType.BitmapInputImage -> InputImage.fromBitmap(
                 type.bitmap,

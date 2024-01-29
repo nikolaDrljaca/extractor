@@ -13,12 +13,12 @@ import com.drbrosdev.extractor.util.toExtraction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-class DefaultImageSearchByKeyword(
+class DefaultSearchImageByKeyword(
     private val dispatcher: CoroutineDispatcher,
     private val imageEmbedDao: ImageEmbeddingsDao,
-) : ImageSearchByKeyword {
+) : SearchImageByKeyword {
 
-    override suspend fun search(params: ImageSearchByKeyword.Params): List<Extraction> =
+    override suspend fun execute(params: SearchImageByKeyword.Params): List<Extraction> =
         withContext(dispatcher) {
             val result = with(params) {
                 query

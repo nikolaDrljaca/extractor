@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.framework.mediastore
+package com.drbrosdev.extractor.domain.model
 
 import android.net.Uri
 import java.time.LocalDateTime

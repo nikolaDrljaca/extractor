@@ -4,15 +4,15 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.drbrosdev.extractor.data.dao.ExtractionDao
-import com.drbrosdev.extractor.domain.usecase.extractor.BulkExtractor
-import com.drbrosdev.extractor.framework.mediastore.MediaStoreImageRepository
+import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
+import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.util.logInfo
 import kotlin.time.measureTime
 
 class ExtractorWorker(
     context: Context,
     workerParameters: WorkerParameters,
-    private val extractor: BulkExtractor,
+    private val extractor: RunBulkExtractor,
     private val mediaImageRepository: MediaStoreImageRepository,
     private val extractionDao: ExtractionDao
 ) : CoroutineWorker(context, workerParameters) {

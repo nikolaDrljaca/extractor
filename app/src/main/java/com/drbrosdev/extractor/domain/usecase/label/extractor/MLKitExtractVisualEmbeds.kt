@@ -9,9 +9,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class MLKitVisualEmbedExtractor(
+class MLKitExtractVisualEmbeds(
     private val dispatcher: CoroutineDispatcher
-) : VisualEmbedExtractor<InputImage> {
+) : ExtractVisualEmbeds<InputImage> {
 
     private val options = ImageLabelerOptions.Builder()
         .setConfidenceThreshold(0.7f)

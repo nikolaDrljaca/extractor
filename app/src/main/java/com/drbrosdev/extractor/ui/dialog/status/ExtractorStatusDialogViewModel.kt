@@ -2,19 +2,19 @@ package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.domain.usecase.ExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.ExtractionStatus
+import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
+import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class ExtractorStatusDialogViewModel(
     private val spawnExtractorWork: SpawnExtractorWork,
-    private val extractionProgress: ExtractionProgress
+    private val trackExtractionProgress: TrackExtractionProgress
 ) : ViewModel() {
 
-    val state = extractionProgress().map {
+    val state = trackExtractionProgress().map {
         when (it) {
             is ExtractionStatus.Done -> ExtractorStatusDialogUiModel(
                 onDeviceCount = it.onDeviceCount,

@@ -7,7 +7,7 @@ import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
-import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettingsProvider
+import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.util.toPreview
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,7 @@ class ExtractorHomeViewModel(
     private val compileVisualAlbum: CompileVisualAlbum,
     private val compileTextAlbum: CompileTextAlbums,
     private val albumRepository: AlbumRepository,
-    private val homeScreenSettingsProvider: ExtractorHomeScreenSettingsProvider
+    private val homeScreenSettingsProvider: ProvideHomeScreenSettings
 ) : ViewModel() {
 
     val settings = homeScreenSettingsProvider()

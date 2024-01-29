@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.ui.album.ExtractorAlbumViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
@@ -33,7 +34,7 @@ val viewModelModule = module {
 
     viewModel {
         ExtractorImageViewModel(
-            loadMediaImageInfo = get()
+            mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>()
         )
     }
 
@@ -43,7 +44,7 @@ val viewModelModule = module {
             keywordType = it.get(),
             imageSearch = get(),
             stateHandle = get(),
-            extractionProgress = get(),
+            trackExtractionProgress = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             generateSuggestedKeywords = get(),
             spawnExtractorWork = get(),
@@ -62,7 +63,7 @@ val viewModelModule = module {
     viewModel {
         ExtractorStatusDialogViewModel(
             spawnExtractorWork = get(),
-            extractionProgress = get()
+            trackExtractionProgress = get()
         )
     }
 

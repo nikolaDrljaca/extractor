@@ -4,32 +4,32 @@ import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.InputImageType
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.usecase.image.create.InputImageFactory
-import com.drbrosdev.extractor.domain.usecase.label.extractor.VisualEmbedExtractor
-import com.drbrosdev.extractor.domain.usecase.text.extractor.TextEmbedExtractor
+import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
+import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.text.extractor.ExtractTextEmbed
 import com.drbrosdev.extractor.util.toUri
 import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
-class DefaultExtractor(
+class DefaultRunExtractor(
     private val dispatcher: CoroutineDispatcher,
-    private val visualEmbedExtractor: VisualEmbedExtractor<InputImage>,
-    private val textEmbedExtractor: TextEmbedExtractor<InputImage>,
-    private val inputImageFactory: InputImageFactory,
-) : Extractor {
+    private val extractVisualEmbeds: ExtractVisualEmbeds<InputImage>,
+    private val extractTextEmbed: ExtractTextEmbed<InputImage>,
+    private val createInputImage: CreateInputImage,
+) : RunExtractor {
 
     override suspend fun execute(mediaImageUri: MediaImageUri): Result<ImageEmbeds> {
         return withContext(dispatcher) {
-            val inputImage = inputImageFactory.create(InputImageType.UriInputImage(mediaImageUri.toUri()))
+            val inputImage = createInputImage.execute(InputImageType.UriInputImage(mediaImageUri.toUri()))
 
             val text = async {
-                textEmbedExtractor.execute(inputImage)
+                extractTextEmbed.execute(inputImage)
             }
 
             val labels = async {
-                visualEmbedExtractor.execute(inputImage)
+                extractVisualEmbeds.execute(inputImage)
             }
 
             val outText = text.await().getOrDefault(Embed.defaultTextEmbed)

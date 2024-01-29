@@ -6,9 +6,9 @@ import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 
 
-interface ImageSearchByKeyword {
+interface SearchImageByKeyword {
 
-    suspend fun search(params: Params): List<Extraction>
+    suspend fun execute(params: Params): List<Extraction>
 
     data class Params(
         val query: String,

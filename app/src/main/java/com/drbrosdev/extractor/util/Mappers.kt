@@ -19,7 +19,7 @@ import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.framework.mediastore.MediaStoreImage
+import com.drbrosdev.extractor.domain.model.MediaStoreImage
 
 
 fun MediaImageUri.toUri(): Uri = this.uri.toUri()

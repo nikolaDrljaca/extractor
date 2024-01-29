@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
  * @param settingsDatastore Global settings store.
  * @return [ExtractorHomeScreenSettings]
  */
-class ExtractorHomeScreenSettingsProvider(
+class ProvideHomeScreenSettings(
     private val dispatcher: CoroutineDispatcher,
     private val settingsDatastore: ExtractorSettingsDatastore
 ) {
