@@ -67,7 +67,7 @@ fun ExtractorButton(
             .then(modifier),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = Color.White,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
             disabledContentColor = Color.LightGray,
             disabledContainerColor = Color.Gray
         ),
@@ -88,7 +88,7 @@ fun OutlinedExtractorActionButton(
     content: @Composable (RowScope.() -> Unit)
 ) {
     val mainColor = if (isSystemInDarkTheme()) {
-        Color.White
+        MaterialTheme.colorScheme.onBackground
     } else {
         MaterialTheme.colorScheme.primary
     }

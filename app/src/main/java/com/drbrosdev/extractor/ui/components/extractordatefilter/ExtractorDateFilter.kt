@@ -59,6 +59,22 @@ fun ExtractorDateFilter(
         ExtractorDateFilterSelection.NONE -> Unit
     }
 
+    val startContentColor by animateColorAsState(
+        targetValue = when (state.startDate) {
+            None -> MaterialTheme.colorScheme.onPrimary
+            is Some -> Color.White
+        },
+        label = ""
+    )
+
+    val endContentColor by animateColorAsState(
+        targetValue = when (state.endDate) {
+            None -> MaterialTheme.colorScheme.onPrimary
+            is Some -> Color.White
+        },
+        label = ""
+    )
+
     val startCardColor by animateColorAsState(
         targetValue = when (state.startDate) {
             None -> Color.Transparent
@@ -69,7 +85,7 @@ fun ExtractorDateFilter(
 
     val startCardBorderColor by animateColorAsState(
         targetValue = when (state.startDate) {
-            None -> Color.White
+            None -> MaterialTheme.colorScheme.onPrimary
             is Some -> Color.Black
         },
         label = ""
@@ -85,7 +101,7 @@ fun ExtractorDateFilter(
 
     val endCardBorderColor by animateColorAsState(
         targetValue = when (state.endDate) {
-            None -> Color.White
+            None -> MaterialTheme.colorScheme.onPrimary
             is Some -> Color.Black
         },
         label = ""
@@ -93,9 +109,8 @@ fun ExtractorDateFilter(
 
     Column {
         Text(
-            text = "Date",
+            text = stringResource(R.string.date),
             style = MaterialTheme.typography.titleLarge.copy(
-                color = Color.White,
                 fontWeight = FontWeight.Normal
             )
         )
@@ -113,7 +128,8 @@ fun ExtractorDateFilter(
                 side = ExtractorDateFilterCardSide.LEFT,
                 dateAsString = state.startDate.getAsString(stringResource(id = R.string.start_date)),
                 containerColor = startCardColor,
-                borderColor = startCardBorderColor
+                borderColor = startCardBorderColor,
+                contentColor = startContentColor
             )
 
             ExtractorDateFilterCard(
@@ -123,13 +139,14 @@ fun ExtractorDateFilter(
                 side = ExtractorDateFilterCardSide.RIGHT,
                 dateAsString = state.endDate.getAsString(stringResource(id = R.string.end_date)),
                 containerColor = endCardColor,
-                borderColor = endCardBorderColor
+                borderColor = endCardBorderColor,
+                contentColor = endContentColor
             )
             
             Spacer(modifier = Modifier.width(4.dp))
 
             Surface(
-                color = Color.White.copy(alpha = 0.2f),
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f),
                 onClick = state::clearDates,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
@@ -138,7 +155,7 @@ fun ExtractorDateFilter(
                 Icon(
                     imageVector = Icons.Rounded.Refresh,
                     contentDescription = "Search Images",
-                    tint = Color.White.copy(alpha = 0.5f),
+                    tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
                     modifier = Modifier.padding(12.dp)
                 )
             }
@@ -158,7 +175,8 @@ private fun ExtractorDateFilterCard(
     dateAsString: String,
     side: ExtractorDateFilterCardSide,
     containerColor: Color = Color.Transparent,
-    borderColor: Color = Color.White
+    borderColor: Color = Color.White,
+    contentColor: Color
 ) {
     val shape = when (side) {
         ExtractorDateFilterCardSide.LEFT -> RoundedCornerShape(14.dp, 0.dp, 0.dp, 14.dp)
@@ -176,7 +194,7 @@ private fun ExtractorDateFilterCard(
         modifier = Modifier.then(modifier),
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
-            contentColor = Color.White
+            contentColor = contentColor
         ),
         onClick = onClick
     ) {
@@ -202,7 +220,11 @@ private fun ExtractorDateFilterCard(
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         Column {
-            ExtractorDateFilter()
+            ExtractorDateFilter(
+                state = ExtractorDateFilterState(
+                    initStart = Some(1L)
+                )
+            )
         }
     }
 }

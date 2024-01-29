@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,7 +57,7 @@ fun ExtractorSearchView(
             .then(modifier),
         shape = RoundedCornerShape(14.dp),
         color = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
         shadowElevation = 0.dp
     ) {
         Column(
@@ -69,7 +68,7 @@ fun ExtractorSearchView(
                 text = state.query,
                 onChange = state::updateQuery,
                 onDoneSubmit = onDone,
-                textColor = Color.White,
+                textColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .padding(textFieldPadding)
                     .fillMaxWidth(),
@@ -80,13 +79,14 @@ fun ExtractorSearchView(
                 onFilterChanged = {
                     state.updateKeywordType(it.toLabelType())
                 },
-                contentColor = Color.White,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 initial = state.initialLabelTypeIndex()
             )
 
             ExtractorSearchTypeSwitch(
                 selection = state.searchType,
-                onSelectionChanged = state::updateSearchType
+                onSelectionChanged = state::updateSearchType,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             )
         }
     }

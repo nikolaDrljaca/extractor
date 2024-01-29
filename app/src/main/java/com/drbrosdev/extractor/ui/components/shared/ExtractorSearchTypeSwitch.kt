@@ -62,7 +62,7 @@ fun ExtractorSearchTypeSwitch(
                     border = FilterChipDefaults.filterChipBorder(
                         enabled = true,
                         selected = selection == item,
-                        borderColor = Color.White
+                        borderColor = contentColor
                     )
                 )
             }

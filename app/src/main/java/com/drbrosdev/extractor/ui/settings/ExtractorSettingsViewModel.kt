@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.settings.ExtractorSettingsDatastore
 import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettingsState
+import com.drbrosdev.extractor.ui.components.extractorsettings.enableDynamicColorAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsettings.textEnabledAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsettings.visualEnabledAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,7 +22,8 @@ class ExtractorSettingsViewModel(
 
     val settingsState = ExtractorSettingsState(
         initialEnabledVisual = false,
-        initialEnabledText = false
+        initialEnabledText = false,
+        initialEnableDynamicColor = false
     )
 
     private val datastoreJob = settingsDatastore.extractorSettings
@@ -29,6 +31,7 @@ class ExtractorSettingsViewModel(
         .onEach {
             settingsState.updateEnabledTextAlbums(it.shouldShowTextAlbums)
             settingsState.updateEnabledVisualAlbums(it.shouldShowVisualAlbums)
+            settingsState.updateEnableDynamicColor(it.enableDynamicColors)
         }
         .launchIn(viewModelScope)
 
@@ -40,4 +43,7 @@ class ExtractorSettingsViewModel(
         .onEach { settingsDatastore.setShowTextAlbums(it) }
         .launchIn(viewModelScope)
 
+    private val updateDynamicColor = settingsState.enableDynamicColorAsFlow()
+        .onEach { settingsDatastore.setDynamicColor(it) }
+        .launchIn(viewModelScope)
 }

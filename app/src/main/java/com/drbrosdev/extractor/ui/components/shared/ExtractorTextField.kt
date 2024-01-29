@@ -23,10 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CombinedPreview
 
 @Composable
 fun ExtractorTextField(
@@ -61,7 +61,7 @@ fun ExtractorTextField(
         minLines = 1,
         maxLines = 2,
         readOnly = false,
-        textStyle = textStyle.copy(color = Color.White),
+        textStyle = textStyle.copy(color = textColor),
         placeholder = {
             Text(
                 text = stringResource(R.string.search_here),
@@ -92,21 +92,23 @@ fun ExtractorTextField(
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
             errorIndicatorColor = Color.Transparent,
-            cursorColor = Color.White,
+            cursorColor = textColor,
             selectionColors = TextSelectionColors(
-                backgroundColor = Color.Black.copy(alpha = 0.4f),
-                handleColor = Color.White
-            )
+                backgroundColor = textColor.copy(alpha = 0.4f),
+                handleColor = textColor
+            ),
+            focusedTextColor = MaterialTheme.colorScheme.onPrimary
         ),
     )
 }
 
-@Preview
+@CombinedPreview
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme {
         Column {
             ExtractorTextField(text = "", onChange = {}, onDoneSubmit = {})
+            ExtractorTextField(text = "sample", onChange = {}, onDoneSubmit = {})
         }
     }
 }

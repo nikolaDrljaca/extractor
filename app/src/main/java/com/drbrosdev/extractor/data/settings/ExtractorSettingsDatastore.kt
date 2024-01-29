@@ -26,13 +26,20 @@ class ExtractorSettingsDatastore(
             it[SHOW_TEXT] ?: ExtractorSettingsDefaults.showTextDefault
         }
 
+    private val enableDynamicColorsFlow: Flow<Boolean>
+        get() = settingsDatastore.data.map {
+            it[ENABLE_DYNAMIC_COLOR] ?: ExtractorSettingsDefaults.enableDynamicColors
+        }
+
     val extractorSettings: Flow<ExtractorSettings> = combine(
         showVisualAlbums,
-        showTextAlbums
-    ) { showVisual, showText ->
+        showTextAlbums,
+        enableDynamicColorsFlow
+    ) { showVisual, showText, enableDynamic ->
         ExtractorSettings(
             shouldShowVisualAlbums = showVisual,
             shouldShowTextAlbums = showText,
+            enableDynamicColors = enableDynamic
         )
     }
 
@@ -48,9 +55,16 @@ class ExtractorSettingsDatastore(
         }
     }
 
+    suspend fun setDynamicColor(value: Boolean) {
+        settingsDatastore.edit {
+            it[ENABLE_DYNAMIC_COLOR] = value
+        }
+    }
+
     private companion object {
         val SHOW_VISUAL = booleanPreferencesKey(name = "show_visual")
         val SHOW_TEXT = booleanPreferencesKey(name = "show_text")
+        val ENABLE_DYNAMIC_COLOR = booleanPreferencesKey(name = "enable_dynamic_color")
     }
 }
 

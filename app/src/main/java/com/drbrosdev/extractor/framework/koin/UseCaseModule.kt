@@ -9,18 +9,19 @@ import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.ValidateToken
-import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
-import com.drbrosdev.extractor.domain.usecase.image.create.DefaultCreateInputImage
 import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
+import com.drbrosdev.extractor.domain.usecase.image.create.DefaultCreateInputImage
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByKeyword
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
-import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
-import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitExtractTextEmbed
+import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
 import com.drbrosdev.extractor.domain.usecase.text.extractor.ExtractTextEmbed
+import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitExtractTextEmbed
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
@@ -131,6 +132,13 @@ val useCaseModule = module {
 
     factory {
         ProvideHomeScreenSettings(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            settingsDatastore = get()
+        )
+    }
+
+    factory {
+        ProvideMainActivitySettings(
             dispatcher = get(named(CoroutineModuleName.Default)),
             settingsDatastore = get()
         )
