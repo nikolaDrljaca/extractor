@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.framework.koin
 
+import com.drbrosdev.extractor.MainViewModel
 import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
@@ -102,6 +103,12 @@ val viewModelModule = module {
             savedStateHandle = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             stringProvider = get()
+        )
+    }
+
+    viewModel {
+        MainViewModel(
+            mainSettings = get()
         )
     }
 }
