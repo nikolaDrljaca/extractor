@@ -28,7 +28,7 @@ import com.drbrosdev.extractor.util.CombinedPreview
 @Composable
 fun ExtractorSettings(
     modifier: Modifier = Modifier,
-    onConfigurePrecisionClick: () -> Unit,
+    onPeriodicSyncClick: () -> Unit,
     state: ExtractorSettingsState
 ) {
     Column(
@@ -71,12 +71,12 @@ fun ExtractorSettings(
 
         ExtractorSettingsItem(
             itemPosition = ExtractorSettingsItemPosition.LAST,
-            onClick = onConfigurePrecisionClick,
+            onClick = onPeriodicSyncClick,
             trailingSlot = {
                 Icon(imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null)
             }
         ) {
-            Text(text = stringResource(R.string.configure_precision))
+            Text(text = stringResource(R.string.periodic_sync))
         }
     }
 }
@@ -167,7 +167,7 @@ private fun CurrentPreview() {
                 initialEnabledText = true,
                 initialEnableDynamicColor = true
             ),
-            onConfigurePrecisionClick = {}
+            onPeriodicSyncClick = {}
         )
     }
 }

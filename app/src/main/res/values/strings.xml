@@ -108,4 +108,8 @@
     <string name="snack_view">View</string>
     <string name="date">Date</string>
     <string name="use_material_you_theme">Use Material You Theme</string>
+    <string name="periodic_sync">Periodic Sync</string>
+    <string name="periodic_first_explainer">Enable Periodic Sync to allow the app to scan your media based on a certain period. This will reduce the amount of Out of Sync warnings.</string>
+    <string name="periodic_second_explainer">Sync runs every hour, with a flexible period of 15 minutes. It considers the devices current status.\n\nThis takes into account the battery life, processing power available and heaviness of use.</string>
+    <string name="use_periodic_sync">Use Periodic Sync</string>
 </resources>

@@ -48,7 +48,7 @@ import com.drbrosdev.extractor.util.applicationIconBitmap
 fun ExtractorSettingsScreen(
     onBack: () -> Unit,
     onLicenseClick: (link: String) -> Unit,
-    onConfigurePrecision: () -> Unit,
+    onPeriodicSyncClick: () -> Unit,
     onAboutLink: (AboutLink) -> Unit,
     modifier: Modifier = Modifier,
     settingsState: ExtractorSettingsState
@@ -94,7 +94,7 @@ fun ExtractorSettingsScreen(
                 ) {
                     when (it) {
                         SettingsTabItem.Settings -> ExtractorSettings(
-                            onConfigurePrecisionClick = onConfigurePrecision,
+                            onPeriodicSyncClick = onPeriodicSyncClick,
                             state = settingsState
                         )
 
