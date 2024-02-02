@@ -4,8 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -48,6 +52,7 @@ fun ExtractorStillIndexing(
 
 @Composable
 fun ExtractorEmptySearch(
+    onReset: () -> Unit,
     modifier: Modifier = Modifier,
     contentColor: Color = Color.Gray
 ) {
@@ -73,7 +78,38 @@ fun ExtractorEmptySearch(
                 modifier = Modifier.width(IntrinsicSize.Max),
                 textAlign = TextAlign.Center
             )
+            Spacer(modifier = Modifier.height(24.dp))
+            ExtractorResetSearch(onClick = onReset)
         }
+    }
+}
+
+@Composable
+fun ExtractorResetSearch(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+
+    Column(
+        modifier = Modifier
+            .then(modifier),
+        verticalArrangement = Arrangement.spacedBy(
+            8.dp,
+            alignment = Alignment.CenterVertically
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ExtractorTextButton(
+            onClick = onClick,
+        ) {
+            Icon(imageVector = Icons.Rounded.Refresh, contentDescription = "")
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = stringResource(R.string.reset))
+        }
+        Text(
+            text = stringResource(R.string.reload_suggestions),
+            style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray)
+        )
     }
 }
 
@@ -82,10 +118,12 @@ fun ExtractorEmptySearch(
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ExtractorStillIndexing()
-            ExtractorEmptySearch()
+            ExtractorEmptySearch(onReset = {})
+            ExtractorResetSearch(onClick = { /*TODO*/ })
         }
     }
 }

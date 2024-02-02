@@ -147,7 +147,9 @@ fun ExtractorSearchScreen(
                             .padding(horizontal = 12.dp),
                     )
 
-                    is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch()
+                    is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch(
+                        onReset = onResetSearch
+                    )
 
                     is ExtractorSearchScreenUiState.Content ->
                         ExtractorImageGrid(
