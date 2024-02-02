@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,8 +38,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -46,13 +47,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.AlbumPreview
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.ui.components.shared.AnimatedBorderContent
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextButton
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
@@ -81,6 +80,7 @@ fun ExtractorCategoryView(
             modifier = Modifier
                 .padding(bottom = 6.dp)
                 .padding(contentPadding)
+                .height(IntrinsicSize.Max)
                 .fillMaxWidth()
         ) {
             Text(
@@ -92,6 +92,18 @@ fun ExtractorCategoryView(
                 state is ExtractorCategoryViewState.Content && category == ExtractorAlbumsViewDefaults.Category.USER -> {
                     ExtractorTextButton(onClick = onViewAllClicked) {
                         Text(text = stringResource(R.string.album_view_all))
+                    }
+                }
+
+                state.isLoading -> {
+                    Box(modifier = Modifier.padding(12.dp)) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(26.dp),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            strokeCap = StrokeCap.Round,
+                            trackColor = Color.Transparent
+                        )
                     }
                 }
 
@@ -120,22 +132,13 @@ fun ExtractorCategoryView(
                     items = it.albums,
                 )
 
-                ExtractorCategoryViewState.Initial -> ExtractorCategoryInitialView(
+                is ExtractorCategoryViewState.Initial -> ExtractorCategoryInitialView(
                     modifier = Modifier.padding(contentPadding),
                     onInitClick = onInitClick,
                     category = category
                 )
-
-                ExtractorCategoryViewState.Loading -> ExtractorCategoryLoadingView(
-                    modifier = Modifier.padding(contentPadding),
-                )
-
-                ExtractorCategoryViewState.Empty -> ExtractorCategoryEmptyView(
-                    modifier = Modifier.padding(contentPadding),
-                )
             }
         }
-
     }
 }
 
@@ -201,69 +204,6 @@ private fun ExtractorCategoryInitialView(
     }
 }
 
-@Composable
-private fun ExtractorCategoryLoadingView(
-    modifier: Modifier = Modifier,
-) {
-    AnimatedBorderContent(
-        shape = RoundedCornerShape(14.dp),
-        gradient = Brush.sweepGradient(
-            listOf(
-                MaterialTheme.colorScheme.background,
-                MaterialTheme.colorScheme.primary
-            )
-        ),
-        animationDuration = 5000
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(130.dp)
-                .then(modifier),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(id = R.string.loading),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Composable
-private fun ExtractorCategoryEmptyView(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = Modifier
-            .requiredHeight(IMAGE_SIZE.dp)
-            .fillMaxWidth()
-            .then(modifier),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(
-                space = 12.dp,
-                alignment = Alignment.CenterVertically
-            ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "\uD83D\uDE41",
-                textAlign = TextAlign.Center,
-                modifier = Modifier.width(IntrinsicSize.Max),
-                fontSize = 24.sp,
-            )
-            Text(
-                text = stringResource(R.string.oops_no_albums_found),
-                color = Color.Gray,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.width(IntrinsicSize.Max),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -272,7 +212,6 @@ private fun ExtractorCategoryContentView(
     onAlbumPreviewClick: (Long) -> Unit,
     items: List<AlbumPreview>
 ) {
-
     LazyRow(
         modifier = Modifier
             .requiredHeight(IMAGE_SIZE.dp)
@@ -308,7 +247,9 @@ private fun AlbumThumbnailView(
     val scaleSize = size * 2
     val shape = RoundedCornerShape(12.dp)
     Box(
-        modifier = Modifier.clip(shape).then(sizeModifier)
+        modifier = Modifier
+            .clip(shape)
+            .then(sizeModifier)
     ) {
         AsyncImage(
             modifier = Modifier
@@ -363,7 +304,7 @@ private fun CurrentPreview() {
             ) {
                 ExtractorCategoryView(
                     onViewAllClicked = { },
-                    state = ExtractorCategoryViewState.Content(albums = items),
+                    state = ExtractorCategoryViewState.Content(albums = items, isLoading = false),
                     onAlbumPreviewClick = {},
                     category = ExtractorAlbumsViewDefaults.Category.TEXT,
                     onInitClick = {}
@@ -372,24 +313,8 @@ private fun CurrentPreview() {
                 ExtractorCategoryView(
                     onViewAllClicked = { },
                     onAlbumPreviewClick = {},
-                    state = ExtractorCategoryViewState.Initial,
+                    state = ExtractorCategoryViewState.Initial(isLoading = true),
                     category = ExtractorAlbumsViewDefaults.Category.USER,
-                    onInitClick = {}
-                )
-
-                ExtractorCategoryView(
-                    onViewAllClicked = { },
-                    onAlbumPreviewClick = {},
-                    state = ExtractorCategoryViewState.Loading,
-                    category = ExtractorAlbumsViewDefaults.Category.VISUAL,
-                    onInitClick = {}
-                )
-
-                ExtractorCategoryView(
-                    onViewAllClicked = { },
-                    onAlbumPreviewClick = {},
-                    state = ExtractorCategoryViewState.Empty,
-                    category = ExtractorAlbumsViewDefaults.Category.VISUAL,
                     onInitClick = {}
                 )
             }

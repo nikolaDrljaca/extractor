@@ -3,16 +3,16 @@ package com.drbrosdev.extractor.ui.components.categoryview
 import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.AlbumPreview
 
-@Immutable
-sealed interface ExtractorCategoryViewState {
+sealed class ExtractorCategoryViewState {
+    abstract val isLoading: Boolean
 
-    data object Loading : ExtractorCategoryViewState
+    data class Initial(
+        override val isLoading: Boolean = false
+    ) : ExtractorCategoryViewState()
 
-    data object Initial : ExtractorCategoryViewState
-
-    data object Empty: ExtractorCategoryViewState
-
+    @Immutable
     data class Content(
         val albums: List<AlbumPreview>,
-    ) : ExtractorCategoryViewState
+        override val isLoading: Boolean
+    ) : ExtractorCategoryViewState()
 }

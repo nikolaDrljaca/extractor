@@ -74,9 +74,9 @@ private fun SearchScreenPreview() {
             ExtractorHomeScreen(
                 onSyncClick = {},
                 onBack = {},
-                visualAlbums = ExtractorCategoryViewState.Initial,
-                userAlbums = ExtractorCategoryViewState.Initial,
-                textAlbums = ExtractorCategoryViewState.Initial,
+                visualAlbums = ExtractorCategoryViewState.Initial(),
+                userAlbums = ExtractorCategoryViewState.Initial(),
+                textAlbums = ExtractorCategoryViewState.Initial(),
                 settings = ExtractorHomeScreenSettings(),
                 onInitTextPreview = {},
                 onInitUserPreviews = {},

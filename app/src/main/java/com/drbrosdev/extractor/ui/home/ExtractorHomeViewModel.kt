@@ -11,10 +11,13 @@ import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.util.toPreview
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ExtractorHomeViewModel(
@@ -24,6 +27,8 @@ class ExtractorHomeViewModel(
     private val albumRepository: AlbumRepository,
     private val homeScreenSettingsProvider: ProvideHomeScreenSettings
 ) : ViewModel() {
+    private val loadingTextAlbum = MutableStateFlow(false)
+    private val loadingVisualAlbum = MutableStateFlow(false)
 
     val settings = homeScreenSettingsProvider()
         .stateIn(
@@ -34,58 +39,73 @@ class ExtractorHomeViewModel(
 
     val textAlbums = albumRepository
         .getCommonTextAlbumsAsFlow()
-        .map { albums ->
+        .combine(loadingTextAlbum) { albums, loading ->
             when {
-                albums.isEmpty() -> ExtractorCategoryViewState.Initial
-                else -> ExtractorCategoryViewState.Content(albums = albums.map { it.toPreview() })
+                loading && albums.isEmpty() -> ExtractorCategoryViewState.Initial(true)
+                albums.isEmpty() -> ExtractorCategoryViewState.Initial()
+                else -> ExtractorCategoryViewState.Content(
+                    albums = albums.map { it.toPreview() },
+                    isLoading = loading
+                )
             }
         }
         .flowOn(Dispatchers.Default)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
-            ExtractorCategoryViewState.Initial
+            ExtractorCategoryViewState.Initial()
         )
 
     val visualAlbums = albumRepository
         .getCommonVisualAlbumsAsFlow()
-        .map { albums ->
+        .combine(loadingVisualAlbum) { albums, loading ->
             when {
-                albums.isEmpty() -> ExtractorCategoryViewState.Initial
-                else -> ExtractorCategoryViewState.Content(albums = albums.map { it.toPreview() })
+                loading && albums.isEmpty() -> ExtractorCategoryViewState.Initial(true)
+                albums.isEmpty() -> ExtractorCategoryViewState.Initial()
+                else -> ExtractorCategoryViewState.Content(
+                    albums = albums.map { it.toPreview() },
+                    isLoading = loading
+                )
             }
         }
         .flowOn(Dispatchers.Default)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
-            ExtractorCategoryViewState.Initial
+            ExtractorCategoryViewState.Initial(true)
         )
 
     val userAlbums = albumRepository
         .getAllUserAlbumsAsFlow()
         .map {
             when {
-                it.isEmpty() -> ExtractorCategoryViewState.Initial
-                else -> ExtractorCategoryViewState.Content(albums = it.map { album -> album.toPreview() })
+                it.isEmpty() -> ExtractorCategoryViewState.Initial()
+                else -> ExtractorCategoryViewState.Content(
+                    albums = it.map { album -> album.toPreview() },
+                    isLoading = false
+                )
             }
         }
         .flowOn(Dispatchers.Default)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
-            ExtractorCategoryViewState.Initial
+            ExtractorCategoryViewState.Initial()
         )
 
     fun compileVisualAlbums() {
         viewModelScope.launch {
+            loadingVisualAlbum.update { true }
             compileVisualAlbum()
+            loadingVisualAlbum.update { false }
         }
     }
 
     fun compileTextAlbums() {
         viewModelScope.launch {
+            loadingTextAlbum.update { true }
             compileTextAlbum()
+            loadingTextAlbum.update { false }
         }
     }
 }
