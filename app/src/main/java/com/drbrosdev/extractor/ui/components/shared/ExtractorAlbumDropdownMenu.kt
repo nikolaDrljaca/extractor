@@ -50,7 +50,7 @@ fun ExtractorAlbumDropdownMenu(
 
         DropdownMenu(
             expanded = isDropdownOpen,
-            onDismissRequest = { isDropdownOpen = false }
+            onDismissRequest = { isDropdownOpen = false },
         ) {
             DropdownMenuItem(
                 text = { Text(text = stringResource(R.string.dropdown_share_all)) },

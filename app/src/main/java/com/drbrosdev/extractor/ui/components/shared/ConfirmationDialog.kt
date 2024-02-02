@@ -4,7 +4,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -40,7 +41,10 @@ fun ConfirmationDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = { onAction(ConfirmationDialogActions.Deny) }
+                onClick = { onAction(ConfirmationDialogActions.Deny) },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
             ) {
                 Text(text = stringResource(R.string.confirm_dialog_deny))
             }
@@ -69,13 +73,14 @@ data class ConfirmationDialogColors(
 )
 
 object ConfirmationDialogDefaults {
+    const val iconSize = 36
 
     @Composable
     fun colors(
-        containerColor: Color = AlertDialogDefaults.containerColor,
-        iconContentColor: Color = AlertDialogDefaults.iconContentColor,
-        titleContentColor: Color = AlertDialogDefaults.titleContentColor,
-        textContentColor: Color = AlertDialogDefaults.textContentColor
+        containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+        iconContentColor: Color = MaterialTheme.colorScheme.primary,
+        titleContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
     ): ConfirmationDialogColors {
         return ConfirmationDialogColors(
             containerColor = containerColor,
@@ -90,7 +95,7 @@ object ConfirmationDialogDefaults {
         androidx.compose.material3.Icon(
             imageVector = Icons.Outlined.Info,
             contentDescription = "",
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier.size(iconSize.dp)
         )
     }
 

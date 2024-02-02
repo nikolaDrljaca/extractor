@@ -47,6 +47,7 @@ import com.drbrosdev.extractor.ui.components.shared.DragHandle
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorStillIndexing
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
@@ -199,7 +200,8 @@ fun ExtractorSearchScreen(
 
             SnackbarHost(
                 hostState = snackbarHostState,
-                modifier = Modifier.layoutId(ViewIds.SNACKBAR)
+                modifier = Modifier.layoutId(ViewIds.SNACKBAR),
+                snackbar = { ExtractorSnackbar(snackbarData = it) }
             )
         }
     }

@@ -47,9 +47,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
-import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import kotlinx.coroutines.flow.collectLatest
@@ -137,7 +138,8 @@ fun ExtractorAlbumsScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
-                .padding(bottom = 8.dp)
+                .padding(bottom = 8.dp),
+            snackbar = { ExtractorSnackbar(snackbarData = it) }
         )
     }
 }

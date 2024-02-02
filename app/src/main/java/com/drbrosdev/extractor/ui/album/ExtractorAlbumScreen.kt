@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +35,11 @@ import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGr
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialog
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
+import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogDefaults
 import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumDropdownMenu
 import com.drbrosdev.extractor.ui.components.shared.ExtractorDropdownAction
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
@@ -67,7 +69,13 @@ fun ExtractorAlbumScreen(
         is ExtractorAlbumScreenState.Content -> {
             if (state.isConfirmDeleteShown) {
                 ConfirmationDialog(
-                    icon = { Icon(imageVector = Icons.Rounded.Delete, contentDescription = "") },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Delete,
+                            contentDescription = "",
+                            modifier = Modifier.size(ConfirmationDialogDefaults.iconSize.dp)
+                        )
+                    },
                     onAction = onDeleteDialogAction
                 ) {
                     Text(text = stringResource(R.string.album_delete_perm))
@@ -76,7 +84,6 @@ fun ExtractorAlbumScreen(
 
             if (state.isConfirmShareShown) {
                 ConfirmationDialog(
-                    icon = { Icon(imageVector = Icons.Rounded.Info, contentDescription = null) },
                     onAction = onShareDialogAction
                 ) {
                     Text(
@@ -125,7 +132,8 @@ fun ExtractorAlbumScreen(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .navigationBarsPadding()
-                        .padding(bottom = 64.dp)
+                        .padding(bottom = 64.dp),
+                    snackbar = { ExtractorSnackbar(snackbarData = it) }
                 )
             }
         }
