@@ -53,7 +53,7 @@ class ExtractorHomeViewModel(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
-            ExtractorCategoryViewState.Initial()
+            ExtractorCategoryViewState.Initial(true)
         )
 
     val visualAlbums = albumRepository
