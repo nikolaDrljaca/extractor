@@ -153,7 +153,7 @@ fun ExtractorAlbumScreen(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .navigationBarsPadding()
-                        .padding(bottom = 64.dp),
+                        .padding(bottom = 64.dp + bottomPadding),
                     snackbar = { ExtractorSnackbar(snackbarData = it) }
                 )
 
