@@ -19,7 +19,7 @@ import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
-import com.drbrosdev.extractor.ui.components.shared.ExtractorDropdownAction
+import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumBottomSheetAction
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -65,20 +65,17 @@ data class ExtractorAlbumNavTarget(
             state = state,
             imageGridState = viewModel.gridState,
             snackbarHostState = snackbarHostState,
-            onDropdownAction = { action ->
-                when (action) {
-                    ExtractorDropdownAction.Delete -> {
-                        viewModel.onDeleteAction()
-                    }
-
-                    ExtractorDropdownAction.Share -> {
-                        viewModel.onShareAction {
-                            context.launchShareIntent(viewModel.imageUris.value)
-                        }
+            onBack = { navController.pop() },
+            onFabClick = viewModel::onShowBottomSheet,
+            onBottomSheetAction = {
+                when (it) {
+                    ExtractorAlbumBottomSheetAction.Delete -> viewModel.onBottomSheetDelete()
+                    ExtractorAlbumBottomSheetAction.Dismiss -> viewModel.onDismissDialog()
+                    ExtractorAlbumBottomSheetAction.Share -> viewModel.onShareAction {
+                        context.launchShareIntent(viewModel.imageUris.value)
                     }
                 }
             },
-            onBack = { navController.pop() },
             onDeleteDialogAction = {
                 when (it) {
                     ConfirmationDialogActions.Confirm -> {
@@ -94,11 +91,11 @@ data class ExtractorAlbumNavTarget(
                 when (it) {
                     ConfirmationDialogActions.Confirm -> {
                         context.launchShareIntent(viewModel.imageUris.value)
-                        viewModel.onDismissShareDialog()
+                        viewModel.onDismissDialog()
                     }
 
-                    ConfirmationDialogActions.Deny -> viewModel.onDismissShareDialog()
-                    ConfirmationDialogActions.Dismiss -> viewModel.onDismissShareDialog()
+                    ConfirmationDialogActions.Deny -> viewModel.onDismissDialog()
+                    ConfirmationDialogActions.Dismiss -> viewModel.onDismissDialog()
                 }
             },
             onMultiselectAction = {
@@ -143,7 +140,8 @@ private fun CurrentPreview() {
                 AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(12L)),
                 AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(13L)),
             )
-        )
+        ),
+        dialogSelection = ExtractorAlbumDialogSelection.None
     )
     ExtractorTheme(dynamicColor = false) {
         Surface(
@@ -154,11 +152,12 @@ private fun CurrentPreview() {
                 imageGridState = ExtractorImageGridState(),
                 snackbarHostState = SnackbarHostState(),
                 onImageClick = {},
-                onDropdownAction = {},
                 onBack = {},
                 onDeleteDialogAction = {},
                 onShareDialogAction = {},
                 onMultiselectAction = {},
+                onBottomSheetAction = {},
+                onFabClick = {}
             )
         }
     }

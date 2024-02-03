@@ -33,8 +33,8 @@ class ExtractorAlbumViewModel(
     private val _imageUris = MutableStateFlow(emptyList<Uri>())
     val imageUris = _imageUris.asStateFlow()
 
-    private val confirmDeleteDialog = MutableStateFlow(false)
-    private val confirmShareDialog = MutableStateFlow(false)
+    private val dialogSelection =
+        MutableStateFlow<ExtractorAlbumDialogSelection>(ExtractorAlbumDialogSelection.None)
 
     private val albumFlow = albumRepository.findAlbumByIdAsFlow(albumId)
         .filterNotNull()
@@ -48,14 +48,12 @@ class ExtractorAlbumViewModel(
 
     val state = combine(
         albumFlow,
-        confirmDeleteDialog,
-        confirmShareDialog,
+        dialogSelection,
         shouldShowSelectAction
-    ) { album, showDelete, showShare, showSelectBar ->
+    ) { album, dialog, showSelectBar ->
         ExtractorAlbumScreenState.Content(
             album = album,
-            isConfirmDeleteShown = showDelete,
-            isConfirmShareShown = showShare,
+            dialogSelection = dialog,
             shouldShowSelectBar = showSelectBar
         )
     }
@@ -69,26 +67,22 @@ class ExtractorAlbumViewModel(
         entries.map { it.uri.toUri() }
     }
 
-    fun onDeleteAction() = confirmDeleteDialog.update { true }
+    fun onDeleteAction() = dialogSelection.update { ExtractorAlbumDialogSelection.ConfirmDelete }
 
-    fun onDismissDialog() = confirmDeleteDialog.update { false }
+    fun onDismissDialog() = dialogSelection.update { ExtractorAlbumDialogSelection.None }
 
     fun onDeleteAlbum() {
         viewModelScope.launch {
-            confirmDeleteDialog.update { false }
+            dialogSelection.update { ExtractorAlbumDialogSelection.None }
             albumRepository.deleteAlbumById(albumId)
         }
     }
 
-    fun onDismissShareDialog() {
-        confirmShareDialog.update { false }
-    }
-
     fun onShareAction(action: () -> Unit) {
         when {
-            _imageUris.value.size > 30 -> confirmShareDialog.update { true }
+            _imageUris.value.size > 30 -> dialogSelection.update { ExtractorAlbumDialogSelection.ConfirmShare }
             else -> {
-                confirmShareDialog.update { false }
+                dialogSelection.update { ExtractorAlbumDialogSelection.None }
                 action()
             }
         }
@@ -125,5 +119,13 @@ class ExtractorAlbumViewModel(
         }.invokeOnCompletion {
             onComplete()
         }
+    }
+
+    fun onBottomSheetDelete() {
+        dialogSelection.update { ExtractorAlbumDialogSelection.ConfirmDelete }
+    }
+
+    fun onShowBottomSheet() {
+        dialogSelection.update { ExtractorAlbumDialogSelection.BottomSheet }
     }
 }

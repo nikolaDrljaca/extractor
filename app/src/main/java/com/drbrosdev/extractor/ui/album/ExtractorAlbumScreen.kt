@@ -7,14 +7,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -36,8 +41,8 @@ import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialog
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogDefaults
-import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumDropdownMenu
-import com.drbrosdev.extractor.ui.components.shared.ExtractorDropdownAction
+import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumActionBottomSheet
+import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumBottomSheetAction
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
@@ -50,8 +55,9 @@ fun ExtractorAlbumScreen(
     onImageClick: (index: Int) -> Unit,
     onDeleteDialogAction: (ConfirmationDialogActions) -> Unit,
     onShareDialogAction: (ConfirmationDialogActions) -> Unit,
-    onDropdownAction: (ExtractorDropdownAction) -> Unit,
+    onBottomSheetAction: (ExtractorAlbumBottomSheetAction) -> Unit,
     onBack: () -> Unit,
+    onFabClick: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
     snackbarHostState: SnackbarHostState,
     state: ExtractorAlbumScreenState,
@@ -64,36 +70,52 @@ fun ExtractorAlbumScreen(
         }
     }
 
+    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
     when (state) {
         ExtractorAlbumScreenState.Loading -> ExtractorAlbumScreenLoading()
         is ExtractorAlbumScreenState.Content -> {
-            if (state.isConfirmDeleteShown) {
-                ConfirmationDialog(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Delete,
-                            contentDescription = "",
-                            modifier = Modifier.size(ConfirmationDialogDefaults.iconSize.dp)
+            when (state.dialogSelection) {
+                ExtractorAlbumDialogSelection.BottomSheet -> {
+                    ExtractorAlbumActionBottomSheet(onAction = onBottomSheetAction)
+                }
+
+                ExtractorAlbumDialogSelection.ConfirmDelete -> {
+                    ConfirmationDialog(
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Delete,
+                                contentDescription = "",
+                                modifier = Modifier.size(ConfirmationDialogDefaults.iconSize.dp)
+                            )
+                        },
+                        onAction = onDeleteDialogAction
+                    ) {
+                        Text(text = stringResource(R.string.album_delete_perm))
+                    }
+                }
+
+                ExtractorAlbumDialogSelection.ConfirmShare -> {
+                    ConfirmationDialog(
+                        onAction = onShareDialogAction
+                    ) {
+                        Text(
+                            text = stringResource(
+                                R.string.too_many_images,
+                                state.album.entries.size
+                            ),
+                            textAlign = TextAlign.Center
                         )
-                    },
-                    onAction = onDeleteDialogAction
-                ) {
-                    Text(text = stringResource(R.string.album_delete_perm))
+                    }
                 }
+
+                ExtractorAlbumDialogSelection.None -> Unit
             }
 
-            if (state.isConfirmShareShown) {
-                ConfirmationDialog(
-                    onAction = onShareDialogAction
-                ) {
-                    Text(
-                        text = stringResource(R.string.too_many_images, state.album.entries.size),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
                 ExtractorImageGrid(
                     onClick = {
                         onImageClick(it)
@@ -107,7 +129,6 @@ fun ExtractorAlbumScreen(
                     state = extractorTopBarState.value,
                     centerSlot = {
                         AlbumHeader(
-                            onDropdownAction = onDropdownAction,
                             onBack = onBack,
                             keyword = state.album.keyword,
                             metadata = state.metadata
@@ -135,6 +156,15 @@ fun ExtractorAlbumScreen(
                         .padding(bottom = 64.dp),
                     snackbar = { ExtractorSnackbar(snackbarData = it) }
                 )
+
+                FloatingActionButton(
+                    onClick = onFabClick,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 32.dp + bottomPadding, end = 32.dp)
+                ) {
+                    Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "")
+                }
             }
         }
     }
@@ -160,7 +190,6 @@ private fun ExtractorAlbumScreenLoading(
 @Composable
 private fun AlbumHeader(
     modifier: Modifier = Modifier,
-    onDropdownAction: (ExtractorDropdownAction) -> Unit,
     onBack: () -> Unit,
     keyword: String,
     metadata: String
@@ -187,7 +216,5 @@ private fun AlbumHeader(
                 style = MaterialTheme.typography.labelMedium.copy(color = Color.Gray)
             )
         }
-
-        ExtractorAlbumDropdownMenu(onAction = onDropdownAction)
     }
 }

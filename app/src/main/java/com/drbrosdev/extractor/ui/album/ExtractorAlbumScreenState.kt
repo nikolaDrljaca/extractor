@@ -8,8 +8,7 @@ sealed interface ExtractorAlbumScreenState {
     @Immutable
     data class Content(
         val album: Album,
-        val isConfirmDeleteShown: Boolean = false,
-        val isConfirmShareShown: Boolean = false,
+        val dialogSelection: ExtractorAlbumDialogSelection,
         val shouldShowSelectBar: Boolean = false
     ) : ExtractorAlbumScreenState {
         val metadata =
@@ -22,4 +21,15 @@ sealed interface ExtractorAlbumScreenState {
 fun ExtractorAlbumScreenState.getAlbum() = when (this) {
     is ExtractorAlbumScreenState.Content -> this.album
     ExtractorAlbumScreenState.Loading -> error("Accessing album outside of content state.")
+}
+
+sealed interface ExtractorAlbumDialogSelection {
+
+    data object None : ExtractorAlbumDialogSelection
+
+    data object ConfirmShare: ExtractorAlbumDialogSelection
+
+    data object ConfirmDelete: ExtractorAlbumDialogSelection
+
+    data object BottomSheet: ExtractorAlbumDialogSelection
 }
