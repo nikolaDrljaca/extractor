@@ -157,13 +157,19 @@ fun ExtractorAlbumScreen(
                     snackbar = { ExtractorSnackbar(snackbarData = it) }
                 )
 
-                FloatingActionButton(
-                    onClick = onFabClick,
+                AnimatedVisibility(
+                    visible = !state.shouldShowSelectBar,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(bottom = 32.dp + bottomPadding, end = 32.dp)
                 ) {
-                    Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "")
+                    FloatingActionButton(
+                        onClick = onFabClick,
+                    ) {
+                        Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "")
+                    }
                 }
             }
         }
