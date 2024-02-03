@@ -9,11 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.drbrosdev.extractor.framework.navigation.LocalBottomSheetNavController
+import com.drbrosdev.extractor.framework.navigation.LocalNavController
+import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.LocalBottomSheetNavController
-import com.drbrosdev.extractor.util.LocalNavController
-import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchEditIntent
 import com.drbrosdev.extractor.util.launchShareIntent

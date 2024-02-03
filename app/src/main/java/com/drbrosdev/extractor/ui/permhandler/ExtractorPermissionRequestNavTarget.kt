@@ -6,9 +6,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.drbrosdev.extractor.framework.navigation.LocalNavController
+import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
-import com.drbrosdev.extractor.util.LocalNavController
-import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.findActivity
 import com.drbrosdev.extractor.util.openAppSettings
 import dev.olshevski.navigation.reimagined.replaceAll

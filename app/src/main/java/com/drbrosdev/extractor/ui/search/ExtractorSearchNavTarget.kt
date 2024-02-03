@@ -12,6 +12,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
+import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
+import com.drbrosdev.extractor.framework.navigation.LocalNavController
+import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
@@ -23,9 +26,6 @@ import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.LocalDialogNavController
-import com.drbrosdev.extractor.util.LocalNavController
-import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchShareIntent
 import dev.olshevski.navigation.reimagined.navigate

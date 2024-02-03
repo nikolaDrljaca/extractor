@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.animspec.CardStackSpec
 import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerOnbCard
-import com.drbrosdev.extractor.util.CardStackSpec
-import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.applicationIconBitmap
 import com.drbrosdev.extractor.util.createExtractorBrush
 import dev.olshevski.navigation.reimagined.AnimatedNavHost

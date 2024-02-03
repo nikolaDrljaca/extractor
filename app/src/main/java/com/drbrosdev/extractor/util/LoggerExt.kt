@@ -7,6 +7,10 @@ fun Any.logInfo(message: String) {
     Log.i(this::class.simpleName, message)
 }
 
+fun Any.logInfo(value: Any?) {
+    Log.i(this::class.simpleName, value.toString())
+}
+
 fun Any.logDebug(message: String) {
     Log.d(this::class.simpleName, message)
 }

@@ -8,10 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.drbrosdev.extractor.framework.navigation.LocalNavController
+import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.album.ExtractorAlbumNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.LocalNavController
-import com.drbrosdev.extractor.util.NavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchShareIntent
 import dev.olshevski.navigation.reimagined.navigate

@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.util.DialogNavTarget
+import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
