@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.searchsheet
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,9 +18,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,12 +39,15 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @Composable
 fun ExtractorSearchSheet(
     modifier: Modifier = Modifier,
+    isHidden: Boolean = false,
     onDone: () -> Unit,
     onCreateAlbumClick: () -> Unit,
     searchViewState: ExtractorSearchViewState,
     dateFilterState: ExtractorDateFilterState,
     loaderButtonState: ExtractorLoaderButtonState,
 ) {
+    val alphaOffset by animateFloatAsState(targetValue = if (isHidden) 0f else 1f, label = "")
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -52,33 +58,40 @@ fun ExtractorSearchSheet(
         ExtractorSearchView(
             onDone = onDone,
             state = searchViewState,
+            isHidden = isHidden,
             contentPadding = PaddingValues(),
             textFieldPadding = PaddingValues(bottom = 16.dp)
         )
 
-        ExtractorDateFilter(state = dateFilterState)
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        ExtractorLoaderButton(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = onCreateAlbumClick,
-            state = loaderButtonState,
-            loadingContent = {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    trackColor = Color.Transparent,
-                    color = Color.Black,
-                    strokeCap = StrokeCap.Round
-                )
-            },
-            successContent = {
-                Icon(imageVector = Icons.Rounded.Check, contentDescription = "")
-                Text(text = stringResource(R.string.album_created))
+        Column(
+            modifier = Modifier.graphicsLayer {
+                alpha = alphaOffset
             }
         ) {
-            Icon(imageVector = Icons.Rounded.Add, contentDescription = "")
-            Text(text = stringResource(R.string.create_album))
+            ExtractorDateFilter(state = dateFilterState)
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            ExtractorLoaderButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onCreateAlbumClick,
+                state = loaderButtonState,
+                loadingContent = {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        trackColor = Color.Transparent,
+                        color = Color.Black,
+                        strokeCap = StrokeCap.Round
+                    )
+                },
+                successContent = {
+                    Icon(imageVector = Icons.Rounded.Check, contentDescription = "")
+                    Text(text = stringResource(R.string.album_created))
+                }
+            ) {
+                Icon(imageVector = Icons.Rounded.Add, contentDescription = "")
+                Text(text = stringResource(R.string.create_album))
+            }
         }
 
         Spacer(modifier = Modifier.height(4.dp))

@@ -26,13 +26,19 @@ class GenerateSuggestedKeywords(
 
     suspend operator fun invoke(): List<SuggestedSearch> = withContext(dispatcher) {
         val textSuggestions = async {
-            textEmbeddingDao.getValueConcatAtRandom()
-                .produceSuggestions(TAKE_TEXT)
+            produceSuggestions(
+                textEmbeddingDao.getValueConcatAtRandom(),
+                TAKE_TEXT,
+                KeywordType.TEXT
+            )
         }
 
         val userSuggestions = async {
-            userEmbeddingDao.getValueConcatAtRandom()
-                .produceSuggestions(TAKE_USER)
+            produceSuggestions(
+                userEmbeddingDao.getValueConcatAtRandom(),
+                TAKE_USER,
+                KeywordType.ALL
+            )
         }
 
         val visualSuggestions = async {
@@ -53,19 +59,20 @@ class GenerateSuggestedKeywords(
         textOut + userOut + visual
     }
 
-    private suspend fun String?.produceSuggestions(size: Int) = this?.let {
-        tokenizeText(it).filter { token -> validateToken(token) }
-            .take(size)
-            .map { token ->
-                SuggestedSearch(
-                    query = token.text,
-                    keywordType = KeywordType.TEXT,
-                    searchType = SearchType.PARTIAL
-                )
-            }
-            .flowOn(dispatcher)
-            .toList()
-    } ?: emptyList()
+    private suspend fun produceSuggestions(input: String?, size: Int, keywordType: KeywordType) =
+        input?.let {
+            this.tokenizeText(it).filter { token -> this.validateToken(token) }
+                .take(size)
+                .map { token ->
+                    SuggestedSearch(
+                        query = token.text,
+                        keywordType = keywordType,
+                        searchType = SearchType.PARTIAL
+                    )
+                }
+                .flowOn(dispatcher)
+                .toList()
+        } ?: emptyList()
 
     companion object {
         private const val TAKE_TEXT = 4

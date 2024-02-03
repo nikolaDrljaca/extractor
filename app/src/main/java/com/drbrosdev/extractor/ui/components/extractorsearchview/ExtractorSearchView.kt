@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.extractorsearchview
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,8 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,9 +35,11 @@ fun ExtractorSearchView(
     state: ExtractorSearchViewState,
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
+    isHidden: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     textFieldPadding: PaddingValues = PaddingValues()
 ) {
+    val alphaOffset by animateFloatAsState(targetValue = if (isHidden) 0f else 1f, label = "")
     val interactionSource = remember { MutableInteractionSource() }
     val focusManager = LocalFocusManager.current
     val keyboardState = rememberKeyboardState()
@@ -75,19 +80,25 @@ fun ExtractorSearchView(
                 interactionSource = interactionSource
             )
 
-            ImageLabelFilterChips(
-                onFilterChanged = {
-                    state.updateKeywordType(it.toLabelType())
-                },
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                initial = state.initialLabelTypeIndex()
-            )
+            Column(
+                modifier = Modifier.graphicsLayer {
+                    alpha = alphaOffset
+                }
+            ) {
+                ImageLabelFilterChips(
+                    onFilterChanged = {
+                        state.updateKeywordType(it.toLabelType())
+                    },
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    initial = state.initialLabelTypeIndex(),
+                )
 
-            ExtractorSearchTypeSwitch(
-                selection = state.searchType,
-                onSelectionChanged = state::updateSearchType,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            )
+                ExtractorSearchTypeSwitch(
+                    selection = state.searchType,
+                    onSelectionChanged = state::updateSearchType,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
         }
     }
 }
