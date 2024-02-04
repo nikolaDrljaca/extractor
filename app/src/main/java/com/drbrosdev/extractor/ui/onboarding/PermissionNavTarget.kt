@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.framework.requiresApi
 import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
 import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
 import com.drbrosdev.extractor.ui.components.shared.OnboardingCardHeadline
@@ -61,16 +62,19 @@ object PermissionOnbCard : OnbNavTarget {
                     }
 
                     ExtractorActionButton(onClick = {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            imagePermissionResultLauncher.launch(
-                                Manifest.permission.READ_MEDIA_IMAGES
-                            )
-                        } else {
-                            imagePermissionResultLauncher.launch(
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                            )
-                        }
-                        //do something
+                        requiresApi(
+                            versionCode = Build.VERSION_CODES.TIRAMISU,
+                            fallback = {
+                                imagePermissionResultLauncher.launch(
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                                )
+                            },
+                            block = {
+                                imagePermissionResultLauncher.launch(
+                                    Manifest.permission.READ_MEDIA_IMAGES
+                                )
+                            }
+                        )
                     }) {
                         Text(text = stringResource(R.string.grant_permission))
                     }
