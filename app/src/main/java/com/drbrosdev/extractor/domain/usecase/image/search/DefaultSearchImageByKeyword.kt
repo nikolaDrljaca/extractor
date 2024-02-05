@@ -5,6 +5,7 @@ import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.KeywordType
+import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.isIn
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.util.logInfo
@@ -28,20 +29,9 @@ class DefaultSearchImageByKeyword(
 
             logInfo("Clean query: $cleanQuery")
 
-            val visualAdaptedQuery = buildString {
-                append("%")
-                append(
-                    cleanQuery
-                        .sorted()
-                        .joinToString(separator = "%") { it }
-                )
-                append("%")
-            }
+            val visualAdaptedQuery = buildVisualAdaptedQuery(cleanQuery, params.type)
 
-            val ftsAdaptedQuery = buildString {
-                append(cleanQuery.joinToString(separator = " ") { it })
-                append("*")
-            }
+            val ftsAdaptedQuery = buildFtsAdaptedQuery(cleanQuery, params.type)
 
             logInfo("Visual Query: $visualAdaptedQuery | FTS query: $ftsAdaptedQuery")
 
@@ -51,8 +41,6 @@ class DefaultSearchImageByKeyword(
                 KeywordType.IMAGE -> imageEmbedDao.findByVisualEmbedding(visualAdaptedQuery)
             }
 
-            logInfo("Result set size: ${result.size}")
-
             result
                 .parMap(context = dispatcher) { it.imageEntity.toExtraction() }
                 .filterByDateRange(params.dateRange)
@@ -61,5 +49,40 @@ class DefaultSearchImageByKeyword(
     private fun List<Extraction>.filterByDateRange(range: DateRange?) = when {
         range != null -> this.filter { it.dateAdded isIn range }
         else -> this
+    }
+
+    private fun buildVisualAdaptedQuery(
+        tokens: List<String>,
+        searchType: SearchType
+    ) = buildString {
+        val separator = when (searchType) {
+            SearchType.FULL -> " "
+            SearchType.PARTIAL -> "%"
+        }
+
+        if (searchType == SearchType.PARTIAL) append("%")
+
+        val words = tokens
+            .sorted()
+            .joinToString(separator = separator) { it }
+        append(words)
+
+        if (searchType == SearchType.PARTIAL) append("%")
+    }
+
+    private fun buildFtsAdaptedQuery(
+        tokens: List<String>,
+        searchType: SearchType
+    ) = buildString {
+        val separator = when (searchType) {
+            SearchType.FULL -> " "
+            SearchType.PARTIAL -> "*"
+        }
+
+        if (searchType == SearchType.PARTIAL) append("*")
+
+        val words = tokens.joinToString(separator = separator) { it }
+        append(words)
+        append("*")
     }
 }
