@@ -46,12 +46,12 @@ fun ExtractorPeriodicWorkScreen(
 
     val surfaceColor by transition.animateColor(label = "") {
         if (it) MaterialTheme.colorScheme.primary
-        else Color.Gray
+        else MaterialTheme.colorScheme.inverseSurface
     }
 
     val surfaceContentColor by transition.animateColor(label = "") {
         if (it) MaterialTheme.colorScheme.onPrimary
-        else Color.LightGray
+        else MaterialTheme.colorScheme.inverseOnSurface
     }
 
     Box(
