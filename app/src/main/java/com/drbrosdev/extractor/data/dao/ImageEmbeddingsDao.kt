@@ -21,21 +21,43 @@ interface ImageEmbeddingsDao {
     @Query(
         """
         WITH text_embeds AS (
-            SELECT t.id, t.extraction_entity_id, t.value
-            FROM text_embedding AS t
-            JOIN text_embedding_fts AS fts ON t.id = fts.rowid
-            WHERE fts.value MATCH replace(:query, '%', '*')
+            WITH out AS (
+                SELECT t.id, t.extraction_entity_id, t.value
+                FROM text_embedding AS t
+                JOIN text_embedding_fts AS fts ON t.id = fts.rowid
+                WHERE fts.value MATCH :ftsQuery
+            )
+            SELECT im.media_store_id, im.path, im.uri, im.date_added FROM image_extraction_entity AS im
+            JOIN out ON out.extraction_entity_id = im.media_store_id
+            GROUP BY im.media_store_id
         ),
         user_embeds AS (
-            SELECT u.id, u.extraction_entity_id, u.value
-            FROM user_embedding AS u
-            JOIN user_embedding_fts AS fts ON u.id = fts.rowid
-            WHERE fts.value MATCH replace(:query, '%', '*')
+            WITH out AS (
+                SELECT u.id, u.extraction_entity_id, u.value
+                FROM user_embedding AS u
+                JOIN user_embedding_fts AS fts ON u.id = fts.rowid
+                WHERE fts.value MATCH :ftsQuery
+            )
+            SELECT im.media_store_id, im.path, im.uri, im.date_added FROM image_extraction_entity AS im
+            JOIN out ON out.extraction_entity_id = im.media_store_id
+            GROUP BY im.media_store_id
         ),
         visual_embeds AS (
-            SELECT v.id, v.extraction_entity_id, v.value 
-            FROM visual_embedding as v
-            WHERE v.value LIKE :query
+            WITH initial AS (
+                SELECT ve.extraction_entity_id, ve.value
+                FROM visual_embedding AS ve
+                ORDER BY ve.value
+            ),
+            lookup AS (
+                SELECT ve.extraction_entity_id AS entity_id, group_concat(ve.value) AS all_values 
+                FROM initial AS ve 
+                GROUP BY entity_id
+            )
+            SELECT DISTINCT im.media_store_id, im.path, im.uri, im.date_added FROM image_extraction_entity AS im
+            JOIN lookup ON lookup.entity_id = im.media_store_id
+            WHERE lookup.all_values LIKE :visualQuery
+            GROUP BY im.media_store_id
+            ORDER BY im.date_added DESC
         ), 
         result_set AS (
             SELECT * FROM text_embeds AS te
@@ -44,24 +66,31 @@ interface ImageEmbeddingsDao {
             UNION 
             SELECT * FROM visual_embeds AS ve
         )
-        SELECT DISTINCT * FROM image_extraction_entity
-        JOIN result_set ON result_set.extraction_entity_id = image_extraction_entity.media_store_id
-        GROUP BY image_extraction_entity.media_store_id
-        ORDER BY image_extraction_entity.date_added DESC
+        SELECT DISTINCT * FROM result_set
+        ORDER BY result_set.date_added DESC
     """
     )
     @Transaction
     @RewriteQueriesToDropUnusedColumns
-    fun findByKeywordAsFlow(query: String): Flow<List<ImageEmbeddingsRelation>>
+    fun findByKeywordAsFlow(visualQuery: String, ftsQuery: String): Flow<List<ImageEmbeddingsRelation>>
 
-    suspend fun findByKeyword(query: String) = findByKeywordAsFlow(query).first()
+    suspend fun findByKeyword(visualQuery: String, ftsQuery: String) = findByKeywordAsFlow(visualQuery, ftsQuery).first()
 
     @Query(
         """
-        SELECT * 
-        FROM visual_embedding AS ve
-        JOIN image_extraction_entity AS im ON im.media_store_id = ve.extraction_entity_id
-        WHERE ve.value LIKE :query
+        WITH initial AS (
+            SELECT ve.extraction_entity_id, ve.value
+            FROM visual_embedding AS ve
+            ORDER BY ve.value
+        ),
+        lookup AS (
+            SELECT ve.extraction_entity_id AS entity_id, group_concat(ve.value) AS all_values 
+            FROM initial AS ve
+            GROUP BY entity_id
+        )
+        SELECT DISTINCT im.media_store_id, im.uri, im.date_added, im.path from image_extraction_entity AS im
+        JOIN lookup ON lookup.entity_id = im.media_store_id
+        WHERE lookup.all_values LIKE :query
         GROUP BY im.media_store_id
         ORDER BY im.date_added DESC
     """
@@ -78,7 +107,7 @@ interface ImageEmbeddingsDao {
             SELECT *
             FROM text_embedding AS t
             JOIN text_embedding_fts AS fts ON t.id = fts.rowid
-            WHERE fts.value MATCH replace(:query, '%', '*')
+            WHERE fts.value MATCH :query
         )
         
         SELECT DISTINCT * FROM image_extraction_entity AS im
@@ -100,7 +129,7 @@ interface ImageEmbeddingsDao {
             SELECT *
             FROM user_embedding AS u
             JOIN user_embedding_fts AS fts ON u.id = fts.rowid
-            WHERE fts.value MATCH replace(:query, '%', '*')
+            WHERE fts.value MATCH :query
         )
         
         SELECT DISTINCT * FROM image_extraction_entity AS im

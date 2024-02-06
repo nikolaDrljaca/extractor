@@ -69,6 +69,7 @@ val useCaseModule = module {
         DefaultSearchImageByKeyword(
             dispatcher = get(named(CoroutineModuleName.IO)),
             imageEmbedDao = get(),
+            tokenizeText = get()
         )
     } bind SearchImageByKeyword::class
 

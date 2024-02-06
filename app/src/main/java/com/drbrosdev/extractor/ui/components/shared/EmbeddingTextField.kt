@@ -61,8 +61,8 @@ fun EmbeddingTextField(
         value = value,
         onValueChange = onTextChange,
         label = label,
-        minLines = 4,
-        maxLines = 7,
+        minLines = 6,
+        maxLines = 10,
         colors = TextFieldDefaults.colors(
             disabledContainerColor = Color.Transparent,
             errorContainerColor = Color.Transparent,

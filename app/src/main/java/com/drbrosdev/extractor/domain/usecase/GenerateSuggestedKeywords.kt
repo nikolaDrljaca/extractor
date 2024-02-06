@@ -47,7 +47,7 @@ class GenerateSuggestedKeywords(
                     SuggestedSearch(
                         query = value,
                         keywordType = KeywordType.IMAGE,
-                        searchType = SearchType.FULL
+                        searchType = SearchType.PARTIAL
                     )
                 }
         }
