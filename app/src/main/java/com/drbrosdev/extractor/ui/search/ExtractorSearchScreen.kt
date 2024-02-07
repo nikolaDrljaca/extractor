@@ -22,6 +22,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -87,6 +88,15 @@ fun ExtractorSearchScreen(
         }
     }
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
+    LaunchedEffect(key1 = state) {
+        when (state) {
+            is ExtractorSearchScreenUiState.Loading -> {
+                imageGridState.lazyGridState.animateScrollToItem(0)
+            }
+            else -> Unit
+        }
+    }
 
     BottomSheetScaffold(
         sheetContent = {
