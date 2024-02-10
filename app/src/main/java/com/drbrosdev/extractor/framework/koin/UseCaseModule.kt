@@ -86,7 +86,7 @@ val useCaseModule = module {
         CompileVisualAlbum(
             dispatcher = get(named(CoroutineModuleName.Default)),
             visualEmbeddingDao = get(),
-            imageEmbeddingsDao = get(),
+            searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
             albumRepository = get<DefaultAlbumRepository>()
         )
     }
@@ -118,7 +118,7 @@ val useCaseModule = module {
         CompileTextAlbums(
             dispatcher = get(named(CoroutineModuleName.Default)),
             textEmbeddingDao = get(),
-            imageEmbeddingsDao = get(),
+            searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
             validateToken = get()
