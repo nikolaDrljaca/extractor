@@ -1,8 +1,9 @@
 package com.drbrosdev.extractor.framework.koin
 
+import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
-import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
+import com.drbrosdev.extractor.framework.notification.NotificationService
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -21,6 +22,10 @@ val frameworkModule = module {
         StringResourceProvider(
             context = androidContext()
         )
+    }
+
+    single {
+        NotificationService(androidContext())
     }
 
 }
