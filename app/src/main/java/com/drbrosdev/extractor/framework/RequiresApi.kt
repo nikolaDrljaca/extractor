@@ -26,3 +26,15 @@ fun requiresApi(
         fallback?.invoke()
     }
 }
+
+fun <T> requiresApi(
+    versionCode: Int,
+    fallback: (() -> T),
+    block: () -> T,
+): T {
+    return if (Build.VERSION.SDK_INT >= versionCode) {
+        block()
+    } else {
+        fallback.invoke()
+    }
+}
