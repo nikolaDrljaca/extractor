@@ -70,7 +70,7 @@ private fun OnboardingScreen(
             .systemBarsPadding(),
     ) {
         val topGuideline = createGuidelineFromTop(0.05f)
-        val cardGuideline = createGuidelineFromBottom(0.55f)
+        val cardGuideline = createGuidelineFromBottom(0.60f)
         val (header, cards) = createRefs()
 
         Column(
