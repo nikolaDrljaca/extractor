@@ -19,14 +19,14 @@ class CompileTextAlbums(
     private val searchImageByKeyword: SearchImageByKeyword,
     private val albumRepository: AlbumRepository,
     private val tokenizeText: TokenizeText,
-    private val validateToken: ValidateToken
+    private val validateSuggestedSearchToken: ValidateSuggestedSearchToken
 ) {
 
     suspend operator fun invoke() {
         val allText = textEmbeddingDao.findAllTextEmbedValues()
 
         val tokens = tokenizeText(allText)
-            .filter { validateToken(it) }
+            .filter { validateSuggestedSearchToken(it) }
             .map { it.text }
             .toList()
 
