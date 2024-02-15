@@ -118,6 +118,8 @@ data class ExtractorAlbumNavTarget(
                         val uris = viewModel.getSelectedUris()
                         context.launchShareIntent(uris)
                     }
+
+                    MultiselectAction.Delete -> viewModel.onDeleteSelection()
                 }
             }
         )

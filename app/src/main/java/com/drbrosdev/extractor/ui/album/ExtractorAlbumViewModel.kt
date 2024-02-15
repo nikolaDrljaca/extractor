@@ -67,8 +67,6 @@ class ExtractorAlbumViewModel(
         entries.map { it.uri.toUri() }
     }
 
-    fun onDeleteAction() = dialogSelection.update { ExtractorAlbumDialogSelection.ConfirmDelete }
-
     fun onDismissDialog() = dialogSelection.update { ExtractorAlbumDialogSelection.None }
 
     fun onDeleteAlbum() {
@@ -127,5 +125,14 @@ class ExtractorAlbumViewModel(
 
     fun onShowBottomSheet() {
         dialogSelection.update { ExtractorAlbumDialogSelection.BottomSheet }
+    }
+
+    fun onDeleteSelection() {
+        viewModelScope.launch {
+            val album = state.value.getAlbum()
+            val ids = gridState.checkedIndices().map { album.entries[it].id.id }
+
+            albumRepository.deleteAlbumItems(ids)
+        }
     }
 }

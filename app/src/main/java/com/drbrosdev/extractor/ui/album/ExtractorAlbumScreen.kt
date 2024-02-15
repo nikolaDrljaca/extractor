@@ -48,6 +48,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
+import com.drbrosdev.extractor.ui.components.shared.albumGridActions
 
 @Composable
 fun ExtractorAlbumScreen(
@@ -145,7 +146,10 @@ fun ExtractorAlbumScreen(
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                    ExtractorMultiselectActionBar(onAction = onMultiselectAction)
+                    ExtractorMultiselectActionBar(
+                        onAction = onMultiselectAction,
+                        items = albumGridActions
+                    )
                 }
 
                 SnackbarHost(
