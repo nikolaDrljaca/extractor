@@ -21,7 +21,7 @@ class GenerateSuggestedKeywords(
     private val userEmbeddingDao: UserEmbeddingDao,
     private val visualEmbeddingDao: VisualEmbeddingDao,
     private val tokenizeText: TokenizeText,
-    private val validateToken: ValidateToken
+    private val validateSuggestedSearchToken: ValidateSuggestedSearchToken
 ) {
 
     suspend operator fun invoke(): List<SuggestedSearch> = withContext(dispatcher) {
@@ -47,7 +47,7 @@ class GenerateSuggestedKeywords(
                     SuggestedSearch(
                         query = value,
                         keywordType = KeywordType.IMAGE,
-                        searchType = SearchType.FULL
+                        searchType = SearchType.PARTIAL
                     )
                 }
         }
@@ -61,7 +61,7 @@ class GenerateSuggestedKeywords(
 
     private suspend fun produceSuggestions(input: String?, size: Int, keywordType: KeywordType) =
         input?.let {
-            this.tokenizeText(it).filter { token -> this.validateToken(token) }
+            this.tokenizeText(it).filter { token -> this.validateSuggestedSearchToken(token) }
                 .take(size)
                 .map { token ->
                     SuggestedSearch(

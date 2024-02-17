@@ -26,16 +26,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -164,15 +163,15 @@ private fun SwipeableAlbumCard(
     onSwipeAction: (ExtractorSwipeAction<AlbumItemUiModel>) -> Unit,
     item: AlbumItemUiModel
 ) {
-    val swipeState = rememberDismissState()
+    val swipeState = rememberSwipeToDismissBoxState()
 
     LaunchedEffect(key1 = Unit) {
         snapshotFlow { swipeState.currentValue }
             .collectLatest {
                 when (it) {
-                    DismissValue.Default -> Unit
-                    DismissValue.DismissedToEnd -> onSwipeAction(ExtractorSwipeAction.Share(item))
-                    DismissValue.DismissedToStart -> onSwipeAction(ExtractorSwipeAction.Delete(item))
+                    SwipeToDismissBoxValue.StartToEnd -> onSwipeAction(ExtractorSwipeAction.Share(item))
+                    SwipeToDismissBoxValue.EndToStart -> onSwipeAction(ExtractorSwipeAction.Delete(item))
+                    SwipeToDismissBoxValue.Settled -> Unit
                 }
                 swipeState.reset()
             }
@@ -180,32 +179,33 @@ private fun SwipeableAlbumCard(
 
     SwipeToDismissBox(
         state = swipeState,
-        directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
+        enableDismissFromStartToEnd = true,
+        enableDismissFromEndToStart = true,
         backgroundContent = {
             val color = when (swipeState.dismissDirection) {
-                null -> Color.Transparent
-                DismissDirection.StartToEnd -> MaterialTheme.colorScheme.primary
-                DismissDirection.EndToStart -> MaterialTheme.colorScheme.error
+                SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.primary
+                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
+                SwipeToDismissBoxValue.Settled -> Color.Transparent
             }
             val contentColor = when (swipeState.dismissDirection) {
-                null -> Color.Transparent
-                DismissDirection.StartToEnd -> Color.White
-                DismissDirection.EndToStart -> MaterialTheme.colorScheme.onError
+                SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.onPrimary
+                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.onError
+                SwipeToDismissBoxValue.Settled -> Color.Transparent
             }
             val icon = when (swipeState.dismissDirection) {
-                null -> Icons.Rounded.Share
-                DismissDirection.StartToEnd -> Icons.Rounded.Share
-                DismissDirection.EndToStart -> Icons.Rounded.Delete
+                SwipeToDismissBoxValue.StartToEnd -> Icons.Rounded.Share
+                SwipeToDismissBoxValue.EndToStart -> Icons.Rounded.Delete
+                SwipeToDismissBoxValue.Settled -> Icons.Rounded.Share
             }
             val alignment = when (swipeState.dismissDirection) {
-                null -> Alignment.Center
-                DismissDirection.StartToEnd -> Alignment.CenterStart
-                DismissDirection.EndToStart -> Alignment.CenterEnd
+                SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                SwipeToDismissBoxValue.Settled -> Alignment.Center
             }
             val padding = when (swipeState.dismissDirection) {
-                null -> PaddingValues()
-                DismissDirection.StartToEnd -> PaddingValues(start = 36.dp)
-                DismissDirection.EndToStart -> PaddingValues(end = 36.dp)
+                SwipeToDismissBoxValue.StartToEnd -> PaddingValues(start = 36.dp)
+                SwipeToDismissBoxValue.EndToStart -> PaddingValues(end = 36.dp)
+                SwipeToDismissBoxValue.Settled -> PaddingValues()
             }
 
             Surface(

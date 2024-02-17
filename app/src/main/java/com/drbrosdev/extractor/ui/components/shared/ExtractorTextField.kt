@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
@@ -42,7 +43,9 @@ fun ExtractorTextField(
         else -> Color.Black
     }
 ) {
-    val textStyle = MaterialTheme.typography.headlineMedium
+    val textStyle = MaterialTheme.typography.headlineMedium.copy(
+        fontSize = 26.sp
+    )
 
     TextField(
         interactionSource = interactionSource,

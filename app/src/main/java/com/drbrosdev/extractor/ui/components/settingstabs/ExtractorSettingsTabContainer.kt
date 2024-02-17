@@ -14,7 +14,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,7 +44,7 @@ fun ExtractorSettingsTabContainer(
             selectedTabIndex = selectedIndex,
             indicator = {
                 ExtractorTabIndicator(
-                    Modifier.tabIndicatorOffset(it[selectedIndex]),
+                    Modifier.tabIndicatorOffset(selectedIndex),
                     color = MaterialTheme.colorScheme.surfaceVariant
                 )
             },

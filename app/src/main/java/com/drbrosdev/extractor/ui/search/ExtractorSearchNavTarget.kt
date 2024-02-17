@@ -143,7 +143,7 @@ private fun SearchScreenPreview() {
             onStartSyncClick = {},
             onMultiselectAction = {},
             extractorStatusButtonState = ExtractorStatusButtonState(),
-            state = ExtractorSearchScreenUiState.Loading,
+            state = ExtractorSearchScreenUiState.StillIndexing,
             searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
             dateFilterState = ExtractorDateFilterState(),
             loaderButtonState = ExtractorLoaderButtonState(),

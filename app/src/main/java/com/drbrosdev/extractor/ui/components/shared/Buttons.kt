@@ -117,12 +117,13 @@ fun OutlinedExtractorActionButton(
 fun ExtractorTextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
     content: @Composable RowScope.() -> Unit
 ) {
     TextButton(
         onClick = onClick,
         colors = ButtonDefaults.textButtonColors(
-            contentColor = MaterialTheme.colorScheme.onBackground
+            contentColor = contentColor
         ),
         modifier = Modifier
             .then(modifier)

@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,12 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.CombinedPreview
 
 @Composable
 fun ExtractorStatusDialog(
@@ -180,47 +176,3 @@ private fun ExtractorCountChips(
     }
 }
 
-@CombinedPreview
-@Composable
-private fun CurrentPreview() {
-    ExtractorTheme(dynamicColor = false) {
-        ExtractorStatusDialog(
-            state = ExtractorStatusDialogUiModel(),
-            onClick = {},
-            headline = {
-                Text(text = "Status", style = MaterialTheme.typography.displaySmall)
-            }
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun CurrentPreview2() {
-    ExtractorTheme(dynamicColor = false) {
-        val state = ExtractorStatusDialogUiModel(
-            inStorageCount = 23,
-            onDeviceCount = 162
-        )
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            ExtractorStatusDialog(
-                state = state,
-                onClick = {},
-                headline = {
-                    Text(text = "Status", style = MaterialTheme.typography.displaySmall)
-                }
-            )
-
-            ExtractorStatusDialog(
-                state = state.copy(isExtractionRunning = true),
-                onClick = {},
-                headline = {
-                    Text(text = "Status", style = MaterialTheme.typography.displaySmall)
-                }
-            )
-        }
-    }
-}

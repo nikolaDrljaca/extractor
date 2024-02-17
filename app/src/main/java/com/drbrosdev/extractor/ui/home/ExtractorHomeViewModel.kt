@@ -11,6 +11,7 @@ import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.util.toPreview
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -29,6 +30,8 @@ class ExtractorHomeViewModel(
 ) : ViewModel() {
     private val loadingTextAlbum = MutableStateFlow(false)
     private val loadingVisualAlbum = MutableStateFlow(false)
+
+    private val runningJobs = mutableMapOf<String, Job>()
 
     val settings = homeScreenSettingsProvider()
         .stateIn(
@@ -94,6 +97,8 @@ class ExtractorHomeViewModel(
         )
 
     fun compileVisualAlbums() {
+        if (loadingVisualAlbum.value) return
+
         viewModelScope.launch {
             loadingVisualAlbum.update { true }
             compileVisualAlbum()
@@ -102,6 +107,8 @@ class ExtractorHomeViewModel(
     }
 
     fun compileTextAlbums() {
+        if (loadingTextAlbum.value) return
+
         viewModelScope.launch {
             loadingTextAlbum.update { true }
             compileTextAlbum()

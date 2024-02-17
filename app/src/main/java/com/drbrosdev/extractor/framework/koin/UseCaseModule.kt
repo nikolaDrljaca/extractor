@@ -8,7 +8,7 @@ import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.ValidateToken
+import com.drbrosdev.extractor.domain.usecase.ValidateSuggestedSearchToken
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
@@ -69,6 +69,7 @@ val useCaseModule = module {
         DefaultSearchImageByKeyword(
             dispatcher = get(named(CoroutineModuleName.IO)),
             imageEmbedDao = get(),
+            tokenizeText = get()
         )
     } bind SearchImageByKeyword::class
 
@@ -85,7 +86,7 @@ val useCaseModule = module {
         CompileVisualAlbum(
             dispatcher = get(named(CoroutineModuleName.Default)),
             visualEmbeddingDao = get(),
-            imageEmbeddingsDao = get(),
+            searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
             albumRepository = get<DefaultAlbumRepository>()
         )
     }
@@ -97,7 +98,7 @@ val useCaseModule = module {
     }
 
     factory {
-        ValidateToken(
+        ValidateSuggestedSearchToken(
             dispatcher = get(named(CoroutineModuleName.Default))
         )
     }
@@ -109,7 +110,7 @@ val useCaseModule = module {
             textEmbeddingDao = get(),
             userEmbeddingDao = get(),
             tokenizeText = get(),
-            validateToken = get()
+            validateSuggestedSearchToken = get()
         )
     }
 
@@ -117,10 +118,10 @@ val useCaseModule = module {
         CompileTextAlbums(
             dispatcher = get(named(CoroutineModuleName.Default)),
             textEmbeddingDao = get(),
-            imageEmbeddingsDao = get(),
+            searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
-            validateToken = get()
+            validateSuggestedSearchToken = get()
         )
     }
 

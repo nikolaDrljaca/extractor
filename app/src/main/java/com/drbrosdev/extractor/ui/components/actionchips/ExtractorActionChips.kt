@@ -30,7 +30,7 @@ fun ExtractorActionChips(
             .then(modifier),
         verticalArrangement = Arrangement.Center,
         horizontalArrangement = Arrangement.spacedBy(
-            space = 2.dp,
+            space = 4.dp,
             alignment = Alignment.CenterHorizontally
         )
     ) {

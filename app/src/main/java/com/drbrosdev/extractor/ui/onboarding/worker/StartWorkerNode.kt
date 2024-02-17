@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
@@ -13,6 +14,7 @@ import com.drbrosdev.extractor.ui.components.shared.OnboardingCardHeadline
 import com.drbrosdev.extractor.ui.onboarding.LocalOnbNavController
 import com.drbrosdev.extractor.ui.onboarding.OnbNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import dev.olshevski.navigation.reimagined.pop
 import dev.olshevski.navigation.reimagined.replaceAll
 import kotlinx.parcelize.Parcelize
@@ -28,26 +30,47 @@ object StartWorkerOnbCard : OnbNavTarget {
         val navController = LocalOnbNavController.current
         val rootNavController = LocalNavController.current
 
-        OnboardingCard(
-            body = stringResource(id = R.string.lorem),
-            headline = {
-                OnboardingCardHeadline(
-                    headline = "Start Extracting!",
-                    onBack = { navController.pop() }
-                )
+        StartWorker(
+            onClick = {
+                viewModel.spawnWorkRequest()
+                viewModel.finishOnboarding()
+                rootNavController.replaceAll(ExtractorSearchNavTarget())
             },
-            actionButton = {
-                ExtractorActionButton(
-                    onClick = {
-                        viewModel.spawnWorkRequest()
-                        viewModel.finishOnboarding()
-                        rootNavController.replaceAll(ExtractorSearchNavTarget())
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = "Begin")
-                }
-            }
+            onBack = { navController.pop() }
         )
+    }
+}
+
+@Composable
+private fun StartWorker(
+    onClick: () -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+
+    OnboardingCard(
+        body = stringResource(id = R.string.onb_start),
+        headline = {
+            OnboardingCardHeadline(
+                headline = "Start Extracting!",
+                onBack = onBack
+            )
+        },
+        actionButton = {
+            ExtractorActionButton(
+                onClick = onClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Begin")
+            }
+        }
+    )
+}
+
+@Preview
+@Composable
+private fun CurrentPreview() {
+    ExtractorTheme(dynamicColor = false) {
+        StartWorker(onClick = {}, onBack = { /*TODO*/ })
     }
 }

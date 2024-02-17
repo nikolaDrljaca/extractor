@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.ui.theme.md_theme_light_primary
+import com.drbrosdev.extractor.util.thenIf
 
 
 @Composable
@@ -55,7 +56,7 @@ fun OnboardingCard(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             headline?.invoke()
             Spacer(modifier = Modifier.height(12.dp))
             Text(
@@ -83,6 +84,9 @@ fun OnboardingCardHeadline(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .thenIf(onBack == null) {
+                padding(top = 12.dp)
+            }
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -105,17 +109,33 @@ fun OnboardingCardHeadline(
 @Composable
 private fun OnboardingCardPreview() {
     ExtractorTheme(dynamicColor = false) {
-        OnboardingCard(
-            body = stringResource(id = R.string.lorem),
-            headline = { OnboardingCardHeadline(headline = "A note ", onBack = {}) },
-            modifier = Modifier
-                .height(444.dp)
-                .width(344.dp)
-        ) {
-            OutlinedExtractorActionButton(onClick = { /*TODO*/ }) {
-                Text(
-                    text = "Sample Action",
-                )
+        Column {
+            OnboardingCard(
+                body = stringResource(id = R.string.lorem),
+                headline = { OnboardingCardHeadline(headline = "A note ", onBack = {}) },
+                modifier = Modifier
+                    .height(444.dp)
+                    .width(344.dp)
+            ) {
+                OutlinedExtractorActionButton(onClick = { /*TODO*/ }) {
+                    Text(
+                        text = "Sample Action",
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            OnboardingCard(
+                body = stringResource(id = R.string.lorem),
+                headline = { OnboardingCardHeadline(headline = "A note ") },
+                modifier = Modifier
+                    .height(444.dp)
+                    .width(344.dp)
+            ) {
+                OutlinedExtractorActionButton(onClick = { /*TODO*/ }) {
+                    Text(
+                        text = "Sample Action",
+                    )
+                }
             }
         }
     }

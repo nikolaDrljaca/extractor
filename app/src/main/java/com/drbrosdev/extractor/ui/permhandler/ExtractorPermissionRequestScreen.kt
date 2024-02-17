@@ -99,18 +99,7 @@ fun ExtractorPermissionRequestScreen(
     }
 }
 
-@ScreenPreview
-@Composable
-private fun CurrentPreview() {
-    ExtractorTheme(dynamicColor = false) {
-        Surface {
-            ExtractorPermissionRequestScreen(
-                onOpenSettings = {},
-                onRequestPermission = {}
-            )
-        }
-    }
-}
+
 
 private fun permissionRequestScreenConstraintSet() = ConstraintSet {
     val warning = createRefFor(ViewIds.WARNING)

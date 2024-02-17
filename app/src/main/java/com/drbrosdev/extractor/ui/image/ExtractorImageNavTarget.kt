@@ -75,7 +75,7 @@ data class ExtractorImageNavTarget(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun CurrentPreview() {
-    ExtractorTheme {
+    ExtractorTheme(dynamicColor = false) {
         ExtractorImageScreen(
             onBottomBarClick = {},
             onBack = { /*TODO*/ },

@@ -14,7 +14,13 @@ import androidx.compose.ui.tooling.preview.Preview
     showBackground = true,
     showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = Devices.PIXEL_7
+    device = Devices.PIXEL_7,
+)
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    device = Devices.FOLDABLE
 )
 annotation class ScreenPreview
 

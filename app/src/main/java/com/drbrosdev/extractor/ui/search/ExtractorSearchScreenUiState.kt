@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 
-@Immutable
 sealed class ExtractorSearchScreenUiState {
 
+    @Immutable
     data class Content(
         val images: List<Extraction>,
     ) : ExtractorSearchScreenUiState()

@@ -41,7 +41,7 @@ import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
-import com.drbrosdev.extractor.util.applicationIconBitmap
+import com.drbrosdev.extractor.util.applicationIconResource
 
 
 @Composable
@@ -132,12 +132,7 @@ private fun AppInfo(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Image(bitmap = applicationIconBitmap(), contentDescription = "")
-//        Image(
-//            painter = painterResource(id = R.drawable.baseline_android_24),
-//            contentDescription = null,
-//            modifier = Modifier.size(56.dp)
-//        )
+        Image(painter = applicationIconResource(), contentDescription = "")
         Text(
             text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.titleLarge

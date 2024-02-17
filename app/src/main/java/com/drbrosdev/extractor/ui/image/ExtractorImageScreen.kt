@@ -8,6 +8,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
@@ -93,12 +94,14 @@ fun ExtractorImageScreen(
 
         AnimatedVisibility(
             visible = showUi,
-            modifier = Modifier.layoutId(ViewIds.TOP_BAR),
+            modifier = Modifier
+                .statusBarsPadding()
+                .layoutId(ViewIds.TOP_BAR),
             enter = fadeIn(),
             exit = fadeOut()
         ) {
             ExtractorImageTopBar(
-                modifier = Modifier.padding(vertical = 36.dp, horizontal = 12.dp),
+                modifier = Modifier.padding(12.dp),
                 onBackClick = onBack,
             )
         }

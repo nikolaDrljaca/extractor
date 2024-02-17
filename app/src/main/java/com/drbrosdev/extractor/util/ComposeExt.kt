@@ -31,12 +31,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.md_theme_light_secondary
 import com.drbrosdev.extractor.ui.theme.md_theme_light_tertiary
 
@@ -46,6 +49,11 @@ fun applicationIconBitmap(): ImageBitmap {
         .getApplicationIcon("com.drbrosdev.extractor")
         .toBitmap(config = Bitmap.Config.ARGB_8888)
         .asImageBitmap()
+}
+
+@Composable
+fun applicationIconResource(): Painter {
+    return painterResource(id = R.drawable.ic_launcher)
 }
 
 @Composable
