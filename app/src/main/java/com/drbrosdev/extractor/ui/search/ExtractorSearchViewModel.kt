@@ -36,7 +36,6 @@ import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
-import com.drbrosdev.extractor.util.logInfo
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
