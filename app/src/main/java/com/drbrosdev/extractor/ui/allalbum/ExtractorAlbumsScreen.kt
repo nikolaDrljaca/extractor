@@ -170,15 +170,11 @@ private fun SwipeableAlbumCard(
             .collectLatest {
                 when (it) {
                     SwipeToDismissBoxValue.StartToEnd -> onSwipeAction(
-                        ExtractorSwipeAction.Share(
-                            item
-                        )
+                        ExtractorSwipeAction.Share(item)
                     )
 
                     SwipeToDismissBoxValue.EndToStart -> onSwipeAction(
-                        ExtractorSwipeAction.Delete(
-                            item
-                        )
+                        ExtractorSwipeAction.Delete(item)
                     )
 
                     SwipeToDismissBoxValue.Settled -> Unit
@@ -302,12 +298,16 @@ private fun AlbumPreview(
     modifier: Modifier = Modifier,
     thumbnails: List<Uri>,
 ) {
+    val internal = remember(thumbnails) {
+        thumbnails.take(4)
+    }
+
     Row(
         modifier = Modifier.then(modifier),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        thumbnails.forEach {
+        internal.forEach {
             ExtractorImageItem(
                 imageUri = it,
                 size = 64,
