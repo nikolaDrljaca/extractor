@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.album
+package com.drbrosdev.extractor.ui.albumviewer
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -48,9 +48,10 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
+import com.drbrosdev.extractor.ui.components.shared.albumGridActions
 
 @Composable
-fun ExtractorAlbumScreen(
+fun ExtractorAlbumViewerScreen(
     modifier: Modifier = Modifier,
     onImageClick: (index: Int) -> Unit,
     onDeleteDialogAction: (ConfirmationDialogActions) -> Unit,
@@ -60,7 +61,7 @@ fun ExtractorAlbumScreen(
     onFabClick: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
     snackbarHostState: SnackbarHostState,
-    state: ExtractorAlbumScreenState,
+    state: ExtractorAlbumViewerScreenState,
     imageGridState: ExtractorImageGridState
 ) {
     val extractorTopBarState = remember {
@@ -73,8 +74,8 @@ fun ExtractorAlbumScreen(
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     when (state) {
-        ExtractorAlbumScreenState.Loading -> ExtractorAlbumScreenLoading()
-        is ExtractorAlbumScreenState.Content -> {
+        ExtractorAlbumViewerScreenState.Loading -> ExtractorAlbumScreenLoading()
+        is ExtractorAlbumViewerScreenState.Content -> {
             when (state.dialogSelection) {
                 ExtractorAlbumDialogSelection.BottomSheet -> {
                     ExtractorAlbumActionBottomSheet(onAction = onBottomSheetAction)
@@ -121,7 +122,7 @@ fun ExtractorAlbumScreen(
                         onImageClick(it)
                     },
                     albumEntries = state.album.entries,
-                    state = imageGridState
+                    state = imageGridState,
                 )
 
                 ExtractorTopBar(
@@ -145,7 +146,10 @@ fun ExtractorAlbumScreen(
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                    ExtractorMultiselectActionBar(onAction = onMultiselectAction)
+                    ExtractorMultiselectActionBar(
+                        onAction = onMultiselectAction,
+                        items = albumGridActions
+                    )
                 }
 
                 SnackbarHost(

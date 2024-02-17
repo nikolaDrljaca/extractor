@@ -31,12 +31,12 @@ import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoad
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.isSuccess
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.isBlank
-import com.drbrosdev.extractor.ui.components.extractorsearchview.isNotBlank
 import com.drbrosdev.extractor.ui.components.extractorsearchview.keywordTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
+import com.drbrosdev.extractor.util.logInfo
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -174,14 +174,9 @@ class ExtractorSearchViewModel(
 
     private val loaderButtonEnabledJob = state
         .onEach {
+            logInfo("running inside state observer $it")
             when (it) {
-                is ExtractorSearchScreenUiState.Content -> {
-                    when {
-                        searchViewState.isNotBlank() -> loaderButtonState.enable()
-                        else -> loaderButtonState.disable()
-                    }
-                }
-
+                is ExtractorSearchScreenUiState.Content -> loaderButtonState.enable()
                 else -> loaderButtonState.disable()
             }
         }

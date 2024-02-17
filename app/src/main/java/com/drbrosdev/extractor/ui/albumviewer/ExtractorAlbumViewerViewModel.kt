@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.album
+package com.drbrosdev.extractor.ui.albumviewer
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ExtractorAlbumViewModel(
+class ExtractorAlbumViewerViewModel(
     private val stateHandle: SavedStateHandle,
     private val albumRepository: AlbumRepository,
     private val albumId: Long
@@ -51,7 +51,7 @@ class ExtractorAlbumViewModel(
         dialogSelection,
         shouldShowSelectAction
     ) { album, dialog, showSelectBar ->
-        ExtractorAlbumScreenState.Content(
+        ExtractorAlbumViewerScreenState.Content(
             album = album,
             dialogSelection = dialog,
             shouldShowSelectBar = showSelectBar
@@ -60,14 +60,12 @@ class ExtractorAlbumViewModel(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
-            ExtractorAlbumScreenState.Loading
+            ExtractorAlbumViewerScreenState.Loading
         )
 
     private suspend fun getUris(entries: List<AlbumEntry>) = withContext(Dispatchers.Default) {
         entries.map { it.uri.toUri() }
     }
-
-    fun onDeleteAction() = dialogSelection.update { ExtractorAlbumDialogSelection.ConfirmDelete }
 
     fun onDismissDialog() = dialogSelection.update { ExtractorAlbumDialogSelection.None }
 
@@ -127,5 +125,19 @@ class ExtractorAlbumViewModel(
 
     fun onShowBottomSheet() {
         dialogSelection.update { ExtractorAlbumDialogSelection.BottomSheet }
+    }
+
+    fun onDeleteSelection(onComplete: () -> Unit) {
+        viewModelScope.launch {
+            val album = state.value.getAlbum()
+            val ids = gridState.checkedIndices().map { album.entries[it].id.id }
+
+            if (ids.isNotEmpty()) {
+                albumRepository.deleteAlbumItems(ids)
+            }
+        }.invokeOnCompletion {
+            gridState.clearSelection()
+            onComplete()
+        }
     }
 }

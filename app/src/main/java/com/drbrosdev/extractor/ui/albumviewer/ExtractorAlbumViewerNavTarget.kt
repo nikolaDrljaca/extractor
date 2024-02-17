@@ -1,6 +1,7 @@
-package com.drbrosdev.extractor.ui.album
+package com.drbrosdev.extractor.ui.albumviewer
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
@@ -35,13 +36,13 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Parcelize
-data class ExtractorAlbumNavTarget(
+data class ExtractorAlbumViewerNavTarget(
     private val albumId: Long
 ) : NavTarget {
 
     @Composable
     override fun Content() {
-        val viewModel: ExtractorAlbumViewModel = koinViewModel {
+        val viewModel: ExtractorAlbumViewerViewModel = koinViewModel {
             parametersOf(albumId)
         }
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -54,7 +55,7 @@ data class ExtractorAlbumNavTarget(
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
 
-        ExtractorAlbumScreen(
+        ExtractorAlbumViewerScreen(
             onImageClick = { index ->
                 val destination = ExtractorImageNavTarget(
                     images = viewModel.imageUris.value,
@@ -118,6 +119,15 @@ data class ExtractorAlbumNavTarget(
                         val uris = viewModel.getSelectedUris()
                         context.launchShareIntent(uris)
                     }
+
+                    MultiselectAction.Delete -> viewModel.onDeleteSelection {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = context.getString(R.string.items_deleted),
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
                 }
             }
         )
@@ -128,7 +138,7 @@ data class ExtractorAlbumNavTarget(
 @Composable
 @ScreenPreview
 private fun CurrentPreview() {
-    val data = ExtractorAlbumScreenState.Content(
+    val data = ExtractorAlbumViewerScreenState.Content(
         album = Album(
             id = 0L,
             name = "Some album",
@@ -147,7 +157,7 @@ private fun CurrentPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            ExtractorAlbumScreen(
+            ExtractorAlbumViewerScreen(
                 state = data,
                 imageGridState = ExtractorImageGridState(),
                 snackbarHostState = SnackbarHostState(),

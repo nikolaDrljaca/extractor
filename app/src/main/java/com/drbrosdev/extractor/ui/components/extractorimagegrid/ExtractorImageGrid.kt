@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.extractorimagegrid
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,6 +68,7 @@ fun ExtractorImageGrid(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtractorImageGrid(
     onClick: (index: Int) -> Unit,
@@ -92,6 +94,7 @@ fun ExtractorImageGrid(
             key = { _, it -> it.id.id }
         ) { index, entry ->
             ExtractorImageItem(
+                modifier = Modifier.animateItemPlacement(),
                 imageUri = entry.uri.toUri(),
                 size = imageSize,
                 onClick = {

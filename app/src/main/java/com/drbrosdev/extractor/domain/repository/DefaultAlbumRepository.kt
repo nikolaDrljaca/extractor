@@ -31,13 +31,17 @@ class DefaultAlbumRepository(
     private val runner: TransactionProvider
 ) : AlbumRepository {
 
-    override suspend fun deleteAlbumById(albumId: Long) = withContext(dispatcher) {
+    override suspend fun deleteAlbumById(albumId: Long) = runner.withTransaction {
         albumDao.deleteById(albumId)
         albumEntryDao.deleteByAlbumEntityId(albumId)
         albumConfigurationDao.deleteByAlbumEntityId(albumId)
     }
 
-    override suspend fun createAlbum(newAlbum: NewAlbum) = runner.transaction {
+    override suspend fun deleteAlbumItems(albumItemIds: List<Long>) {
+        albumEntryDao.deleteByIds(albumItemIds)
+    }
+
+    override suspend fun createAlbum(newAlbum: NewAlbum) = runner.withTransaction {
         val albumId = albumDao.insert(
             AlbumEntity(
                 name = newAlbum.name,

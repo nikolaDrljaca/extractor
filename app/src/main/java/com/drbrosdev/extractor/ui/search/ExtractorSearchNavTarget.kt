@@ -121,6 +121,8 @@ data class ExtractorSearchNavTarget(
                         val uris = viewModel.getSelectedImageUris()
                         context.launchShareIntent(uris)
                     }
+
+                    MultiselectAction.Delete -> Unit
                 }
             }
         )

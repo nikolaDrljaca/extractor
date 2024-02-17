@@ -103,7 +103,7 @@ class DefaultExtractorRepository(
         }
 
         //NOTE: Ordering is important for relationships
-        txRunner.transaction {
+        txRunner.withTransaction {
             extractionDao.insert(extractionEntity)
             textEmbeddingDao.insert(textEntity)
             visualEmbeddingDao.insertAll(visualEntities)
@@ -136,7 +136,7 @@ class DefaultExtractorRepository(
             }
         }
 
-        txRunner.transaction {
+        txRunner.withTransaction {
             textEmbeddingDao.insertAll(textEmbeds)
             extractionDao.insertAll(extractionEntities)
             visualEmbeddingDao.insertAll(visualEmbeds)

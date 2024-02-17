@@ -10,7 +10,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
-import com.drbrosdev.extractor.ui.album.ExtractorAlbumNavTarget
+import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchShareIntent
@@ -33,7 +33,7 @@ data object ExtractorAlbumsNavTarget : NavTarget {
         ExtractorAlbumsScreen(
             onBack = { navController.pop() },
             onAlbumClick = {
-                navController.navigate(ExtractorAlbumNavTarget(it))
+                navController.navigate(ExtractorAlbumViewerNavTarget(it))
             },
             onAction = {
                 when (it) {
