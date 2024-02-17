@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.album
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
@@ -119,7 +120,14 @@ data class ExtractorAlbumNavTarget(
                         context.launchShareIntent(uris)
                     }
 
-                    MultiselectAction.Delete -> viewModel.onDeleteSelection()
+                    MultiselectAction.Delete -> viewModel.onDeleteSelection {
+                        scope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = context.getString(R.string.items_deleted),
+                                duration = SnackbarDuration.Short
+                            )
+                        }
+                    }
                 }
             }
         )

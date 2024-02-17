@@ -37,7 +37,7 @@ class DefaultAlbumRepository(
         albumConfigurationDao.deleteByAlbumEntityId(albumId)
     }
 
-    override suspend fun deleteAlbumItems(albumItemIds: List<Long>) = runner.withTransaction {
+    override suspend fun deleteAlbumItems(albumItemIds: List<Long>) {
         albumEntryDao.deleteByIds(albumItemIds)
     }
 

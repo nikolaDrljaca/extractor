@@ -75,7 +75,7 @@ val albumGridActions = listOf(
     MultiselectActionItem(
         resourceId = R.drawable.round_delete_24,
         stringId = R.string.action_delete,
-        action = MultiselectAction.Share
+        action = MultiselectAction.Delete
     ),
     MultiselectActionItem(
         resourceId = R.drawable.rounded_add_24,

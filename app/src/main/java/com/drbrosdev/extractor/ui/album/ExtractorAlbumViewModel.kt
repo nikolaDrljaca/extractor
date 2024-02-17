@@ -127,12 +127,17 @@ class ExtractorAlbumViewModel(
         dialogSelection.update { ExtractorAlbumDialogSelection.BottomSheet }
     }
 
-    fun onDeleteSelection() {
+    fun onDeleteSelection(onComplete: () -> Unit) {
         viewModelScope.launch {
             val album = state.value.getAlbum()
             val ids = gridState.checkedIndices().map { album.entries[it].id.id }
 
-            albumRepository.deleteAlbumItems(ids)
+            if (ids.isNotEmpty()) {
+                albumRepository.deleteAlbumItems(ids)
+            }
+        }.invokeOnCompletion {
+            gridState.clearSelection()
+            onComplete()
         }
     }
 }

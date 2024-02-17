@@ -122,7 +122,7 @@ fun ExtractorAlbumScreen(
                         onImageClick(it)
                     },
                     albumEntries = state.album.entries,
-                    state = imageGridState
+                    state = imageGridState,
                 )
 
                 ExtractorTopBar(
