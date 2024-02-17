@@ -174,7 +174,6 @@ class ExtractorSearchViewModel(
 
     private val loaderButtonEnabledJob = state
         .onEach {
-            logInfo("running inside state observer $it")
             when (it) {
                 is ExtractorSearchScreenUiState.Content -> loaderButtonState.enable()
                 else -> loaderButtonState.disable()
