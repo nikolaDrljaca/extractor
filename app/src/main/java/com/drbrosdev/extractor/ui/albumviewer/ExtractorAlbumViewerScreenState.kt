@@ -1,26 +1,26 @@
-package com.drbrosdev.extractor.ui.album
+package com.drbrosdev.extractor.ui.albumviewer
 
 import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.Album
 
-sealed interface ExtractorAlbumScreenState {
+sealed interface ExtractorAlbumViewerScreenState {
 
     @Immutable
     data class Content(
         val album: Album,
         val dialogSelection: ExtractorAlbumDialogSelection,
         val shouldShowSelectBar: Boolean = false
-    ) : ExtractorAlbumScreenState {
+    ) : ExtractorAlbumViewerScreenState {
         val metadata =
             "${album.keywordType.name.lowercase()} \u00B7 ${album.searchType.name.lowercase()} \u00B7 ${album.entries.size}"
     }
 
-    data object Loading : ExtractorAlbumScreenState
+    data object Loading : ExtractorAlbumViewerScreenState
 }
 
-fun ExtractorAlbumScreenState.getAlbum() = when (this) {
-    is ExtractorAlbumScreenState.Content -> this.album
-    ExtractorAlbumScreenState.Loading -> error("Accessing album outside of content state.")
+fun ExtractorAlbumViewerScreenState.getAlbum() = when (this) {
+    is ExtractorAlbumViewerScreenState.Content -> this.album
+    ExtractorAlbumViewerScreenState.Loading -> error("Accessing album outside of content state.")
 }
 
 sealed interface ExtractorAlbumDialogSelection {

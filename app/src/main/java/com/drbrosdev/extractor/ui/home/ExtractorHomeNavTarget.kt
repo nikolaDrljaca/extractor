@@ -10,7 +10,7 @@ import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettin
 import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
-import com.drbrosdev.extractor.ui.album.ExtractorAlbumNavTarget
+import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsNavTarget
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
@@ -54,7 +54,7 @@ object ExtractorHomeNavTarget : NavTarget {
             onInitUserPreviews = { navController.pop() },
             onInitVisualPreview = viewModel::compileVisualAlbums,
             onAlbumPreviewClick = {
-                navController.navigate(ExtractorAlbumNavTarget(it))
+                navController.navigate(ExtractorAlbumViewerNavTarget(it))
             },
             onSettingsClick = {
                 navController.navigate(ExtractorSettingsNavTarget)

@@ -4,7 +4,7 @@ import com.drbrosdev.extractor.MainViewModel
 import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
-import com.drbrosdev.extractor.ui.album.ExtractorAlbumViewModel
+import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel
 import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
@@ -86,7 +86,7 @@ val viewModelModule = module {
     }
 
     viewModel { params ->
-        ExtractorAlbumViewModel(
+        ExtractorAlbumViewerViewModel(
             stateHandle = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             albumId = params.get()
