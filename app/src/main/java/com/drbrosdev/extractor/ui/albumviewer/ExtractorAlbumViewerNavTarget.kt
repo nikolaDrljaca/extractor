@@ -26,6 +26,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumBottomSheetAct
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CollectFlow
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchShareIntent
 import dev.olshevski.navigation.reimagined.navigate
@@ -55,6 +56,40 @@ data class ExtractorAlbumViewerNavTarget(
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
 
+        CollectFlow(viewModel.events) {
+            when (it) {
+                ExtractorAlbumViewerEvents.SelectionCreated -> {
+                    scope.launch {
+                        val result = snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.snack_album_created),
+                            actionLabel = context.getString(R.string.snack_view)
+                        )
+                        when (result) {
+                            SnackbarResult.Dismissed -> Unit
+                            SnackbarResult.ActionPerformed -> navController.pop()
+                        }
+                    }
+                }
+
+                ExtractorAlbumViewerEvents.AlbumDeleted -> {
+                    navController.pop()
+                }
+
+                ExtractorAlbumViewerEvents.SelectionDeleted -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.items_deleted),
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+
+                ExtractorAlbumViewerEvents.SelectionShared -> {
+                    context.launchShareIntent(viewModel.imageUris.value)
+                }
+            }
+        }
+
         ExtractorAlbumViewerScreen(
             onImageClick = { index ->
                 val destination = ExtractorImageNavTarget(
@@ -72,9 +107,7 @@ data class ExtractorAlbumViewerNavTarget(
                 when (it) {
                     ExtractorAlbumBottomSheetAction.Delete -> viewModel.onBottomSheetDelete()
                     ExtractorAlbumBottomSheetAction.Dismiss -> viewModel.onDismissDialog()
-                    ExtractorAlbumBottomSheetAction.Share -> viewModel.onShareAction {
-                        context.launchShareIntent(viewModel.imageUris.value)
-                    }
+                    ExtractorAlbumBottomSheetAction.Share -> viewModel.onShareAction()
                 }
             },
             onDeleteDialogAction = {
@@ -102,32 +135,14 @@ data class ExtractorAlbumViewerNavTarget(
             onMultiselectAction = {
                 when (it) {
                     MultiselectAction.Cancel -> viewModel.onSelectionClear()
-                    MultiselectAction.CreateAlbum -> viewModel.onSelectionCreate {
-                        scope.launch {
-                            val result = snackbarHostState.showSnackbar(
-                                message = context.getString(R.string.snack_album_created),
-                                actionLabel = context.getString(R.string.snack_view)
-                            )
-                            when (result) {
-                                SnackbarResult.Dismissed -> Unit
-                                SnackbarResult.ActionPerformed -> navController.pop()
-                            }
-                        }
-                    }
+                    MultiselectAction.CreateAlbum -> viewModel.onSelectionCreate()
 
                     MultiselectAction.Share -> {
                         val uris = viewModel.getSelectedUris()
                         context.launchShareIntent(uris)
                     }
 
-                    MultiselectAction.Delete -> viewModel.onDeleteSelection {
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = context.getString(R.string.items_deleted),
-                                duration = SnackbarDuration.Short
-                            )
-                        }
-                    }
+                    MultiselectAction.Delete -> viewModel.onDeleteSelection()
                 }
             }
         )

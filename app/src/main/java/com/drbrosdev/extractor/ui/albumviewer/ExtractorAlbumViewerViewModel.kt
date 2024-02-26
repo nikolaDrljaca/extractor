@@ -12,6 +12,7 @@ import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndicesAsFlow
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -35,6 +37,9 @@ class ExtractorAlbumViewerViewModel(
 
     private val dialogSelection =
         MutableStateFlow<ExtractorAlbumDialogSelection>(ExtractorAlbumDialogSelection.None)
+
+    private val _events = Channel<ExtractorAlbumViewerEvents>()
+    val events = _events.receiveAsFlow()
 
     private val albumFlow = albumRepository.findAlbumByIdAsFlow(albumId)
         .filterNotNull()
@@ -76,12 +81,14 @@ class ExtractorAlbumViewerViewModel(
         }
     }
 
-    fun onShareAction(action: () -> Unit) {
+    fun onShareAction() {
         when {
             _imageUris.value.size > 30 -> dialogSelection.update { ExtractorAlbumDialogSelection.ConfirmShare }
             else -> {
                 dialogSelection.update { ExtractorAlbumDialogSelection.None }
-                action()
+                viewModelScope.launch {
+                    _events.send(ExtractorAlbumViewerEvents.SelectionShared)
+                }
             }
         }
     }
@@ -94,7 +101,7 @@ class ExtractorAlbumViewerViewModel(
         return gridState.checkedIndices().map { imageUris.value[it] }
     }
 
-    fun onSelectionCreate(onComplete: () -> Unit = {}) {
+    fun onSelectionCreate() {
         viewModelScope.launch {
             val album = state.value.getAlbum()
             val newAlbum = NewAlbum(
@@ -112,10 +119,8 @@ class ExtractorAlbumViewerViewModel(
             )
 
             albumRepository.createAlbum(newAlbum)
-
             gridState.clearSelection()
-        }.invokeOnCompletion {
-            onComplete()
+            _events.send(ExtractorAlbumViewerEvents.SelectionCreated)
         }
     }
 
@@ -127,17 +132,23 @@ class ExtractorAlbumViewerViewModel(
         dialogSelection.update { ExtractorAlbumDialogSelection.BottomSheet }
     }
 
-    fun onDeleteSelection(onComplete: () -> Unit) {
+    fun onDeleteSelection() {
         viewModelScope.launch {
             val album = state.value.getAlbum()
             val ids = gridState.checkedIndices().map { album.entries[it].id.id }
 
+            val albumCount = album.entries.count()
+            val selectedCount = gridState.checkedIndices().count()
+
+            if (albumCount == selectedCount) {
+                albumRepository.deleteAlbumById(albumId)
+                _events.send(ExtractorAlbumViewerEvents.AlbumDeleted)
+            }
+
             if (ids.isNotEmpty()) {
                 albumRepository.deleteAlbumItems(ids)
+                _events.send(ExtractorAlbumViewerEvents.SelectionDeleted)
             }
-        }.invokeOnCompletion {
-            gridState.clearSelection()
-            onComplete()
         }
     }
 }

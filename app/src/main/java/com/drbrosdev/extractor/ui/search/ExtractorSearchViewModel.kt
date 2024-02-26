@@ -302,6 +302,7 @@ class ExtractorSearchViewModel(
 
     fun resetSearch() {
         searchViewState.updateQuery("")
+        dateFilterState.clearDates()
         _state.update {
             ExtractorSearchScreenUiState.ShowSuggestions(
                 ExtractorSuggestedSearchState.Loading
