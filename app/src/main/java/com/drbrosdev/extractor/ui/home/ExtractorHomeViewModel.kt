@@ -11,7 +11,6 @@ import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.util.toPreview
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -31,8 +30,6 @@ class ExtractorHomeViewModel(
     private val loadingTextAlbum = MutableStateFlow(false)
     private val loadingVisualAlbum = MutableStateFlow(false)
 
-    private val runningJobs = mutableMapOf<String, Job>()
-
     val settings = homeScreenSettingsProvider()
         .stateIn(
             viewModelScope,
@@ -44,7 +41,7 @@ class ExtractorHomeViewModel(
         .getCommonTextAlbumsAsFlow()
         .combine(loadingTextAlbum) { albums, loading ->
             when {
-                loading && albums.isEmpty() -> ExtractorCategoryViewState.Initial(true)
+                loading and albums.isEmpty() -> ExtractorCategoryViewState.Initial(true)
                 albums.isEmpty() -> ExtractorCategoryViewState.Initial()
                 else -> ExtractorCategoryViewState.Content(
                     albums = albums.map { it.toPreview() },
@@ -63,7 +60,7 @@ class ExtractorHomeViewModel(
         .getCommonVisualAlbumsAsFlow()
         .combine(loadingVisualAlbum) { albums, loading ->
             when {
-                loading && albums.isEmpty() -> ExtractorCategoryViewState.Initial(true)
+                loading and albums.isEmpty() -> ExtractorCategoryViewState.Initial(true)
                 albums.isEmpty() -> ExtractorCategoryViewState.Initial()
                 else -> ExtractorCategoryViewState.Content(
                     albums = albums.map { it.toPreview() },
