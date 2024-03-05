@@ -45,7 +45,8 @@ val useCaseModule = module {
 
     factory {
         MlKitExtractTextEmbed(
-            dispatcher = get(named(CoroutineModuleName.Default))
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            tokenizeText = get()
         )
     } bind ExtractTextEmbed::class
 
