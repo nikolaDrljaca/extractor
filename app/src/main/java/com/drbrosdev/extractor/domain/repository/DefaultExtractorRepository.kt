@@ -97,6 +97,7 @@ class DefaultExtractorRepository(
 
         // handle visual embeds
         val visuals = visualEmbeds
+            .filter { it.value.isBlank() }
             .map { it.value.lowercase() }
             .joinToString(separator = ",") { it }
 
