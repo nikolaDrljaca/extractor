@@ -6,7 +6,6 @@ import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel
-import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
 import com.drbrosdev.extractor.ui.image.ExtractorImageViewModel
@@ -66,12 +65,6 @@ val viewModelModule = module {
         ExtractorStatusDialogViewModel(
             spawnExtractorWork = get(),
             trackExtractionProgress = get()
-        )
-    }
-
-    viewModel {
-        ExtractorStatsViewModel(
-            visualEmbedDao = get()
         )
     }
 

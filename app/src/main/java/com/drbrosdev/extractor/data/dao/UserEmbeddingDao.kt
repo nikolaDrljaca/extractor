@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.data.dao
 
+import android.database.sqlite.SQLiteConstraintException
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -27,6 +28,15 @@ interface UserEmbeddingDao {
 
     @Query("UPDATE user_embedding SET value=:value WHERE extraction_entity_id=:imageEntityId")
     suspend fun update(value: String, imageEntityId: Long)
+
+    suspend fun upsert(value: String, extractionEntityId: Long) {
+        try {
+            val userEmbedding = UserEmbeddingEntity(value = value, extractionEntityId = extractionEntityId)
+            insert(userEmbedding)
+        } catch (e: SQLiteConstraintException) {
+            update(value, extractionEntityId)
+        }
+    }
 
     @Delete
     suspend fun delete(value: UserEmbeddingEntity)

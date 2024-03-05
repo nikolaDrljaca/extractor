@@ -54,7 +54,7 @@ class ExtractorImageInfoViewModel(
                 )
             )
 
-            extractorDataRepository.updateOrInsertUserEmbed(
+            extractorDataRepository.upsertUserEmbed(
                 EmbedUpdate(
                     value = imageInfoModel.value.embeddingsFormState.userEmbedding.trim(),
                     mediaImageId = MediaImageId(mediaImageId)

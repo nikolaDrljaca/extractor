@@ -47,9 +47,10 @@ fun ImageEmbeddingsRelation.mapToImageEmbeds(): ImageEmbeds {
     val userEmbed = this.userEmbeddingEntity?.let {
         Embed.User(it.value)
     }
-    val visualEmbeds = this.visualEmbeddingEntities.map {
-        Embed.Visual(it.value)
-    }
+
+    val visualEmbeds = this.visualEmbeddingEntity.value
+        .split(",")
+        .map { Embed.Visual(it) }
 
     return ImageEmbeds(
         textEmbed = textEmbed,

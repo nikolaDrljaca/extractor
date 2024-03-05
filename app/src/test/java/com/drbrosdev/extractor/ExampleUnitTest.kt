@@ -49,6 +49,35 @@ class ExampleUnitTest {
 
         Unit
     }
+
+    @Test
+    fun `visual embed deletion`() = runBlocking {
+        val visualEmbeds = "foo,bar,baz,foobar"
+
+        val out = visualEmbeds
+            .split(",")
+            .map { it.trim() }
+            .filter { it.lowercase() != "baz".lowercase() }
+            .joinToString(separator = ",") { it }
+        println(out)
+        assert(out == "foo,bar,foobar")
+    }
+
+    @Test
+    fun `test build full match query`() = runBlocking {
+        val adaptedQuery = "*lake*"
+        val output = buildString {
+            append("textIndex:$adaptedQuery")
+            append(" OR ")
+            append("visualIndex:$adaptedQuery")
+            append(" OR ")
+            append("userIndex:$adaptedQuery")
+            append(" OR ")
+            append("colorIndex:$adaptedQuery")
+        }
+
+        println(output)
+    }
 }
 
 
