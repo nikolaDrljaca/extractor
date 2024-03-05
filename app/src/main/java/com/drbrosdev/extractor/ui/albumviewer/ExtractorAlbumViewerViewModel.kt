@@ -149,6 +149,7 @@ class ExtractorAlbumViewerViewModel(
                 albumRepository.deleteAlbumItems(ids)
                 _events.send(ExtractorAlbumViewerEvents.SelectionDeleted)
             }
+            gridState.clearSelection()
         }
     }
 }
