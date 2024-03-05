@@ -4,6 +4,7 @@ import com.drbrosdev.extractor.domain.model.AdaptedQuery
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.Token
+import com.drbrosdev.extractor.util.logInfo
 
 class CreateAdaptedQuery {
 
@@ -13,7 +14,7 @@ class CreateAdaptedQuery {
                 adaptedQuery = buildFtsAdaptedQuery(tokens, searchType),
                 keywordType = keywordType
             )
-        )
+        ).also { logInfo("AdaptedQuery: ${it.query} | params: $params") }
     }
 
     private fun buildFtsAdaptedQuery(
@@ -29,7 +30,9 @@ class CreateAdaptedQuery {
 
         val words = tokens.joinToString(separator = separator) { it.text }
         append(words)
-        append("*")
+        if (searchType == SearchType.PARTIAL) {
+            append("*")
+        }
     }
 
     private fun appendSearchIndexTableNames(
