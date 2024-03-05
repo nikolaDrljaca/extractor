@@ -6,8 +6,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 
 
 @Dao
@@ -48,27 +46,13 @@ interface TextEmbeddingDao {
     @Query("DELETE FROM text_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
 
-    @Query(
-        """
-        SELECT t.id, t.extraction_entity_id, t.value
-        FROM text_embedding AS t
-        JOIN text_embedding_fts AS fts ON t.id = fts.rowid
-        WHERE fts.value MATCH :query
-    """
-    )
-    fun findByValueFtsAsFlow(query: String): Flow<List<TextEmbeddingEntity>>
-
-    suspend fun findByValue(query: String): List<TextEmbeddingEntity> =
-        findByValueFtsAsFlow(query).first()
-
     @Query("""
         WITH out AS (
             SELECT value 
             FROM text_embedding AS te
             WHERE te.value IS NOT NULL AND te.value !=''
             ORDER BY random()
-            LIMIT 10
-        )
+            LIMIT 10)
         SELECT group_concat(value)
         FROM out
     """)

@@ -29,7 +29,7 @@ class ExtractorWorker(
             createForegroundInfo(
                 NotificationService.PROGRESS_ID,
                 notificationService.createNotification(NotificationService.PROGRESS_CHANNEL_ID) {
-                    it.setContentInfo("Extraction is running.")
+                    it.setContentInfo("Extraction is running")
                 }
             )
         )
@@ -53,7 +53,7 @@ class ExtractorWorker(
         return createForegroundInfo(
             notificationId = NotificationService.PROGRESS_ID,
             notification = notificationService.createNotification(NotificationService.PROGRESS_CHANNEL_ID) {
-                it.setContentInfo("Extraction is running.")
+                it.setContentInfo("Extraction is running")
             }
         )
     }

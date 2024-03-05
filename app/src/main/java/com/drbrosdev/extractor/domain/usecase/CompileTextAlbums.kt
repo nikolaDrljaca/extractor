@@ -7,7 +7,6 @@ import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -19,7 +18,8 @@ class CompileTextAlbums(
     private val searchImageByKeyword: SearchImageByKeyword,
     private val albumRepository: AlbumRepository,
     private val tokenizeText: TokenizeText,
-    private val validateSuggestedSearchToken: ValidateSuggestedSearchToken
+    private val validateSuggestedSearchToken: ValidateSuggestedSearchToken,
+    private val generateMostCommonTokens: GenerateMostCommonTokens
 ) {
 
     suspend operator fun invoke() {
@@ -27,13 +27,10 @@ class CompileTextAlbums(
 
         val tokens = tokenizeText(allText)
             .filter { validateSuggestedSearchToken(it) }
-            .map { it.text }
             .toList()
 
-        tokens
-            .createFrequencyMap()
-            .generateMostCommon()
-            .asFlow()
+        generateMostCommonTokens(tokens)
+            .map { it.text }
             .map { topWord ->
                 val params = SearchImageByKeyword.Params(
                     query = topWord,
@@ -50,17 +47,6 @@ class CompileTextAlbums(
                 val newAlbum = it.createNewAlbumFromPayload()
                 albumRepository.createAlbum(newAlbum)
             }
-    }
-
-    private fun List<String>.createFrequencyMap(): Map<String, Int> {
-        return groupingBy { it }.eachCount()
-    }
-
-    private fun Map<String, Int>.generateMostCommon(amount: Int = 7): List<String> {
-        return this.entries
-            .sortedByDescending { it.value }
-            .map { it.key }
-            .take(amount)
     }
 
     private fun CompileAlbumPayload.createNewAlbumFromPayload(): NewAlbum {

@@ -19,6 +19,7 @@ val domainModule = module {
             textEmbeddingDao = get(),
             userEmbeddingDao = get(),
             imageEmbeddingsDao = get(),
+            searchIndexDao = get(),
             txRunner = get()
         )
     } bind ExtractorRepository::class

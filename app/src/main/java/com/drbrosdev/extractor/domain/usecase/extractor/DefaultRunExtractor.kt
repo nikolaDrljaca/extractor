@@ -22,18 +22,20 @@ class DefaultRunExtractor(
 
     override suspend fun execute(mediaImageUri: MediaImageUri): Result<ImageEmbeds> {
         return withContext(dispatcher) {
-            val inputImage = createInputImage.execute(InputImageType.UriInputImage(mediaImageUri.toUri()))
+            val inputImage =
+                createInputImage.execute(InputImageType.UriInputImage(mediaImageUri.toUri()))
 
             val text = async {
                 extractTextEmbed.execute(inputImage)
             }
 
-            val labels = async {
+            val visuals = async {
                 extractVisualEmbeds.execute(inputImage)
             }
 
             val outText = text.await().getOrDefault(Embed.defaultTextEmbed)
-            val outVisual = labels.await().getOrDefault(listOf(Embed.defaultVisualEmbed))
+
+            val outVisual = visuals.await().getOrDefault(listOf(Embed.defaultVisualEmbed))
 
             val out = ImageEmbeds(
                 textEmbed = outText,
