@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,15 +13,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -32,8 +38,8 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
 @Composable
 fun ExtractorStatusDialog(
     onClick: () -> Unit,
+    onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
-    headline: (@Composable () -> Unit)? = null,
     state: ExtractorStatusDialogUiModel
 ) {
     val scrollState = rememberScrollState()
@@ -49,9 +55,20 @@ fun ExtractorStatusDialog(
                 .padding(16.dp)
                 .verticalScroll(scrollState),
         ) {
-            headline?.let {
-                it()
-                Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.status_dialog_status),
+                    style = MaterialTheme.typography.displaySmall
+                )
+                IconButton(onClick = onCloseClick) {
+                    Icon(imageVector = Icons.Rounded.Close, contentDescription = "")
+                }
             }
 
             Text(
