@@ -7,8 +7,8 @@ import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
 import com.drbrosdev.extractor.util.CONCURRENCY
-import com.drbrosdev.extractor.util.logError
-import com.drbrosdev.extractor.util.logInfo
+import com.drbrosdev.extractor.framework.logger.logError
+import com.drbrosdev.extractor.framework.logger.logInfo
 import com.drbrosdev.extractor.util.mediaImageUri
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow

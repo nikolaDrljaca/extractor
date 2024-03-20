@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.framework
 
 import android.os.Build
+import com.drbrosdev.extractor.BuildConfig
 
 object VersionCodes {
     const val V_21 = Build.VERSION_CODES.LOLLIPOP
@@ -36,5 +37,16 @@ fun <T> requiresApi(
         block()
     } else {
         fallback.invoke()
+    }
+}
+
+fun requireDebug(
+    fallback: (() -> Unit)?  = null,
+    action: () -> Unit
+) {
+    if (BuildConfig.DEBUG) {
+        action()
+    } else {
+        fallback?.invoke()
     }
 }

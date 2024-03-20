@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
 import com.drbrosdev.extractor.ui.root.Root
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.framework.logger.logInfo
 import com.drbrosdev.extractor.util.setupInitialThemeLoad
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -30,6 +31,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setupInitialThemeLoad { viewModel.isDynamicTheme.value }
 
+        logInfo("Starting")
+
         setContent {
             viewModel.isDynamicTheme
                 .collectAsStateWithLifecycle()
@@ -44,6 +47,11 @@ class MainActivity : ComponentActivity() {
                     }
                 }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (application as ExtractorApplication).databaseLogger.close()
     }
 }
 

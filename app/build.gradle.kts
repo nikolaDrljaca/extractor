@@ -121,6 +121,9 @@ dependencies {
     //splash screen API
     implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
 
+    // timber logging
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     implementation("io.arrow-kt:arrow-core:1.2.0")

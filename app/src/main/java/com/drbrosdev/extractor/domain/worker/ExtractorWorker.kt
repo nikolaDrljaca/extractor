@@ -12,7 +12,7 @@ import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.framework.notification.NotificationService
 import com.drbrosdev.extractor.framework.requiresApi
-import com.drbrosdev.extractor.util.logInfo
+import com.drbrosdev.extractor.framework.logger.logInfo
 import kotlin.time.measureTime
 
 class ExtractorWorker(
