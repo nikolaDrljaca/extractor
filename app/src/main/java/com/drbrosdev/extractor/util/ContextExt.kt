@@ -60,6 +60,18 @@ suspend fun Context.launchUseAsIntent(media: MediaStoreImage) =
         startActivity(Intent.createChooser(intent, getString(R.string.set_as)))
     }
 
+
+fun Context.launchEmailIntent(content: String) {
+    val intent = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:") // Only email apps handle this.
+        putExtra(Intent.EXTRA_EMAIL, arrayOf("devnikoladr@gmail.com"))
+        putExtra(Intent.EXTRA_SUBJECT, "Extractor Feedback Submission")
+        putExtra(Intent.EXTRA_TEXT, content)
+    }
+
+    startActivity(intent)
+}
+
 fun Context.findActivity(): Activity {
     var context = this
     while (context is ContextWrapper) {
