@@ -45,6 +45,11 @@ class MainActivity : ComponentActivity() {
                 }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (application as ExtractorApplication).databaseLogger.close()
+    }
 }
 
 class MainViewModel(

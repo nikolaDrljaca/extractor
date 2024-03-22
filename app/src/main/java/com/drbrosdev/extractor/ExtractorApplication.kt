@@ -7,20 +7,38 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.util.DebugLogger
 import com.drbrosdev.extractor.framework.koin.allKoinModules
+import com.drbrosdev.extractor.framework.logger.DatabaseEventLogTree
+import com.drbrosdev.extractor.framework.requireDebug
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.startKoin
+import timber.log.Timber
 
 class ExtractorApplication : Application(), ImageLoaderFactory {
+
+    val databaseLogger by lazy {
+        DatabaseEventLogTree()
+    }
 
     override fun onCreate() {
         super.onCreate()
         startKoin {
-            androidLogger()
+            requireDebug {
+                androidLogger()
+            }
             androidContext(this@ExtractorApplication)
             workManagerFactory()
             modules(allKoinModules)
+        }
+
+        requireDebug(
+            fallback = { Timber.plant(databaseLogger) }
+        ) {
+            Timber.plant(
+                Timber.DebugTree(),
+                databaseLogger
+            )
         }
     }
 

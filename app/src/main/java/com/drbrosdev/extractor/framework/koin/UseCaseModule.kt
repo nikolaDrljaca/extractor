@@ -5,6 +5,7 @@ import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
+import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
@@ -161,5 +162,12 @@ val useCaseModule = module {
 
     factory {
         CreateAdaptedQuery()
+    }
+
+    factory {
+        GenerateFeedbackEmailContent(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            eventLogDao = get()
+        )
     }
 }

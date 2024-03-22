@@ -14,6 +14,7 @@ import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
+import com.drbrosdev.extractor.ui.settings.bug.ExtractorBugReportViewModel
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -109,6 +110,13 @@ val viewModelModule = module {
     viewModel {
         ExtractorPeriodicWorkViewModel(
             workManager = get()
+        )
+    }
+
+    viewModel {
+        ExtractorBugReportViewModel(
+            savedStateHandle = get(),
+            generateEmailContent = get()
         )
     }
 }
