@@ -17,8 +17,8 @@ interface EventLogDao {
             SELECT ifnull(max(event.event_order), 0) + 1
             FROM event_entity as event
         )       
-        INSERT INTO event_entity
-        VALUES (0, (SELECT * FROM next), :tag, :message, :timestamp, :localizedMessage)
+        INSERT INTO event_entity (event_order, tag, message, timestamp, localizedMessage)
+        VALUES ((SELECT * FROM next), :tag, :message, :timestamp, :localizedMessage)
     """
     )
     suspend fun insert(

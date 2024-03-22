@@ -34,7 +34,7 @@ class GenerateFeedbackEmailContent(
             append("No event logs stored.")
             return
         }
-        append("--- Event Logs ---")
+        append("--- Event Logs ---\n")
         append(eventText)
     }
 

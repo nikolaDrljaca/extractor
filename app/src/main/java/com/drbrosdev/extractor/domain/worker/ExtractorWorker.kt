@@ -10,9 +10,9 @@ import androidx.work.WorkerParameters
 import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
+import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.framework.notification.NotificationService
 import com.drbrosdev.extractor.framework.requiresApi
-import com.drbrosdev.extractor.framework.logger.logInfo
 import kotlin.time.measureTime
 
 class ExtractorWorker(
@@ -44,7 +44,7 @@ class ExtractorWorker(
             return Result.retry()
         }
 
-        logInfo("Extraction Worker processed $localImageCount images in ${time.inWholeMinutes}(minutes) - ${time.inWholeMilliseconds}(ms)")
+        logEvent("Extraction Worker processed $localImageCount images in ${time.inWholeMinutes}(minutes) - ${time.inWholeMilliseconds}(ms)")
 
         return Result.success()
     }

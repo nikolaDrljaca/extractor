@@ -1,5 +1,7 @@
 package com.drbrosdev.extractor.framework.logger
 
+import android.annotation.SuppressLint
+import android.util.Log
 import timber.log.Timber
 
 private val Any.simpleName: String
@@ -11,23 +13,18 @@ private val Any.simpleName: String
         return "Extractor: "
     }
 
+@SuppressLint("LogNotTimber")
 fun Any.logInfo(message: String) {
+    Log.i(simpleName, message)
+}
+
+fun Any.logEvent(message: String) {
     Timber.tag(simpleName).i(message)
 }
 
-fun Any.logInfo(value: Any?) {
-    Timber.tag(simpleName).i(value.toString())
-}
-
-fun Any.logDebug(message: String) = Timber.tag(simpleName).d(message)
-
-fun Any.logError(
+fun Any.logErrorEvent(
     message: String,
     throwable: Throwable? = null
 ) {
     Timber.tag(simpleName).e(throwable, message)
-}
-
-fun Any.logWarn(message: String) {
-    Timber.tag(simpleName).w(message)
 }
