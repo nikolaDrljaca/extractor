@@ -1,34 +1,29 @@
 package com.drbrosdev.extractor.ui.onboarding
 
-import android.Manifest
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.framework.requiresApi
-import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
-import com.drbrosdev.extractor.ui.components.shared.ExtractorTextButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorDialog
+import com.drbrosdev.extractor.ui.components.shared.InfoIconButton
 import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
-import com.drbrosdev.extractor.ui.components.shared.OnboardingCardHeadline
-import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerOnbCard
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.findActivity
-import com.drbrosdev.extractor.util.openAppSettings
-import dev.olshevski.navigation.reimagined.navigate
-import dev.olshevski.navigation.reimagined.pop
-import kotlinx.parcelize.Parcelize
 
+/*
 @Parcelize
 object PermissionOnbCard : OnbNavTarget {
 
@@ -64,15 +59,51 @@ object PermissionOnbCard : OnbNavTarget {
         )
     }
 }
+ */
 
 @Composable
-private fun PermissionCard(
-    onPermissionClick: () -> Unit,
-    onSettingsClick: () -> Unit,
-    onBack: () -> Unit,
+fun PermissionCard(
     modifier: Modifier = Modifier,
 ) {
+    val headlineStyle = MaterialTheme.typography.headlineMedium
+    var shouldShowInfoDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
 
+    if (shouldShowInfoDialog) {
+        ExtractorDialog(
+            onAction = {
+                shouldShowInfoDialog = !shouldShowInfoDialog
+            },
+        ) {
+            Text(
+                text = stringResource(id = R.string.onb_permission),
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
+
+    OnboardingCard(
+        modifier = modifier,
+        painter = {
+            Image(
+                painter = painterResource(id = R.drawable.ilu_permissions),
+                contentDescription = "",
+            )
+        },
+        topBar = {
+            InfoIconButton(onClick = { shouldShowInfoDialog = true })
+        },
+    ) {
+        Text(text = stringResource(id = R.string.permission), style = headlineStyle)
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "In order to function properly, we need permission to view your images.",
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+    }
+    /*
     OnboardingCard(
         body = stringResource(id = R.string.onb_permission),
         headline = {
@@ -97,15 +128,15 @@ private fun PermissionCard(
             }
         }
     )
+     */
 }
 
 @Preview
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
-        PermissionCard(
-            onPermissionClick = { /*TODO*/ },
-            onSettingsClick = { /*TODO*/ },
-            onBack = { /*TODO*/ })
+        Surface(color = MaterialTheme.colorScheme.background) {
+            PermissionCard()
+        }
     }
 }

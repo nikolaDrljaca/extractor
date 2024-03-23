@@ -10,7 +10,7 @@ import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
 import com.drbrosdev.extractor.ui.image.ExtractorImageViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
-import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
+import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
@@ -21,7 +21,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel {
-        StartWorkerViewModel(
+        OnboardingViewModel(
             spawnExtractorWork = get(),
             datastore = get(),
         )
