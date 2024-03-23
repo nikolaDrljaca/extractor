@@ -66,7 +66,7 @@ fun WelcomeCard(
         Text(text = appName, style = headlineStyle)
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Search through your gallery and find your memories!",
+            text = stringResource(R.string.search_gallery),
             textAlign = TextAlign.Center
         )
     }

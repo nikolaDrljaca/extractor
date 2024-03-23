@@ -61,7 +61,7 @@ fun PrivacyNoteCard(
         Text(text = stringResource(id = R.string.a_note_on_privacy), style = headlineStyle)
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "All information found on your images is stored locally and never leaves your device.\n\nYou own your data.",
+            text = stringResource(R.string.all_info_local),
             textAlign = TextAlign.Center,
         )
     }

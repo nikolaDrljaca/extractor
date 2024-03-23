@@ -23,43 +23,6 @@ import com.drbrosdev.extractor.ui.components.shared.InfoIconButton
 import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
-/*
-@Parcelize
-object PermissionOnbCard : OnbNavTarget {
-
-    @Composable
-    override fun Content() {
-        val navController = LocalOnbNavController.current
-        val imagePermissionResultLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                if (isGranted) navController.navigate(StartWorkerOnbCard)
-            }
-        )
-        val activity = LocalContext.current.findActivity()
-
-        PermissionCard(
-            onPermissionClick = {
-                requiresApi(
-                    versionCode = Build.VERSION_CODES.TIRAMISU,
-                    fallback = {
-                        imagePermissionResultLauncher.launch(
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        )
-                    },
-                    block = {
-                        imagePermissionResultLauncher.launch(
-                            Manifest.permission.READ_MEDIA_IMAGES
-                        )
-                    }
-                )
-            },
-            onSettingsClick = { activity.openAppSettings() },
-            onBack = { navController.pop() }
-        )
-    }
-}
- */
 
 @Composable
 fun PermissionCard(
@@ -98,37 +61,11 @@ fun PermissionCard(
         Text(text = stringResource(id = R.string.permission), style = headlineStyle)
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "In order to function properly, we need permission to view your images.",
+            text = stringResource(R.string.function_permission),
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(12.dp))
     }
-    /*
-    OnboardingCard(
-        body = stringResource(id = R.string.onb_permission),
-        headline = {
-            OnboardingCardHeadline(
-                headline = stringResource(R.string.permission),
-                onBack = onBack
-            )
-        },
-        actionButton = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                ExtractorTextButton(onClick = onSettingsClick, contentColor = Color.White) {
-                    Text(text = stringResource(R.string.open_settings))
-                }
-
-                ExtractorActionButton(onClick = onPermissionClick) {
-                    Text(text = stringResource(R.string.grant_permission))
-                }
-            }
-        }
-    )
-     */
 }
 
 @Preview

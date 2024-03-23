@@ -20,30 +20,6 @@ import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 
-/*
-@Parcelize
-object StartWorkerOnbCard : OnbNavTarget {
-
-    @Composable
-    override fun Content() {
-        val viewModel = koinViewModel<OnboardingViewModel>()
-        val navController = LocalOnbNavController.current
-        val rootNavController = LocalNavController.current
-
-        /*
-        StartWorker(
-            onClick = {
-                viewModel.spawnWorkRequest()
-                viewModel.finishOnboarding()
-                rootNavController.replaceAll(ExtractorSearchNavTarget())
-            },
-            onBack = { navController.pop() }
-        )
-         */
-    }
-}
- */
-
 @Composable
 fun StartWorkerCard(
     modifier: Modifier = Modifier,
@@ -78,7 +54,7 @@ fun StartWorkerCard(
             InfoIconButton(onClick = { shouldShowInfoDialog = true })
         },
     ) {
-        Text(text = "Start Extracting!", style = headlineStyle)
+        Text(text = stringResource(R.string.start_extracting), style = headlineStyle)
     }
 }
 

@@ -49,6 +49,7 @@ fun OnboardingCard(
 ) {
     ConstraintLayout(
         modifier = Modifier
+            .padding(top = 12.dp)
             .fillMaxSize()
             .then(modifier),
         constraintSet = onboardingCardConstraints()

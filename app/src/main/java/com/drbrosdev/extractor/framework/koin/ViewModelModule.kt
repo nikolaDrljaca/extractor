@@ -24,6 +24,7 @@ val viewModelModule = module {
         OnboardingViewModel(
             spawnExtractorWork = get(),
             datastore = get(),
+            savedStateHandle = get()
         )
     }
 
