@@ -1,118 +1,118 @@
 package com.drbrosdev.extractor.ui.onboarding
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
-import com.drbrosdev.extractor.R
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
-import com.drbrosdev.extractor.framework.navigation.animspec.CardStackSpec
-import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerOnbCard
-import com.drbrosdev.extractor.util.applicationIconBitmap
-import com.drbrosdev.extractor.util.createExtractorBrush
-import dev.olshevski.navigation.reimagined.AnimatedNavHost
-import dev.olshevski.navigation.reimagined.NavController
-import dev.olshevski.navigation.reimagined.rememberNavController
+import com.drbrosdev.extractor.framework.requiresApi
+import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.findActivity
+import dev.olshevski.navigation.reimagined.replaceAll
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import org.koin.androidx.compose.koinViewModel
 
 
 @Parcelize
-object Onboarding : NavTarget {
+object OnboardingNavTarget : NavTarget {
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-        OnboardingScreen()
+        val viewModel: OnboardingViewModel = koinViewModel()
+        val pagerState = rememberPagerState {
+            4
+        }
+        val scope = rememberCoroutineScope()
+        val navController = LocalNavController.current
+
+        val imagePermissionResultLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted ->
+                if (isGranted) scope.launch {
+                    pagerState.animateScrollToPage(3)
+                }
+            }
+        )
+
+        OnboardingScreen(
+            pagerState = pagerState,
+            onClick = {
+                val event = mapEvent(pagerState.currentPage)
+                when (event) {
+                    OnboardingEvents.GoNext -> {
+                        scope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    }
+
+                    OnboardingEvents.RequestPermissions -> {
+                        requiresApi(
+                            versionCode = Build.VERSION_CODES.TIRAMISU,
+                            fallback = {
+                                imagePermissionResultLauncher.launch(
+                                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                                )
+                            },
+                            block = {
+                                imagePermissionResultLauncher.launch(
+                                    android.Manifest.permission.READ_MEDIA_IMAGES
+                                )
+                            }
+                        )
+                    }
+
+                    OnboardingEvents.StartWorker -> {
+                        viewModel.spawnWorkRequest()
+                        viewModel.finishOnboarding()
+                        navController.replaceAll(ExtractorSearchNavTarget())
+                    }
+                }
+            },
+            onBackClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                }
+            }
+        )
     }
 }
 
-interface OnbNavTarget : NavTarget {
-    @Composable
-    override fun Content()
+
+sealed interface OnboardingEvents {
+    data object RequestPermissions : OnboardingEvents
+    data object GoNext : OnboardingEvents
+    data object StartWorker : OnboardingEvents
 }
 
-val LocalOnbNavController = staticCompositionLocalOf<NavController<OnbNavTarget>> {
-    error("NavController not provided in this scope.")
+private fun mapEvent(currentPage: Int): OnboardingEvents = when (currentPage) {
+    2 -> OnboardingEvents.RequestPermissions
+    3 -> OnboardingEvents.StartWorker
+    else -> OnboardingEvents.GoNext
 }
 
+
+@OptIn(ExperimentalFoundationApi::class)
+@Preview
 @Composable
-private fun OnboardingScreen(
-    modifier: Modifier = Modifier,
-) {
-    val onbNavController = rememberNavController(
-        initialBackstack = listOf(
-            StartWorkerOnbCard, PermissionOnbCard, PrivacyNoteOnbCard, WelcomeOnbCard
-        )
-    )
-
-    val brush = createExtractorBrush()
-
-    ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(brush)
-            .padding(horizontal = 24.dp)
-            .systemBarsPadding(),
-    ) {
-        val topGuideline = createGuidelineFromTop(0.05f)
-        val cardGuideline = createGuidelineFromBottom(0.60f)
-        val (header, cards) = createRefs()
-
-        Column(
-            modifier = Modifier
-                .constrainAs(
-                    ref = header,
-                    constrainBlock = {
-                        top.linkTo(topGuideline)
-                    }
-                )
-                .fillMaxWidth(),
-        ) {
-            Image(bitmap = applicationIconBitmap(), contentDescription = "")
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = stringResource(id = R.string.app_name),
-                style = MaterialTheme.typography.displaySmall,
-                color = Color.White
+private fun CurrentPreview() {
+    ExtractorTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            OnboardingScreen(
+                pagerState = rememberPagerState { 0 },
+                onClick = {},
+                onBackClick = {}
             )
-            Text(
-                text = stringResource(R.string.welcome),
-                style = MaterialTheme.typography.displayLarge,
-                color = Color.White
-            )
-        }
-
-        AnimatedNavHost(
-            controller = onbNavController,
-            transitionSpec = CardStackSpec,
-            modifier = modifier.constrainAs(cards) {
-                top.linkTo(cardGuideline)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom, margin = 12.dp)
-                height = Dimension.fillToConstraints
-            }
-        ) {
-            CompositionLocalProvider(
-                LocalOnbNavController provides onbNavController
-            ) {
-                it.Content()
-            }
         }
     }
 }

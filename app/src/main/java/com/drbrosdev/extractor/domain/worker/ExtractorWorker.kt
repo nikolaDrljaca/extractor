@@ -44,7 +44,9 @@ class ExtractorWorker(
             return Result.retry()
         }
 
-        logEvent("Extraction Worker processed $localImageCount images in ${time.inWholeMinutes}(minutes) - ${time.inWholeMilliseconds}(ms)")
+        if (time.inWholeMinutes != 0L) {
+            logEvent("Extraction Worker processed $localImageCount images in ${time.inWholeMinutes}(minutes) - ${time.inWholeMilliseconds}(ms)")
+        }
 
         return Result.success()
     }
