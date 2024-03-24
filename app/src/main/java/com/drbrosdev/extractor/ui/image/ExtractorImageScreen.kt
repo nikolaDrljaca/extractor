@@ -95,13 +95,14 @@ fun ExtractorImageScreen(
         AnimatedVisibility(
             visible = showUi,
             modifier = Modifier
-                .statusBarsPadding()
                 .layoutId(ViewIds.TOP_BAR),
             enter = fadeIn(),
             exit = fadeOut()
         ) {
             ExtractorImageTopBar(
-                modifier = Modifier.padding(12.dp),
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(12.dp),
                 onBackClick = onBack,
             )
         }
