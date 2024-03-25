@@ -24,7 +24,7 @@ import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGr
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
 import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumBottomSheetAction
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
-import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
+import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CollectFlow
 import com.drbrosdev.extractor.util.ScreenPreview
@@ -92,7 +92,7 @@ data class ExtractorAlbumViewerNavTarget(
 
         ExtractorAlbumViewerScreen(
             onImageClick = { index ->
-                val destination = ExtractorImageNavTarget(
+                val destination = ExtractorImageViewerNavTarget(
                     images = viewModel.imageUris.value,
                     initialIndex = index
                 )

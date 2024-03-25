@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.image
+package com.drbrosdev.extractor.ui.imageviewer
 
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -24,7 +24,7 @@ import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
 @Parcelize
-data class ExtractorImageNavTarget(
+data class ExtractorImageViewerNavTarget(
     private val images: List<Uri>,
     private val initialIndex: Int
 ) : NavTarget {
@@ -32,7 +32,7 @@ data class ExtractorImageNavTarget(
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-        val viewModel: ExtractorImageViewModel = koinViewModel()
+        val viewModel: ExtractorImageViewerModel = koinViewModel()
 
         val currentImageInfo by viewModel.currentMediaImageInfo.collectAsStateWithLifecycle()
         val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
@@ -52,17 +52,17 @@ data class ExtractorImageNavTarget(
             viewModel.events.collect { event ->
                 currentImageInfo?.let { imageInfo ->
                     when (event) {
-                        ExtractorImageEvents.OnEdit -> context.launchEditIntent(imageInfo)
-                        ExtractorImageEvents.OnExtractorInfo ->
+                        ExtractorImageViewerEvents.OnEdit -> context.launchEditIntent(imageInfo)
+                        ExtractorImageViewerEvents.OnExtractorInfo ->
                             bottomSheetNavigator.navigate(ExtractorImageInfoNavTarget(imageInfo.mediaImageId))
-                        ExtractorImageEvents.OnShare -> context.launchShareIntent(imageInfo)
-                        ExtractorImageEvents.OnUseAs -> context.launchUseAsIntent(imageInfo)
+                        ExtractorImageViewerEvents.OnShare -> context.launchShareIntent(imageInfo)
+                        ExtractorImageViewerEvents.OnUseAs -> context.launchUseAsIntent(imageInfo)
                     }
                 }
             }
         }
 
-        ExtractorImageScreen(
+        ExtractorImageViewerScreen(
             pagerState = pagerState,
             images = images,
             onBack = { navController.pop() },
@@ -76,7 +76,7 @@ data class ExtractorImageNavTarget(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
-        ExtractorImageScreen(
+        ExtractorImageViewerScreen(
             onBottomBarClick = {},
             onBack = { /*TODO*/ },
             pagerState = rememberPagerState { 0 },

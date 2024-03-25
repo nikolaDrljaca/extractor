@@ -7,7 +7,7 @@ import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.components.actionchips.AboutLink
 import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettingsState
-import com.drbrosdev.extractor.ui.settings.bug.ExtractorBugReportNavTarget
+import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackNavTarget
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
@@ -38,7 +38,7 @@ object ExtractorSettingsNavTarget : NavTarget {
             onAboutLink = {
                 //TODO
                 when (it) {
-                    AboutLink.FEEDBACK -> navController.navigate(ExtractorBugReportNavTarget)
+                    AboutLink.FEEDBACK -> navController.navigate(ExtractorFeedbackNavTarget)
                     else -> Unit
                 }
             },

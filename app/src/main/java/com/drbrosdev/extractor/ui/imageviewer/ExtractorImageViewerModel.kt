@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.image
+package com.drbrosdev.extractor.ui.imageviewer
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -14,14 +14,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ExtractorImageViewModel(
+class ExtractorImageViewerModel(
     private val mediaStoreImageRepository: MediaStoreImageRepository
 ) : ViewModel() {
 
     private val _currentMediaImage = MutableStateFlow<MediaStoreImage?>(null)
     val currentMediaImageInfo = _currentMediaImage.asStateFlow()
 
-    private val eventChannel = Channel<ExtractorImageEvents>()
+    private val eventChannel = Channel<ExtractorImageViewerEvents>()
     val events = eventChannel.receiveAsFlow()
         .debounce(200L)
 

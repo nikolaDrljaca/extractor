@@ -18,24 +18,24 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Parcelize
-object ExtractorBugReportNavTarget : NavTarget {
+object ExtractorFeedbackNavTarget : NavTarget {
 
     @Composable
     override fun Content() {
-        val viewModel: ExtractorBugReportViewModel = koinViewModel()
+        val viewModel: ExtractorFeedbackViewModel = koinViewModel()
 
         val navController = LocalNavController.current
         val context = LocalContext.current
 
         CollectFlow(flow = viewModel.events) {
             when (it) {
-                is ExtractorBugReportEvents.SendEmail -> {
+                is ExtractorFeedbackEvents.SendEmail -> {
                     context.launchEmailIntent(it.content)
                 }
             }
         }
 
-        ExtractorBugReportScreen(
+        ExtractorFeedbackScreen(
             onBack = {
                 navController.pop()
             },
@@ -55,10 +55,10 @@ private fun CurrentPreview() {
             color = MaterialTheme.colorScheme.background,
             modifier = Modifier.fillMaxSize()
         ) {
-            ExtractorBugReportScreen(
+            ExtractorFeedbackScreen(
                 onBack = {},
                 onSubmit = {},
-                state = ExtractorBugReportState("sample", false)
+                state = ExtractorFeedbackState("sample", false)
             )
         }
     }

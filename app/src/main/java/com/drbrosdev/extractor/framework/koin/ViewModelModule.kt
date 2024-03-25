@@ -8,13 +8,13 @@ import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
-import com.drbrosdev.extractor.ui.image.ExtractorImageViewModel
+import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
-import com.drbrosdev.extractor.ui.settings.bug.ExtractorBugReportViewModel
+import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackViewModel
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -36,7 +36,7 @@ val viewModelModule = module {
 
 
     viewModel {
-        ExtractorImageViewModel(
+        ExtractorImageViewerModel(
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>()
         )
     }
@@ -115,7 +115,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        ExtractorBugReportViewModel(
+        ExtractorFeedbackViewModel(
             savedStateHandle = get(),
             generateEmailContent = get()
         )

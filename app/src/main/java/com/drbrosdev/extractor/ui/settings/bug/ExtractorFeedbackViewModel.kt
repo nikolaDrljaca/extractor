@@ -9,19 +9,19 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class ExtractorBugReportViewModel(
+class ExtractorFeedbackViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val generateEmailContent: GenerateFeedbackEmailContent
 ) : ViewModel() {
 
     val state = savedStateHandle.saveable(
         key = "bug_report_state",
-        saver = ExtractorBugReportState.Saver
+        saver = ExtractorFeedbackState.Saver
     ) {
-        ExtractorBugReportState()
+        ExtractorFeedbackState()
     }
 
-    private val _events = Channel<ExtractorBugReportEvents>()
+    private val _events = Channel<ExtractorFeedbackEvents>()
     val events = _events.receiveAsFlow()
 
     fun onSubmitFeedback() {
@@ -33,7 +33,7 @@ class ExtractorBugReportViewModel(
                 includeEventLogs = state.includeEventLogs
             )
 
-            _events.send(ExtractorBugReportEvents.SendEmail(out))
+            _events.send(ExtractorFeedbackEvents.SendEmail(out))
 
             state.enable()
             state.onIsLoadingChanged(false)
@@ -42,6 +42,6 @@ class ExtractorBugReportViewModel(
 
 }
 
-sealed interface ExtractorBugReportEvents {
-    data class SendEmail(val content: String) : ExtractorBugReportEvents
+sealed interface ExtractorFeedbackEvents {
+    data class SendEmail(val content: String) : ExtractorFeedbackEvents
 }

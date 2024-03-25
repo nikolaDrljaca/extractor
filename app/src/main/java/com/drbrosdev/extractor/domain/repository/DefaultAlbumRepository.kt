@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.domain.repository
 
-import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.data.TransactionProvider
 import com.drbrosdev.extractor.data.dao.AlbumConfigurationDao
 import com.drbrosdev.extractor.data.dao.AlbumDao
@@ -17,6 +16,7 @@ import com.drbrosdev.extractor.util.toAlbumOrigin
 import com.drbrosdev.extractor.util.toAlbumSearchType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -57,14 +57,16 @@ class DefaultAlbumRepository(
         )
         albumConfigurationDao.insert(configuration)
 
-        val out = newAlbum.entries.parMap(context = dispatcher) {
-            val entry = AlbumEntryEntity(
-                albumId = albumId,
-                uri = it.uri.uri,
-                imageEntityId = it.id.id
-            )
-            albumEntryDao.insert(entry)
-        }
+        newAlbum.entries
+            .asFlow()
+            .collect {
+                val entry = AlbumEntryEntity(
+                    albumId = albumId,
+                    uri = it.uri.uri,
+                    imageEntityId = it.id.id
+                )
+                albumEntryDao.insert(entry)
+            }
     }
 
     override fun findAlbumByIdAsFlow(albumId: Long): Flow<Album?> {

@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.image
+package com.drbrosdev.extractor.ui.imageviewer
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
@@ -41,7 +41,7 @@ import net.engawapg.lib.zoomable.zoomable
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ExtractorImageScreen(
+fun ExtractorImageViewerScreen(
     onBottomBarClick: (ExtractorBottomBarItem) -> Unit,
     onBack: () -> Unit,
     pagerState: PagerState,

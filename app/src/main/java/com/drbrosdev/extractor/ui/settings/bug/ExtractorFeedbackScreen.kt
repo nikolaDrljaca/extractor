@@ -41,10 +41,10 @@ import com.drbrosdev.extractor.ui.components.shared.InfoIconButton
 
 
 @Composable
-fun ExtractorBugReportScreen(
+fun ExtractorFeedbackScreen(
     onBack: () -> Unit,
     onSubmit: () -> Unit,
-    state: ExtractorBugReportState
+    state: ExtractorFeedbackState
 ) {
     val textStyle = MaterialTheme.typography.bodyMedium.copy(
         fontWeight = FontWeight.Normal

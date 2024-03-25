@@ -8,7 +8,7 @@ import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.setValue
 
 @Stable
-class ExtractorBugReportState(
+class ExtractorFeedbackState(
     initUserText: String = "",
     initIncludeEventLogs: Boolean = false
 ) {
@@ -46,16 +46,16 @@ class ExtractorBugReportState(
     }
 
     companion object {
-        val Saver = object : Saver<ExtractorBugReportState, Map<String, Any>> {
-            override fun restore(value: Map<String, Any>): ExtractorBugReportState {
-                return ExtractorBugReportState(
+        val Saver = object : Saver<ExtractorFeedbackState, Map<String, Any>> {
+            override fun restore(value: Map<String, Any>): ExtractorFeedbackState {
+                return ExtractorFeedbackState(
                     initUserText = value.getOrDefault("userText", "") as? String ?: "",
                     initIncludeEventLogs = value.getOrDefault("includeEventLogs", false) as? Boolean
                         ?: false
                 )
             }
 
-            override fun SaverScope.save(value: ExtractorBugReportState): Map<String, Any> {
+            override fun SaverScope.save(value: ExtractorFeedbackState): Map<String, Any> {
                 return mapOf(
                     "userText" to value.userText,
                     "includeEventLogs" to value.includeEventLogs
