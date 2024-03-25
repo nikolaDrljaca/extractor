@@ -23,7 +23,6 @@ class ExtractorPeriodicWorkViewModel(
             Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
                 .setRequiresStorageNotLow(true)
-                .setRequiresDeviceIdle(true)
                 .build()
         )
         .build()
