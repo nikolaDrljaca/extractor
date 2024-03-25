@@ -35,7 +35,7 @@ class DefaultRunExtractor(
 
             val outText = text.await().getOrDefault(Embed.defaultTextEmbed)
 
-            val outVisual = visuals.await().getOrDefault(listOf(Embed.defaultVisualEmbed))
+            val outVisual = visuals.await().getOrDefault(emptyList())
 
             val out = ImageEmbeds(
                 textEmbed = outText,
