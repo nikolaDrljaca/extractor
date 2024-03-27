@@ -108,10 +108,11 @@
     <string name="use_periodic_sync">Koristi periodičnu sinhronizaciju</string>
     <string name="action_create_album">Napravi Album</string>
     <string name="action_feedback">Feedback</string>
-    <string name="onb_start">Kada pritisnete \'Počni\' aplikacija će započeti indeksiranje da pronađe sve informacije za pretragu. Dok je ovaj proces aktivan, funkcionalnost pretrage neće biti omogućena.</string>
-    <string name="action_delete">Obriši</string>
-    <string name="items_deleted">Stavke obrisane.</string>
-    <string name="bug_report">Prijavi Bug</string>
+    <string name="onb_what_is">%1$s je aplikacija koja vam pomaže da brže pronađete svoje slike. To radi koristeći tekstualni upit i traži ga u sadržaju slike. Ovaj sadržaj može biti tekst, oblici, objekti ili bilo koja druga stvar koja vam padne na pamet!</string>
+    <string name="onb_permission">Uvek postoji trenutak kada vam padne na pamet slika koju želite da podelite sa prijateljem, a znate šta je na slici, ali to jednostavno ne možete pronaći u ogromnom moru hiljada malih sličica u vašoj galeriji. Ovdje %1$s može pomoći.</string>
+    <string name="onb_start">Aplikacija radi u potpunosti van mreže i ne pristupa internetu, niti ima ili traži dozvolu za to. Svi podaci koje stvori ova aplikacija prisutni su samo lokalno na vašem uređaju. Ovi podaci nikada ne napuštaju vaš uređaj i slobodno možete s njima raditi kako želite.</string>
+    <string name="items_deleted">Vi ste vlasnik svojih podataka.</string>
+    <string name="bug_report">Možete je isključiti u bilo kojem trenutku, samo budite upozoreni da aplikacija neće ispravno raditi i zatražiti će od vas da vratite ovu dozvolu.</string>
     <string name="include_event_logs">Spakuj dnevnik događaja*</string>
     <string name="event_log_disclaimer">*Dnevnik događaja je sačuvan lokalno na vašem uređaju. Vi odlučujete ako želite da ga podijelite. Pritisnite i za više informacija.</string>
     <string name="submit_feedback_header">"Pišite nam o vašem iskustvu tokom korišćenja aplikacije, i predložite nam promjene ili novu funkcionalnost koju želite. Došlo je do greške? Opišite nam događaj, ili samo pošaljite dnevnik događaja. "</string>
