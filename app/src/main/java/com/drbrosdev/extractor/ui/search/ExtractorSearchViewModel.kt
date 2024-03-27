@@ -31,7 +31,6 @@ import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoad
 import com.drbrosdev.extractor.ui.components.extractorloaderbutton.isSuccess
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 import com.drbrosdev.extractor.ui.components.extractorsearchview.isBlank
-import com.drbrosdev.extractor.ui.components.extractorsearchview.isNotBlank
 import com.drbrosdev.extractor.ui.components.extractorsearchview.keywordTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlow
@@ -175,13 +174,7 @@ class ExtractorSearchViewModel(
     private val loaderButtonEnabledJob = state
         .onEach {
             when (it) {
-                is ExtractorSearchScreenUiState.Content -> {
-                    when {
-                        searchViewState.isNotBlank() -> loaderButtonState.enable()
-                        else -> loaderButtonState.disable()
-                    }
-                }
-
+                is ExtractorSearchScreenUiState.Content -> loaderButtonState.enable()
                 else -> loaderButtonState.disable()
             }
         }
@@ -309,6 +302,7 @@ class ExtractorSearchViewModel(
 
     fun resetSearch() {
         searchViewState.updateQuery("")
+        dateFilterState.clearDates()
         _state.update {
             ExtractorSearchScreenUiState.ShowSuggestions(
                 ExtractorSuggestedSearchState.Loading

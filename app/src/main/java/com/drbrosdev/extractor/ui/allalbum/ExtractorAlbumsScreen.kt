@@ -169,8 +169,14 @@ private fun SwipeableAlbumCard(
         snapshotFlow { swipeState.currentValue }
             .collectLatest {
                 when (it) {
-                    SwipeToDismissBoxValue.StartToEnd -> onSwipeAction(ExtractorSwipeAction.Share(item))
-                    SwipeToDismissBoxValue.EndToStart -> onSwipeAction(ExtractorSwipeAction.Delete(item))
+                    SwipeToDismissBoxValue.StartToEnd -> onSwipeAction(
+                        ExtractorSwipeAction.Share(item)
+                    )
+
+                    SwipeToDismissBoxValue.EndToStart -> onSwipeAction(
+                        ExtractorSwipeAction.Delete(item)
+                    )
+
                     SwipeToDismissBoxValue.Settled -> Unit
                 }
                 swipeState.reset()
@@ -178,6 +184,7 @@ private fun SwipeableAlbumCard(
     }
 
     SwipeToDismissBox(
+        modifier = Modifier.then(modifier),
         state = swipeState,
         enableDismissFromStartToEnd = true,
         enableDismissFromEndToStart = true,
@@ -229,7 +236,6 @@ private fun SwipeableAlbumCard(
         AlbumCard(
             onClick = onClick,
             item = item,
-            modifier = modifier
         )
     }
 }
@@ -292,12 +298,16 @@ private fun AlbumPreview(
     modifier: Modifier = Modifier,
     thumbnails: List<Uri>,
 ) {
+    val internal = remember(thumbnails) {
+        thumbnails.take(4)
+    }
+
     Row(
         modifier = Modifier.then(modifier),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        thumbnails.forEach {
+        internal.forEach {
             ExtractorImageItem(
                 imageUri = it,
                 size = 64,

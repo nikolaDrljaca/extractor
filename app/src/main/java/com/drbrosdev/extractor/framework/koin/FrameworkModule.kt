@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.framework.StringResourceProvider
+import com.drbrosdev.extractor.framework.logger.EventLogDatabase
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.framework.notification.NotificationService
 import org.koin.android.ext.koin.androidContext
@@ -27,5 +28,8 @@ val frameworkModule = module {
     single {
         NotificationService(androidContext())
     }
+
+    single { EventLogDatabase.createLogDatabase(androidContext()) }
+    single { get<EventLogDatabase>().eventLogDao() }
 
 }

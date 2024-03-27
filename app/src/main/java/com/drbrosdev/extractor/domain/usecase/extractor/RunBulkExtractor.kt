@@ -1,16 +1,19 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
-import arrow.fx.coroutines.parMap
+import arrow.fx.coroutines.parMapUnordered
+import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
+import com.drbrosdev.extractor.framework.logger.logErrorEvent
+import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.util.CONCURRENCY
-import com.drbrosdev.extractor.util.logError
-import com.drbrosdev.extractor.util.logInfo
 import com.drbrosdev.extractor.util.mediaImageUri
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOn
 
 class RunBulkExtractor(
     private val dispatcher: CoroutineDispatcher,
@@ -33,40 +36,43 @@ class RunBulkExtractor(
 
         when {
             isOnDevice.size > isInStorage.size -> {
-                logInfo("Processing extraction for ${isOnDevice.size} images from device.")
-                //perform extraction
-                isOnDevice.parMap(
-                    concurrency = CONCURRENCY,
-                    context = dispatcher
-                ) {
-                    //NOTE: Watch for the throw
-                    val mediaStoreImage = mediaImages[it]!!
-                    val embeds = runExtractor.execute(mediaStoreImage.mediaImageUri())
-                        .onFailure { exception ->
-                            logError(
-                                "Extraction failed for image",
-                                exception
-                            )
-                        }
-                        .getOrThrow()
+                // perform extraction
+                logEvent("Processing extraction for ${isOnDevice.size} images from device.")
+                isOnDevice.asFlow()
+                    .parMapUnordered(CONCURRENCY) {
+                        val mediaStoreImage = mediaImages[it]!!
+                        val embeds = runExtractor.execute(mediaStoreImage.mediaImageUri())
+                            .onFailure { exception ->
+                                logErrorEvent(
+                                    "Extraction failed for image",
+                                    exception
+                                )
+                            }
+                            .getOrNull()
 
-                    val data = NewExtraction(
-                        mediaImageId = MediaImageId(it),
-                        extractorImageUri = MediaImageUri(mediaStoreImage.uri.toString()),
-                        path = mediaStoreImage.path,
-                        dateAdded = mediaStoreImage.dateAdded,
-                        textEmbed = embeds.textEmbed,
-                        visualEmbeds = embeds.visualEmbeds
-                    )
-                    extractorRepository.createExtractionData(data)
-                }
+                        val data = NewExtraction(
+                            mediaImageId = MediaImageId(it),
+                            extractorImageUri = MediaImageUri(mediaStoreImage.uri.toString()),
+                            path = mediaStoreImage.path,
+                            dateAdded = mediaStoreImage.dateAdded,
+                            textEmbed = embeds?.textEmbed ?: Embed.defaultTextEmbed,
+                            visualEmbeds = embeds?.visualEmbeds ?: listOf()
+                        )
+                        data
+                    }
+                    .flowOn(dispatcher)
+                    .collect { data ->
+                        extractorRepository.createExtractionData(data)
+                    }
             }
 
             isOnDevice.size < isInStorage.size -> {
                 //delete diff
-                isInStorage.parMap(concurrency = CONCURRENCY, context = dispatcher) {
-                    extractorRepository.deleteExtractionData(it)
-                }
+                isInStorage
+                    .asFlow()
+                    .collect {
+                        extractorRepository.deleteExtractionData(it)
+                    }
             }
 
             else -> Unit

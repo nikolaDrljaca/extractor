@@ -17,9 +17,9 @@ import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
+import com.drbrosdev.extractor.domain.model.MediaStoreImage
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.model.MediaStoreImage
 
 
 fun MediaImageUri.toUri(): Uri = this.uri.toUri()
@@ -47,9 +47,10 @@ fun ImageEmbeddingsRelation.mapToImageEmbeds(): ImageEmbeds {
     val userEmbed = this.userEmbeddingEntity?.let {
         Embed.User(it.value)
     }
-    val visualEmbeds = this.visualEmbeddingEntities.map {
-        Embed.Visual(it.value)
-    }
+
+    val visualEmbeds = this.visualEmbeddingEntity.value
+        .split(",")
+        .map { Embed.Visual(it) }
 
     return ImageEmbeds(
         textEmbed = textEmbed,
@@ -105,9 +106,14 @@ fun AlbumRelation.toAlbum(): Album {
 }
 
 fun Album.toPreview(): AlbumPreview {
+    val thumbnail = when {
+        entries.isNotEmpty() -> entries.first().uri
+        else -> MediaImageUri(Uri.EMPTY.toString())
+    }
+
     return AlbumPreview(
         id = this.id,
         name = this.name,
-        thumbnail = this.entries.first().uri
+        thumbnail = thumbnail
     )
 }

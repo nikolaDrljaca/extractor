@@ -6,16 +6,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -73,6 +76,11 @@ fun ExtractorImageInfoScreen(
                 modifier = Modifier.layoutId(ViewIds.SAVE_BUTTON),
                 contentPadding = ExtractorButtonDefaults.paddingValues(vertical = 4.dp)
             ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.round_save_24),
+                    contentDescription = "null"
+                )
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(text = stringResource(R.string.info_screen_save))
             }
 
@@ -97,8 +105,9 @@ private fun imageInfoConstraintSet() = ConstraintSet {
     val embeddings = createRefFor(ViewIds.EMBEDDINGS)
     val note = createRefFor(ViewIds.NOTE)
 
-    val guideline = createGuidelineFromStart(0.7f)
+    val guideline = createGuidelineFromStart(0.65f)
     val topGuideline = createGuidelineFromTop(0.03f)
+    val barGuideline = createGuidelineFromTop(0.09f)
 
     constrain(note) {
         top.linkTo(embeddings.bottom)
@@ -110,19 +119,21 @@ private fun imageInfoConstraintSet() = ConstraintSet {
     constrain(saveButton) {
         top.linkTo(topGuideline)
         end.linkTo(parent.end)
-        start.linkTo(guideline)
-        width = Dimension.fillToConstraints
+        bottom.linkTo(barGuideline)
+        height = Dimension.fillToConstraints
     }
 
     constrain(imageInfo) {
         top.linkTo(topGuideline)
         start.linkTo(parent.start)
-        end.linkTo(parent.end)
+        end.linkTo(guideline)
+        bottom.linkTo(barGuideline)
         width = Dimension.fillToConstraints
+        height = Dimension.fillToConstraints
     }
 
     constrain(embeddings) {
-        top.linkTo(imageInfo.bottom, margin = 12.dp)
+        top.linkTo(barGuideline, margin = 12.dp)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
         width = Dimension.fillToConstraints

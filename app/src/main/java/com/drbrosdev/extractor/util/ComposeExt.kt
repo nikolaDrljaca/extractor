@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.util
 
-import android.graphics.Bitmap
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -9,16 +8,12 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -28,28 +23,21 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.md_theme_light_secondary
 import com.drbrosdev.extractor.ui.theme.md_theme_light_tertiary
+import kotlinx.coroutines.flow.Flow
 
-@Composable
-fun applicationIconBitmap(): ImageBitmap {
-    return LocalContext.current.packageManager
-        .getApplicationIcon("com.drbrosdev.extractor")
-        .toBitmap(config = Bitmap.Config.ARGB_8888)
-        .asImageBitmap()
-}
 
 @Composable
 fun applicationIconResource(): Painter {
@@ -121,31 +109,6 @@ fun Modifier.shimmer(): Modifier = composed {
 }
 
 @Composable
-fun LazyGridState.isScrollingUp(): Boolean {
-    val previousIndex = remember(this) {
-        mutableIntStateOf(firstVisibleItemIndex)
-    }
-
-    val previousScrollOffset = remember {
-        mutableIntStateOf(firstVisibleItemScrollOffset)
-    }
-
-    return remember(this) {
-        derivedStateOf {
-            if(previousIndex.value != firstVisibleItemIndex) {
-                previousIndex.value > firstVisibleItemIndex
-            } else {
-                previousScrollOffset.value >= firstVisibleItemScrollOffset
-            }.also {
-                previousIndex.value = firstVisibleItemIndex
-                previousScrollOffset.value = firstVisibleItemScrollOffset
-
-            }
-        }
-    }.value
-}
-
-@Composable
 fun createExtractorBrush(): Brush {
     val animation = rememberInfiniteTransition(label = "brush")
     val flat = with(LocalDensity.current) { 800.dp.toPx() }
@@ -176,17 +139,6 @@ fun createExtractorBrush(): Brush {
     return brush
 }
 
-
-fun Modifier.noRippleClickable(
-    onClick: () -> Unit
-) : Modifier = composed {
-    clickable(
-        indication = null,
-        interactionSource = remember { MutableInteractionSource() },
-        onClick = onClick
-    )
-}
-
 enum class KeyboardState {
     VISIBLE,
     HIDDEN
@@ -207,10 +159,23 @@ fun Modifier.outlined(): Modifier {
         .border(width = 2.dp, color = Color.Red)
 }
 
-fun Modifier.thenIf(condition : Boolean, modifier : Modifier.() -> Modifier) : Modifier {
+fun Modifier.thenIf(condition: Boolean, modifier: Modifier.() -> Modifier): Modifier {
     return if (condition) {
         then(modifier(Modifier))
     } else {
         this
+    }
+}
+
+@Composable
+fun <T> CollectFlow(
+    flow: Flow<T>,
+    action: suspend (T) -> Unit
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(key1 = flow) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            flow.collect(action)
+        }
     }
 }

@@ -42,14 +42,11 @@ class GenerateSuggestedKeywords(
         }
 
         val visualSuggestions = async {
-            visualEmbeddingDao.getValuesAtRandom(TAKE_VISUAL)
-                .map { value ->
-                    SuggestedSearch(
-                        query = value,
-                        keywordType = KeywordType.IMAGE,
-                        searchType = SearchType.PARTIAL
-                    )
-                }
+            produceSuggestions(
+                visualEmbeddingDao.getValuesAtRandom()?.replace(",", " "),
+                TAKE_VISUAL,
+                KeywordType.IMAGE
+            )
         }
 
         val textOut = textSuggestions.await()

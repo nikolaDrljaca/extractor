@@ -11,6 +11,7 @@ import com.drbrosdev.extractor.data.dao.AlbumEntryDao
 import com.drbrosdev.extractor.data.dao.AlbumRelationDao
 import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
+import com.drbrosdev.extractor.data.dao.SearchIndexDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
@@ -18,10 +19,10 @@ import com.drbrosdev.extractor.data.entity.AlbumConfigurationEntity
 import com.drbrosdev.extractor.data.entity.AlbumEntity
 import com.drbrosdev.extractor.data.entity.AlbumEntryEntity
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
+import com.drbrosdev.extractor.data.entity.SearchIndexEntity
+import com.drbrosdev.extractor.data.entity.SearchIndexFts
 import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
-import com.drbrosdev.extractor.data.entity.TextEmbeddingFts
 import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
-import com.drbrosdev.extractor.data.entity.UserEmbeddingFts
 import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 
 @Database(
@@ -33,10 +34,10 @@ import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
         AlbumEntity::class,
         AlbumEntryEntity::class,
         AlbumConfigurationEntity::class,
-        TextEmbeddingFts::class,
-        UserEmbeddingFts::class
+        SearchIndexEntity::class,
+        SearchIndexFts::class
     ],
-    version = 11,
+    version = 14,
 )
 @TypeConverters(DatabaseConverters::class)
 abstract class ExtractorDatabase : RoomDatabase() {
@@ -58,6 +59,8 @@ abstract class ExtractorDatabase : RoomDatabase() {
     abstract fun albumRelationDao(): AlbumRelationDao
 
     abstract fun albumEntryDao(): AlbumEntryDao
+
+    abstract fun searchIndexDao(): SearchIndexDao
 
     companion object {
         fun createExtractorDatabase(context: Context): ExtractorDatabase {

@@ -3,7 +3,9 @@ package com.drbrosdev.extractor.ui.components.shared
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,12 +33,62 @@ sealed interface MultiselectAction {
     data object CreateAlbum : MultiselectAction
 
     data object Cancel : MultiselectAction
+
+    data object Delete : MultiselectAction
 }
+
+data class MultiselectActionItem(
+    val resourceId: Int,
+    val stringId: Int,
+    val action: MultiselectAction
+)
+
+val searchGridActions = listOf(
+    MultiselectActionItem(
+        resourceId = R.drawable.rounded_close_24,
+        stringId = R.string.cancel,
+        action = MultiselectAction.Cancel
+    ),
+    MultiselectActionItem(
+        resourceId = R.drawable.round_share_24,
+        stringId = R.string.action_share,
+        action = MultiselectAction.Share
+    ),
+    MultiselectActionItem(
+        resourceId = R.drawable.rounded_add_24,
+        stringId = R.string.create_album,
+        action = MultiselectAction.CreateAlbum
+    ),
+)
+
+val albumGridActions = listOf(
+    MultiselectActionItem(
+        resourceId = R.drawable.rounded_close_24,
+        stringId = R.string.cancel,
+        action = MultiselectAction.Cancel
+    ),
+    MultiselectActionItem(
+        resourceId = R.drawable.round_share_24,
+        stringId = R.string.action_share,
+        action = MultiselectAction.Share
+    ),
+    MultiselectActionItem(
+        resourceId = R.drawable.round_delete_24,
+        stringId = R.string.action_delete,
+        action = MultiselectAction.Delete
+    ),
+    MultiselectActionItem(
+        resourceId = R.drawable.rounded_add_24,
+        stringId = R.string.create_album,
+        action = MultiselectAction.CreateAlbum
+    ),
+)
 
 @Composable
 fun ExtractorMultiselectActionBar(
     onAction: (MultiselectAction) -> Unit,
     modifier: Modifier = Modifier,
+    items: List<MultiselectActionItem> = searchGridActions,
 ) {
     Surface(
         shape = RoundedCornerShape(14.dp),
@@ -49,23 +101,13 @@ fun ExtractorMultiselectActionBar(
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
-            MultiselectActionBarItem(
-                onClick = { onAction(MultiselectAction.Cancel) },
-                painter = painterResource(id = R.drawable.rounded_close_24),
-                text = stringResource(R.string.cancel)
-            )
-
-            MultiselectActionBarItem(
-                onClick = { onAction(MultiselectAction.Share) },
-                painter = painterResource(id = R.drawable.round_share_24),
-                text = stringResource(id = R.string.bottom_bar_share)
-            )
-
-            MultiselectActionBarItem(
-                onClick = { onAction(MultiselectAction.CreateAlbum) },
-                painter = painterResource(id = R.drawable.rounded_add_24),
-                text = stringResource(id = R.string.create_album)
-            )
+            items.forEach {
+                MultiselectActionBarItem(
+                    onClick = { onAction(it.action) },
+                    painter = painterResource(id = it.resourceId),
+                    text = stringResource(id = it.stringId)
+                )
+            }
         }
     }
 }
@@ -116,6 +158,8 @@ private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         Column {
             ExtractorMultiselectActionBar(onAction = {})
+            Spacer(modifier = Modifier.height(12.dp))
+            ExtractorMultiselectActionBar(onAction = {}, items = albumGridActions)
         }
     }
 }

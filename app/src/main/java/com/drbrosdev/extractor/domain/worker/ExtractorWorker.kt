@@ -10,9 +10,9 @@ import androidx.work.WorkerParameters
 import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
+import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.framework.notification.NotificationService
 import com.drbrosdev.extractor.framework.requiresApi
-import com.drbrosdev.extractor.util.logInfo
 import kotlin.time.measureTime
 
 class ExtractorWorker(
@@ -29,7 +29,7 @@ class ExtractorWorker(
             createForegroundInfo(
                 NotificationService.PROGRESS_ID,
                 notificationService.createNotification(NotificationService.PROGRESS_CHANNEL_ID) {
-                    it.setContentInfo("Extraction is running.")
+                    it.setContentInfo("Extraction is running")
                 }
             )
         )
@@ -44,7 +44,9 @@ class ExtractorWorker(
             return Result.retry()
         }
 
-        logInfo("Extraction Worker processed $localImageCount images in ${time.inWholeMinutes}(minutes) - ${time.inWholeMilliseconds}(ms)")
+        if (time.inWholeMinutes != 0L) {
+            logEvent("Extraction Worker processed $localImageCount images in ${time.inWholeMinutes}(minutes) - ${time.inWholeMilliseconds}(ms)")
+        }
 
         return Result.success()
     }
@@ -53,7 +55,7 @@ class ExtractorWorker(
         return createForegroundInfo(
             notificationId = NotificationService.PROGRESS_ID,
             notification = notificationService.createNotification(NotificationService.PROGRESS_CHANNEL_ID) {
-                it.setContentInfo("Extraction is running.")
+                it.setContentInfo("Extraction is running")
             }
         )
     }

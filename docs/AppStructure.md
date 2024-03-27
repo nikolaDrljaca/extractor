@@ -37,6 +37,10 @@ The architecture design is flexible, and it tries to establish patterns to handl
 - Encapsulation of Logic: Use Cases are created where they make sense, a piece of complex logic or
   logic that will be used in multiple places. It is hidden behind an interface contract to enforce
   a signature and allow implementation swapping.
+- Atomic 'design patterns' for UI development. Jetpack Compose encourages breaking down complex UI
+  flows
+  and elements into smaller components. Distinguish between different levels of UI components and
+  compose them together to build complex screens.
 
 These are of course just examples for the terms.
 Ideas behind each layer are explained in more detail below.
@@ -96,7 +100,7 @@ In cases where necessary, `Dao`s can be composite -> they can take other `Dao`s 
 to encapsulate service operations on related objects.
 
 > It is recommended that composite DAOs make use of transactions. This can be provided via DI.
-Look at `TransactionProvider`.
+> Look at `TransactionProvider`.
 
 Example:
 
@@ -128,7 +132,8 @@ There are three main components:
   are
   representative of the problem domain.
 
-Using exhaustive matching with restricted hierarchy constructs in Kotlin we can effectively create
+Using exhaustive matching with restricted inheritance hierarchy constructs in Kotlin we can
+effectively create
 Sum types and Product types.
 
 Read more [here](https://arrow-kt.io/learn/design/domain-modeling/).
@@ -146,8 +151,14 @@ events is to use sealed classes (Sum Types).
   of
   domain model origin. Repositories here operate(return) domain models.
 
-Furthermore, sometimes for UI consumers of the layer it is necessary to just fetch or hand off
+Furthermore, sometimes for UI consumers of the layer it is necessary to just fetch a model for
+display or hand off
 some domain model for processing. This is the place to deal with that.
+> Most common are cases where a repository method has a `create` or `insert` method for a Domain
+> type.
+> For these situations we don't create Use Cases as they would be redundant, just forwarding to
+> repository calls
+> and increasing complexity.
 
 We also make use of product types to encapsulate "payloads" for repository and use case functions.
 This allows a sort of an open-closed principle where the interface contract cannot be changed, but
@@ -169,7 +180,7 @@ complex
 flows. For example: `Extractor` makes use of multiple other use cases to orchestrate its logic.
 
 > Note that the naming convention should always make use of a verb to indicate an action,
-ex: `ValidateToken`.
+> ex: `ValidateToken`.
 
 Note however that use cases should not be used in situations where they lead to a data/domain layer
 CRUD call. In these situations it is more appropriate to use the Repository package.
@@ -196,7 +207,7 @@ From the concepts of Atomic Design, we are concerned with:
   Example: Take a look into the `src/{package}/ui/components/shared/Buttons.kt`
 - Molecules: Small collection of atoms that create a more complex component with its related state.
   As far as Composable functions go in this layer, they are stateless, but they are accompanied by a
-  state definition and they make use of it. For more details, read `Stateful.md`
+  state definition and they make use of it. For more details, read [UI State](ComposeState.md).
 - Organisms: Collection of molecules that compose into a page. A distinction is made here between an
   Organism and a Screen due to the fact that on larger form factors we might display more Organisms
   per screen.
@@ -219,7 +230,9 @@ For package structure, each screen/feature has a dedicated package with:
   to bind with view models and navigation providers.
 - (required) Top level *stateless* composable: `<feature_name>Screen` -> Actual user interface code.
 - `<feature_name>ViewModel` if applicable.
-- `<feature_name>UiState` if applicable. **Should be annotated with `@Immutable`.**
+- `<feature_name>UiState` if applicable. **Should be annotated with `@Immutable` or `@Stable`.**
+- `<feature_name>Events` sealed interface/class to represent possible UI events. **Should be
+  annotated with `@Immutable`**
 
 **ALWAYS** have a `@Preview` in this file - in `<feature_name>Screen` to preview the screen ui.
 

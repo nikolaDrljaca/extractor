@@ -8,33 +8,43 @@ import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 
 class CompileVisualAlbum(
     private val dispatcher: CoroutineDispatcher,
     private val visualEmbeddingDao: VisualEmbeddingDao,
+    private val albumRepository: AlbumRepository,
     private val searchImageByKeyword: SearchImageByKeyword,
-    private val albumRepository: AlbumRepository
+    private val tokenizeText: TokenizeText,
+    private val validateSuggestedToken: ValidateSuggestedSearchToken,
+    private val generateMostCommonTokens: GenerateMostCommonTokens
 ) {
 
     suspend operator fun invoke() {
-        visualEmbeddingDao.getMostUsed(7)
-            .asFlow()
-            .map { embedUsage ->
+        val allVisuals = visualEmbeddingDao.findAllVisualEmbedValues()
+            .replace(",", " ")
+
+        val tokens = tokenizeText(allVisuals)
+            .filter { validateSuggestedToken(it) }
+            .flowOn(dispatcher)
+            .toList()
+
+        generateMostCommonTokens(tokens)
+            .map { it.text }
+            .map { topWord ->
                 val params = SearchImageByKeyword.Params(
-                    query = embedUsage.value,
+                    query = topWord,
                     keywordType = KeywordType.IMAGE,
                     type = SearchType.PARTIAL,
                     dateRange = null
                 )
                 val result = searchImageByKeyword.execute(params)
-                result to embedUsage.value
+                result to topWord
             }
-            // do not create albums with no entries, therefore filter out empty embeddings list
-            .filter { (embeddings, _) -> embeddings.isNotEmpty() }
+            .filter { (embeds, _) -> embeds.isNotEmpty() }
             .flowOn(dispatcher)
             .collect {
                 val newAlbum = it.createNewAlbumFromPayload()

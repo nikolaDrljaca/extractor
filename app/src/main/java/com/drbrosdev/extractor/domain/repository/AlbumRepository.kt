@@ -25,5 +25,7 @@ interface AlbumRepository {
     suspend fun getAllUserAlbums(): List<Album>
 
     suspend fun deleteAlbumById(albumId: Long)
+
+    suspend fun deleteAlbumItems(albumItemIds: List<Long>)
 }
 

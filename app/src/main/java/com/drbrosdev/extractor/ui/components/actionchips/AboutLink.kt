@@ -22,8 +22,8 @@ enum class AboutLink(
         nameResource = R.string.action_rate,
         iconResource = R.drawable.round_star_24
     ),
-    BUG_REPORT(
-        nameResource = R.string.action_bug,
-        iconResource = R.drawable.round_bug_report_24
+    FEEDBACK(
+        nameResource = R.string.action_feedback,
+        iconResource = R.drawable.round_feedback_24
     ),
 }

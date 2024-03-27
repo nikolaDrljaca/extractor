@@ -3,23 +3,25 @@ package com.drbrosdev.extractor.domain.repository
 import com.drbrosdev.extractor.data.TransactionProvider
 import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
+import com.drbrosdev.extractor.data.dao.SearchIndexDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.ExtractionEntity
+import com.drbrosdev.extractor.data.entity.SearchIndexEntity
 import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
 import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
 import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
-import com.drbrosdev.extractor.domain.repository.payload.NewEmbed
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
 import com.drbrosdev.extractor.util.mapToImageEmbeds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class DefaultExtractorRepository(
     private val dispatcher: CoroutineDispatcher,
@@ -28,6 +30,7 @@ class DefaultExtractorRepository(
     private val textEmbeddingDao: TextEmbeddingDao,
     private val userEmbeddingDao: UserEmbeddingDao,
     private val imageEmbeddingsDao: ImageEmbeddingsDao,
+    private val searchIndexDao: SearchIndexDao,
     private val txRunner: TransactionProvider
 ) : ExtractorRepository {
 
@@ -38,6 +41,8 @@ class DefaultExtractorRepository(
         visualEmbeddingDao.deleteByMediaId(mediaImageId)
         textEmbeddingDao.deleteByMediaId(mediaImageId)
         userEmbeddingDao.deleteByMediaId(mediaImageId)
+        // update search index
+        searchIndexDao.deleteByMediaId(mediaImageId)
     }
 
     override suspend fun getAllIds(): Set<Long> {
@@ -52,34 +57,29 @@ class DefaultExtractorRepository(
 
     override suspend fun updateTextEmbed(embedUpdate: EmbedUpdate) = with(embedUpdate) {
         textEmbeddingDao.update(value, mediaImageId.id)
+        // update search index
+        searchIndexDao.updateTextIndex(value, mediaImageId.id)
     }
 
-    override suspend fun updateOrInsertUserEmbed(embedUpdate: EmbedUpdate) {
-        val existing = userEmbeddingDao.findByMediaId(embedUpdate.mediaImageId.id)
-        if (existing == null) {
-            val newUserEmbed = UserEmbeddingEntity(extractionEntityId = embedUpdate.mediaImageId.id, value = embedUpdate.value)
-            userEmbeddingDao.insert(newUserEmbed)
-        } else {
-            userEmbeddingDao.update(embedUpdate.value, embedUpdate.mediaImageId.id)
-        }
-    }
-
-    override suspend fun deleteVisualEmbed(visualEmbeddingId: Long) {
-        visualEmbeddingDao.deleteById(visualEmbeddingId)
-    }
-
-    override suspend fun insertVisualEmbed(newEmbed: NewEmbed) = with(newEmbed) {
-        val visualEmbed = VisualEmbeddingEntity(
-            extractionEntityId = mediaImageId.id,
-            value = value
-        )
-        visualEmbeddingDao.insert(visualEmbed)
+    override suspend fun upsertUserEmbed(embedUpdate: EmbedUpdate) = with(embedUpdate) {
+        userEmbeddingDao.update(value, mediaImageId.id)
+        // update search index
+        searchIndexDao.updateUserIndex(value, mediaImageId.id)
     }
 
     override suspend fun deleteVisualEmbed(mediaImageId: MediaImageId, value: String) {
-        visualEmbeddingDao.findByMediaId(mediaImageId.id)
-            .find { it.value == value }
-            ?.let { visualEmbeddingDao.delete(it) }
+        visualEmbeddingDao.findByMediaId(mediaImageId.id)?.let { visualEmbed ->
+            val updated = withContext(dispatcher) {
+                visualEmbed.value
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.lowercase() != value.lowercase() }
+                    .joinToString(separator = ",") { it }
+            }
+
+            visualEmbeddingDao.update(visualEmbed.copy(value = updated))
+            searchIndexDao.updateVisualIndex(updated, visualEmbed.extractionEntityId)
+        }
     }
 
     override suspend fun createExtractionData(data: NewExtraction) = with(data) {
@@ -95,51 +95,39 @@ class DefaultExtractorRepository(
             value = textEmbed.value
         )
 
-        val visualEntities = visualEmbeds.map {
-            VisualEmbeddingEntity(
-                extractionEntityId = mediaImageId.id,
-                value = it.value
-            )
-        }
+        // handle visual embeds
+        val visuals = visualEmbeds
+            .filter { it.value.isNotBlank() }
+            .map { it.value.lowercase() }
+            .joinToString(separator = ",") { it }
+
+        val visualEntity = VisualEmbeddingEntity(
+            extractionEntityId = mediaImageId.id,
+            value = visuals
+        )
+
+        // Create default empty user entity
+        val userEntity = UserEmbeddingEntity(
+            extractionEntityId = mediaImageId.id,
+            value = ""
+        )
+
+        val searchIndex = SearchIndexEntity(
+            textIndex = textEmbed.value,
+            visualIndex = visuals,
+            userIndex = "", // Empty on first creation
+            colorIndex = "", // TODO
+            extractionEntityId = mediaImageId.id
+        )
 
         //NOTE: Ordering is important for relationships
-        txRunner.transaction {
+        txRunner.withTransaction {
             extractionDao.insert(extractionEntity)
             textEmbeddingDao.insert(textEntity)
-            visualEmbeddingDao.insertAll(visualEntities)
-        }
-    }
-
-    override suspend fun createExtractionData(data: List<NewExtraction>) {
-        val extractionEntities = data.map {
-            ExtractionEntity(
-                mediaStoreId = it.mediaImageId.id,
-                uri = it.extractorImageUri.uri,
-                dateAdded = it.dateAdded,
-                path = it.path
-            )
-        }
-
-        val textEmbeds = data.map {
-            TextEmbeddingEntity(
-                extractionEntityId = it.mediaImageId.id,
-                value = it.textEmbed.value
-            )
-        }
-
-        val visualEmbeds = data.flatMap { create ->
-            create.visualEmbeds.map {
-                VisualEmbeddingEntity(
-                    extractionEntityId = create.mediaImageId.id,
-                    value = it.value
-                )
-            }
-        }
-
-        txRunner.transaction {
-            textEmbeddingDao.insertAll(textEmbeds)
-            extractionDao.insertAll(extractionEntities)
-            visualEmbeddingDao.insertAll(visualEmbeds)
+            visualEmbeddingDao.insert(visualEntity)
+            userEmbeddingDao.insert(userEntity)
+            // create search index
+            searchIndexDao.insert(searchIndex)
         }
     }
 }

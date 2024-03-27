@@ -4,26 +4,27 @@ import com.drbrosdev.extractor.MainViewModel
 import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
-import com.drbrosdev.extractor.ui.album.ExtractorAlbumViewModel
+import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel
-import com.drbrosdev.extractor.ui.components.stats.ExtractorStatsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
-import com.drbrosdev.extractor.ui.image.ExtractorImageViewModel
+import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
-import com.drbrosdev.extractor.ui.onboarding.worker.StartWorkerViewModel
+import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
+import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackViewModel
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel {
-        StartWorkerViewModel(
+        OnboardingViewModel(
             spawnExtractorWork = get(),
             datastore = get(),
+            savedStateHandle = get()
         )
     }
 
@@ -35,7 +36,7 @@ val viewModelModule = module {
 
 
     viewModel {
-        ExtractorImageViewModel(
+        ExtractorImageViewerModel(
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>()
         )
     }
@@ -70,12 +71,6 @@ val viewModelModule = module {
     }
 
     viewModel {
-        ExtractorStatsViewModel(
-            visualEmbedDao = get()
-        )
-    }
-
-    viewModel {
         ExtractorHomeViewModel(
             savedStateHandle = get(),
             compileVisualAlbum = get(),
@@ -86,7 +81,7 @@ val viewModelModule = module {
     }
 
     viewModel { params ->
-        ExtractorAlbumViewModel(
+        ExtractorAlbumViewerViewModel(
             stateHandle = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             albumId = params.get()
@@ -116,6 +111,13 @@ val viewModelModule = module {
     viewModel {
         ExtractorPeriodicWorkViewModel(
             workManager = get()
+        )
+    }
+
+    viewModel {
+        ExtractorFeedbackViewModel(
+            savedStateHandle = get(),
+            generateEmailContent = get()
         )
     }
 }

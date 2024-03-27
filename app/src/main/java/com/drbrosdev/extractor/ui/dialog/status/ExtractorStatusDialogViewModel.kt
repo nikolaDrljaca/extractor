@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.dialog.status
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
@@ -40,6 +41,7 @@ class ExtractorStatusDialogViewModel(
 }
 
 
+@Immutable
 data class ExtractorStatusDialogUiModel(
     val onDeviceCount: Int = 0,
     val inStorageCount: Int = 0,

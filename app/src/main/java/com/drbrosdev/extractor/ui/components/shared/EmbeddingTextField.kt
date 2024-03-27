@@ -50,6 +50,7 @@ fun EmbeddingTextField(
     value: String,
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     label: (@Composable () -> Unit)? = null,
     placeholder: (@Composable () -> Unit)? = null,
 ) {
@@ -69,7 +70,8 @@ fun EmbeddingTextField(
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent
         ),
-        placeholder = placeholder
+        placeholder = placeholder,
+        enabled = enabled
     )
 }
 

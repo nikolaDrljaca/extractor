@@ -24,7 +24,7 @@ import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearch
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
-import com.drbrosdev.extractor.ui.image.ExtractorImageNavTarget
+import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchShareIntent
@@ -85,7 +85,7 @@ data class ExtractorSearchNavTarget(
             snackbarHostState = viewModel.snackbarHostState,
             onNavToDetail = { selectedIndex ->
                 navController.navigate(
-                    ExtractorImageNavTarget(
+                    ExtractorImageViewerNavTarget(
                         images = viewModel.getImageUris(),
                         initialIndex = selectedIndex
                     )
@@ -121,6 +121,8 @@ data class ExtractorSearchNavTarget(
                         val uris = viewModel.getSelectedImageUris()
                         context.launchShareIntent(uris)
                     }
+
+                    MultiselectAction.Delete -> Unit
                 }
             }
         )

@@ -4,6 +4,9 @@ import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
+import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
+import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
+import com.drbrosdev.extractor.domain.usecase.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
@@ -43,7 +46,8 @@ val useCaseModule = module {
 
     factory {
         MlKitExtractTextEmbed(
-            dispatcher = get(named(CoroutineModuleName.Default))
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            tokenizeText = get()
         )
     } bind ExtractTextEmbed::class
 
@@ -69,7 +73,8 @@ val useCaseModule = module {
         DefaultSearchImageByKeyword(
             dispatcher = get(named(CoroutineModuleName.IO)),
             imageEmbedDao = get(),
-            tokenizeText = get()
+            tokenizeText = get(),
+            createAdaptedQuery = get()
         )
     } bind SearchImageByKeyword::class
 
@@ -83,11 +88,20 @@ val useCaseModule = module {
     }
 
     factory {
+        GenerateMostCommonTokens(
+            dispatcher = get(named(CoroutineModuleName.Default))
+        )
+    }
+
+    factory {
         CompileVisualAlbum(
             dispatcher = get(named(CoroutineModuleName.Default)),
             visualEmbeddingDao = get(),
             searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
-            albumRepository = get<DefaultAlbumRepository>()
+            albumRepository = get<DefaultAlbumRepository>(),
+            tokenizeText = get(),
+            validateSuggestedToken = get(),
+            generateMostCommonTokens = get()
         )
     }
 
@@ -121,7 +135,8 @@ val useCaseModule = module {
             searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
-            validateSuggestedSearchToken = get()
+            validateSuggestedSearchToken = get(),
+            generateMostCommonTokens = get()
         )
     }
 
@@ -142,6 +157,17 @@ val useCaseModule = module {
         ProvideMainActivitySettings(
             dispatcher = get(named(CoroutineModuleName.Default)),
             settingsDatastore = get()
+        )
+    }
+
+    factory {
+        CreateAdaptedQuery()
+    }
+
+    factory {
+        GenerateFeedbackEmailContent(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            eventLogDao = get()
         )
     }
 }

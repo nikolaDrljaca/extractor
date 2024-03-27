@@ -35,6 +35,6 @@ fun Album.toItemUiModel(): AlbumItemUiModel {
         keyword = this.keyword,
         metadata = "${keywordType.name.lowercase()} \u00B7 ${searchType.name.lowercase()} \u00B7 ${entries.size}",
         id = this.id,
-        thumbnails = this.entries.map { it.uri.toUri() }.take(4)
+        thumbnails = this.entries.map { it.uri.toUri() }
     )
 }

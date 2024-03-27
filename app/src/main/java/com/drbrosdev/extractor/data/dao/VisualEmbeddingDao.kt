@@ -6,36 +6,18 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 
 @Dao
 interface VisualEmbeddingDao {
 
-    data class VisualEmbedUsage(
-        val value: String,
-        val usageCount: Int
-    )
-
     @Query("SELECT count(id) FROM visual_embedding")
     suspend fun getCount(): Int
-
-    @Query("""
-        SELECT value, count(*) AS usageCount
-        FROM visual_embedding
-        GROUP BY value
-        ORDER BY usageCount DESC
-        LIMIT :amount
-    """)
-    fun getMostUsedAsFlow(amount: Int): Flow<List<VisualEmbedUsage>>
-
-    suspend fun getMostUsed(amount: Int) = getMostUsedAsFlow(amount).first()
 
     @Query("SELECT * FROM visual_embedding WHERE id=:id")
     suspend fun findById(id: Long): VisualEmbeddingEntity?
 
     @Query("SELECT * FROM visual_embedding WHERE extraction_entity_id=:mediaId")
-    suspend fun findByMediaId(mediaId: Long): List<VisualEmbeddingEntity>
+    suspend fun findByMediaId(mediaId: Long): VisualEmbeddingEntity?
 
     @Insert
     suspend fun insert(value: VisualEmbeddingEntity)
@@ -59,10 +41,20 @@ interface VisualEmbeddingDao {
     suspend fun deleteByValue(value: String)
 
     @Query("""
-        SELECT DISTINCT value
+        SELECT group_concat(value)
         FROM visual_embedding
-        ORDER BY random()
-        LIMIT :amount
     """)
-    suspend fun getValuesAtRandom(amount: Int): List<String>
+    suspend fun findAllVisualEmbedValues(): String
+
+    @Query("""
+        WITH result AS (
+            SELECT value
+            FROM visual_embedding AS ve
+            WHERE ve.value IS NOT NULL AND ve.value != ''
+            ORDER BY random()
+            LIMIT 10)
+        SELECT group_concat(value)
+        FROM result
+    """)
+    suspend fun getValuesAtRandom(): String?
 }

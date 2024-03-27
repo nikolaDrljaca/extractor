@@ -15,7 +15,7 @@ import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.animspec.DefaultTransitionSpec
-import com.drbrosdev.extractor.ui.onboarding.Onboarding
+import com.drbrosdev.extractor.ui.onboarding.OnboardingNavTarget
 import com.drbrosdev.extractor.ui.permhandler.ExtractorPermissionRequestNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
@@ -44,7 +44,7 @@ fun Root() {
         val isOnboardingFinished = viewModel.isOnboardingFinished().first()
         if (!isOnboardingFinished) {
             //Onboarding not shown
-            navController.replaceAll(Onboarding)
+            navController.replaceAll(OnboardingNavTarget)
         } else {
             //Has seen onboarding, but permission is denied
             //Probably manually revoked
@@ -55,7 +55,9 @@ fun Root() {
             }
 
             when (context.checkSelfPermission(perm)) {
-                PackageManager.PERMISSION_DENIED -> navController.replaceAll(ExtractorPermissionRequestNavTarget)
+                PackageManager.PERMISSION_DENIED -> navController.replaceAll(
+                    ExtractorPermissionRequestNavTarget
+                )
                 PackageManager.PERMISSION_GRANTED -> Unit
             }
         }
