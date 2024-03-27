@@ -12,8 +12,6 @@
     <string name="tap_right_for_more">" Tippen Sie rechts, um mehr zu erfahren."</string>
     <string name="sync_status">Sync Status</string>
     <string name="settings">Einstellungen</string>
-    <string name="export_data">"Daten exportieren "</string>
-    <string name="import_data">Daten importieren</string>
     <string name="match_keyword">Passendes Stichwort</string>
     <string name="visual_embeddings">Visueles Stichwort</string>
     <string name="text_embeddings">Text Stichwort</string>
@@ -36,15 +34,12 @@
     <string name="search_here">"Suche hier… "</string>
     <string name="datepicker_select">Auswählen</string>
     <string name="datepicker_close">Schliessen</string>
-    <string name="status_dialog_current_extraction">"Aktuelle Extraktion "</string>
-    <string name="process_is_already_running">"Der Prozess läuft bereits. "</string>
     <string name="status_in_storage">In Storage</string>
     <string name="status_on_device">"Auf dem Gerät "</string>
     <string name="status_dialog_status">Status</string>
     <string name="extractor_image_info">Extraktor-Bildinformationen</string>
     <string name="info_screen_save">Speichern</string>
     <string name="info_screen_note_head">Notize</string>
-    <string name="what_is_app">Was ist %1$s</string>
     <string name="let_s_get_started">"Lass uns anfangen! "</string>
     <string name="a_note_on_privacy">"Ein Hinweis zum Datenschutz "</string>
     <string name="understood">Verstanden!</string>
@@ -87,7 +82,6 @@
     <string name="action_bug">Bug</string>
     <string name="enable_visual_albums">Aktivieren Sie visuelle Alben</string>
     <string name="enable_text_albums">" Aktivieren Sie Textalben"</string>
-    <string name="configure_precision">Präzision konfigurieren</string>
     <string name="settings_tab_settings">Einstellungen</string>
     <string name="settings_tab_licenses">Lizenzen</string>
     <string name="settings_tab_about">"Über uns "</string>

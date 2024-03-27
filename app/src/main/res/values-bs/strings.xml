@@ -12,8 +12,6 @@
     <string name="tap_right_for_more">Klikni desno za više</string>
     <string name="sync_status">Status sinhronizacije</string>
     <string name="settings">Podešavanja</string>
-    <string name="export_data">Izvezi podatke</string>
-    <string name="import_data">Uvezi podatke</string>
     <string name="match_keyword">Podudaranje ključne riječi</string>
     <string name="visual_embeddings">Vizualne ključne riječi</string>
     <string name="text_embeddings">Tekstualne ključne riječi</string>
@@ -36,15 +34,12 @@
     <string name="search_here">Pretraži ovdje</string>
     <string name="datepicker_select">Izaberi</string>
     <string name="datepicker_close">Zatvori</string>
-    <string name="status_dialog_current_extraction">Trenutna ekstrakcija</string>
-    <string name="process_is_already_running">Proces je već pokrenut.</string>
     <string name="status_in_storage">U skladištu</string>
     <string name="status_on_device">Na uređaju</string>
     <string name="status_dialog_status">Status</string>
     <string name="extractor_image_info">Ekstraktovane informacije o slici</string>
     <string name="info_screen_save">Sačuvaj</string>
     <string name="info_screen_note_head">Bilješka</string>
-    <string name="what_is_app">Šta je %1$s?</string>
     <string name="let_s_get_started">Počnimo!</string>
     <string name="a_note_on_privacy">Napomena o privatnosti</string>
     <string name="understood">Shvatio!</string>
@@ -60,7 +55,7 @@
     <string name="init_album_category_expl">Dodirnite „Inicijalizuj“ da biste kreirali albume na osnovu najčešće pronađenih ključnih riječi.</string>
     <string name="create_own_album">Kreirajte sopstvene albume sa ekrana za pretragu!</string>
     <string name="go_to_search">Idi na pretragu</string>
-    <string name="oops_no_albums_found">Ups! Nijedan album nije pronađen</string>
+    <string name="oops_no_albums_found">Ups! Nijedan album nije pronađen.</string>
     <string name="create_album">Kreiraj album</string>
     <string name="album_created">Album kreiran!</string>
     <string name="dropdown_delete">Izbriši album</string>
@@ -87,7 +82,6 @@
     <string name="action_bug">Kvar</string>
     <string name="enable_visual_albums">Omogući vizualne albume</string>
     <string name="enable_text_albums">Omogući tekstualne albume</string>
-    <string name="configure_precision">Konfiguriši preciznost</string>
     <string name="settings_tab_settings">Podešavanja</string>
     <string name="settings_tab_licenses">Licence</string>
     <string name="settings_tab_about">O nama</string>
@@ -112,4 +106,22 @@
     <string name="periodic_first_explainer">Omogućite periodičnu sinhronizaciju da biste dozvolili aplikaciji da skenira Vaše medije na osnovu određenog perioda. Ovo će smanjiti količinu upozorenja o nepotpunoj sinhronizaciji.</string>
     <string name="periodic_second_explainer">Sinhronizacija se pokreće svaki sat, sa fleksibilnim periodom od 15 minuta. Ona uzima u obzir trenutni status uređaja. Ovo uzima u obzir trajanje baterije, dostupnu snagu obrade i težinu upotrebe</string>
     <string name="use_periodic_sync">Koristi periodičnu sinhronizaciju</string>
+    <string name="action_create_album">Napravi Album</string>
+    <string name="action_feedback">Feedback</string>
+    <string name="onb_start">Kada pritisnete \'Počni\' aplikacija će započeti indeksiranje da pronađe sve informacije za pretragu. Dok je ovaj proces aktivan, funkcionalnost pretrage neće biti omogućena.</string>
+    <string name="action_delete">Obriši</string>
+    <string name="items_deleted">Stavke obrisane.</string>
+    <string name="bug_report">Prijavi Bug</string>
+    <string name="include_event_logs">Spakuj dnevnik događaja*</string>
+    <string name="event_log_disclaimer">*Dnevnik događaja je sačuvan lokalno na vašem uređaju. Vi odlučujete ako želite da ga podijelite. Pritisnite i za više informacija.</string>
+    <string name="submit_feedback_header">"Pišite nam o vašem iskustvu tokom korišćenja aplikacije, i predložite nam promjene ili novu funkcionalnost koju želite. Došlo je do greške? Opišite nam događaj, ili samo pošaljite dnevnik događaja. "</string>
+    <string name="send_us_feedback">Pošalji nam Feedback!</string>
+    <string name="submit">Pošalji</string>
+    <string name="got_it">U redu!</string>
+    <string name="what_you_think">Recite nam šta mislite!</string>
+    <string name="event_log_dialog">Aplikacija vodi dnevnik događaja dok je koristite. On uključuje zapise o kritikalnim procesima, kao što su greške ili neuspješno izvlačenje informacija. Oni nam pomažu da lakše ustanovimo zašto je došlo do greške. Dnevnik ne sadrži bilo kakve informacije koje vas mogu identifikovati na bilo kakav način, i mogu samo da sadrže najosnovnije informacije o vašem uređaju, kao što je broj jezgara. Dnevnik je dodat u email, tako da možete pregledati njegov sadržaj.</string>
+    <string name="search_gallery">Pretraži svoji galeriju i pronađi svoje omiljene fotografije!</string>
+    <string name="function_permission">Za pravilan rad, aplikaciji je potreban pristup za pregledanje vaših fotografija.</string>
+    <string name="start_extracting">Započni!</string>
+    <string name="all_info_local">Svi podaci su sačuvani lokalno na vašem uređaju. Nikada nisu poslati preko interneta. Vi ste vlasnik vaših podataka.</string>
 </resources>
