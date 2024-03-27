@@ -12,4 +12,5 @@ val allLicenses = listOf(
     License(id = 3, name = "Coil", link = "https://coil-kt.github.io/coil/"),
     License(id = 4, name = "Zoomable", link = "https://github.com/usuiat/Zoomable"),
     License(id = 5, name = "Arrow", link = "https://arrow-kt.io/"),
+    License(id = 6, name = "Timber", link = "https://github.com/JakeWharton/timber"),
 )
