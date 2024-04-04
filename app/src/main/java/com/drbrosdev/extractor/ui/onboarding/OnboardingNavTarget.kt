@@ -9,14 +9,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.requiresApi
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.findActivity
 import dev.olshevski.navigation.reimagined.replaceAll
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -73,7 +71,6 @@ object OnboardingNavTarget : NavTarget {
                     }
 
                     OnboardingEvents.StartWorker -> {
-                        viewModel.spawnWorkRequest()
                         viewModel.finishOnboarding()
                         navController.replaceAll(ExtractorSearchNavTarget())
                     }
