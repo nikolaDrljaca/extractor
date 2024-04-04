@@ -79,7 +79,8 @@ fun ExtractorTextField(
                 color = textColor.copy(alpha = 0.2f),
                 onClick = onDoneSubmit,
                 shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(48.dp),
+                enabled = enabled
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Search,
