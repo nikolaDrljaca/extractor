@@ -41,7 +41,8 @@ fun ExtractorTextField(
     textColor: Color = when {
         isSystemInDarkTheme() -> Color.White
         else -> Color.Black
-    }
+    },
+    enabled: Boolean = true
 ) {
     val textStyle = MaterialTheme.typography.headlineMedium.copy(
         fontSize = 26.sp
@@ -61,6 +62,7 @@ fun ExtractorTextField(
             onDone = { onDoneSubmit() },
             onSearch = { onDoneSubmit() }
         ),
+        enabled = enabled,
         minLines = 1,
         maxLines = 2,
         readOnly = false,
@@ -100,7 +102,9 @@ fun ExtractorTextField(
                 backgroundColor = textColor.copy(alpha = 0.4f),
                 handleColor = textColor
             ),
-            focusedTextColor = MaterialTheme.colorScheme.onPrimary
+            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = Color.Transparent,
+            disabledTextColor = Color.Gray,
         ),
     )
 }

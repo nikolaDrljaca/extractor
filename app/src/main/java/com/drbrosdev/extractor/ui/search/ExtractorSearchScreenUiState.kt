@@ -22,6 +22,8 @@ sealed class ExtractorSearchScreenUiState {
         val suggestedSearchState: ExtractorSuggestedSearchState
     ) : ExtractorSearchScreenUiState()
 
+    data object NoSearchesLeft : ExtractorSearchScreenUiState()
+
     data object Empty : ExtractorSearchScreenUiState()
 }
 
@@ -32,6 +34,22 @@ fun MutableStateFlow<ExtractorSearchScreenUiState>.createFrom(
         mediaImages.isEmpty() -> ExtractorSearchScreenUiState.Empty
         else -> ExtractorSearchScreenUiState.Content(mediaImages)
     }
+}
+
+fun MutableStateFlow<ExtractorSearchScreenUiState>.createFrom(
+    mediaImages: Result<List<Extraction>>,
+) = update {
+    mediaImages.fold(
+        onSuccess = { extractions ->
+            when {
+                extractions.isEmpty() -> ExtractorSearchScreenUiState.Empty
+                else -> ExtractorSearchScreenUiState.Content(extractions)
+            }
+        },
+        onFailure = {
+            ExtractorSearchScreenUiState.NoSearchesLeft
+        }
+    )
 }
 
 fun ExtractorSearchScreenUiState.getImages(): List<Extraction> {

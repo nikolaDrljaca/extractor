@@ -26,6 +26,7 @@ fun ExtractorSearchTypeSwitch(
     contentColor: Color = Color.White,
     selection: SearchType,
     onSelectionChanged: (SearchType) -> Unit,
+    enabled: Boolean = true,
 ) {
 
     Column {
@@ -51,18 +52,23 @@ fun ExtractorSearchTypeSwitch(
                     },
                     label = { Text(text = stringResource(id = item.asStringRes())) },
                     leadingIcon = {},
+                    enabled = enabled,
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = Color.Transparent,
                         selectedContainerColor = Color.Black,
                         selectedLabelColor = Color.White,
                         labelColor = contentColor,
                         selectedLeadingIconColor = Color.White,
-                        iconColor = contentColor
+                        iconColor = contentColor,
+                        disabledContainerColor = Color.Transparent,
+                        disabledLabelColor = Color.Gray,
                     ),
                     border = FilterChipDefaults.filterChipBorder(
-                        enabled = true,
+                        enabled = enabled,
                         selected = selection == item,
-                        borderColor = contentColor
+                        borderColor = contentColor,
+                        disabledBorderColor = Color.Gray,
+                        disabledSelectedBorderColor = Color.Gray
                     )
                 )
             }

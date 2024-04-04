@@ -185,6 +185,8 @@ fun ExtractorSearchScreen(
                             state = it.suggestedSearchState
                         )
                     }
+
+                    is ExtractorSearchScreenUiState.NoSearchesLeft -> Unit
                 }
             }
 

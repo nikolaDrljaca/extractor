@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -16,7 +18,8 @@ import kotlinx.coroutines.flow.Flow
 class ExtractorSearchViewState(
     initialQuery: String,
     initialKeywordType: KeywordType,
-    initialSearchType: SearchType = SearchType.PARTIAL
+    initialSearchType: SearchType = SearchType.PARTIAL,
+    initialIsDisabled: Boolean = false,
 ) {
     var query by mutableStateOf(initialQuery)
         private set
@@ -27,9 +30,21 @@ class ExtractorSearchViewState(
     var searchType by mutableStateOf(initialSearchType)
         private set
 
+    var disabled by mutableStateOf(initialIsDisabled)
+        private set
+
     inline fun updateQuery(block: (String) -> String) {
         val new = block(query)
         updateQuery(new)
+    }
+
+    fun disable() {
+        query = ""
+        disabled = true
+    }
+
+    fun enable() {
+        disabled = false
     }
 
     fun updateSearchType(value: SearchType) {
@@ -44,17 +59,26 @@ class ExtractorSearchViewState(
         keywordType = new
     }
 
+
     companion object {
-        fun Saver() = androidx.compose.runtime.saveable.Saver<ExtractorSearchViewState, String>(
-            save = { it.query },
-            restore = {
-                ExtractorSearchViewState(
-                    initialQuery = it,
+        val Saver = object : Saver<ExtractorSearchViewState, Map<String, Any>> {
+            override fun restore(value: Map<String, Any>): ExtractorSearchViewState? {
+                return ExtractorSearchViewState(
+                    initialQuery = value.getOrDefault("query", "") as String,
                     initialKeywordType = KeywordType.ALL,
-                    initialSearchType = SearchType.PARTIAL
+                    initialSearchType = SearchType.PARTIAL,
+                    initialIsDisabled = value.getOrDefault("disabled", false) as Boolean
                 )
             }
-        )
+
+            override fun SaverScope.save(value: ExtractorSearchViewState): Map<String, Any>? {
+                return mapOf(
+                    "query" to value.query,
+                    "disabled" to value.disabled
+                )
+            }
+
+        }
     }
 }
 
@@ -81,7 +105,7 @@ fun rememberExtractorSearchViewState(
     initialKeywordType: KeywordType,
     initialSearchType: SearchType = SearchType.PARTIAL
 ): ExtractorSearchViewState {
-    return rememberSaveable(saver = ExtractorSearchViewState.Saver()) {
+    return rememberSaveable(saver = ExtractorSearchViewState.Saver) {
         ExtractorSearchViewState(
             initialQuery = initialQuery,
             initialKeywordType = initialKeywordType,

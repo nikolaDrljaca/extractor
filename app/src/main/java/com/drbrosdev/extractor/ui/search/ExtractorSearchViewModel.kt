@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.Extraction
@@ -16,6 +17,7 @@ import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
+import com.drbrosdev.extractor.domain.usecase.PerformSearch
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
@@ -52,7 +54,7 @@ import kotlinx.coroutines.launch
 class ExtractorSearchViewModel(
     query: String,
     keywordType: KeywordType,
-    private val imageSearch: SearchImageByKeyword,
+    private val imageSearch: PerformSearch,
     private val trackExtractionProgress: TrackExtractionProgress,
     private val albumRepository: AlbumRepository,
     private val stateHandle: SavedStateHandle,
@@ -64,10 +66,15 @@ class ExtractorSearchViewModel(
     val snackbarHostState = SnackbarHostState()
     val extractorStatusButtonState = ExtractorStatusButtonState()
 
-    val searchViewState = ExtractorSearchViewState(
-        initialQuery = stateHandle["query"] ?: query,
-        initialKeywordType = keywordType,
-    )
+    val searchViewState = stateHandle.saveable(
+        key = "extractor_search_view_state",
+        saver = ExtractorSearchViewState.Saver
+    ) {
+        ExtractorSearchViewState(
+            initialQuery = stateHandle["query"] ?: query,
+            initialKeywordType = keywordType,
+        )
+    }
 
     val dateFilterState = ExtractorDateFilterState()
 
@@ -100,7 +107,7 @@ class ExtractorSearchViewModel(
             SheetContent.SearchView
         )
 
-    private val progressJob = trackExtractionProgress()
+    private val progressJob = trackExtractionProgress.invoke()
         .distinctUntilChanged()
         //handle create album button state
         .onEach {
@@ -122,10 +129,17 @@ class ExtractorSearchViewModel(
                 is ExtractionStatus.Done -> {
                     when {
                         ((it.inStorageCount != 0) and (_state.value !is ExtractorSearchScreenUiState.Content)) -> {
-                            val suggested = generateSuggestedKeywords()
+                            val suggested = generateSuggestedKeywords.invoke()
                             _state.update {
-                                ExtractorSearchScreenUiState.ShowSuggestions(
-                                    ExtractorSuggestedSearchState.Content(suggested)
+                                suggested.fold(
+                                    onSuccess = { result ->
+                                        ExtractorSearchScreenUiState.ShowSuggestions(
+                                            ExtractorSuggestedSearchState.Content(result)
+                                        )
+                                    },
+                                    onFailure = {
+                                        ExtractorSearchScreenUiState.NoSearchesLeft
+                                    }
                                 )
                             }
                         }
@@ -162,13 +176,22 @@ class ExtractorSearchViewModel(
 
     private val saveQueryJob = searchViewState.queryAsFlow()
         .distinctUntilChanged()
-        .onEach { stateHandle["query"] = it }
         .onEach { loaderButtonState.initial() }
         .launchIn(viewModelScope)
 
     private val dateFilterJob = dateFilterState.dateRangeAsFlow()
         .distinctUntilChanged()
         .onEach { performSearch(SearchStrategy.NORMAL) }
+        .launchIn(viewModelScope)
+
+    private val disableSearchJob = datastore.searchCount
+        .distinctUntilChanged()
+        .onEach {
+            when {
+                it == 0 -> searchViewState.disable()
+                else -> searchViewState.enable()
+            }
+        }
         .launchIn(viewModelScope)
 
     private val loaderButtonEnabledJob = state
@@ -309,10 +332,17 @@ class ExtractorSearchViewModel(
             )
         }
         viewModelScope.launch {
-            val suggested = generateSuggestedKeywords()
+            val suggested = generateSuggestedKeywords.invoke()
             _state.update {
-                ExtractorSearchScreenUiState.ShowSuggestions(
-                    ExtractorSuggestedSearchState.Content(suggested)
+                suggested.fold(
+                    onSuccess = { result ->
+                        ExtractorSearchScreenUiState.ShowSuggestions(
+                            ExtractorSuggestedSearchState.Content(result)
+                        )
+                    },
+                    onFailure = {
+                        ExtractorSearchScreenUiState.NoSearchesLeft
+                    }
                 )
             }
         }

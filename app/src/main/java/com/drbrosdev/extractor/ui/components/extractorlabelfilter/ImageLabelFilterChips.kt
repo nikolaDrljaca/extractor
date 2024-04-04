@@ -33,7 +33,8 @@ fun ImageLabelFilterChips(
     modifier: Modifier = Modifier,
     contentColor: Color = Color.White,
     initial: Int = 0,
-    onFilterChanged: (ImageLabelFilterChipData) -> Unit
+    onFilterChanged: (ImageLabelFilterChipData) -> Unit,
+    enabled: Boolean = true
 ) {
     var selected by rememberSaveable {
         mutableIntStateOf(initial)
@@ -79,6 +80,7 @@ fun ImageLabelFilterChips(
                         selected = index
                         onFilterChanged(chipItems[index])
                     },
+                    enabled = enabled,
                     label = { Text(text = item.label) },
                     leadingIcon = {
                         Icon(
@@ -93,12 +95,17 @@ fun ImageLabelFilterChips(
                         selectedLabelColor = Color.White,
                         labelColor = contentColor,
                         selectedLeadingIconColor = Color.White,
-                        iconColor = contentColor
+                        iconColor = contentColor,
+                        disabledLabelColor = Color.Gray,
+                        disabledLeadingIconColor = Color.Gray,
+                        disabledContainerColor = Color.Transparent
                     ),
                     border = FilterChipDefaults.filterChipBorder(
-                        enabled = true,
+                        enabled = enabled,
                         selected = selected == index,
-                        borderColor = contentColor
+                        borderColor = contentColor,
+                        disabledBorderColor = Color.Gray,
+                        disabledSelectedBorderColor = Color.Gray
                     )
                 )
             }
