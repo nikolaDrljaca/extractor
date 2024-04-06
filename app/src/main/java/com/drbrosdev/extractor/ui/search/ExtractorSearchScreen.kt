@@ -47,6 +47,7 @@ import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheet
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
 import com.drbrosdev.extractor.ui.components.shared.DragHandle
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
+import com.drbrosdev.extractor.ui.components.shared.ExtractorGetMoreSearches
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
@@ -189,7 +190,14 @@ fun ExtractorSearchScreen(
                         )
                     }
 
-                    is ExtractorSearchScreenUiState.NoSearchesLeft -> Unit
+                    is ExtractorSearchScreenUiState.NoSearchesLeft ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            ExtractorGetMoreSearches(onClick = { /*TODO*/ })
+                        }
                 }
             }
 
@@ -206,7 +214,7 @@ fun ExtractorSearchScreen(
                 centerSlot = {
                     ExtractorHeader(
                         bottomText = stringResource(R.string.searches_left, searchCount),
-                        onClick = {}
+                        onClick = onHeaderClick
                     )
                 },
                 trailingSlot = {

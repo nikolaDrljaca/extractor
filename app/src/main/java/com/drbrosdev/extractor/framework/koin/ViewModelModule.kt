@@ -7,6 +7,7 @@ import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageReposi
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
+import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
@@ -24,6 +25,12 @@ val viewModelModule = module {
         OnboardingViewModel(
             savedStateHandle = get(),
             completeOnboarding = get()
+        )
+    }
+
+    viewModel {
+        ExtractorGetMoreViewModel(
+            datastore = get()
         )
     }
 

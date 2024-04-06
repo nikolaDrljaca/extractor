@@ -23,6 +23,7 @@ import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStat
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
+import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -127,7 +128,9 @@ data class ExtractorSearchNavTarget(
                     MultiselectAction.Delete -> Unit
                 }
             },
-            onHeaderClick = {}
+            onHeaderClick = {
+                navController.navigate(ExtractorGetMoreNavTarget)
+            }
         )
     }
 }
