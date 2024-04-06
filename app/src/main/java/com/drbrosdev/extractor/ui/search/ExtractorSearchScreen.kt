@@ -69,10 +69,12 @@ fun ExtractorSearchScreen(
     onStartSyncClick: () -> Unit,
     onResetSearch: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
+    onHeaderClick: () -> Unit,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberExtractorSearchBottomSheetState()
     ),
     state: ExtractorSearchScreenUiState,
+    searchCount: Int,
     dateFilterState: ExtractorDateFilterState,
     searchViewState: ExtractorSearchViewState,
     extractorStatusButtonState: ExtractorStatusButtonState,
@@ -94,6 +96,7 @@ fun ExtractorSearchScreen(
             is ExtractorSearchScreenUiState.Loading -> {
                 imageGridState.lazyGridState.animateScrollToItem(0)
             }
+
             else -> Unit
         }
     }
@@ -200,7 +203,12 @@ fun ExtractorSearchScreen(
                         state = extractorStatusButtonState
                     )
                 },
-                centerSlot = { ExtractorHeader(bottomText = stringResource(R.string.tap_right_for_more)) },
+                centerSlot = {
+                    ExtractorHeader(
+                        bottomText = stringResource(R.string.searches_left, searchCount),
+                        onClick = {}
+                    )
+                },
                 trailingSlot = {
                     IconButton(onClick = onExtractorHomeClicked) {
                         Icon(

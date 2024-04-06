@@ -128,4 +128,5 @@
     <string name="start_extracting">Start Extracting!</string>
     <string name="all_info_local">All information found on your images is stored locally and never leaves your device.\n\nYou own your data.</string>
     <string name="action_bug">Bug</string>
+    <string name="searches_left">Searches left: %1$s</string>
 </resources>

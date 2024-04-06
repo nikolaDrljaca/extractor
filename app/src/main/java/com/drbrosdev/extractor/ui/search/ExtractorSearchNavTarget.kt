@@ -50,6 +50,7 @@ data class ExtractorSearchNavTarget(
         }
         val state by viewModel.state.collectAsStateWithLifecycle()
         val sheetContent by viewModel.sheetContent.collectAsStateWithLifecycle()
+        val searchCount by viewModel.searchCount.collectAsStateWithLifecycle()
 
         val navController = LocalNavController.current
         val dialogNavController = LocalDialogNavController.current
@@ -76,6 +77,7 @@ data class ExtractorSearchNavTarget(
         ExtractorSearchScreen(
             scaffoldState = scaffoldState,
             state = state,
+            searchCount = searchCount,
             extractorStatusButtonState = viewModel.extractorStatusButtonState,
             searchViewState = viewModel.searchViewState,
             dateFilterState = viewModel.dateFilterState,
@@ -124,7 +126,8 @@ data class ExtractorSearchNavTarget(
 
                     MultiselectAction.Delete -> Unit
                 }
-            }
+            },
+            onHeaderClick = {}
         )
     }
 }
@@ -144,6 +147,7 @@ private fun SearchScreenPreview() {
             onResetSearch = {},
             onStartSyncClick = {},
             onMultiselectAction = {},
+            onHeaderClick = {},
             extractorStatusButtonState = ExtractorStatusButtonState(),
             state = ExtractorSearchScreenUiState.StillIndexing,
             searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
@@ -152,6 +156,7 @@ private fun SearchScreenPreview() {
             sheetContent = SheetContent.SearchView,
             snackbarHostState = SnackbarHostState(),
             imageGridState = ExtractorImageGridState(),
+            searchCount = 21
         )
     }
 }

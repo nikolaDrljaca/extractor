@@ -93,6 +93,13 @@ class ExtractorSearchViewModel(
 
     val shouldShowSheetFlow = datastore.shouldShowSearchSheet
 
+    val searchCount = datastore.searchCount
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            0
+        )
+
     val sheetContent = gridState.checkedIndicesAsFlow()
         .map { checked ->
             val content = when {
