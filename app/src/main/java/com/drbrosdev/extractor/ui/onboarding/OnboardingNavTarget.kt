@@ -56,7 +56,7 @@ object OnboardingNavTarget : NavTarget {
 
                     OnboardingEvents.RequestPermissions -> {
                         requiresApi(
-                            versionCode = Build.VERSION_CODES.TIRAMISU,
+                            apiLevel = Build.VERSION_CODES.TIRAMISU,
                             fallback = {
                                 imagePermissionResultLauncher.launch(
                                     android.Manifest.permission.READ_EXTERNAL_STORAGE

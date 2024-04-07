@@ -7,6 +7,7 @@ import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
 import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.text.extractor.ExtractTextEmbed
+import com.drbrosdev.extractor.util.runCatching
 import com.drbrosdev.extractor.util.toUri
 import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,15 +23,20 @@ class DefaultRunExtractor(
 
     override suspend fun execute(mediaImageUri: MediaImageUri): Result<ImageEmbeds> {
         return withContext(dispatcher) {
-            val inputImage =
+            val inputImage = runCatching {
                 createInputImage.execute(InputImageType.UriInputImage(mediaImageUri.toUri()))
+            }
+
+            if (inputImage.isFailure) return@withContext Result.failure(
+                inputImage.exceptionOrNull() ?: Throwable("Input image creation failed.")
+            )
 
             val text = async {
-                extractTextEmbed.execute(inputImage)
+                extractTextEmbed.execute(inputImage.getOrThrow())
             }
 
             val visuals = async {
-                extractVisualEmbeds.execute(inputImage)
+                extractVisualEmbeds.execute(inputImage.getOrThrow())
             }
 
             val outText = text.await().getOrDefault(Embed.defaultTextEmbed)

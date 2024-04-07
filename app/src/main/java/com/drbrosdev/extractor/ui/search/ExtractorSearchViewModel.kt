@@ -139,12 +139,12 @@ class ExtractorSearchViewModel(
                             val suggested = generateSuggestedKeywords.invoke()
                             _state.update {
                                 suggested.fold(
-                                    onSuccess = { result ->
+                                    ifRight = { result ->
                                         ExtractorSearchScreenUiState.ShowSuggestions(
                                             ExtractorSuggestedSearchState.Content(result)
                                         )
                                     },
-                                    onFailure = {
+                                    ifLeft = {
                                         ExtractorSearchScreenUiState.NoSearchesLeft
                                     }
                                 )
@@ -342,12 +342,12 @@ class ExtractorSearchViewModel(
             val suggested = generateSuggestedKeywords.invoke()
             _state.update {
                 suggested.fold(
-                    onSuccess = { result ->
+                    ifRight = { result ->
                         ExtractorSearchScreenUiState.ShowSuggestions(
                             ExtractorSuggestedSearchState.Content(result)
                         )
                     },
-                    onFailure = {
+                    ifLeft = {
                         ExtractorSearchScreenUiState.NoSearchesLeft
                     }
                 )

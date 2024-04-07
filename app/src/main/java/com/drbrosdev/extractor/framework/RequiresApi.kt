@@ -17,11 +17,11 @@ object VersionCodes {
 
 
 fun requiresApi(
-    versionCode: Int,
+    apiLevel: Int,
     fallback: (() -> Unit)? = null,
     block: () -> Unit,
 ) {
-    if (Build.VERSION.SDK_INT >= versionCode) {
+    if (Build.VERSION.SDK_INT >= apiLevel) {
         block()
     } else {
         fallback?.invoke()

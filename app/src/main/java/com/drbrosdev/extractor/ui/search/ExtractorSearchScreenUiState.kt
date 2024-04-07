@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.search
 
 import androidx.compose.runtime.Immutable
+import arrow.core.Either
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,16 +38,16 @@ fun MutableStateFlow<ExtractorSearchScreenUiState>.createFrom(
 }
 
 fun MutableStateFlow<ExtractorSearchScreenUiState>.createFrom(
-    mediaImages: Result<List<Extraction>>,
+    mediaImages: Either<Unit, List<Extraction>>,
 ) = update {
     mediaImages.fold(
-        onSuccess = { extractions ->
+        ifRight = { extractions ->
             when {
                 extractions.isEmpty() -> ExtractorSearchScreenUiState.Empty
                 else -> ExtractorSearchScreenUiState.Content(extractions)
             }
         },
-        onFailure = {
+        ifLeft = {
             ExtractorSearchScreenUiState.NoSearchesLeft
         }
     )
