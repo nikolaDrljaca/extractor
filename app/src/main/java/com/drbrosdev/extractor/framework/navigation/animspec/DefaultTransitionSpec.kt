@@ -28,7 +28,7 @@ val DefaultTransitionSpec = NavTransitionSpec<NavTarget?> { action, from, to ->
     val fadeInAndOut = fadeIn() togetherWith fadeOut()
 
     val scaleInAndOut =
-        fadeIn() + scaleIn(initialScale = 0.9f) togetherWith fadeOut()
+        fadeIn() + scaleIn(initialScale = 0.95f) togetherWith fadeOut()
 
     when {
         ((from is ExtractorSearchNavTarget) or (from is ExtractorAlbumViewerNavTarget)) and (to is ExtractorImageViewerNavTarget) -> fadeInAndOut
