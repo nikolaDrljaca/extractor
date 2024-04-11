@@ -47,6 +47,7 @@ import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheet
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
 import com.drbrosdev.extractor.ui.components.shared.DragHandle
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
+import com.drbrosdev.extractor.ui.components.shared.ExtractorGetMoreSearches
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
@@ -69,10 +70,12 @@ fun ExtractorSearchScreen(
     onStartSyncClick: () -> Unit,
     onResetSearch: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
+    onHeaderClick: () -> Unit,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberExtractorSearchBottomSheetState()
     ),
     state: ExtractorSearchScreenUiState,
+    searchCount: Int,
     dateFilterState: ExtractorDateFilterState,
     searchViewState: ExtractorSearchViewState,
     extractorStatusButtonState: ExtractorStatusButtonState,
@@ -94,6 +97,7 @@ fun ExtractorSearchScreen(
             is ExtractorSearchScreenUiState.Loading -> {
                 imageGridState.lazyGridState.animateScrollToItem(0)
             }
+
             else -> Unit
         }
     }
@@ -185,6 +189,15 @@ fun ExtractorSearchScreen(
                             state = it.suggestedSearchState
                         )
                     }
+
+                    is ExtractorSearchScreenUiState.NoSearchesLeft ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            ExtractorGetMoreSearches(onClick = { /*TODO*/ })
+                        }
                 }
             }
 
@@ -198,7 +211,12 @@ fun ExtractorSearchScreen(
                         state = extractorStatusButtonState
                     )
                 },
-                centerSlot = { ExtractorHeader(bottomText = stringResource(R.string.tap_right_for_more)) },
+                centerSlot = {
+                    ExtractorHeader(
+                        bottomText = stringResource(R.string.searches_left, searchCount),
+                        onClick = onHeaderClick
+                    )
+                },
                 trailingSlot = {
                     IconButton(onClick = onExtractorHomeClicked) {
                         Icon(

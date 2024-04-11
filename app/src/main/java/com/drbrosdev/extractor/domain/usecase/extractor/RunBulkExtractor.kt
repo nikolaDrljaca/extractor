@@ -2,18 +2,20 @@ package com.drbrosdev.extractor.domain.usecase.extractor
 
 import arrow.fx.coroutines.parMapUnordered
 import com.drbrosdev.extractor.domain.model.Embed
-import com.drbrosdev.extractor.domain.model.MediaImageId
-import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
 import com.drbrosdev.extractor.framework.logger.logErrorEvent
 import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.util.CONCURRENCY
+import com.drbrosdev.extractor.util.mediaImageId
 import com.drbrosdev.extractor.util.mediaImageUri
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 
 class RunBulkExtractor(
     private val dispatcher: CoroutineDispatcher,
@@ -38,9 +40,12 @@ class RunBulkExtractor(
             isOnDevice.size > isInStorage.size -> {
                 // perform extraction
                 logEvent("Processing extraction for ${isOnDevice.size} images from device.")
-                isOnDevice.asFlow()
-                    .parMapUnordered(CONCURRENCY) {
-                        val mediaStoreImage = mediaImages[it]!!
+                isOnDevice
+                    .asFlow()
+                    .map { mediaImages[it] }
+                    .onEach { if (it == null) logEvent("Found NPE for image reference. Possibly removed during extraction.") }
+                    .filterNotNull()
+                    .parMapUnordered(CONCURRENCY) { mediaStoreImage ->
                         val embeds = runExtractor.execute(mediaStoreImage.mediaImageUri())
                             .onFailure { exception ->
                                 logErrorEvent(
@@ -51,8 +56,8 @@ class RunBulkExtractor(
                             .getOrNull()
 
                         val data = NewExtraction(
-                            mediaImageId = MediaImageId(it),
-                            extractorImageUri = MediaImageUri(mediaStoreImage.uri.toString()),
+                            mediaImageId = mediaStoreImage.mediaImageId(),
+                            extractorImageUri = mediaStoreImage.mediaImageUri(),
                             path = mediaStoreImage.path,
                             dateAdded = mediaStoreImage.dateAdded,
                             textEmbed = embeds?.textEmbed ?: Embed.defaultTextEmbed,

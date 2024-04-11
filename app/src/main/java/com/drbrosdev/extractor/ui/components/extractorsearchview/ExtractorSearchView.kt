@@ -77,7 +77,8 @@ fun ExtractorSearchView(
                 modifier = Modifier
                     .padding(textFieldPadding)
                     .fillMaxWidth(),
-                interactionSource = interactionSource
+                interactionSource = interactionSource,
+                enabled = !state.disabled
             )
 
             Column(
@@ -91,12 +92,14 @@ fun ExtractorSearchView(
                     },
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     initial = state.initialLabelTypeIndex(),
+                    enabled = !state.disabled
                 )
 
                 ExtractorSearchTypeSwitch(
                     selection = state.searchType,
                     onSelectionChanged = state::updateSearchType,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
+                    enabled = !state.disabled
                 )
             }
         }
@@ -113,7 +116,8 @@ private fun CurrentPreview() {
             state = ExtractorSearchViewState(
                 "",
                 KeywordType.ALL,
-                SearchType.PARTIAL
+                SearchType.PARTIAL,
+                initialIsDisabled = true
             )
         )
     }

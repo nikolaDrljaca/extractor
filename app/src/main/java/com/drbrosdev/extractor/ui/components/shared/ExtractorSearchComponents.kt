@@ -113,6 +113,32 @@ fun ExtractorResetSearch(
     }
 }
 
+@Composable
+fun ExtractorGetMoreSearches(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = Modifier.then(modifier),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.used_allocated_searches),
+            style = MaterialTheme.typography.titleMedium
+        )
+        Text(
+            text = stringResource(R.string.searches_how_get_more),
+            style = MaterialTheme.typography.labelSmall
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        OutlinedExtractorActionButton(onClick = onClick) {
+            Text(text = stringResource(R.string.get_more))
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun CurrentPreview() {
@@ -124,6 +150,7 @@ private fun CurrentPreview() {
             ExtractorStillIndexing()
             ExtractorEmptySearch(onReset = {})
             ExtractorResetSearch(onClick = { /*TODO*/ })
+            ExtractorGetMoreSearches(onClick = {})
         }
     }
 }

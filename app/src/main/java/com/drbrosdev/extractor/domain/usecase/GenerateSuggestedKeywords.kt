@@ -1,5 +1,9 @@
 package com.drbrosdev.extractor.domain.usecase
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
@@ -20,11 +24,16 @@ class GenerateSuggestedKeywords(
     private val textEmbeddingDao: TextEmbeddingDao,
     private val userEmbeddingDao: UserEmbeddingDao,
     private val visualEmbeddingDao: VisualEmbeddingDao,
+    private val dataStore: ExtractorDataStore,
     private val tokenizeText: TokenizeText,
     private val validateSuggestedSearchToken: ValidateSuggestedSearchToken
 ) {
 
-    suspend operator fun invoke(): List<SuggestedSearch> = withContext(dispatcher) {
+    suspend operator fun invoke(): Either<Unit, List<SuggestedSearch>> = withContext(dispatcher) {
+        if (dataStore.getSearchCount() == 0) {
+            return@withContext Unit.left()
+        }
+
         val textSuggestions = async {
             produceSuggestions(
                 textEmbeddingDao.getValueConcatAtRandom(),
@@ -53,7 +62,7 @@ class GenerateSuggestedKeywords(
         val userOut = userSuggestions.await()
         val visual = visualSuggestions.await()
 
-        textOut + userOut + visual
+        (textOut + userOut + visual).right()
     }
 
     private suspend fun produceSuggestions(input: String?, size: Int, keywordType: KeywordType) =

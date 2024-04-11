@@ -7,9 +7,10 @@ import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageReposi
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
+import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
-import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
+import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
@@ -22,9 +23,14 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel {
         OnboardingViewModel(
-            spawnExtractorWork = get(),
-            datastore = get(),
-            savedStateHandle = get()
+            savedStateHandle = get(),
+            completeOnboarding = get()
+        )
+    }
+
+    viewModel {
+        ExtractorGetMoreViewModel(
+            datastore = get()
         )
     }
 

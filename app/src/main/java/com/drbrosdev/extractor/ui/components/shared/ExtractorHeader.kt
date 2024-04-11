@@ -79,6 +79,47 @@ fun ExtractorHeader(
 }
 
 
+@Composable
+fun ExtractorHeader(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    headerText: String = stringResource(id = R.string.app_name),
+    bottomText: String? = null,
+) {
+    Surface(
+        modifier = Modifier
+            .then(modifier),
+        color = Color.Transparent,
+        shadowElevation = 0.dp,
+        tonalElevation = 0.dp,
+        onClick = onClick,
+        shape = RoundedCornerShape(14.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = headerText,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            )
+
+            bottomText?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                )
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun ButtonsPreview() {
