@@ -1,5 +1,5 @@
 
-# Extractor Application
+# Lupa - Project Extractor
 
 Search your images with text. Application indexes local images and extracts information from them
 using [MLKit](https://developers.google.com/ml-kit/guides) models to allow keyword searching across images.
