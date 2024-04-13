@@ -58,7 +58,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2024.02.02"))
+    implementation(platform("androidx.compose:compose-bom:2024.04.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -68,7 +68,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.02.02"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
@@ -82,7 +82,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     //ML Kit
-    implementation("com.google.mlkit:image-labeling:17.0.7")
+    implementation("com.google.mlkit:image-labeling:17.0.8")
     implementation("com.google.mlkit:text-recognition:16.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.2")
 
@@ -119,7 +119,7 @@ dependencies {
     implementation("net.engawapg.lib:zoomable:$zoomableVersion")
 
     //splash screen API
-    implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
+    implementation("androidx.core:core-splashscreen:1.1.0-rc01")
 
     // timber logging
     implementation("com.jakewharton.timber:timber:5.0.1")
