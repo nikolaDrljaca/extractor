@@ -80,7 +80,7 @@ val useCaseModule = module {
         )
     } bind SearchImageByKeyword::class
 
-    factory {
+    single {
         TrackExtractionProgress(
             dispatcher = get(named(CoroutineModuleName.Default)),
             extractionDao = get(),

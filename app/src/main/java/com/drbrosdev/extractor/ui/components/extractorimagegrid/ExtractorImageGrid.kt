@@ -109,7 +109,7 @@ fun ExtractorImageGrid(
 }
 
 object ExtractorImageGridDefaults {
-    val paddingValues = PaddingValues(vertical = 116.dp)
+    val paddingValues = PaddingValues(vertical = 120.dp)
 }
 
 @Preview

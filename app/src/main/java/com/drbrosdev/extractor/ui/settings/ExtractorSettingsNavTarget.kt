@@ -11,6 +11,7 @@ import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackNavTarget
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
+import com.drbrosdev.extractor.util.launchShareAppIntent
 import com.drbrosdev.extractor.util.launchViewIntent
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
@@ -36,10 +37,12 @@ object ExtractorSettingsNavTarget : NavTarget {
                 navController.navigate(ExtractorPeriodicWorkNavTarget)
             },
             onAboutLink = {
-                //TODO
                 when (it) {
                     AboutLink.FEEDBACK -> navController.navigate(ExtractorFeedbackNavTarget)
-                    else -> Unit
+                    AboutLink.WEBSITE -> context.launchViewIntent("https://lupa-hazel.vercel.app/")
+                    AboutLink.POLICY -> context.launchViewIntent("https://lupa-hazel.vercel.app/privacy")
+                    AboutLink.SHARE -> context.launchShareAppIntent()
+                    AboutLink.RATE -> context.launchViewIntent("https://play.google.com/store/apps/details?id=com.drbrosdev.extractor")
                 }
             },
             settingsState = viewModel.settingsState

@@ -3,9 +3,11 @@ package com.drbrosdev.extractor.ui.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
+import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,7 +28,8 @@ class ExtractorHomeViewModel(
     private val compileVisualAlbum: CompileVisualAlbum,
     private val compileTextAlbum: CompileTextAlbums,
     private val albumRepository: AlbumRepository,
-    private val homeScreenSettingsProvider: ProvideHomeScreenSettings
+    private val homeScreenSettingsProvider: ProvideHomeScreenSettings,
+    private val extractionStatus: TrackExtractionProgress
 ) : ViewModel() {
     private val loadingTextAlbum = MutableStateFlow(false)
     private val loadingVisualAlbum = MutableStateFlow(false)
@@ -37,6 +41,9 @@ class ExtractorHomeViewModel(
             ExtractorHomeScreenSettings()
         )
 
+    private val progress = extractionStatus.invoke()
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
     val textAlbums = albumRepository
         .getCommonTextAlbumsAsFlow()
         .combine(loadingTextAlbum) { albums, loading ->
@@ -47,6 +54,12 @@ class ExtractorHomeViewModel(
                     albums = albums.map { it.toPreview() },
                     isLoading = loading
                 )
+            }
+        }
+        .combine(progress) { viewState, status ->
+            when (status) {
+                is ExtractionStatus.Done -> viewState
+                is ExtractionStatus.Running -> ExtractorCategoryViewState.StillIndexing()
             }
         }
         .flowOn(Dispatchers.Default)
@@ -66,6 +79,14 @@ class ExtractorHomeViewModel(
                     albums = albums.map { it.toPreview() },
                     isLoading = loading
                 )
+            }
+        }
+        .combine(progress) { viewState, status ->
+            when  {
+                viewState is ExtractorCategoryViewState.Content -> viewState
+                status is ExtractionStatus.Done -> viewState
+                status is ExtractionStatus.Running -> ExtractorCategoryViewState.StillIndexing()
+                else -> viewState
             }
         }
         .flowOn(Dispatchers.Default)

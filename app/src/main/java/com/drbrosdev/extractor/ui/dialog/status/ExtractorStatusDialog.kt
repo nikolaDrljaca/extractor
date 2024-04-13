@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.components.shared.ExtractorActionButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
 
 @Composable
 fun ExtractorStatusDialog(
@@ -85,7 +85,7 @@ fun ExtractorStatusDialog(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            ExtractorActionButton(
+            ExtractorButton(
                 onClick = onClick,
                 enabled = state.shouldAllowExtraction,
                 modifier = Modifier.fillMaxWidth()

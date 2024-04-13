@@ -71,6 +71,7 @@ fun ExtractorSearchScreen(
     onResetSearch: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
     onHeaderClick: () -> Unit,
+    onGetMoreSearches: () -> Unit,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberExtractorSearchBottomSheetState()
     ),
@@ -128,11 +129,7 @@ fun ExtractorSearchScreen(
             }
         },
         sheetContainerColor = MaterialTheme.colorScheme.primary,
-        sheetDragHandle = {
-            DragHandle(
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        },
+        sheetDragHandle = { DragHandle(color = MaterialTheme.colorScheme.onPrimary) },
         sheetContentColor = MaterialTheme.colorScheme.onPrimary,
         sheetPeekHeight = 106.dp + bottomPadding,
         scaffoldState = scaffoldState
@@ -196,7 +193,7 @@ fun ExtractorSearchScreen(
                                 .fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            ExtractorGetMoreSearches(onClick = { /*TODO*/ })
+                            ExtractorGetMoreSearches(onClick = onGetMoreSearches)
                         }
                 }
             }

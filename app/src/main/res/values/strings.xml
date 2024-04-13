@@ -137,4 +137,5 @@
     <string name="direct_support">You can also support us directly and not watch ads by selecting one of the options below.*</string>
     <string name="watch_an_ad">Watch an Ad</string>
     <string name="ad_support">You can get 100 searches by viewing a full screen ad that lasts 5 seconds. This will provide a kickback to us, and allow you to keep using the app for free.</string>
+    <string name="indexing_active_albums_create">Indexing is still active. When finished, you can create albums based on most common keywords.</string>
 </resources>

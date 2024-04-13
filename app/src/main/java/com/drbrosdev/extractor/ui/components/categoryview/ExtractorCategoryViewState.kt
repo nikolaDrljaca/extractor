@@ -10,6 +10,10 @@ sealed class ExtractorCategoryViewState {
         override val isLoading: Boolean = false
     ) : ExtractorCategoryViewState()
 
+    data class StillIndexing(
+        override val isLoading: Boolean = false
+    ) : ExtractorCategoryViewState()
+
     @Immutable
     data class Content(
         val albums: List<AlbumPreview>,

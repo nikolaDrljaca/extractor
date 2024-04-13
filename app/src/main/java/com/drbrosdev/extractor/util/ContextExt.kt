@@ -33,6 +33,22 @@ fun Context.launchShareIntent(mediaImages: List<Uri>) {
     startActivity(Intent.createChooser(intent, "Share Images via..."))
 }
 
+fun Context.launchShareIntent(content: String) {
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, content)
+    }
+    startActivity(Intent.createChooser(intent, null))
+}
+
+fun Context.launchShareAppIntent() {
+    val content = buildString {
+        appendLine("Checkout this Lupa on the Play Store!")
+        appendLine("https://play.google.com/store/apps/details?id=com.drbrosdev.extractor")
+    }
+    launchShareIntent(content)
+}
+
 fun Context.launchViewIntent(link: String) {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
     startActivity(intent)

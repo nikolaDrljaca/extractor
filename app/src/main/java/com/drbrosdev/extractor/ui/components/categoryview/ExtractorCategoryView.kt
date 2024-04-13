@@ -137,6 +137,8 @@ fun ExtractorCategoryView(
                     onInitClick = onInitClick,
                     category = category
                 )
+
+                is ExtractorCategoryViewState.StillIndexing -> ExtractorCategoryStillIndexingView()
             }
         }
     }
@@ -149,6 +151,29 @@ object ExtractorAlbumsViewDefaults {
         VISUAL(R.string.visual_albums),
         TEXT(R.string.text_albums),
         USER(R.string.my_albums)
+    }
+}
+
+@Composable
+private fun ExtractorCategoryStillIndexingView(
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = Modifier
+            .requiredHeight(IMAGE_SIZE.dp)
+            .fillMaxWidth()
+            .then(modifier),
+        verticalArrangement = Arrangement.spacedBy(
+            space = 12.dp,
+            alignment = Alignment.CenterVertically
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.indexing_active_albums_create),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.labelMedium
+        )
     }
 }
 
@@ -315,6 +340,14 @@ private fun CurrentPreview() {
                     onAlbumPreviewClick = {},
                     state = ExtractorCategoryViewState.Initial(isLoading = true),
                     category = ExtractorAlbumsViewDefaults.Category.USER,
+                    onInitClick = {}
+                )
+
+                ExtractorCategoryView(
+                    onViewAllClicked = { },
+                    onAlbumPreviewClick = {},
+                    state = ExtractorCategoryViewState.StillIndexing(),
+                    category = ExtractorAlbumsViewDefaults.Category.TEXT,
                     onInitClick = {}
                 )
             }

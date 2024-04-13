@@ -128,6 +128,9 @@ data class ExtractorSearchNavTarget(
                     MultiselectAction.Delete -> Unit
                 }
             },
+            onGetMoreSearches = {
+                navController.navigate(ExtractorGetMoreNavTarget)
+            },
             onHeaderClick = {
                 navController.navigate(ExtractorGetMoreNavTarget)
             }
@@ -151,6 +154,7 @@ private fun SearchScreenPreview() {
             onStartSyncClick = {},
             onMultiselectAction = {},
             onHeaderClick = {},
+            onGetMoreSearches = {},
             extractorStatusButtonState = ExtractorStatusButtonState(),
             state = ExtractorSearchScreenUiState.StillIndexing,
             searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
