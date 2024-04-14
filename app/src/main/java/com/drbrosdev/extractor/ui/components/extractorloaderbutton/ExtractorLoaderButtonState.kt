@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.delay
 
 @Stable
 class ExtractorLoaderButtonState(
@@ -20,24 +19,6 @@ class ExtractorLoaderButtonState(
 
     var isEnabled by mutableStateOf(true)
         private set
-
-    @Deprecated(
-        message = "Don't use as it always displays the success state. Use `loading()` and `success()` to change state.",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith(expression = """
-            loaderState.loading()
-            launch { 
-                someSuspendAction()
-            }.invokeOnCompletion { loaderState.success() } 
-        """)
-    )
-    suspend fun withLoader(block: suspend () -> Unit) {
-        current = Target.LOADING
-        block()
-        current = Target.SUCCESS
-        delay(1000L)
-        current = Target.INITIAL
-    }
 
     fun loading() {
         current = Target.LOADING
@@ -77,7 +58,7 @@ class ExtractorLoaderButtonState(
     }
 }
 
-fun ExtractorLoaderButtonState.isSuccess() : Boolean {
+fun ExtractorLoaderButtonState.isSuccess(): Boolean {
     return current == ExtractorLoaderButtonState.Target.SUCCESS
 }
 

@@ -27,6 +27,7 @@ import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CollectFlow
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchShareIntent
 import dev.olshevski.navigation.reimagined.navigate
@@ -75,6 +76,14 @@ data class ExtractorSearchNavTarget(
             }
         }
 
+        CollectFlow(flow = viewModel.events) {
+            when (it) {
+                ExtractorSearchScreenEvents.AlbumCreated -> navController.navigate(
+                    ExtractorHomeNavTarget
+                )
+            }
+        }
+
         ExtractorSearchScreen(
             scaffoldState = scaffoldState,
             state = state,
@@ -102,7 +111,9 @@ data class ExtractorSearchNavTarget(
             onStatusButtonClick = {
                 dialogNavController.navigate(ExtractorStatusDialogNavTarget)
             },
-            onCreateAlbumClick = { viewModel.onCompileUserAlbum() },
+            onCreateAlbumClick = {
+                viewModel.onCreateUserAlbum()
+            },
             onSuggestedSearchClick = {
                 viewModel.performSuggestedSearch(it)
             },
@@ -116,10 +127,7 @@ data class ExtractorSearchNavTarget(
             onMultiselectAction = {
                 when (it) {
                     MultiselectAction.Cancel -> viewModel.onSelectionClear()
-                    MultiselectAction.CreateAlbum -> viewModel.onSelectionCreate {
-                        navController.navigate(ExtractorHomeNavTarget)
-                    }
-
+                    MultiselectAction.CreateAlbum -> viewModel.onSelectionCreate()
                     MultiselectAction.Share -> {
                         val uris = viewModel.getSelectedImageUris()
                         context.launchShareIntent(uris)

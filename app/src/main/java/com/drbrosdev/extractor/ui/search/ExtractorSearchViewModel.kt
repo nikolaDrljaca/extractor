@@ -39,6 +39,7 @@ import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlo
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
 import com.drbrosdev.extractor.util.toUri
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,6 +48,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -90,6 +92,9 @@ class ExtractorSearchViewModel(
     val state = _state.asStateFlow()
 
     private val lastQuery = MutableStateFlow(LastQuery(query, keywordType))
+
+    private val _events = Channel<ExtractorSearchScreenEvents>()
+    val events = _events.receiveAsFlow()
 
     val shouldShowSheetFlow = datastore.shouldShowSearchSheet
 
@@ -233,42 +238,38 @@ class ExtractorSearchViewModel(
         }
     }
 
-    fun onCompileUserAlbum() {
+    fun onCreateUserAlbum() {
         if (loaderButtonState.isSuccess()) return
         loaderButtonState.loading()
 
-        when (state.value) {
-            is ExtractorSearchScreenUiState.Content -> compileUserAlbum(state.value.getImages()) {
-                loaderButtonState.success()
-            }
+        viewModelScope.launch {
+            when (state.value) {
+                is ExtractorSearchScreenUiState.Content -> {
+                    compileUserAlbum(state.value.getImages())
+                    _events.send(ExtractorSearchScreenEvents.AlbumCreated)
+                    loaderButtonState.success()
+                }
 
-            else -> Unit
+                else -> Unit
+            }
         }
     }
 
-    private fun compileUserAlbum(
-        input: List<Extraction>,
-        onFinish: () -> Unit = {}
-    ) {
-        viewModelScope.launch {
-            val newAlbum = NewAlbum(
-                keyword = searchViewState.query,
-                name = searchViewState.query,
-                searchType = searchViewState.searchType,
-                keywordType = searchViewState.keywordType,
-                origin = NewAlbum.Origin.USER_GENERATED,
-                entries = input.map {
-                    NewAlbum.Entry(
-                        uri = it.uri,
-                        id = it.mediaImageId
-                    )
-                }
-            )
-            albumRepository.createAlbum(newAlbum)
-        }
-            .invokeOnCompletion {
-                onFinish()
+    private suspend fun compileUserAlbum(input: List<Extraction>) {
+        val newAlbum = NewAlbum(
+            keyword = searchViewState.query,
+            name = searchViewState.query,
+            searchType = searchViewState.searchType,
+            keywordType = searchViewState.keywordType,
+            origin = NewAlbum.Origin.USER_GENERATED,
+            entries = input.map {
+                NewAlbum.Entry(
+                    uri = it.uri,
+                    id = it.mediaImageId
+                )
             }
+        )
+        albumRepository.createAlbum(newAlbum)
     }
 
     private fun runSearch() {
@@ -359,9 +360,7 @@ class ExtractorSearchViewModel(
         gridState.clearSelection()
     }
 
-    fun onSelectionCreate(
-        onComplete: () -> Unit = {}
-    ) {
+    fun onSelectionCreate() {
         viewModelScope.launch {
             val extractions = state.value.getImages()
 
@@ -369,18 +368,17 @@ class ExtractorSearchViewModel(
                 .first()
                 .map { extractions[it] }
 
-            compileUserAlbum(toCreate) {
-                gridState.clearSelection()
-                //Show snack bar with action to view
-                viewModelScope.launch {
-                    val result = snackbarHostState.showSnackbar(
-                        message = stringProvider.get(R.string.snack_album_created),
-                        actionLabel = stringProvider.get(R.string.snack_view)
-                    )
-                    when (result) {
-                        SnackbarResult.Dismissed -> Unit
-                        SnackbarResult.ActionPerformed -> onComplete()
-                    }
+            compileUserAlbum(toCreate)
+            gridState.clearSelection()
+            //Show snack bar with action to view
+            viewModelScope.launch {
+                val result = snackbarHostState.showSnackbar(
+                    message = stringProvider.get(R.string.snack_album_created),
+                    actionLabel = stringProvider.get(R.string.snack_view)
+                )
+                when (result) {
+                    SnackbarResult.Dismissed -> Unit
+                    SnackbarResult.ActionPerformed -> _events.send(ExtractorSearchScreenEvents.AlbumCreated)
                 }
             }
         }
