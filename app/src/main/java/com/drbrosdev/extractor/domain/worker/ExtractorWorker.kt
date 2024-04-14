@@ -10,6 +10,7 @@ import androidx.work.WorkerParameters
 import com.drbrosdev.extractor.data.dao.ExtractionDao
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
+import com.drbrosdev.extractor.framework.logger.logErrorEvent
 import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.framework.notification.NotificationService
 import com.drbrosdev.extractor.framework.requiresApi
@@ -25,14 +26,21 @@ class ExtractorWorker(
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
-        setForeground(
-            createForegroundInfo(
-                NotificationService.PROGRESS_ID,
-                notificationService.createNotification(NotificationService.PROGRESS_CHANNEL_ID) {
-                    it.setContentInfo("Extraction is running")
-                }
+        try {
+            setForeground(
+                createForegroundInfo(
+                    NotificationService.PROGRESS_ID,
+                    notificationService.createNotification(NotificationService.PROGRESS_CHANNEL_ID) {
+                        it.setContentInfo("Extraction is running")
+                    }
+                )
             )
-        )
+        } catch (e: Exception) {
+            logErrorEvent(
+                message = "Starting Foreground Service failed.",
+                throwable = e
+            )
+        }
 
         val time = measureTime {
             extractor.execute()
@@ -73,7 +81,7 @@ class ExtractorWorker(
                 ForegroundInfo(
                     notificationId,
                     notification,
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+                    ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
                 )
             })
     }
