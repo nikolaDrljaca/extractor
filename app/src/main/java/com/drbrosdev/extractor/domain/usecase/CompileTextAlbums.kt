@@ -23,13 +23,13 @@ class CompileTextAlbums(
 ) {
 
     suspend operator fun invoke() {
-        val allText = textEmbeddingDao.findAllTextEmbedValues()
+        val allText = textEmbeddingDao.findAllTextEmbedValues() ?: return
 
         val tokens = tokenizeText(allText)
             .filter { validateSuggestedSearchToken(it) }
             .toList()
 
-        generateMostCommonTokens(tokens)
+        generateMostCommonTokens.invoke(tokens)
             .map { it.text }
             .map { topWord ->
                 val params = SearchImageByKeyword.Params(

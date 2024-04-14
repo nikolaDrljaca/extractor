@@ -44,7 +44,7 @@ interface VisualEmbeddingDao {
         SELECT group_concat(value)
         FROM visual_embedding
     """)
-    suspend fun findAllVisualEmbedValues(): String
+    suspend fun findAllVisualEmbedValues(): String?
 
     @Query("""
         WITH result AS (

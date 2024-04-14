@@ -24,15 +24,15 @@ class CompileVisualAlbum(
 ) {
 
     suspend operator fun invoke() {
-        val allVisuals = visualEmbeddingDao.findAllVisualEmbedValues()
-            .replace(",", " ")
+        val allVisuals = visualEmbeddingDao.findAllVisualEmbedValues() ?: return
 
-        val tokens = tokenizeText(allVisuals)
+        val clean = allVisuals.replace(",", " ")
+        val tokens = tokenizeText(clean)
             .filter { validateSuggestedToken(it) }
             .flowOn(dispatcher)
             .toList()
 
-        generateMostCommonTokens(tokens)
+        generateMostCommonTokens.invoke(tokens)
             .map { it.text }
             .map { topWord ->
                 val params = SearchImageByKeyword.Params(

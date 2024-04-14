@@ -26,7 +26,7 @@ interface TextEmbeddingDao {
         FROM text_embedding
     """
     )
-    suspend fun findAllTextEmbedValues(): String
+    suspend fun findAllTextEmbedValues(): String?
 
     @Insert
     suspend fun insert(value: TextEmbeddingEntity)
