@@ -25,7 +25,7 @@ class MlKitExtractTextEmbed(
             }
 
             out.mapCatching {
-                val clean = tokenizeText(it.text.lowercase())
+                val clean = tokenizeText.invoke(it.text.lowercase())
                     .toList()
                     .joinToString(separator = " ") { token -> token.text }
 

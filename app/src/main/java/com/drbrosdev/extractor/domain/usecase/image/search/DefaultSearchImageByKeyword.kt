@@ -21,7 +21,7 @@ class DefaultSearchImageByKeyword(
 
     override suspend fun execute(params: SearchImageByKeyword.Params): List<Extraction> =
         withContext(dispatcher) {
-            val cleanQuery = tokenizeText(params.query)
+            val cleanQuery = tokenizeText.invoke(params.query)
                 .toList()
 
             val createAdaptedQueryParams = CreateAdaptedQuery.Params(
@@ -30,7 +30,7 @@ class DefaultSearchImageByKeyword(
                 keywordType = params.keywordType
             )
 
-            val adaptedQuery = createAdaptedQuery(createAdaptedQueryParams)
+            val adaptedQuery = createAdaptedQuery.invoke(createAdaptedQueryParams)
 
             imageEmbedDao.findByKeyword(adaptedQuery.query)
                 .parMap(context = dispatcher) { it.imageEntity.toExtraction() }

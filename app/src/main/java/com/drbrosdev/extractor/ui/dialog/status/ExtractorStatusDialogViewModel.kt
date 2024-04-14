@@ -15,7 +15,7 @@ class ExtractorStatusDialogViewModel(
     private val trackExtractionProgress: TrackExtractionProgress
 ) : ViewModel() {
 
-    val state = trackExtractionProgress().map {
+    val state = trackExtractionProgress.invoke().map {
         when (it) {
             is ExtractionStatus.Done -> ExtractorStatusDialogUiModel(
                 onDeviceCount = it.onDeviceCount,
@@ -36,7 +36,7 @@ class ExtractorStatusDialogViewModel(
         )
 
     fun startExtraction() {
-        spawnExtractorWork()
+        spawnExtractorWork.invoke()
     }
 }
 

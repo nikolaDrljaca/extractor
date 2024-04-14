@@ -34,7 +34,7 @@ class ExtractorHomeViewModel(
     private val loadingTextAlbum = MutableStateFlow(false)
     private val loadingVisualAlbum = MutableStateFlow(false)
 
-    val settings = homeScreenSettingsProvider()
+    val settings = homeScreenSettingsProvider.invoke()
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),

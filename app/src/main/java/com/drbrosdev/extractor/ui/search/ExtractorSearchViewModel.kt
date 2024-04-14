@@ -17,7 +17,7 @@ import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
-import com.drbrosdev.extractor.domain.usecase.PerformSearch
+import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 class ExtractorSearchViewModel(
     query: String,
     keywordType: KeywordType,
-    private val imageSearch: PerformSearch,
+    private val imageSearch: SearchImages,
     private val trackExtractionProgress: TrackExtractionProgress,
     private val albumRepository: AlbumRepository,
     private val stateHandle: SavedStateHandle,
@@ -323,7 +323,7 @@ class ExtractorSearchViewModel(
         }
     }
 
-    fun spawnWork() = spawnExtractorWork()
+    fun spawnWork() = spawnExtractorWork.invoke()
 
     fun onShowSheetDone() {
         viewModelScope.launch {

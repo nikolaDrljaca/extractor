@@ -27,8 +27,8 @@ class CompileVisualAlbum(
         val allVisuals = visualEmbeddingDao.findAllVisualEmbedValues() ?: return
 
         val clean = allVisuals.replace(",", " ")
-        val tokens = tokenizeText(clean)
-            .filter { validateSuggestedToken(it) }
+        val tokens = tokenizeText.invoke(clean)
+            .filter { validateSuggestedToken.invoke(it) }
             .flowOn(dispatcher)
             .toList()
 

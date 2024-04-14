@@ -32,7 +32,6 @@ class RunBulkExtractor(
 
         if (isOnDevice == isInStorage) return
 
-
         val mediaImages = mediaImageRepository.findAllById(onDeviceIds.toList())
             .associateBy { it.mediaImageId }
 

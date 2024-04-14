@@ -1,11 +1,8 @@
 package com.drbrosdev.extractor.domain.usecase
 
 import com.drbrosdev.extractor.domain.model.Token
-import kotlinx.coroutines.CoroutineDispatcher
 
-class ValidateSuggestedSearchToken(
-    private val dispatcher: CoroutineDispatcher
-) {
+class ValidateSuggestedSearchToken {
 
     operator fun invoke(token: Token): Boolean {
         val value by token

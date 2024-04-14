@@ -25,8 +25,8 @@ class CompileTextAlbums(
     suspend operator fun invoke() {
         val allText = textEmbeddingDao.findAllTextEmbedValues() ?: return
 
-        val tokens = tokenizeText(allText)
-            .filter { validateSuggestedSearchToken(it) }
+        val tokens = tokenizeText.invoke(allText)
+            .filter { validateSuggestedSearchToken.invoke(it) }
             .toList()
 
         generateMostCommonTokens.invoke(tokens)

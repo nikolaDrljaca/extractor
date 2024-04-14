@@ -9,7 +9,7 @@ import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
-import com.drbrosdev.extractor.domain.usecase.PerformSearch
+import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
@@ -114,9 +114,7 @@ val useCaseModule = module {
     }
 
     factory {
-        ValidateSuggestedSearchToken(
-            dispatcher = get(named(CoroutineModuleName.Default))
-        )
+        ValidateSuggestedSearchToken()
     }
 
     factory {
@@ -183,7 +181,7 @@ val useCaseModule = module {
     }
 
     factory {
-        PerformSearch(
+        SearchImages(
             dispatcher = get(named(CoroutineModuleName.Default)),
             searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
             dataStore = get(),

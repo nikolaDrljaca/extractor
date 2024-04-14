@@ -67,7 +67,8 @@ class GenerateSuggestedKeywords(
 
     private suspend fun produceSuggestions(input: String?, size: Int, keywordType: KeywordType) =
         input?.let {
-            this.tokenizeText(it).filter { token -> this.validateSuggestedSearchToken(token) }
+            tokenizeText.invoke(it)
+                .filter { token -> validateSuggestedSearchToken.invoke(token) }
                 .take(size)
                 .map { token ->
                     SuggestedSearch(

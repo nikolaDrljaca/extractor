@@ -9,7 +9,7 @@ import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-class PerformSearch(
+class SearchImages(
     private val dispatcher: CoroutineDispatcher,
     private val searchImageByKeyword: SearchImageByKeyword,
     private val dataStore: ExtractorDataStore
@@ -17,8 +17,7 @@ class PerformSearch(
 
     suspend fun execute(params: SearchImageByKeyword.Params): Either<Unit, List<Extraction>> =
         withContext(dispatcher) {
-            val currentSearchCount = dataStore.getSearchCount()
-            if (currentSearchCount == 0) {
+            if (dataStore.getSearchCount() == 0) {
                 return@withContext Unit.left()
             }
 
