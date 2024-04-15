@@ -16,7 +16,7 @@ import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
-import com.drbrosdev.extractor.util.mapToImageEmbeds
+import com.drbrosdev.extractor.util.toImageEmbeds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -52,7 +52,7 @@ class DefaultExtractorRepository(
     override fun findImageDataByMediaId(mediaImageId: MediaImageId): Flow<ImageEmbeds?> {
         return imageEmbeddingsDao.findByMediaImageId(mediaImageId.id)
             .distinctUntilChanged()
-            .map { it?.mapToImageEmbeds() }
+            .map { it?.toImageEmbeds() }
     }
 
     override suspend fun updateTextEmbed(embedUpdate: EmbedUpdate) = with(embedUpdate) {
