@@ -14,8 +14,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 
@@ -69,6 +67,9 @@ class GenerateSuggestedKeywords(
         input?.let {
             tokenizeText.invoke(it)
                 .filter { token -> validateSuggestedSearchToken.invoke(token) }
+                .flowOn(dispatcher)
+                .toList()
+                .shuffled()
                 .take(size)
                 .map { token ->
                     SuggestedSearch(
@@ -77,7 +78,6 @@ class GenerateSuggestedKeywords(
                         searchType = SearchType.PARTIAL
                     )
                 }
-                .flowOn(dispatcher)
                 .toList()
         } ?: emptyList()
 
