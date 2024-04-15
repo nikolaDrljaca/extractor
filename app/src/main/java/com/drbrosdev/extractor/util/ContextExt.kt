@@ -44,13 +44,31 @@ fun Context.launchShareIntent(content: String) {
 fun Context.launchShareAppIntent() {
     val content = buildString {
         appendLine("Checkout this Lupa on the Play Store!")
-        appendLine("https://play.google.com/store/apps/details?id=com.drbrosdev.extractor")
+        appendLine(getString(R.string.play_store_link))
     }
     launchShareIntent(content)
 }
 
+fun Context.launchPlayStorePage() {
+    val intent = Intent(
+        Intent.ACTION_VIEW,
+        Uri.parse(getString(R.string.app_store_link))
+    )
+    startActivity(intent)
+}
+
 fun Context.launchViewIntent(link: String) {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+    startActivity(intent)
+}
+
+fun Context.launchWebpageIntent() {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.webage)))
+    startActivity(intent)
+}
+
+fun Context.launchPrivacyPolicyIntent() {
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.webpage_privacy)))
     startActivity(intent)
 }
 
@@ -80,7 +98,7 @@ suspend fun Context.launchUseAsIntent(media: MediaStoreImage) =
 fun Context.launchEmailIntent(content: String) {
     val intent = Intent(Intent.ACTION_SENDTO).apply {
         data = Uri.parse("mailto:") // Only email apps handle this.
-        putExtra(Intent.EXTRA_EMAIL, arrayOf("devnikoladr@gmail.com"))
+        putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
         putExtra(Intent.EXTRA_SUBJECT, "Extractor Feedback Submission")
         putExtra(Intent.EXTRA_TEXT, content)
     }

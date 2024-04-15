@@ -11,8 +11,11 @@ import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackNavTarget
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
+import com.drbrosdev.extractor.util.launchPlayStorePage
+import com.drbrosdev.extractor.util.launchPrivacyPolicyIntent
 import com.drbrosdev.extractor.util.launchShareAppIntent
 import com.drbrosdev.extractor.util.launchViewIntent
+import com.drbrosdev.extractor.util.launchWebpageIntent
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
@@ -39,10 +42,10 @@ object ExtractorSettingsNavTarget : NavTarget {
             onAboutLink = {
                 when (it) {
                     AboutLink.FEEDBACK -> navController.navigate(ExtractorFeedbackNavTarget)
-                    AboutLink.WEBSITE -> context.launchViewIntent("https://lupa-hazel.vercel.app/")
-                    AboutLink.POLICY -> context.launchViewIntent("https://lupa-hazel.vercel.app/privacy")
+                    AboutLink.WEBSITE -> context.launchWebpageIntent()
+                    AboutLink.POLICY -> context.launchPrivacyPolicyIntent()
                     AboutLink.SHARE -> context.launchShareAppIntent()
-                    AboutLink.RATE -> context.launchViewIntent("https://play.google.com/store/apps/details?id=com.drbrosdev.extractor")
+                    AboutLink.RATE -> context.launchPlayStorePage()
                 }
             },
             settingsState = viewModel.settingsState

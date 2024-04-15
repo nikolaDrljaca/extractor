@@ -138,4 +138,11 @@
     <string name="watch_an_ad">Watch an Ad</string>
     <string name="ad_support">You can get 100 searches by viewing a full screen ad that lasts 5 seconds. This will provide a kickback to us, and allow you to keep using the app for free.</string>
     <string name="indexing_active_albums_create">Indexing is still active. When finished, you can create albums based on most common keywords.</string>
+
+    <!-- Support emails, webpage URLs, privacy policy -->
+    <string name="play_store_link" translatable="false">https://play.google.com/store/apps/details?id=com.drbrosdev.extractor</string>
+    <string name="support_email" translatable="false">drljacandev@gmail.com</string>
+    <string name="webage" translatable="false">https://lupa-hazel.vercel.app/</string>
+    <string name="webpage_privacy" translatable="false">https://lupa-hazel.vercel.app/privacy</string>
+    <string name="app_store_link" translatable="false">https://play.google.com/store/apps/details?id=com.drbrosdev.extractor</string>
 </resources>
