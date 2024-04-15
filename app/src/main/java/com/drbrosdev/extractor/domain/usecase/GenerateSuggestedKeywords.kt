@@ -63,23 +63,28 @@ class GenerateSuggestedKeywords(
         (textOut + userOut + visual).right()
     }
 
-    private suspend fun produceSuggestions(input: String?, size: Int, keywordType: KeywordType) =
-        input?.let {
-            tokenizeText.invoke(it)
-                .filter { token -> validateSuggestedSearchToken.invoke(token) }
-                .flowOn(dispatcher)
-                .toList()
-                .shuffled()
-                .take(size)
-                .map { token ->
-                    SuggestedSearch(
-                        query = token.text,
-                        keywordType = keywordType,
-                        searchType = SearchType.PARTIAL
-                    )
-                }
-                .toList()
-        } ?: emptyList()
+    private suspend fun produceSuggestions(
+        input: String?,
+        size: Int,
+        keywordType: KeywordType
+    ): List<SuggestedSearch> {
+        if (input == null) return emptyList()
+
+        return tokenizeText.invoke(input)
+            .filter { token -> validateSuggestedSearchToken.invoke(token) }
+            .flowOn(dispatcher)
+            .toList()
+            .shuffled()
+            .take(size)
+            .map { token ->
+                SuggestedSearch(
+                    query = token.text,
+                    keywordType = keywordType,
+                    searchType = SearchType.PARTIAL
+                )
+            }
+            .toList()
+    }
 
     companion object {
         private const val TAKE_TEXT = 4
