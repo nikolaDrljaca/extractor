@@ -25,8 +25,10 @@ fun ExtractorShopItem(
 ) {
     Surface(
         shape = RoundedCornerShape(size = 12.dp),
-        onClick = {},
-        color = MaterialTheme.colorScheme.primary
+        onClick = onClick,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+            .then(modifier)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,6 +30,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.ui.components.rewards.RewardSnackbar
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorShopItem
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
@@ -37,7 +40,9 @@ import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButto
 fun ExtractorGetMoreScreen(
     onBack: () -> Unit,
     onViewAdClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onPurchaseItemClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    snackbarState: SnackbarHostState,
 ) {
     val textStyle = MaterialTheme.typography.bodyMedium.copy(
         fontWeight = FontWeight.Normal
@@ -68,7 +73,10 @@ fun ExtractorGetMoreScreen(
             modifier = Modifier.layoutId(ViewIds.AD_VIEW),
             verticalArrangement = Arrangement.spacedBy(space = 8.dp)
         ) {
-            Text(text = stringResource(R.string.watch_an_ad), style = MaterialTheme.typography.headlineMedium)
+            Text(
+                text = stringResource(R.string.watch_an_ad),
+                style = MaterialTheme.typography.headlineMedium
+            )
             Text(
                 text = stringResource(R.string.ad_support),
                 style = textStyle
@@ -93,7 +101,10 @@ fun ExtractorGetMoreScreen(
             modifier = Modifier.layoutId(ViewIds.BUY_VIEW),
             verticalArrangement = Arrangement.spacedBy(space = 8.dp)
         ) {
-            Text(text = stringResource(R.string.buy_more), style = MaterialTheme.typography.headlineMedium)
+            Text(
+                text = stringResource(R.string.buy_more),
+                style = MaterialTheme.typography.headlineMedium
+            )
             Text(
                 text = stringResource(R.string.direct_support),
                 style = textStyle
@@ -107,7 +118,7 @@ fun ExtractorGetMoreScreen(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 items(2) {
-                    ExtractorShopItem(onClick = { /*TODO*/ })
+                    ExtractorShopItem(onClick = onPurchaseItemClick)
                 }
             }
         }
@@ -118,6 +129,13 @@ fun ExtractorGetMoreScreen(
                 style = smallLabel
             )
         }
+
+        SnackbarHost(
+            hostState = snackbarState,
+            modifier = Modifier.layoutId(ViewIds.SNACKBAR)
+        ) {
+            RewardSnackbar()
+        }
     }
 }
 
@@ -126,6 +144,14 @@ private fun getMoreScreenConstraintSet() = ConstraintSet {
     val buyView = createRefFor(ViewIds.BUY_VIEW)
     val header = createRefFor(ViewIds.HEADER)
     val disclaimer = createRefFor(ViewIds.DISCLAIMER)
+    val snackbar = createRefFor(ViewIds.SNACKBAR)
+
+    constrain(snackbar) {
+        bottom.linkTo(disclaimer.top, margin = 8.dp)
+        start.linkTo(parent.start, margin = 16.dp)
+        end.linkTo(parent.end, margin = 16.dp)
+        width = Dimension.fillToConstraints
+    }
 
     constrain(header) {
         start.linkTo(parent.start)
@@ -159,4 +185,5 @@ private object ViewIds {
     const val BUY_VIEW = "buy_view"
     const val HEADER = "header_view"
     const val DISCLAIMER = "disc_view"
+    const val SNACKBAR = "get_more_snackbar"
 }

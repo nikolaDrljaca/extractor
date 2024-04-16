@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.getmore
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
@@ -21,9 +22,13 @@ object ExtractorGetMoreNavTarget : NavTarget {
         val navController = LocalNavController.current
 
         ExtractorGetMoreScreen(
+            snackbarState = viewModel.snackbarHostState,
             onBack = { navController.pop() },
             onViewAdClick = {
                 viewModel.rewardSearches()
+            },
+            onPurchaseItemClick = {
+                viewModel.rewardPurchase()
             }
         )
     }
@@ -37,8 +42,10 @@ private fun CurrentPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             ExtractorGetMoreScreen(
+                snackbarState = SnackbarHostState(),
                 onBack = {},
-                onViewAdClick = {}
+                onViewAdClick = {},
+                onPurchaseItemClick = {}
             )
         }
     }
