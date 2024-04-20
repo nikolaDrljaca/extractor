@@ -41,7 +41,7 @@ fun <T> requiresApi(
 }
 
 fun requireDebug(
-    fallback: (() -> Unit)?  = null,
+    fallback: (() -> Unit)? = null,
     action: () -> Unit
 ) {
     if (BuildConfig.DEBUG) {

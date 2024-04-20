@@ -5,13 +5,16 @@ import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.worker
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val workerModule = module {
-    worker {
+    //Using named() as sometimes koin can fail to instantiate the workerParameters
+    //leading to runtime exceptions
+    worker(named<ExtractorWorker>()) {
         ExtractorWorker(
             context = androidContext(),
-            workerParameters = get(),
+            workerParameters = it.get(),
             extractor = get(),
             mediaImageRepository = get<DefaultMediaStoreImageRepository>(),
             extractionDao = get(),

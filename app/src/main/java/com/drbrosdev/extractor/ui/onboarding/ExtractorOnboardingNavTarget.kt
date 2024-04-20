@@ -22,7 +22,7 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Parcelize
-object OnboardingNavTarget : NavTarget {
+object ExtractorOnboardingNavTarget : NavTarget {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
@@ -43,7 +43,7 @@ object OnboardingNavTarget : NavTarget {
             }
         )
 
-        OnboardingScreen(
+        ExtractorOnboardingScreen(
             pagerState = pagerState,
             onClick = {
                 val event = mapEvent(pagerState.currentPage)
@@ -105,7 +105,7 @@ private fun mapEvent(currentPage: Int): OnboardingEvents = when (currentPage) {
 private fun CurrentPreview() {
     ExtractorTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            OnboardingScreen(
+            ExtractorOnboardingScreen(
                 pagerState = rememberPagerState { 0 },
                 onClick = {},
                 onBackClick = {}

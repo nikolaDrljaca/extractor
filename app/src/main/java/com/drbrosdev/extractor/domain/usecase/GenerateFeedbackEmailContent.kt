@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.domain.usecase
 
 import android.os.Build
+import com.drbrosdev.extractor.BuildConfig
 import com.drbrosdev.extractor.framework.logger.EventEntity
 import com.drbrosdev.extractor.framework.logger.EventLogDao
 import com.drbrosdev.extractor.framework.requiresApi
@@ -30,7 +31,12 @@ class GenerateFeedbackEmailContent(
         }
     }
 
-    private fun parseEvent(event: EventEntity) = "${event.timestamp}|${event.tag}|${event.message}"
+    private fun StringBuilder.appendUserContent(text: String) {
+        if (text.isNotBlank()) {
+            append(text)
+            append("\n\n")
+        }
+    }
 
     private fun StringBuilder.appendDeviceInfo() {
         val runtime = Runtime.getRuntime()
@@ -45,6 +51,9 @@ class GenerateFeedbackEmailContent(
         requiresApi(apiLevel = 31) {
             appendLine("SoC: ${Build.SOC_MANUFACTURER} ${Build.SOC_MODEL}")
         }
+        appendLine("SDK Version: ${Build.VERSION.SDK_INT}")
+        appendLine("Lupa Version: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})")
+        append("\n")
     }
 
     private fun StringBuilder.appendEventContent(eventText: String) {
@@ -56,9 +65,5 @@ class GenerateFeedbackEmailContent(
         append(eventText)
     }
 
-    private fun StringBuilder.appendUserContent(text: String) {
-        append("\n")
-        append(text)
-        append("\n\n\n")
-    }
+    private fun parseEvent(event: EventEntity) = "${event.timestamp}|${event.tag}|${event.message}"
 }

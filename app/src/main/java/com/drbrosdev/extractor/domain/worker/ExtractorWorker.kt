@@ -27,14 +27,7 @@ class ExtractorWorker(
 
     override suspend fun doWork(): Result {
         try {
-            setForeground(
-                createForegroundInfo(
-                    NotificationService.PROGRESS_ID,
-                    notificationService.createNotification(NotificationService.PROGRESS_CHANNEL_ID) {
-                        it.setContentInfo("Extraction is running")
-                    }
-                )
-            )
+            setForeground(getForegroundInfo())
         } catch (e: Exception) {
             logErrorEvent(
                 message = "Starting Foreground Service failed.",

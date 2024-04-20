@@ -31,7 +31,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorTextButton
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OnboardingScreen(
+fun ExtractorOnboardingScreen(
     onClick: () -> Unit,
     onBackClick: () -> Unit,
     pagerState: PagerState

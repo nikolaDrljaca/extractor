@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.root
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.compose.runtime.Composable
@@ -8,6 +9,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
+import com.drbrosdev.extractor.framework.navigation.BlankNavTarget
 import com.drbrosdev.extractor.framework.navigation.BottomSheetNavTarget
 import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
 import com.drbrosdev.extractor.framework.navigation.LocalBottomSheetNavController
@@ -15,7 +17,7 @@ import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.animspec.DefaultTransitionSpec
-import com.drbrosdev.extractor.ui.onboarding.OnboardingNavTarget
+import com.drbrosdev.extractor.ui.onboarding.ExtractorOnboardingNavTarget
 import com.drbrosdev.extractor.ui.permhandler.ExtractorPermissionRequestNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
@@ -33,9 +35,10 @@ import org.koin.androidx.compose.koinViewModel
 fun Root() {
     val viewModel: RootViewModel = koinViewModel()
     val context = LocalContext.current
+    val startDestination = determineStartDestination(context)
 
     val navController =
-        rememberNavController<NavTarget>(startDestination = ExtractorSearchNavTarget())
+        rememberNavController<NavTarget>(startDestination = startDestination)
     val dialogNavController = rememberNavController<DialogNavTarget>(initialBackstack = emptyList())
     val bottomSheetNavController =
         rememberNavController<BottomSheetNavTarget>(initialBackstack = emptyList())
@@ -44,7 +47,7 @@ fun Root() {
         val isOnboardingFinished = viewModel.isOnboardingFinished().first()
         if (!isOnboardingFinished) {
             //Onboarding not shown
-            navController.replaceAll(OnboardingNavTarget)
+            navController.replaceAll(ExtractorOnboardingNavTarget)
         } else {
             //Has seen onboarding, but permission is denied
             //Probably manually revoked
@@ -58,6 +61,7 @@ fun Root() {
                 PackageManager.PERMISSION_DENIED -> navController.replaceAll(
                     ExtractorPermissionRequestNavTarget
                 )
+
                 PackageManager.PERMISSION_GRANTED -> Unit
             }
         }
@@ -100,3 +104,15 @@ fun Root() {
     }
 }
 
+private fun determineStartDestination(context: Context): NavTarget {
+    val perm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        Manifest.permission.READ_MEDIA_IMAGES
+    } else {
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    }
+
+    return when (context.checkSelfPermission(perm)) {
+        PackageManager.PERMISSION_DENIED -> BlankNavTarget
+        else -> ExtractorSearchNavTarget()
+    }
+}

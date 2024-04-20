@@ -138,7 +138,7 @@ private fun AppInfo(
             style = MaterialTheme.typography.titleLarge
         )
         Text(
-            text = "Version ${BuildConfig.VERSION_NAME}",
+            text = "Version ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
             style = MaterialTheme.typography.labelLarge.copy(
                 color = Color.Gray,
                 fontWeight = FontWeight.Light
