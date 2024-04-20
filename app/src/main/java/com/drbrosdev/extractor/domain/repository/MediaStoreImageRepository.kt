@@ -13,6 +13,8 @@ interface MediaStoreImageRepository {
 
     suspend fun findAllById(ids: List<Long>): List<MediaStoreImage>
 
+    fun findAllByIdAsFlow(ids: List<Long>): Flow<MediaStoreImage>
+
     suspend fun getCount(): Int
 
     fun getCountAsFlow(): Flow<Int>

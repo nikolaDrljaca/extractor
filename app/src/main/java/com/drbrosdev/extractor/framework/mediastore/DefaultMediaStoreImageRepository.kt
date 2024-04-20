@@ -42,6 +42,12 @@ class DefaultMediaStoreImageRepository(
         )
     }
 
+    override fun findAllByIdAsFlow(ids: List<Long>): Flow<MediaStoreImage> {
+        return contentResolver.runMediaStoreImageQueryAsFlow(
+            selection = "${MediaStore.Images.Media._ID} IN (${ids.joinToString(", ")})"
+        )
+    }
+
     override suspend fun getCount(): Int {
         return contentResolver.getCount()
     }
