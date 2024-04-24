@@ -12,7 +12,7 @@ enum class AboutLink(
     ),
     POLICY(
         nameResource = R.string.action_policy,
-        iconResource = R.drawable.round_public_24
+        iconResource = R.drawable.round_shield_24
     ),
     SHARE(
         nameResource = R.string.action_share,

@@ -26,5 +26,9 @@ fun Any.logErrorEvent(
     message: String,
     throwable: Throwable? = null
 ) {
-    Timber.tag(simpleName).e(throwable, message)
+    val out = buildString {
+        appendLine(message)
+        throwable?.let { append(it.message) }
+    }
+    Timber.tag(simpleName).wtf(message = out)
 }
