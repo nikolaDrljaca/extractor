@@ -25,7 +25,7 @@ sealed class ImageLabelFilterChipData(
 }
 
 
-fun ImageLabelFilterChipData.toLabelType(): KeywordType {
+fun ImageLabelFilterChipData.toKeywordType(): KeywordType {
     return when(this) {
         is ImageLabelFilterChipData.All -> KeywordType.ALL
         is ImageLabelFilterChipData.Image -> KeywordType.IMAGE

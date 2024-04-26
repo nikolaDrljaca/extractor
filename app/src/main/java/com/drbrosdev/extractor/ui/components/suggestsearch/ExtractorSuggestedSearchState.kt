@@ -8,7 +8,8 @@ import com.drbrosdev.extractor.domain.model.SuggestedSearch
 sealed interface ExtractorSuggestedSearchState {
 
     data class Content(
-        val suggestedSearches: List<SuggestedSearch>
+        val suggestedSearches: List<SuggestedSearch>,
+        val onSuggestionClick: (SuggestedSearch) -> Unit
     ) : ExtractorSuggestedSearchState
 
     data object Loading : ExtractorSuggestedSearchState

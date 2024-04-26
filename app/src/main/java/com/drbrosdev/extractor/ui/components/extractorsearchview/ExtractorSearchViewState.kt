@@ -59,7 +59,6 @@ class ExtractorSearchViewState(
         keywordType = new
     }
 
-
     companion object {
         val Saver = object : Saver<ExtractorSearchViewState, Map<String, Any>> {
             override fun restore(value: Map<String, Any>): ExtractorSearchViewState? {

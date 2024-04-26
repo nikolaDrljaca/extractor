@@ -36,14 +36,13 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
-import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGrid
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
-import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
-import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheet
+import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetEvents
+import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetState
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
 import com.drbrosdev.extractor.ui.components.shared.DragHandle
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
@@ -75,15 +74,14 @@ fun ExtractorSearchScreen(
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberExtractorSearchBottomSheetState()
     ),
-    state: ExtractorSearchScreenUiState,
+    state: ExtractorSearchContainerState,
     searchCount: Int,
-    dateFilterState: ExtractorDateFilterState,
-    searchViewState: ExtractorSearchViewState,
     extractorStatusButtonState: ExtractorStatusButtonState,
-    loaderButtonState: ExtractorLoaderButtonState,
-    imageGridState: ExtractorImageGridState,
+    imageGridState: ExtractorGridState,
     sheetContent: SheetContent,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    searchSheetState: ExtractorSearchSheetState,
+    onSearchSheetEvent: (ExtractorSearchSheetEvents) -> Unit,
 ) {
     val extractorTopBarState = remember {
         derivedStateOf {
@@ -95,7 +93,7 @@ fun ExtractorSearchScreen(
 
     LaunchedEffect(key1 = state) {
         when (state) {
-            is ExtractorSearchScreenUiState.Loading -> {
+            is ExtractorSearchContainerState.Loading -> {
                 imageGridState.lazyGridState.animateScrollToItem(0)
             }
 
@@ -117,14 +115,21 @@ fun ExtractorSearchScreen(
                     )
 
                     SheetContent.SearchView -> ExtractorSearchSheet(
-                        onDone = onDone,
-                        isHidden = scaffoldState.bottomSheetState.targetValue == SheetValue.PartiallyExpanded,
-                        onCreateAlbumClick = onCreateAlbumClick,
-                        searchViewState = searchViewState,
-                        dateFilterState = dateFilterState,
-                        loaderButtonState = loaderButtonState,
-                        modifier = Modifier.navigationBarsPadding()
+                        onEvent = onSearchSheetEvent,
+                        state = searchSheetState,
+                        modifier = Modifier.navigationBarsPadding(),
+                        isHidden = scaffoldState.bottomSheetState.targetValue == SheetValue.PartiallyExpanded
                     )
+
+//                    SheetContent.SearchView -> ExtractorSearchSheet(
+//                        onDone = onDone,
+//                        isHidden = scaffoldState.bottomSheetState.targetValue == SheetValue.PartiallyExpanded,
+//                        onCreateAlbumClick = onCreateAlbumClick,
+//                        searchViewState = searchViewState,
+//                        dateFilterState = dateFilterState,
+//                        loaderButtonState = loaderButtonState,
+//                        modifier = Modifier.navigationBarsPadding()
+//                    )
                 }
             }
         },
@@ -147,7 +152,7 @@ fun ExtractorSearchScreen(
                     .layoutId(ViewIds.MAIN_CONTENT)
             ) {
                 when (it) {
-                    ExtractorSearchScreenUiState.Loading -> Box(
+                    ExtractorSearchContainerState.Loading -> Box(
                         modifier = Modifier
                             .fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -155,17 +160,17 @@ fun ExtractorSearchScreen(
                         Text(text = stringResource(R.string.loading))
                     }
 
-                    is ExtractorSearchScreenUiState.StillIndexing -> ExtractorStillIndexing(
+                    is ExtractorSearchContainerState.StillIndexing -> ExtractorStillIndexing(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = 12.dp),
                     )
 
-                    is ExtractorSearchScreenUiState.Empty -> ExtractorEmptySearch(
+                    is ExtractorSearchContainerState.Empty -> ExtractorEmptySearch(
                         onReset = onResetSearch
                     )
 
-                    is ExtractorSearchScreenUiState.Content ->
+                    is ExtractorSearchContainerState.Content ->
                         ExtractorImageGrid(
                             images = it.images,
                             onClick = onNavToDetail,
@@ -173,7 +178,7 @@ fun ExtractorSearchScreen(
                             state = imageGridState,
                         )
 
-                    is ExtractorSearchScreenUiState.ShowSuggestions -> Box(
+                    is ExtractorSearchContainerState.ShowSuggestions -> Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .offset(y = -(110.dp + bottomPadding)),
@@ -187,7 +192,7 @@ fun ExtractorSearchScreen(
                         )
                     }
 
-                    is ExtractorSearchScreenUiState.NoSearchesLeft ->
+                    is ExtractorSearchContainerState.NoSearchesLeft ->
                         Box(
                             modifier = Modifier
                                 .fillMaxSize(),

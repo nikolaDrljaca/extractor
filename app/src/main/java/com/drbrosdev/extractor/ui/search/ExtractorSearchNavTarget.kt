@@ -15,11 +15,9 @@ import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
-import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
-import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
-import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
+import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetState
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
@@ -36,20 +34,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Parcelize
-data class ExtractorSearchNavTarget(
-    private val query: String = "",
-    private val keywordType: KeywordType = KeywordType.ALL
-) : NavTarget {
+data object ExtractorSearchNavTarget : NavTarget {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        val viewModel: ExtractorSearchViewModel = koinViewModel {
-            parametersOf(query, keywordType)
-        }
+        val viewModel: ExtractorSearchViewModel = koinViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
         val sheetContent by viewModel.sheetContent.collectAsStateWithLifecycle()
         val searchCount by viewModel.searchCount.collectAsStateWithLifecycle()
@@ -89,9 +81,7 @@ data class ExtractorSearchNavTarget(
             state = state,
             searchCount = searchCount,
             extractorStatusButtonState = viewModel.extractorStatusButtonState,
-            searchViewState = viewModel.searchViewState,
-            dateFilterState = viewModel.dateFilterState,
-            loaderButtonState = viewModel.loaderButtonState,
+            searchSheetState = viewModel.searchSheetState,
             imageGridState = viewModel.gridState,
             sheetContent = sheetContent,
             snackbarHostState = viewModel.snackbarHostState,
@@ -141,6 +131,9 @@ data class ExtractorSearchNavTarget(
             },
             onHeaderClick = {
                 navController.navigate(ExtractorGetMoreNavTarget)
+            },
+            onSearchSheetEvent = {
+
             }
         )
     }
@@ -163,14 +156,13 @@ private fun SearchScreenPreview() {
             onMultiselectAction = {},
             onHeaderClick = {},
             onGetMoreSearches = {},
+            onSearchSheetEvent = {},
             extractorStatusButtonState = ExtractorStatusButtonState(),
-            state = ExtractorSearchScreenUiState.StillIndexing,
-            searchViewState = ExtractorSearchViewState("", KeywordType.ALL),
-            dateFilterState = ExtractorDateFilterState(),
-            loaderButtonState = ExtractorLoaderButtonState(),
+            state = ExtractorSearchContainerState.StillIndexing,
+            searchSheetState = ExtractorSearchSheetState("", KeywordType.ALL, false),
             sheetContent = SheetContent.SearchView,
             snackbarHostState = SnackbarHostState(),
-            imageGridState = ExtractorImageGridState(),
+            imageGridState = ExtractorGridState(),
             searchCount = 21
         )
     }

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.AlbumEntry
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndicesAsFlow
 import com.drbrosdev.extractor.util.toUri
@@ -46,7 +46,7 @@ class ExtractorAlbumViewerViewModel(
         .onEach { album -> _imageUris.update { getUris(album.entries) } }
         .flowOn(Dispatchers.Default)
 
-    val gridState = ExtractorImageGridState()
+    val gridState = ExtractorGridState()
 
     private val shouldShowSelectAction = gridState.checkedIndicesAsFlow()
         .map { it.isNotEmpty() }

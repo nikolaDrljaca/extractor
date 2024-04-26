@@ -40,20 +40,28 @@ import com.drbrosdev.extractor.util.CombinedPreview
 @Composable
 fun ExtractorDateFilter(
     modifier: Modifier = Modifier,
+    onDateChanged: (Long?, Long?) -> Unit,
+    onResetDate: () -> Unit,
     state: ExtractorDateFilterState = rememberExtractorDateFilterState()
 ) {
     when (state.selection) {
         ExtractorDateFilterSelection.START ->
             ExtractorDatePicker(
                 onDismiss = state::clearSelection,
-                onConfirm = state::updateStartDate
+                onConfirm = {
+                    state.updateStartDate(it)
+                    onDateChanged(state.startDate.getOrNull(), state.endDate.getOrNull())
+                }
             )
 
 
         ExtractorDateFilterSelection.END ->
             ExtractorDatePicker(
                 onDismiss = state::clearSelection,
-                onConfirm = state::updateEndDate
+                onConfirm = {
+                    state.updateEndDate(it)
+                    onDateChanged(state.startDate.getOrNull(), state.endDate.getOrNull())
+                }
             )
 
         ExtractorDateFilterSelection.NONE -> Unit
@@ -107,7 +115,10 @@ fun ExtractorDateFilter(
         label = ""
     )
 
-    Column {
+    Column(
+        modifier = Modifier
+            .then(modifier),
+    ) {
         Text(
             text = stringResource(R.string.date),
             style = MaterialTheme.typography.titleLarge.copy(
@@ -117,8 +128,6 @@ fun ExtractorDateFilter(
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(
-            modifier = Modifier
-                .then(modifier),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ExtractorDateFilterCard(
@@ -142,12 +151,15 @@ fun ExtractorDateFilter(
                 borderColor = endCardBorderColor,
                 contentColor = endContentColor
             )
-            
+
             Spacer(modifier = Modifier.width(4.dp))
 
             Surface(
                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f),
-                onClick = state::clearDates,
+                onClick = {
+                    state.clearDates()
+                    onResetDate()
+                },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .width(IntrinsicSize.Max)
@@ -223,7 +235,9 @@ private fun CurrentPreview() {
             ExtractorDateFilter(
                 state = ExtractorDateFilterState(
                     initStart = Some(1L)
-                )
+                ),
+                onDateChanged = { _, _ -> },
+                onResetDate = {}
             )
         }
     }

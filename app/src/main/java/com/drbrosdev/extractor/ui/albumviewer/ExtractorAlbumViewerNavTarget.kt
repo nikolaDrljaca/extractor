@@ -20,7 +20,7 @@ import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
 import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumBottomSheetAction
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
@@ -174,7 +174,7 @@ private fun CurrentPreview() {
         ) {
             ExtractorAlbumViewerScreen(
                 state = data,
-                imageGridState = ExtractorImageGridState(),
+                imageGridState = ExtractorGridState(),
                 snackbarHostState = SnackbarHostState(),
                 onImageClick = {},
                 onBack = {},

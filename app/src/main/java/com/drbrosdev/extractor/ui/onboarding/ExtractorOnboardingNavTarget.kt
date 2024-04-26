@@ -72,7 +72,7 @@ object ExtractorOnboardingNavTarget : NavTarget {
 
                     OnboardingEvents.StartWorker -> {
                         viewModel.finishOnboarding()
-                        navController.replaceAll(ExtractorSearchNavTarget())
+                        navController.replaceAll(ExtractorSearchNavTarget)
                     }
                 }
             },

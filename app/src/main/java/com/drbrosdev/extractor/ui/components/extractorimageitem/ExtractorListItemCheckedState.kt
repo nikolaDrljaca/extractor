@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.ui.components.extractorimageitem
 
-enum class ExtractorImageItemState {
+enum class ExtractorListItemCheckedState {
     CHECKED,
     UNCHECKED
 }
