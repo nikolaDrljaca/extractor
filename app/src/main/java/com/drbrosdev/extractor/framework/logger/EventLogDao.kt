@@ -35,6 +35,7 @@ interface EventLogDao {
         """
         SELECT *
         FROM event_entity
+        ORDER BY timestamp DESC
     """
     )
     fun findAllAsFlow(): Flow<List<EventEntity>>
