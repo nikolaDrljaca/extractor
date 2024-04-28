@@ -45,6 +45,7 @@ class GenerateFeedbackEmailContent(
             else -> max.toString()
         }
         appendLine("--- Device Info ---")
+        appendLine("Device: ${Build.MANUFACTURER} ${Build.PRODUCT}")
         appendLine("VM Processors: ${runtime.availableProcessors()}")
         appendLine("VM Memory: $maxMemory")
         // cpu
