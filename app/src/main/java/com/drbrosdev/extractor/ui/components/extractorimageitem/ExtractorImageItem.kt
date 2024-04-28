@@ -48,7 +48,7 @@ fun ExtractorImageItem(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     size: Int? = null,
-    checkedState: ExtractorImageItemState
+    checkedState: ExtractorListItemCheckedState
 ) {
     val sizeModifier = if (size != null) {
         Modifier.size(size.dp)
@@ -65,8 +65,8 @@ fun ExtractorImageItem(
     val cornerSize by transition.animateDp(
         targetValueByState = {
             when (it) {
-                ExtractorImageItemState.CHECKED -> 12.dp
-                ExtractorImageItemState.UNCHECKED -> 2.dp
+                ExtractorListItemCheckedState.CHECKED -> 12.dp
+                ExtractorListItemCheckedState.UNCHECKED -> 2.dp
             }
         },
         label = ""
@@ -75,8 +75,8 @@ fun ExtractorImageItem(
     val scale by transition.animateFloat(
         targetValueByState = {
             when (it) {
-                ExtractorImageItemState.CHECKED -> 0.8f
-                ExtractorImageItemState.UNCHECKED -> 1f
+                ExtractorListItemCheckedState.CHECKED -> 0.8f
+                ExtractorListItemCheckedState.UNCHECKED -> 1f
             }
         },
         label = ""
@@ -85,8 +85,8 @@ fun ExtractorImageItem(
     val borderColor by transition.animateColor(
         targetValueByState = {
             when (it) {
-                ExtractorImageItemState.CHECKED -> MaterialTheme.colorScheme.primary
-                ExtractorImageItemState.UNCHECKED -> Color.Transparent
+                ExtractorListItemCheckedState.CHECKED -> MaterialTheme.colorScheme.primary
+                ExtractorListItemCheckedState.UNCHECKED -> Color.Transparent
             }
         },
         label = ""
@@ -276,8 +276,8 @@ private fun CurrentPreview() {
         Surface {
             Row {
                 repeat(4) {
-                    val state = if (it % 2 == 0) ExtractorImageItemState.CHECKED
-                    else ExtractorImageItemState.UNCHECKED
+                    val state = if (it % 2 == 0) ExtractorListItemCheckedState.CHECKED
+                    else ExtractorListItemCheckedState.UNCHECKED
 
                     ExtractorImageItem(
                         imageUri = "".toUri(),

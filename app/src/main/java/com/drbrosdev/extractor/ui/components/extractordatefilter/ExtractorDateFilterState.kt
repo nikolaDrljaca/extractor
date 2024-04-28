@@ -35,6 +35,9 @@ class ExtractorDateFilterState(
     var selection by mutableStateOf(ExtractorDateFilterSelection.NONE)
         private set
 
+    var disabled by mutableStateOf(false)
+        private set
+
     fun showStartSelection() {
         selection = ExtractorDateFilterSelection.START
     }
@@ -68,6 +71,16 @@ class ExtractorDateFilterState(
     fun clearDates() {
         startDate = None
         endDate = None
+    }
+
+    fun enable() {
+        if (!disabled) return
+        disabled = false
+    }
+
+    fun disable() {
+        if (disabled) return
+        disabled = true
     }
 
     companion object {
@@ -120,6 +133,10 @@ fun ExtractorDateFilterState.dateRange(): DateRange? {
             end = LocalDateTime.ofInstant(Instant.ofEpochMilli(end), ZoneId.systemDefault())
         )
     }
+}
+
+fun ExtractorDateFilterState.isEmpty(): Boolean {
+    return startDate.isNone() && endDate.isNone()
 }
 
 fun ExtractorDateFilterState.dateRangeAsFlow(): Flow<DateRange?> {

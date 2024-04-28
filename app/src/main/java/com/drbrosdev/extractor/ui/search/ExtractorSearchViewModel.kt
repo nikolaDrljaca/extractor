@@ -1,18 +1,22 @@
 package com.drbrosdev.extractor.ui.search
 
 import android.net.Uri
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.saveable
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.toOption
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.KeywordType
+import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
@@ -21,246 +25,358 @@ import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
-import com.drbrosdev.extractor.domain.usecase.image.search.SearchStrategy
 import com.drbrosdev.extractor.framework.StringResourceProvider
-import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
-import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
-import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRangeAsFlow
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndicesAsFlow
-import com.drbrosdev.extractor.ui.components.extractorloaderbutton.ExtractorLoaderButtonState
-import com.drbrosdev.extractor.ui.components.extractorloaderbutton.isSuccess
-import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
-import com.drbrosdev.extractor.ui.components.extractorsearchview.isBlank
-import com.drbrosdev.extractor.ui.components.extractorsearchview.keywordTypeAsFlow
-import com.drbrosdev.extractor.ui.components.extractorsearchview.queryAsFlow
-import com.drbrosdev.extractor.ui.components.extractorsearchview.searchTypeAsFlow
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
+import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetEvents
+import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetState
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
+import com.drbrosdev.extractor.util.WhileUiSubscribed
+import com.drbrosdev.extractor.util.panic
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ExtractorSearchViewModel(
-    query: String,
-    keywordType: KeywordType,
+    private val stateHandle: SavedStateHandle,
+    private val albumRepository: AlbumRepository,
     private val imageSearch: SearchImages,
     private val trackExtractionProgress: TrackExtractionProgress,
-    private val albumRepository: AlbumRepository,
-    private val stateHandle: SavedStateHandle,
     private val generateSuggestedKeywords: GenerateSuggestedKeywords,
     private val spawnExtractorWork: SpawnExtractorWork,
     private val datastore: ExtractorDataStore,
     private val stringProvider: StringResourceProvider
 ) : ViewModel() {
-    val snackbarHostState = SnackbarHostState()
-    val extractorStatusButtonState = ExtractorStatusButtonState()
 
-    val searchViewState = stateHandle.saveable(
-        key = "extractor_search_view_state",
-        saver = ExtractorSearchViewState.Saver
-    ) {
-        ExtractorSearchViewState(
-            initialQuery = stateHandle["query"] ?: query,
-            initialKeywordType = keywordType,
+    private val _searchTrigger = MutableStateFlow<SearchImageByKeyword.Params?>(null)
+    private val _suggestionTrigger = MutableStateFlow(Unit.toOption())
+
+    private val _progress = trackExtractionProgress.invoke()
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
+    val searchCount = datastore.searchCount
+        .onEach {
+            if (it == 0) searchSheetState.disable()
+            else searchSheetState.enable()
+        }
+        .stateIn(
+            viewModelScope,
+            WhileUiSubscribed,
+            0
         )
+
+    private val _containerState = combine(
+        _searchTrigger,
+        _suggestionTrigger,
+        _progress,
+    ) { search, suggestion, progress ->
+        when (progress) {
+            is ExtractionStatus.Running -> ExtractorSearchContainerState.StillIndexing
+            is ExtractionStatus.Done -> {
+                when (val searchParams = search.toOption()) {
+                    None -> handleShowSuggestionState(suggestion)
+
+                    is Some -> handleImageSearchState(searchParams.value)
+                }
+            }
+        }
     }
+        .combine(searchCount) { state, count ->
+            when {
+                count == 0 -> ExtractorSearchContainerState.NoSearchesLeft(
+                    onGetMore = ::getMoreSearches
+                )
 
-    val dateFilterState = ExtractorDateFilterState()
+                else -> state
+            }
+        }
 
-    val loaderButtonState = ExtractorLoaderButtonState()
 
-    val gridState = ExtractorImageGridState()
+    private val _isContainerStateLoading = MutableStateFlow(false)
 
-    private val _state = MutableStateFlow<ExtractorSearchScreenUiState>(
-        ExtractorSearchScreenUiState.ShowSuggestions(
-            ExtractorSuggestedSearchState.Loading
+    val containerState = combine(
+        _isContainerStateLoading,
+        _containerState
+    ) { isLoading, containerState ->
+        when {
+            isLoading -> ExtractorSearchContainerState.Loading
+            else -> containerState
+        }
+    }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            ExtractorSearchContainerState.ShowSuggestions(
+                ExtractorSuggestedSearchState.Loading
+            )
         )
-    )
-    val state = _state.asStateFlow()
 
-    private val lastQuery = MutableStateFlow(LastQuery(query, keywordType))
+    val statusButtonState = _progress
+        .map {
+            when (it) {
+                is ExtractionStatus.Done -> when {
+                    it.isDataIncomplete -> ExtractorStatusButtonState.OutOfSync
+                    else -> ExtractorStatusButtonState.Idle
+                }
+
+                is ExtractionStatus.Running -> ExtractorStatusButtonState.ExtractionRunning(
+                    it.percentage
+                )
+            }
+        }
+        .stateIn(
+            viewModelScope,
+            WhileUiSubscribed,
+            ExtractorStatusButtonState.Idle
+        )
+
+    val searchSheetState = ExtractorSearchSheetState(
+        stateHandle = stateHandle,
+        eventHandler = ::processSearchSheetEvents
+    )
+
+    val snackbarHostState = SnackbarHostState()
+
 
     private val _events = Channel<ExtractorSearchScreenEvents>()
     val events = _events.receiveAsFlow()
 
-    val shouldShowSheetFlow = datastore.shouldShowSearchSheet
+    private val shouldShowSheetFlowJob = datastore.shouldShowSearchSheet
+        .filter { it }
+        .onEach { _events.send(ExtractorSearchScreenEvents.ShowSearchSheet) }
+        .launchIn(viewModelScope)
 
-    val searchCount = datastore.searchCount
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            0
-        )
-
-    val sheetContent = gridState.checkedIndicesAsFlow()
-        .map { checked ->
-            val content = when {
-                checked.isNotEmpty() -> SheetContent.MultiselectBar
-                else -> SheetContent.SearchView
-            }
-            content
+    fun onShowSheetDone() {
+        viewModelScope.launch {
+            datastore.hasSeenSearchSheet()
         }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            SheetContent.SearchView
-        )
+    }
 
-    private val progressJob = trackExtractionProgress.invoke()
-        .distinctUntilChanged()
-        //handle create album button state
-        .onEach {
-            val status = when (it) {
-                is ExtractionStatus.Done -> when {
-                    it.isDataIncomplete -> ExtractorStatusButtonState.Status.OutOfSync
-                    else -> ExtractorStatusButtonState.Status.Idle
-                }
+    fun onSelectionClear() {
+        when (val value = containerState.value) {
+            is ExtractorSearchContainerState.Content -> value.gridState.clearSelection()
 
-                is ExtractionStatus.Running -> ExtractorStatusButtonState.Status.ExtractionRunning(
-                    it.percentage
-                )
-            }
-            extractorStatusButtonState.update(status)
+            else -> Unit
         }
-        //handle show suggestions
-        .onEach {
-            when (it) {
-                is ExtractionStatus.Done -> {
-                    when {
-                        ((it.inStorageCount != 0) and (_state.value !is ExtractorSearchScreenUiState.Content)) -> {
-                            val suggested = generateSuggestedKeywords.invoke()
-                            _state.update {
-                                suggested.fold(
-                                    ifRight = { result ->
-                                        ExtractorSearchScreenUiState.ShowSuggestions(
-                                            ExtractorSuggestedSearchState.Content(result)
-                                        )
-                                    },
-                                    ifLeft = {
-                                        ExtractorSearchScreenUiState.NoSearchesLeft
-                                    }
-                                )
-                            }
-                        }
+    }
 
-                        else -> {
-                            _state.update {
-                                ExtractorSearchScreenUiState.ShowSuggestions(
-                                    ExtractorSuggestedSearchState.Empty
-                                )
-                            }
-                        }
+    fun onSelectionCreate() {
+        when (val value = containerState.value) {
+            is ExtractorSearchContainerState.Content -> {
+                val extractions = value.getImages()
+                val toCreate = value.gridState.checkedIndices()
+                    .map { extractions[it] }
+
+                viewModelScope.launch {
+                    compileUserAlbum(toCreate)
+                    value.gridState.clearSelection()
+
+                    val result = snackbarHostState.showSnackbar(
+                        message = stringProvider.get(R.string.snack_album_created),
+                        actionLabel = stringProvider.get(R.string.snack_view),
+                        duration = SnackbarDuration.Long
+                    )
+                    when (result) {
+                        SnackbarResult.Dismissed -> Unit
+                        SnackbarResult.ActionPerformed -> _events.send(ExtractorSearchScreenEvents.AlbumCreated)
                     }
                 }
-
-                is ExtractionStatus.Running -> _state.update {
-                    ExtractorSearchScreenUiState.StillIndexing
-                }
             }
 
-        }
-        .launchIn(viewModelScope)
-
-    private val labelTypeUpdateFlow = searchViewState.keywordTypeAsFlow()
-        .distinctUntilChanged()
-        .onEach { performSearch(SearchStrategy.NORMAL) }
-        .onEach { loaderButtonState.initial() }
-        .launchIn(viewModelScope)
-
-    private val searchTypeUpdateFlow = searchViewState.searchTypeAsFlow()
-        .distinctUntilChanged()
-        .onEach { performSearch(SearchStrategy.NORMAL) }
-        .onEach { loaderButtonState.initial() }
-        .launchIn(viewModelScope)
-
-    private val saveQueryJob = searchViewState.queryAsFlow()
-        .distinctUntilChanged()
-        .onEach { loaderButtonState.initial() }
-        .launchIn(viewModelScope)
-
-    private val dateFilterJob = dateFilterState.dateRangeAsFlow()
-        .distinctUntilChanged()
-        .onEach { performSearch(SearchStrategy.NORMAL) }
-        .launchIn(viewModelScope)
-
-    private val disableSearchJob = datastore.searchCount
-        .distinctUntilChanged()
-        .onEach {
-            when {
-                it == 0 -> searchViewState.disable()
-                else -> searchViewState.enable()
-            }
-        }
-        .launchIn(viewModelScope)
-
-    private val loaderButtonEnabledJob = state
-        .onEach {
-            when (it) {
-                is ExtractorSearchScreenUiState.Content -> loaderButtonState.enable()
-                else -> loaderButtonState.disable()
-            }
-        }
-        .launchIn(viewModelScope)
-
-    fun performSearch(searchStrategy: SearchStrategy) {
-        when (searchStrategy) {
-            SearchStrategy.NORMAL -> runSearch()
-            SearchStrategy.DIRTY_CHECKING -> {
-                if (searchViewState.isBlank()) return
-                if (
-                    lastQuery.value.isOldQuery(
-                        searchViewState.query,
-                        searchViewState.keywordType
-                    )
-                ) return
-                runSearch()
-            }
+            else -> Unit
         }
     }
 
-    fun getImageUris(): List<Uri> {
-        return when (val out = state.value) {
-            is ExtractorSearchScreenUiState.Content -> out.images.map { it.uri.uri.toUri() }
-            else -> emptyList()
+    fun getSelectedImageUris(): List<Uri> {
+        return when (val value = containerState.value) {
+            is ExtractorSearchContainerState.Content -> value.gridState.checkedIndices()
+                .map { value.getImages()[it].uri.toUri() }
+
+            else -> panic("Accessing checked items outside of content state.")
         }
     }
 
-    fun onCreateUserAlbum() {
-        if (loaderButtonState.isSuccess()) return
-        loaderButtonState.loading()
-
+    fun createUserAlbum() {
         viewModelScope.launch {
-            when (state.value) {
-                is ExtractorSearchScreenUiState.Content -> {
-                    compileUserAlbum(state.value.getImages())
-                    _events.send(ExtractorSearchScreenEvents.AlbumCreated)
-                    loaderButtonState.success()
+            val extractions = containerState.value.getImages()
+            compileUserAlbum(extractions)
+
+            val result = snackbarHostState.showSnackbar(
+                message = stringProvider.get(R.string.snack_album_created),
+                actionLabel = stringProvider.get(R.string.snack_view),
+                duration = SnackbarDuration.Long
+            )
+            when (result) {
+                SnackbarResult.Dismissed -> Unit
+                SnackbarResult.ActionPerformed -> _events.send(ExtractorSearchScreenEvents.AlbumCreated)
+            }
+        }
+    }
+
+    private suspend fun handleImageSearchState(searchParams: SearchImageByKeyword.Params): ExtractorSearchContainerState {
+        return imageSearch.execute(searchParams).fold(
+            ifLeft = {
+                ExtractorSearchContainerState.NoSearchesLeft(
+                    onGetMore = ::getMoreSearches
+                )
+            },
+            ifRight = {
+                _isContainerStateLoading.update { false }
+                when {
+                    it.isEmpty() -> ExtractorSearchContainerState.Empty(
+                        onReset = {
+                            onSearchContainerContentEvent(
+                                ExtractorSearchContainerEvents.OnReset
+                            )
+                        }
+                    )
+
+                    else -> ExtractorSearchContainerState.Content(
+                        images = it,
+                        eventHandler = ::onSearchContainerContentEvent
+                    )
+                }
+            }
+        )
+    }
+
+    private suspend fun handleShowSuggestionState(suggestion: Option<Unit>): ExtractorSearchContainerState {
+        return when (suggestion) {
+            None -> panic("Invalid state, suggestion trigger has to be something.")
+            is Some -> {
+                generateSuggestedKeywords.invoke().fold(
+                    ifLeft = {
+                        ExtractorSearchContainerState.NoSearchesLeft(
+                            onGetMore = ::getMoreSearches
+                        )
+                    },
+                    ifRight = {
+                        _isContainerStateLoading.update { false }
+                        when {
+                            it.isEmpty() -> ExtractorSearchContainerState.ShowSuggestions(
+                                ExtractorSuggestedSearchState.Empty(
+                                    onStartSync = { spawnExtractorWork.invoke() }
+                                )
+                            )
+
+                            else -> ExtractorSearchContainerState.ShowSuggestions(
+                                ExtractorSuggestedSearchState.Content(
+                                    onSuggestionClick = ::imageSearchWithSuggestion,
+                                    suggestedSearches = it
+                                )
+                            )
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    private fun processSearchSheetEvents(event: ExtractorSearchSheetEvents) {
+        val params = when (event) {
+            is ExtractorSearchSheetEvents.OnChange -> with(event.data) {
+                SearchImageByKeyword.Params(
+                    dateRange = dateRange,
+                    query = query,
+                    type = searchType,
+                    keywordType = keywordType
+                )
+            }
+
+            is ExtractorSearchSheetEvents.OnDateChange -> with(event.data) {
+                SearchImageByKeyword.Params(
+                    dateRange = dateRange,
+                    query = query,
+                    type = searchType,
+                    keywordType = keywordType
+                )
+            }
+
+            is ExtractorSearchSheetEvents.OnSearchClick -> with(event.data) {
+                viewModelScope.launch {
+                    _events.send(ExtractorSearchScreenEvents.HideKeyboard)
                 }
 
-                else -> Unit
+                SearchImageByKeyword.Params(
+                    dateRange = dateRange,
+                    query = query,
+                    type = searchType,
+                    keywordType = keywordType
+                )
+            }
+        }
+
+        //don't perform a search with no query
+        if (params.query.isBlank()) return
+
+        _searchTrigger.update { params }
+        _isContainerStateLoading.update { true }
+    }
+
+    private fun getMoreSearches() {
+        viewModelScope.launch {
+            _events.send(ExtractorSearchScreenEvents.NavToGetMore)
+        }
+    }
+
+    private fun imageSearchWithSuggestion(suggestedSearch: SuggestedSearch) {
+        val params = SearchImageByKeyword.Params(
+            query = suggestedSearch.query,
+            keywordType = suggestedSearch.keywordType,
+            type = suggestedSearch.searchType,
+            dateRange = null
+        )
+        _searchTrigger.update { params }
+        _isContainerStateLoading.update { true }
+        with(searchSheetState.searchViewState) {
+            updateQuery(suggestedSearch.query)
+            updateSearchType(suggestedSearch.searchType)
+            updateKeywordType(suggestedSearch.keywordType)
+        }
+    }
+
+    private fun onSearchContainerContentEvent(event: ExtractorSearchContainerEvents) {
+        when (event) {
+            is ExtractorSearchContainerEvents.OnImageClick -> {
+                viewModelScope.launch {
+                    _events.send(
+                        ExtractorSearchScreenEvents.NavToImage(
+                            imageUris = containerState.value.getImagesUris(),
+                            initialIndex = event.index
+                        )
+                    )
+                }
+            }
+
+            ExtractorSearchContainerEvents.OnReset -> {
+                with(searchSheetState.searchViewState) {
+                    updateSearchType(SearchType.PARTIAL)
+                    updateKeywordType(KeywordType.ALL)
+                    updateQuery("")
+                }
+                _searchTrigger.update { null }
+                _isContainerStateLoading.update { true }
             }
         }
     }
 
     private suspend fun compileUserAlbum(input: List<Extraction>) {
         val newAlbum = NewAlbum(
-            keyword = searchViewState.query,
-            name = searchViewState.query,
-            searchType = searchViewState.searchType,
-            keywordType = searchViewState.keywordType,
+            keyword = searchSheetState.searchViewState.query,
+            name = searchSheetState.searchViewState.query,
+            searchType = searchSheetState.searchViewState.searchType,
+            keywordType = searchSheetState.searchViewState.keywordType,
             origin = NewAlbum.Origin.USER_GENERATED,
             entries = input.map {
                 NewAlbum.Entry(
@@ -270,122 +386,6 @@ class ExtractorSearchViewModel(
             }
         )
         albumRepository.createAlbum(newAlbum)
-    }
-
-    private fun runSearch() {
-        if (searchViewState.isBlank()) return
-        if (_state.value is ExtractorSearchScreenUiState.StillIndexing) return
-
-        _state.update { ExtractorSearchScreenUiState.Loading }
-
-        viewModelScope.launch {
-            val searchQuery = SearchImageByKeyword.Params(
-                query = searchViewState.query,
-                keywordType = searchViewState.keywordType,
-                dateRange = dateFilterState.dateRange(),
-                type = searchViewState.searchType
-            )
-
-            val result = imageSearch.execute(searchQuery).also {
-                lastQuery.update { LastQuery(searchViewState.query, searchViewState.keywordType) }
-            }
-
-            _state.createFrom(result)
-        }
-    }
-
-    private data class LastQuery(val query: String, val keywordType: KeywordType)
-
-    private fun LastQuery.isOldQuery(query: String, keywordType: KeywordType): Boolean {
-        return when {
-            (query == this.query) and (keywordType == this.keywordType) -> true
-            else -> false
-        }
-    }
-
-    fun performSuggestedSearch(suggestedSearch: SuggestedSearch) = with(suggestedSearch) {
-        _state.update { ExtractorSearchScreenUiState.Loading }
-
-        viewModelScope.launch {
-            val searchQuery = SearchImageByKeyword.Params(
-                query = query,
-                keywordType = keywordType,
-                dateRange = null,
-                type = searchType
-            )
-
-            val result = imageSearch.execute(searchQuery).also {
-                lastQuery.update { LastQuery(searchViewState.query, searchViewState.keywordType) }
-            }
-
-            _state.createFrom(result)
-            searchViewState.updateQuery(query)
-        }
-    }
-
-    fun spawnWork() = spawnExtractorWork.invoke()
-
-    fun onShowSheetDone() {
-        viewModelScope.launch {
-            datastore.hasSeenSearchSheet()
-        }
-    }
-
-    fun resetSearch() {
-        searchViewState.updateQuery("")
-        dateFilterState.clearDates()
-        _state.update {
-            ExtractorSearchScreenUiState.ShowSuggestions(
-                ExtractorSuggestedSearchState.Loading
-            )
-        }
-        viewModelScope.launch {
-            val suggested = generateSuggestedKeywords.invoke()
-            _state.update {
-                suggested.fold(
-                    ifRight = { result ->
-                        ExtractorSearchScreenUiState.ShowSuggestions(
-                            ExtractorSuggestedSearchState.Content(result)
-                        )
-                    },
-                    ifLeft = {
-                        ExtractorSearchScreenUiState.NoSearchesLeft
-                    }
-                )
-            }
-        }
-    }
-
-    fun onSelectionClear() {
-        gridState.clearSelection()
-    }
-
-    fun onSelectionCreate() {
-        viewModelScope.launch {
-            val extractions = state.value.getImages()
-
-            val toCreate = gridState.checkedIndicesAsFlow()
-                .first()
-                .map { extractions[it] }
-
-            compileUserAlbum(toCreate)
-            gridState.clearSelection()
-            //Show snack bar with action to view
-            viewModelScope.launch {
-                val result = snackbarHostState.showSnackbar(
-                    message = stringProvider.get(R.string.snack_album_created),
-                    actionLabel = stringProvider.get(R.string.snack_view)
-                )
-                when (result) {
-                    SnackbarResult.Dismissed -> Unit
-                    SnackbarResult.ActionPerformed -> _events.send(ExtractorSearchScreenEvents.AlbumCreated)
-                }
-            }
-        }
-    }
-
-    fun getSelectedImageUris(): List<Uri> {
-        return gridState.checkedIndices().map { state.value.getImages()[it].uri.toUri() }
     }
 }
 

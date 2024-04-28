@@ -40,8 +40,6 @@ import com.drbrosdev.extractor.util.CombinedPreview
 @Composable
 fun ExtractorSuggestedSearch(
     modifier: Modifier = Modifier,
-    onClick: (SuggestedSearch) -> Unit,
-    onStartSyncClick: () -> Unit,
     state: ExtractorSuggestedSearchState
 ) {
 
@@ -58,14 +56,17 @@ fun ExtractorSuggestedSearch(
         ) {
             when (it) {
                 is ExtractorSuggestedSearchState.Content -> SuggestedSearchContent(
-                    onClick = onClick,
+                    onClick = { search -> it.onSuggestionClick(search) },
                     suggestedSearches = it.suggestedSearches
                 )
 
                 ExtractorSuggestedSearchState.Loading -> SuggestedSearchLoading(
                     numberOfItems = 6
                 )
-                ExtractorSuggestedSearchState.Empty -> SuggestedSearchEmpty(onClick = onStartSyncClick)
+
+                is ExtractorSuggestedSearchState.Empty -> SuggestedSearchEmpty(
+                    onClick = { it.onStartSync() }
+                )
             }
         }
     }
@@ -220,31 +221,25 @@ private fun CurrentPreview() {
             searchType = SearchType.FULL
         )
         val list = (1..6).map { suggestedSearch }
-        val contentState = ExtractorSuggestedSearchState.Content(list)
+        val contentState = ExtractorSuggestedSearchState.Content({}, list)
         val loadingState = ExtractorSuggestedSearchState.Loading
-        val emptyState = ExtractorSuggestedSearchState.Empty
+        val emptyState = ExtractorSuggestedSearchState.Empty({})
 
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ExtractorSuggestedSearch(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = {},
-                onStartSyncClick = {},
                 state = contentState
             )
 
             ExtractorSuggestedSearch(
                 modifier = Modifier.fillMaxWidth(),
-                onStartSyncClick = {},
-                onClick = {},
                 state = loadingState
             )
 
             ExtractorSuggestedSearch(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = {},
-                onStartSyncClick = {},
                 state = emptyState
             )
         }

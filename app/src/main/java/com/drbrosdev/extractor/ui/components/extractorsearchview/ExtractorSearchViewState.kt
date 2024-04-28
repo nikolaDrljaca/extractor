@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Stable
 class ExtractorSearchViewState(
-    initialQuery: String,
-    initialKeywordType: KeywordType,
+    initialQuery: String = "",
+    initialKeywordType: KeywordType = KeywordType.ALL,
     initialSearchType: SearchType = SearchType.PARTIAL,
     initialIsDisabled: Boolean = false,
 ) {
@@ -39,11 +39,12 @@ class ExtractorSearchViewState(
     }
 
     fun disable() {
-        query = ""
+        if (disabled) return
         disabled = true
     }
 
     fun enable() {
+        if (!disabled) return
         disabled = false
     }
 
@@ -59,10 +60,9 @@ class ExtractorSearchViewState(
         keywordType = new
     }
 
-
     companion object {
         val Saver = object : Saver<ExtractorSearchViewState, Map<String, Any>> {
-            override fun restore(value: Map<String, Any>): ExtractorSearchViewState? {
+            override fun restore(value: Map<String, Any>): ExtractorSearchViewState {
                 return ExtractorSearchViewState(
                     initialQuery = value.getOrDefault("query", "") as String,
                     initialKeywordType = KeywordType.ALL,
@@ -71,7 +71,7 @@ class ExtractorSearchViewState(
                 )
             }
 
-            override fun SaverScope.save(value: ExtractorSearchViewState): Map<String, Any>? {
+            override fun SaverScope.save(value: ExtractorSearchViewState): Map<String, Any> {
                 return mapOf(
                     "query" to value.query,
                     "disabled" to value.disabled

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.ImageLabelFilterChips
-import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toLabelType
+import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toKeywordType
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTypeSwitch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextField
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -34,6 +34,8 @@ import com.drbrosdev.extractor.util.rememberKeyboardState
 fun ExtractorSearchView(
     state: ExtractorSearchViewState,
     onDone: () -> Unit,
+    onKeywordTypeChange: () -> Unit,
+    onSearchTypeChange: () -> Unit,
     modifier: Modifier = Modifier,
     isHidden: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(16.dp),
@@ -88,7 +90,9 @@ fun ExtractorSearchView(
             ) {
                 ImageLabelFilterChips(
                     onFilterChanged = {
-                        state.updateKeywordType(it.toLabelType())
+                        val keywordType = it.toKeywordType()
+                        state.updateKeywordType(keywordType)
+                        onKeywordTypeChange()
                     },
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     initial = state.initialLabelTypeIndex(),
@@ -97,7 +101,10 @@ fun ExtractorSearchView(
 
                 ExtractorSearchTypeSwitch(
                     selection = state.searchType,
-                    onSelectionChanged = state::updateSearchType,
+                    onSelectionChanged = {
+                        state.updateSearchType(it)
+                        onSearchTypeChange()
+                    },
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     enabled = !state.disabled
                 )
@@ -117,8 +124,10 @@ private fun CurrentPreview() {
                 "",
                 KeywordType.ALL,
                 SearchType.PARTIAL,
-                initialIsDisabled = true
-            )
+                initialIsDisabled = true,
+            ),
+            onKeywordTypeChange = {},
+            onSearchTypeChange = {}
         )
     }
 }

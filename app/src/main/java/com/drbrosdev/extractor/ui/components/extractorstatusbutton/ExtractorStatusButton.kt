@@ -31,20 +31,20 @@ fun ExtractorStatusButton(
     modifier: Modifier = Modifier,
     state: ExtractorStatusButtonState,
 ) {
-    val brushModifier = when (state.status) {
-        is ExtractorStatusButtonState.Status.Idle -> Modifier
-        is ExtractorStatusButtonState.Status.ExtractionRunning -> Modifier.background(
+    val brushModifier = when (state) {
+        is ExtractorStatusButtonState.Idle -> Modifier
+        is ExtractorStatusButtonState.ExtractionRunning -> Modifier.background(
             createExtractorBrush()
         )
 
-        is ExtractorStatusButtonState.Status.OutOfSync ->
+        is ExtractorStatusButtonState.OutOfSync ->
             Modifier.background(color = MaterialTheme.colorScheme.error)
     }
 
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(14.dp))
-            .thenIf(state.status !is ExtractorStatusButtonState.Status.Idle) {
+            .thenIf(state !is ExtractorStatusButtonState.Idle) {
                 clickable { onClick() }
             }
             .then(brushModifier)
@@ -52,23 +52,23 @@ fun ExtractorStatusButton(
             .then(modifier),
         contentAlignment = Alignment.Center
     ) {
-        when (val status = state.status) {
-            is ExtractorStatusButtonState.Status.Idle ->
+        when (state) {
+            is ExtractorStatusButtonState.Idle ->
                 Box(modifier = Modifier.size(40.dp))
 
-            is ExtractorStatusButtonState.Status.ExtractionRunning ->
+            is ExtractorStatusButtonState.ExtractionRunning ->
                 Box(
                     modifier = Modifier.padding(4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "${status.donePercentage}%",
+                        text = "${state.donePercentage}%",
                         color = Color.White,
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
 
-            ExtractorStatusButtonState.Status.OutOfSync -> Box(
+            ExtractorStatusButtonState.OutOfSync -> Box(
                 modifier = Modifier.padding(4.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -91,21 +91,17 @@ private fun CurrentPreview() {
         ) {
             ExtractorStatusButton(
                 onClick = { /*TODO*/ },
-                state = ExtractorStatusButtonState()
+                state = ExtractorStatusButtonState.Idle
             )
 
             ExtractorStatusButton(
                 onClick = { /*TODO*/ },
-                state = ExtractorStatusButtonState(
-                    ExtractorStatusButtonState.Status.ExtractionRunning(34)
-                )
+                state = ExtractorStatusButtonState.ExtractionRunning(34)
             )
 
             ExtractorStatusButton(
                 onClick = { /*TODO*/ },
-                state = ExtractorStatusButtonState(
-                    ExtractorStatusButtonState.Status.OutOfSync
-                )
+                state = ExtractorStatusButtonState.OutOfSync
             )
         }
     }

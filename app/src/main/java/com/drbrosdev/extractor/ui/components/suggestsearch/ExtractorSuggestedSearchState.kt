@@ -4,14 +4,17 @@ import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
 
 
-@Immutable
 sealed interface ExtractorSuggestedSearchState {
 
+    @Immutable
     data class Content(
-        val suggestedSearches: List<SuggestedSearch>
+        val onSuggestionClick: (SuggestedSearch) -> Unit,
+        val suggestedSearches: List<SuggestedSearch>,
     ) : ExtractorSuggestedSearchState
 
     data object Loading : ExtractorSuggestedSearchState
 
-    data object Empty : ExtractorSuggestedSearchState
+    data class Empty(
+        val onStartSync: () -> Unit
+    ) : ExtractorSuggestedSearchState
 }

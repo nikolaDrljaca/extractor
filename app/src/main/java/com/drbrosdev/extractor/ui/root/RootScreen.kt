@@ -113,6 +113,6 @@ private fun determineStartDestination(context: Context): NavTarget {
 
     return when (context.checkSelfPermission(perm)) {
         PackageManager.PERMISSION_DENIED -> BlankNavTarget
-        else -> ExtractorSearchNavTarget()
+        else -> ExtractorSearchNavTarget
     }
 }

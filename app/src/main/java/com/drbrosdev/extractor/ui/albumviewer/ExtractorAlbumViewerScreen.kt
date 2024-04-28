@@ -36,7 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGrid
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGridState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialog
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
@@ -62,7 +62,7 @@ fun ExtractorAlbumViewerScreen(
     onMultiselectAction: (MultiselectAction) -> Unit,
     snackbarHostState: SnackbarHostState,
     state: ExtractorAlbumViewerScreenState,
-    imageGridState: ExtractorImageGridState
+    imageGridState: ExtractorGridState
 ) {
     val extractorTopBarState = remember {
         derivedStateOf {

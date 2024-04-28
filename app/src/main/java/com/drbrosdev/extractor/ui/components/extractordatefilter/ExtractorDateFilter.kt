@@ -40,20 +40,27 @@ import com.drbrosdev.extractor.util.CombinedPreview
 @Composable
 fun ExtractorDateFilter(
     modifier: Modifier = Modifier,
+    onDateChanged: () -> Unit,
     state: ExtractorDateFilterState = rememberExtractorDateFilterState()
 ) {
     when (state.selection) {
         ExtractorDateFilterSelection.START ->
             ExtractorDatePicker(
                 onDismiss = state::clearSelection,
-                onConfirm = state::updateStartDate
+                onConfirm = {
+                    state.updateStartDate(it)
+                    onDateChanged()
+                }
             )
 
 
         ExtractorDateFilterSelection.END ->
             ExtractorDatePicker(
                 onDismiss = state::clearSelection,
-                onConfirm = state::updateEndDate
+                onConfirm = {
+                    state.updateEndDate(it)
+                    onDateChanged()
+                }
             )
 
         ExtractorDateFilterSelection.NONE -> Unit
@@ -107,7 +114,10 @@ fun ExtractorDateFilter(
         label = ""
     )
 
-    Column {
+    Column(
+        modifier = Modifier
+            .then(modifier),
+    ) {
         Text(
             text = stringResource(R.string.date),
             style = MaterialTheme.typography.titleLarge.copy(
@@ -117,8 +127,6 @@ fun ExtractorDateFilter(
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(
-            modifier = Modifier
-                .then(modifier),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ExtractorDateFilterCard(
@@ -129,7 +137,8 @@ fun ExtractorDateFilter(
                 dateAsString = state.startDate.getAsString(stringResource(id = R.string.start_date)),
                 containerColor = startCardColor,
                 borderColor = startCardBorderColor,
-                contentColor = startContentColor
+                contentColor = startContentColor,
+                enabled = !state.disabled
             )
 
             ExtractorDateFilterCard(
@@ -140,17 +149,22 @@ fun ExtractorDateFilter(
                 dateAsString = state.endDate.getAsString(stringResource(id = R.string.end_date)),
                 containerColor = endCardColor,
                 borderColor = endCardBorderColor,
-                contentColor = endContentColor
+                contentColor = endContentColor,
+                enabled = !state.disabled
             )
-            
+
             Spacer(modifier = Modifier.width(4.dp))
 
             Surface(
                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f),
-                onClick = state::clearDates,
+                onClick = {
+                    state.clearDates()
+                    onDateChanged()
+                },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
-                    .width(IntrinsicSize.Max)
+                    .width(IntrinsicSize.Max),
+                enabled = !state.disabled
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Refresh,
@@ -176,6 +190,7 @@ private fun ExtractorDateFilterCard(
     side: ExtractorDateFilterCardSide,
     containerColor: Color = Color.Transparent,
     borderColor: Color = Color.White,
+    enabled: Boolean = true,
     contentColor: Color
 ) {
     val shape = when (side) {
@@ -188,13 +203,21 @@ private fun ExtractorDateFilterCard(
         ExtractorDateFilterCardSide.LEFT -> Alignment.Start
     }
 
+    val actualBorderColor = when {
+        enabled -> borderColor
+        else -> Color.Gray
+    }
+
     OutlinedCard(
         shape = shape,
-        border = BorderStroke(width = 1.dp, color = borderColor),
+        border = BorderStroke(width = 1.dp, color = actualBorderColor),
         modifier = Modifier.then(modifier),
-        colors = CardDefaults.cardColors(
+        enabled = enabled,
+        colors = CardDefaults.outlinedCardColors(
             containerColor = containerColor,
-            contentColor = contentColor
+            contentColor = contentColor,
+            disabledContainerColor = Color.Gray,
+            disabledContentColor = Color.LightGray,
         ),
         onClick = onClick
     ) {
@@ -223,7 +246,8 @@ private fun CurrentPreview() {
             ExtractorDateFilter(
                 state = ExtractorDateFilterState(
                     initStart = Some(1L)
-                )
+                ),
+                onDateChanged = {},
             )
         }
     }

@@ -30,7 +30,7 @@ object ExtractorPermissionRequestNavTarget : NavTarget {
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
                 if (isGranted) {
-                    navController.replaceAll(ExtractorSearchNavTarget())
+                    navController.replaceAll(ExtractorSearchNavTarget)
                 }
             }
         )

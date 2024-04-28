@@ -49,8 +49,6 @@ val viewModelModule = module {
 
     viewModel {
         ExtractorSearchViewModel(
-            query = it.get(),
-            keywordType = it.get(),
             imageSearch = get(),
             stateHandle = get(),
             trackExtractionProgress = get(),

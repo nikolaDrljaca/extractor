@@ -29,7 +29,7 @@ fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = ExtractorImageGridDefaults.paddingValues,
     images: List<Extraction>,
-    state: ExtractorImageGridState
+    state: ExtractorGridState
 ) {
     val imageSize = 96
 
@@ -75,7 +75,7 @@ fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = ExtractorImageGridDefaults.paddingValues,
     albumEntries: List<AlbumEntry>,
-    state: ExtractorImageGridState
+    state: ExtractorGridState
 ) {
     val imageSize = 96
 
@@ -121,7 +121,7 @@ private fun CurrentPreview() {
                 images = emptyList(),
                 onClick = {},
                 onReset = { /*TODO*/ },
-                state = ExtractorImageGridState()
+                state = ExtractorGridState()
             )
         }
     }
