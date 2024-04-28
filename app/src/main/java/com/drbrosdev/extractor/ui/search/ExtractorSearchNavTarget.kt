@@ -119,11 +119,11 @@ data object ExtractorSearchNavTarget : NavTarget {
 private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         ExtractorSearchScreen(
-            onExtractorHomeClicked = { /*TODO*/ },
-            onStatusButtonClick = { /*TODO*/ },
+            onExtractorHomeClicked = {  },
+            onStatusButtonClick = { },
             onMultiselectAction = {},
-            onHeaderClick = { /*TODO*/ },
-            onCreateAlbumFabClick = { /*TODO*/ },
+            onHeaderClick = { },
+            onCreateAlbumFabClick = { },
             state = ExtractorSearchContainerState.StillIndexing,
             searchCount = 21,
             extractorStatusButtonState = ExtractorStatusButtonState.Idle,
