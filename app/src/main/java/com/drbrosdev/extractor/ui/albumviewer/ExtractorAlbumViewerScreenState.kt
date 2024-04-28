@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.ui.albumviewer
 
 import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.Album
+import com.drbrosdev.extractor.util.panic
 
 sealed interface ExtractorAlbumViewerScreenState {
 
@@ -20,7 +21,7 @@ sealed interface ExtractorAlbumViewerScreenState {
 
 fun ExtractorAlbumViewerScreenState.getAlbum() = when (this) {
     is ExtractorAlbumViewerScreenState.Content -> this.album
-    ExtractorAlbumViewerScreenState.Loading -> error("Accessing album outside of content state.")
+    ExtractorAlbumViewerScreenState.Loading -> panic("Accessing album outside of content state.")
 }
 
 sealed interface ExtractorAlbumDialogSelection {

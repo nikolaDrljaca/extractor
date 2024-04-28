@@ -1,6 +1,11 @@
 package com.drbrosdev.extractor.ui.search
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -10,9 +15,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,8 +30,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,14 +41,12 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGrid
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheet
-import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetEvents
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetState
+import com.drbrosdev.extractor.ui.components.searchsheet.SheetContent
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
 import com.drbrosdev.extractor.ui.components.shared.DragHandle
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
@@ -59,47 +63,37 @@ import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSea
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchScreen(
-    modifier: Modifier = Modifier,
-    onNavToDetail: (selectedIndex: Int) -> Unit,
     onExtractorHomeClicked: () -> Unit,
-    onDone: () -> Unit,
     onStatusButtonClick: () -> Unit,
-    onCreateAlbumClick: () -> Unit,
-    onSuggestedSearchClick: (SuggestedSearch) -> Unit,
-    onStartSyncClick: () -> Unit,
-    onResetSearch: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
     onHeaderClick: () -> Unit,
-    onGetMoreSearches: () -> Unit,
+    onCreateAlbumFabClick: () -> Unit,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberExtractorSearchBottomSheetState()
     ),
     state: ExtractorSearchContainerState,
     searchCount: Int,
     extractorStatusButtonState: ExtractorStatusButtonState,
-    imageGridState: ExtractorGridState,
-    sheetContent: SheetContent,
     snackbarHostState: SnackbarHostState,
     searchSheetState: ExtractorSearchSheetState,
-    onSearchSheetEvent: (ExtractorSearchSheetEvents) -> Unit,
 ) {
-    val extractorTopBarState = remember {
-        derivedStateOf {
-            if (imageGridState.lazyGridState.firstVisibleItemIndex > 0) ExtractorTopBarState.ELEVATED
-            else ExtractorTopBarState.NORMAL
-        }
-    }
-    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
-    LaunchedEffect(key1 = state) {
+    val extractorTopBarState =
         when (state) {
-            is ExtractorSearchContainerState.Loading -> {
-                imageGridState.lazyGridState.animateScrollToItem(0)
-            }
-
-            else -> Unit
+            is ExtractorSearchContainerState.Content -> state.topAppBarState.value
+            else -> ExtractorTopBarState.NORMAL
         }
+
+    val sheetContent =
+        when (state) {
+            is ExtractorSearchContainerState.Content -> state.sheetContent.value
+            else -> SheetContent.SearchView
+        }
+
+    val isCreateAlbumFabVisible = remember(state, sheetContent) {
+        (state is ExtractorSearchContainerState.Content) and (sheetContent is SheetContent.SearchView)
     }
+
+    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     BottomSheetScaffold(
         sheetContent = {
@@ -115,21 +109,10 @@ fun ExtractorSearchScreen(
                     )
 
                     SheetContent.SearchView -> ExtractorSearchSheet(
-                        onEvent = onSearchSheetEvent,
                         state = searchSheetState,
                         modifier = Modifier.navigationBarsPadding(),
                         isHidden = scaffoldState.bottomSheetState.targetValue == SheetValue.PartiallyExpanded
                     )
-
-//                    SheetContent.SearchView -> ExtractorSearchSheet(
-//                        onDone = onDone,
-//                        isHidden = scaffoldState.bottomSheetState.targetValue == SheetValue.PartiallyExpanded,
-//                        onCreateAlbumClick = onCreateAlbumClick,
-//                        searchViewState = searchViewState,
-//                        dateFilterState = dateFilterState,
-//                        loaderButtonState = loaderButtonState,
-//                        modifier = Modifier.navigationBarsPadding()
-//                    )
                 }
             }
         },
@@ -167,15 +150,21 @@ fun ExtractorSearchScreen(
                     )
 
                     is ExtractorSearchContainerState.Empty -> ExtractorEmptySearch(
-                        onReset = onResetSearch
+                        onReset = { it.onReset() }
                     )
 
                     is ExtractorSearchContainerState.Content ->
                         ExtractorImageGrid(
                             images = it.images,
-                            onClick = onNavToDetail,
-                            onReset = onResetSearch,
-                            state = imageGridState,
+                            onClick = { index ->
+                                it.eventHandler(
+                                    ExtractorSearchContainerEvents.OnImageClick(
+                                        index
+                                    )
+                                )
+                            },
+                            onReset = { it.eventHandler(ExtractorSearchContainerEvents.OnReset) },
+                            state = it.gridState,
                         )
 
                     is ExtractorSearchContainerState.ShowSuggestions -> Box(
@@ -186,8 +175,6 @@ fun ExtractorSearchScreen(
                     ) {
                         ExtractorSuggestedSearch(
                             modifier = Modifier.padding(horizontal = 12.dp),
-                            onClick = onSuggestedSearchClick,
-                            onStartSyncClick = onStartSyncClick,
                             state = it.suggestedSearchState
                         )
                     }
@@ -198,15 +185,32 @@ fun ExtractorSearchScreen(
                                 .fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            ExtractorGetMoreSearches(onClick = onGetMoreSearches)
+                            ExtractorGetMoreSearches(onClick = { it.onGetMore() })
                         }
+                }
+            }
+
+            AnimatedVisibility(
+                modifier = Modifier
+                    .layoutId(ViewIds.FAB),
+                visible = isCreateAlbumFabVisible,
+                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut()
+            ) {
+                FloatingActionButton(
+                    modifier = Modifier.padding(4.dp),
+                    onClick = onCreateAlbumFabClick,
+                    containerColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
                 }
             }
 
             ExtractorTopBar(
                 modifier = Modifier
                     .layoutId(ViewIds.TOP_BAR),
-                state = extractorTopBarState.value,
+                state = extractorTopBarState,
                 leadingSlot = {
                     ExtractorStatusButton(
                         onClick = onStatusButtonClick,
@@ -243,6 +247,14 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
     val topBar = createRefFor(ViewIds.TOP_BAR)
     val mainContent = createRefFor(ViewIds.MAIN_CONTENT)
     val snackbar = createRefFor(ViewIds.SNACKBAR)
+    val fab = createRefFor(ViewIds.FAB)
+
+    val bottomSheetGuideline = createGuidelineFromBottom(offset = 120.dp)
+
+    constrain(fab) {
+        end.linkTo(parent.end, margin = 16.dp)
+        bottom.linkTo(bottomSheetGuideline)
+    }
 
     constrain(mainContent) {
         start.linkTo(parent.start)
@@ -263,7 +275,7 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
     constrain(snackbar) {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        bottom.linkTo(parent.bottom, margin = 120.dp)
+        bottom.linkTo(fab.top)
         width = Dimension.fillToConstraints
     }
 }
@@ -272,4 +284,5 @@ private object ViewIds {
     const val MAIN_CONTENT = "content"
     const val TOP_BAR = "topBar"
     const val SNACKBAR = "snack_bar"
+    const val FAB = "create_fab"
 }

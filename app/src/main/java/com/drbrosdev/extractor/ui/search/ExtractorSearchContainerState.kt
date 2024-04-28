@@ -1,23 +1,45 @@
 package com.drbrosdev.extractor.ui.search
 
-import androidx.compose.runtime.Immutable
+import android.net.Uri
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
+import com.drbrosdev.extractor.ui.components.searchsheet.SheetContent
+import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
+import com.drbrosdev.extractor.util.panic
+import com.drbrosdev.extractor.util.toUri
 
 sealed interface ExtractorSearchContainerEvents {
+
     data object OnReset : ExtractorSearchContainerEvents
-    data class OnImageClick(val extraction: Extraction) : ExtractorSearchContainerEvents
+
+    data class OnImageClick(val index: Int) : ExtractorSearchContainerEvents
 }
 
 sealed interface ExtractorSearchContainerState {
 
-    @Immutable
+    @Stable
     data class Content(
         val images: List<Extraction>,
         val gridState: ExtractorGridState = ExtractorGridState(),
         val eventHandler: (ExtractorSearchContainerEvents) -> Unit
-    ) : ExtractorSearchContainerState
+    ) : ExtractorSearchContainerState {
+        val topAppBarState = derivedStateOf {
+            if (gridState.lazyGridState.firstVisibleItemIndex > 0) ExtractorTopBarState.ELEVATED
+            else ExtractorTopBarState.NORMAL
+        }
+
+        val sheetContent = derivedStateOf {
+            val checked = gridState.checkedIndices()
+            when {
+                (checked.isNotEmpty()) -> SheetContent.MultiselectBar
+                else -> SheetContent.SearchView
+            }
+        }
+    }
 
     data object Loading : ExtractorSearchContainerState
 
@@ -39,12 +61,13 @@ sealed interface ExtractorSearchContainerState {
 fun ExtractorSearchContainerState.getImages(): List<Extraction> {
     return when (this) {
         is ExtractorSearchContainerState.Content -> this.images
-        else -> error("Accessing image list outside of Success state.")
+        else -> panic("Accessing image list outside of Success state.")
     }
 }
 
-sealed interface SheetContent {
-    data object SearchView : SheetContent
-
-    data object MultiselectBar : SheetContent
+fun ExtractorSearchContainerState.getImagesUris(): List<Uri> {
+    return when (this) {
+        is ExtractorSearchContainerState.Content -> this.images.map { it.uri.toUri() }
+        else -> panic("Accessing image list outside of Success state.")
+    }
 }

@@ -34,8 +34,8 @@ import com.drbrosdev.extractor.util.rememberKeyboardState
 fun ExtractorSearchView(
     state: ExtractorSearchViewState,
     onDone: () -> Unit,
-    onKeywordTypeChange: (KeywordType) -> Unit,
-    onSearchTypeChange: (SearchType) -> Unit,
+    onKeywordTypeChange: () -> Unit,
+    onSearchTypeChange: () -> Unit,
     modifier: Modifier = Modifier,
     isHidden: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(16.dp),
@@ -92,7 +92,7 @@ fun ExtractorSearchView(
                     onFilterChanged = {
                         val keywordType = it.toKeywordType()
                         state.updateKeywordType(keywordType)
-                        onKeywordTypeChange(keywordType)
+                        onKeywordTypeChange()
                     },
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     initial = state.initialLabelTypeIndex(),
@@ -103,7 +103,7 @@ fun ExtractorSearchView(
                     selection = state.searchType,
                     onSelectionChanged = {
                         state.updateSearchType(it)
-                        onSearchTypeChange(it)
+                        onSearchTypeChange()
                     },
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     enabled = !state.disabled
@@ -124,7 +124,7 @@ private fun CurrentPreview() {
                 "",
                 KeywordType.ALL,
                 SearchType.PARTIAL,
-                initialIsDisabled = true
+                initialIsDisabled = true,
             ),
             onKeywordTypeChange = {},
             onSearchTypeChange = {}

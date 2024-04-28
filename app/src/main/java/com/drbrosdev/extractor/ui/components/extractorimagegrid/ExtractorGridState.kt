@@ -1,11 +1,13 @@
 package com.drbrosdev.extractor.ui.components.extractorimagegrid
 
 import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshotFlow
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorListItemCheckedState
 import kotlinx.coroutines.flow.map
 
+@Stable
 class ExtractorGridState(
     val lazyGridState: LazyGridState = LazyGridState(),
 ) {

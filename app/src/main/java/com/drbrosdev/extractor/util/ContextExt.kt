@@ -112,7 +112,7 @@ fun Context.findActivity(): Activity {
         if (context is Activity) return context
         context = context.baseContext
     }
-    error("No activity found.")
+    panic("No activity found.")
 }
 
 fun Context.checkAndRequestPermission(

@@ -123,6 +123,7 @@ val useCaseModule = module {
             visualEmbeddingDao = get(),
             textEmbeddingDao = get(),
             userEmbeddingDao = get(),
+            extractionDao = get(),
             tokenizeText = get(),
             validateSuggestedSearchToken = get(),
             dataStore = get()
