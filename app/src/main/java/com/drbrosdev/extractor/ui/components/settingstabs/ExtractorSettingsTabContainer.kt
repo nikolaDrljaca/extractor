@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -49,7 +48,6 @@ fun ExtractorSettingsTabContainer(
                 )
             },
             divider = {},
-            modifier = Modifier.fillMaxWidth(0.7f)
         ) {
             tabItems.forEachIndexed { index, _ ->
                 val tabText = settingsItemAsString(item = tabItems[index])

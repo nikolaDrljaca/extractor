@@ -4,7 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,7 +47,9 @@ fun ExtractorLicenses(
                 }
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(0.7f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 12.dp)
                 ) {
                     Text(text = license.name, style = MaterialTheme.typography.labelLarge)
                     Text(

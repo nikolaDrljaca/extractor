@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
@@ -113,7 +113,7 @@ fun ExtractorSettingsItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .requiredHeight(56.dp)
+                .defaultMinSize(minHeight = 56.dp)
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
@@ -147,7 +147,7 @@ private fun ExtractorSettingsItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .requiredHeight(56.dp)
+                .defaultMinSize(minHeight = 56.dp)
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
