@@ -8,6 +8,7 @@ import com.drbrosdev.extractor.ui.components.extractorsettings.enableDynamicColo
 import com.drbrosdev.extractor.ui.components.extractorsettings.textEnabledAsFlow
 import com.drbrosdev.extractor.ui.components.extractorsettings.visualEnabledAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -36,14 +37,17 @@ class ExtractorSettingsViewModel(
         .launchIn(viewModelScope)
 
     private val updateVisualJob = settingsState.visualEnabledAsFlow()
+        .drop(1) // drop the first emission, which is the initial value from above
         .onEach { settingsDatastore.setShowVisualAlbums(it) }
         .launchIn(viewModelScope)
 
     private val updateTextJob = settingsState.textEnabledAsFlow()
+        .drop(1) // drop the first emission, which is the initial value from above
         .onEach { settingsDatastore.setShowTextAlbums(it) }
         .launchIn(viewModelScope)
 
     private val updateDynamicColor = settingsState.enableDynamicColorAsFlow()
+        .drop(1) // drop the first emission, which is the initial value from above
         .onEach { settingsDatastore.setDynamicColor(it) }
         .launchIn(viewModelScope)
 }

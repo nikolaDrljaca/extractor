@@ -185,12 +185,12 @@ private fun CurrentPreview() {
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 ExtractorStillIndexing()
-                ExtractorEmptySearch(onReset = {})
-                ExtractorResetSearch(onClick = { /*TODO*/ })
-                ExtractorGetMoreSearches(onClick = {})
+                ExtractorEmptySearch(onReset = { })
+                ExtractorResetSearch(onClick = { })
+                ExtractorGetMoreSearches(onClick = { })
                 ExtractorSearchFabStack(
-                    onAddClick = { /*TODO*/ },
-                    onResetClick = {}
+                    onAddClick = { },
+                    onResetClick = { }
                 )
             }
         }
