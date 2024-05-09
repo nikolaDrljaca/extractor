@@ -15,4 +15,8 @@ sealed interface ExtractorSearchScreenEvents {
     data object ShowSearchSheet : ExtractorSearchScreenEvents
 
     data object HideKeyboard: ExtractorSearchScreenEvents
+
+    data class ShareSelectedImages(
+        val imageUris: List<Uri>
+    ): ExtractorSearchScreenEvents
 }

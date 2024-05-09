@@ -17,6 +17,8 @@ sealed interface ExtractorSearchContainerEvents {
     data object OnReset : ExtractorSearchContainerEvents
 
     data class OnImageClick(val index: Int) : ExtractorSearchContainerEvents
+
+    data class OnCreateAlbumClick(val images: List<Extraction>): ExtractorSearchContainerEvents
 }
 
 sealed interface ExtractorSearchContainerState {
@@ -25,7 +27,7 @@ sealed interface ExtractorSearchContainerState {
     data class Content(
         val images: List<Extraction>,
         val gridState: ExtractorGridState = ExtractorGridState(),
-        val eventHandler: (ExtractorSearchContainerEvents) -> Unit
+        val eventSink: (ExtractorSearchContainerEvents) -> Unit
     ) : ExtractorSearchContainerState {
         val topAppBarState = derivedStateOf {
             if (gridState.lazyGridState.firstVisibleItemIndex > 0) ExtractorTopBarState.ELEVATED

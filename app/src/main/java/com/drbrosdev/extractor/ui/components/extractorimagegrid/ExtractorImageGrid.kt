@@ -3,10 +3,9 @@ package com.drbrosdev.extractor.ui.components.extractorimagegrid
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
@@ -18,18 +17,16 @@ import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.AlbumEntry
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
-import com.drbrosdev.extractor.ui.components.shared.ExtractorResetSearch
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.toUri
 
 @Composable
 fun ExtractorImageGrid(
     onClick: (index: Int) -> Unit,
-    onReset: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = ExtractorImageGridDefaults.paddingValues,
+    gridState: ExtractorGridState,
     images: List<Extraction>,
-    state: ExtractorGridState
 ) {
     val imageSize = 96
 
@@ -37,7 +34,7 @@ fun ExtractorImageGrid(
         modifier = Modifier
             .then(modifier),
         columns = GridCells.Adaptive(minSize = imageSize.dp),
-        state = state.lazyGridState,
+        state = gridState.lazyGridState,
         verticalArrangement = Arrangement.spacedBy(1.dp),
         horizontalArrangement = Arrangement.spacedBy(1.dp),
         contentPadding = contentPadding
@@ -47,23 +44,15 @@ fun ExtractorImageGrid(
                 imageUri = it.uri.toUri(),
                 size = imageSize,
                 onClick = {
-                    val handled = state.onItemClick(index)
+                    val handled = gridState.onItemClick(index)
                     if (!handled) onClick(index)
                 },
-                checkedState = state[index],
-                onLongClick = { state.onItemLongClick(index) }
+                checkedState = gridState[index],
+                onLongClick = { gridState.onItemLongClick(index) }
             )
         }
-
-        item(
-            key = "reset",
-            span = { GridItemSpan(maxLineSpan) }
-        ) {
-            ExtractorResetSearch(
-                onClick = onReset,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(top = 24.dp)
-            )
+        item {
+            Spacer(modifier = Modifier.height(120.dp))
         }
     }
 }
@@ -120,8 +109,7 @@ private fun CurrentPreview() {
             ExtractorImageGrid(
                 images = emptyList(),
                 onClick = {},
-                onReset = { /*TODO*/ },
-                state = ExtractorGridState()
+                gridState = ExtractorGridState()
             )
         }
     }

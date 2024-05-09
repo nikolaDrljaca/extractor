@@ -15,7 +15,6 @@ import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetState
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
-import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
@@ -77,6 +76,8 @@ data object ExtractorSearchNavTarget : NavTarget {
                     scaffoldState.bottomSheetState.partialExpand()
                     viewModel.onShowSheetDone()
                 }
+
+                is ExtractorSearchScreenEvents.ShareSelectedImages -> context.launchShareIntent(it.imageUris)
             }
         }
 
@@ -91,24 +92,10 @@ data object ExtractorSearchNavTarget : NavTarget {
             onStatusButtonClick = {
                 dialogNavController.navigate(ExtractorStatusDialogNavTarget)
             },
-            onMultiselectAction = {
-                when (it) {
-                    MultiselectAction.Cancel -> viewModel.onSelectionClear()
-                    MultiselectAction.CreateAlbum -> viewModel.onSelectionCreate()
-                    MultiselectAction.Share -> {
-                        val uris = viewModel.getSelectedImageUris()
-                        context.launchShareIntent(uris)
-                    }
-
-                    MultiselectAction.Delete -> Unit
-                }
-            },
+            onMultiselectAction = viewModel::multiselectEventHandler,
             onHeaderClick = {
                 navController.navigate(ExtractorGetMoreNavTarget)
             },
-            onCreateAlbumFabClick = {
-                viewModel.createUserAlbum()
-            }
         )
     }
 }
@@ -119,11 +106,10 @@ data object ExtractorSearchNavTarget : NavTarget {
 private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         ExtractorSearchScreen(
-            onExtractorHomeClicked = {  },
+            onExtractorHomeClicked = { },
             onStatusButtonClick = { },
-            onMultiselectAction = {},
+            onMultiselectAction = { },
             onHeaderClick = { },
-            onCreateAlbumFabClick = { },
             state = ExtractorSearchContainerState.StillIndexing,
             searchCount = 21,
             extractorStatusButtonState = ExtractorStatusButtonState.Idle,

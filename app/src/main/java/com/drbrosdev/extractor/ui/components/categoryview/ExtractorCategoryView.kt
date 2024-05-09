@@ -138,7 +138,9 @@ fun ExtractorCategoryView(
                     category = category
                 )
 
-                is ExtractorCategoryViewState.StillIndexing -> ExtractorCategoryStillIndexingView()
+                is ExtractorCategoryViewState.StillIndexing -> ExtractorCategoryStillIndexingView(
+                    modifier = Modifier.padding(contentPadding)
+                )
             }
         }
     }

@@ -113,6 +113,8 @@ private fun SuggestedSearchContent(
             text = stringResource(R.string.or_start_a_search_below),
             style = MaterialTheme.typography.labelSmall
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
     }
 }
 

@@ -1,38 +1,33 @@
 package com.drbrosdev.extractor.ui.search
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -53,6 +48,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorGetMoreSearches
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchFabStack
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorStillIndexing
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
@@ -67,7 +63,6 @@ fun ExtractorSearchScreen(
     onStatusButtonClick: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
     onHeaderClick: () -> Unit,
-    onCreateAlbumFabClick: () -> Unit,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberExtractorSearchBottomSheetState()
     ),
@@ -88,10 +83,6 @@ fun ExtractorSearchScreen(
             is ExtractorSearchContainerState.Content -> state.sheetContent.value
             else -> SheetContent.SearchView
         }
-
-    val isCreateAlbumFabVisible = remember(state, sheetContent) {
-        (state is ExtractorSearchContainerState.Content) and (sheetContent is SheetContent.SearchView)
-    }
 
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
@@ -116,10 +107,11 @@ fun ExtractorSearchScreen(
                 }
             }
         },
+        sheetShape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp),
         sheetContainerColor = MaterialTheme.colorScheme.primary,
         sheetDragHandle = { DragHandle(color = MaterialTheme.colorScheme.onPrimary) },
         sheetContentColor = MaterialTheme.colorScheme.onPrimary,
-        sheetPeekHeight = 106.dp + bottomPadding,
+        sheetPeekHeight = 96.dp + bottomPadding,
         scaffoldState = scaffoldState
     ) {
         ConstraintLayout(
@@ -138,9 +130,14 @@ fun ExtractorSearchScreen(
                     ExtractorSearchContainerState.Loading -> Box(
                         modifier = Modifier
                             .fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.TopCenter
                     ) {
-                        Text(text = stringResource(R.string.loading))
+                        LinearProgressIndicator(
+                            modifier = Modifier.fillMaxWidth(),
+                            trackColor = Color.Transparent,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            strokeCap = StrokeCap.Round
+                        )
                     }
 
                     is ExtractorSearchContainerState.StillIndexing -> ExtractorStillIndexing(
@@ -153,24 +150,34 @@ fun ExtractorSearchScreen(
                         onReset = { it.onReset() }
                     )
 
-                    is ExtractorSearchContainerState.Content ->
+                    is ExtractorSearchContainerState.Content -> Box(
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
                         ExtractorImageGrid(
+                            modifier = Modifier.fillMaxSize(),
                             images = it.images,
                             onClick = { index ->
-                                it.eventHandler(
+                                it.eventSink(
                                     ExtractorSearchContainerEvents.OnImageClick(
                                         index
                                     )
                                 )
                             },
-                            onReset = { it.eventHandler(ExtractorSearchContainerEvents.OnReset) },
-                            state = it.gridState,
+                            gridState = it.gridState,
+                            contentPadding = PaddingValues(0.dp)
                         )
+                        ExtractorSearchFabStack(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(end = 16.dp, bottom = 32.dp),
+                            onAddClick = { it.eventSink(ExtractorSearchContainerEvents.OnCreateAlbumClick(it.images)) },
+                            onResetClick = { it.eventSink(ExtractorSearchContainerEvents.OnReset) }
+                        )
+                    }
 
                     is ExtractorSearchContainerState.ShowSuggestions -> Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .offset(y = -(110.dp + bottomPadding)),
+                            .fillMaxSize(),
                         contentAlignment = Alignment.BottomCenter
                     ) {
                         ExtractorSuggestedSearch(
@@ -187,23 +194,6 @@ fun ExtractorSearchScreen(
                         ) {
                             ExtractorGetMoreSearches(onClick = { it.onGetMore() })
                         }
-                }
-            }
-
-            AnimatedVisibility(
-                modifier = Modifier
-                    .layoutId(ViewIds.FAB),
-                visible = isCreateAlbumFabVisible,
-                enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-                exit = shrinkOut(shrinkTowards = Alignment.Center) + fadeOut()
-            ) {
-                FloatingActionButton(
-                    modifier = Modifier.padding(4.dp),
-                    onClick = onCreateAlbumFabClick,
-                    containerColor = MaterialTheme.colorScheme.background,
-                    contentColor = MaterialTheme.colorScheme.primary
-                ) {
-                    Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
                 }
             }
 
@@ -247,20 +237,14 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
     val topBar = createRefFor(ViewIds.TOP_BAR)
     val mainContent = createRefFor(ViewIds.MAIN_CONTENT)
     val snackbar = createRefFor(ViewIds.SNACKBAR)
-    val fab = createRefFor(ViewIds.FAB)
 
-    val bottomSheetGuideline = createGuidelineFromBottom(offset = 120.dp)
-
-    constrain(fab) {
-        end.linkTo(parent.end, margin = 16.dp)
-        bottom.linkTo(bottomSheetGuideline)
-    }
+    val bottomSheetGuideline = createGuidelineFromBottom(offset = 88.dp)
 
     constrain(mainContent) {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        top.linkTo(parent.top)
-        bottom.linkTo(parent.bottom)
+        top.linkTo(topBar.bottom)
+        bottom.linkTo(bottomSheetGuideline)
         width = Dimension.fillToConstraints
         height = Dimension.fillToConstraints
     }
@@ -275,7 +259,7 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
     constrain(snackbar) {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        bottom.linkTo(fab.top)
+        bottom.linkTo(bottomSheetGuideline, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
 }
@@ -284,5 +268,4 @@ private object ViewIds {
     const val MAIN_CONTENT = "content"
     const val TOP_BAR = "topBar"
     const val SNACKBAR = "snack_bar"
-    const val FAB = "create_fab"
 }

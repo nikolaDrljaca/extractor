@@ -9,9 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,10 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CombinedPreview
 
 @Composable
 fun ExtractorStillIndexing(
@@ -89,7 +93,6 @@ fun ExtractorResetSearch(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     Column(
         modifier = Modifier
             .then(modifier),
@@ -139,18 +142,57 @@ fun ExtractorGetMoreSearches(
     }
 }
 
-@Preview
+@Composable
+fun ExtractorSearchFabStack(
+    modifier: Modifier = Modifier,
+    onAddClick: () -> Unit,
+    onResetClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .then(modifier),
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+    ) {
+        SmallFloatingActionButton(
+            onClick = onResetClick,
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Refresh,
+                contentDescription = ""
+            )
+        }
+
+        FloatingActionButton(
+            onClick = onAddClick,
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
+        }
+    }
+}
+
+@CombinedPreview
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            ExtractorStillIndexing()
-            ExtractorEmptySearch(onReset = {})
-            ExtractorResetSearch(onClick = { /*TODO*/ })
-            ExtractorGetMoreSearches(onClick = {})
+        Surface {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                ExtractorStillIndexing()
+                ExtractorEmptySearch(onReset = {})
+                ExtractorResetSearch(onClick = { /*TODO*/ })
+                ExtractorGetMoreSearches(onClick = {})
+                ExtractorSearchFabStack(
+                    onAddClick = { /*TODO*/ },
+                    onResetClick = {}
+                )
+            }
         }
     }
 }

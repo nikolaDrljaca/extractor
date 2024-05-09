@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.ui.search
 
-import android.net.Uri
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -8,7 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import arrow.core.None
-import arrow.core.Option
 import arrow.core.Some
 import arrow.core.toOption
 import com.drbrosdev.extractor.R
@@ -30,15 +28,18 @@ import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetEvents
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetState
+import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
-import com.drbrosdev.extractor.util.panic
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -59,8 +60,19 @@ class ExtractorSearchViewModel(
     private val stringProvider: StringResourceProvider
 ) : ViewModel() {
 
+    //this can now be modelled with a bespoke sealed interface to distinguish between search and suggestion
     private val _searchTrigger = MutableStateFlow<SearchImageByKeyword.Params?>(null)
-    private val _suggestionTrigger = MutableStateFlow(Unit.toOption())
+
+    private val _searchTriggerResult = _searchTrigger
+        .flatMapLatest { params ->
+            flow {
+                emit(ExtractorSearchContainerState.Loading)
+                when (val out = params.toOption()) {
+                    None -> emit(generateSuggestions())
+                    is Some -> emit(performImageSearch(out.value))
+                }
+            }
+        }
 
     private val _progress = trackExtractionProgress.invoke()
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
@@ -76,44 +88,23 @@ class ExtractorSearchViewModel(
             0
         )
 
-    private val _containerState = combine(
-        _searchTrigger,
-        _suggestionTrigger,
+    val containerState = combine(
+        _searchTriggerResult,
         _progress,
-    ) { search, suggestion, progress ->
+        searchCount,
+    ) { search, progress, count ->
         when (progress) {
             is ExtractionStatus.Running -> ExtractorSearchContainerState.StillIndexing
-            is ExtractionStatus.Done -> {
-                when (val searchParams = search.toOption()) {
-                    None -> handleShowSuggestionState(suggestion)
-
-                    is Some -> handleImageSearchState(searchParams.value)
-                }
-            }
-        }
-    }
-        .combine(searchCount) { state, count ->
-            when {
+            is ExtractionStatus.Done -> when {
                 count == 0 -> ExtractorSearchContainerState.NoSearchesLeft(
                     onGetMore = ::getMoreSearches
                 )
 
-                else -> state
+                else -> search
             }
         }
-
-
-    private val _isContainerStateLoading = MutableStateFlow(false)
-
-    val containerState = combine(
-        _isContainerStateLoading,
-        _containerState
-    ) { isLoading, containerState ->
-        when {
-            isLoading -> ExtractorSearchContainerState.Loading
-            else -> containerState
-        }
     }
+        .distinctUntilChanged()
         .stateIn(
             viewModelScope,
             SharingStarted.Lazily,
@@ -143,11 +134,10 @@ class ExtractorSearchViewModel(
 
     val searchSheetState = ExtractorSearchSheetState(
         stateHandle = stateHandle,
-        eventHandler = ::processSearchSheetEvents
+        eventHandler = ::searchSheetEventHandler
     )
 
     val snackbarHostState = SnackbarHostState()
-
 
     private val _events = Channel<ExtractorSearchScreenEvents>()
     val events = _events.receiveAsFlow()
@@ -163,22 +153,19 @@ class ExtractorSearchViewModel(
         }
     }
 
-    fun onSelectionClear() {
-        when (val value = containerState.value) {
-            is ExtractorSearchContainerState.Content -> value.gridState.clearSelection()
+    fun multiselectEventHandler(event: MultiselectAction) {
+        when (event) {
+            MultiselectAction.Cancel -> when (val value = containerState.value) {
+                is ExtractorSearchContainerState.Content -> value.gridState.clearSelection()
+                else -> Unit
+            }
 
-            else -> Unit
-        }
-    }
+            MultiselectAction.CreateAlbum -> when (val value = containerState.value) {
+                is ExtractorSearchContainerState.Content -> viewModelScope.launch {
+                    val extractions = value.getImages()
+                    val toCreate = value.gridState.checkedIndices()
+                        .map { extractions[it] }
 
-    fun onSelectionCreate() {
-        when (val value = containerState.value) {
-            is ExtractorSearchContainerState.Content -> {
-                val extractions = value.getImages()
-                val toCreate = value.gridState.checkedIndices()
-                    .map { extractions[it] }
-
-                viewModelScope.launch {
                     compileUserAlbum(toCreate)
                     value.gridState.clearSelection()
 
@@ -192,39 +179,25 @@ class ExtractorSearchViewModel(
                         SnackbarResult.ActionPerformed -> _events.send(ExtractorSearchScreenEvents.AlbumCreated)
                     }
                 }
+
+                else -> Unit
             }
 
-            else -> Unit
-        }
-    }
+            MultiselectAction.Share -> when (val value = containerState.value) {
+                is ExtractorSearchContainerState.Content -> viewModelScope.launch {
+                    val uris = value.gridState.checkedIndices()
+                        .map { value.getImages()[it].uri.toUri() }
+                    _events.send(ExtractorSearchScreenEvents.ShareSelectedImages(uris))
+                }
 
-    fun getSelectedImageUris(): List<Uri> {
-        return when (val value = containerState.value) {
-            is ExtractorSearchContainerState.Content -> value.gridState.checkedIndices()
-                .map { value.getImages()[it].uri.toUri() }
-
-            else -> panic("Accessing checked items outside of content state.")
-        }
-    }
-
-    fun createUserAlbum() {
-        viewModelScope.launch {
-            val extractions = containerState.value.getImages()
-            compileUserAlbum(extractions)
-
-            val result = snackbarHostState.showSnackbar(
-                message = stringProvider.get(R.string.snack_album_created),
-                actionLabel = stringProvider.get(R.string.snack_view),
-                duration = SnackbarDuration.Long
-            )
-            when (result) {
-                SnackbarResult.Dismissed -> Unit
-                SnackbarResult.ActionPerformed -> _events.send(ExtractorSearchScreenEvents.AlbumCreated)
+                else -> Unit
             }
+
+            MultiselectAction.Delete -> Unit // Unsupported for this grid
         }
     }
 
-    private suspend fun handleImageSearchState(searchParams: SearchImageByKeyword.Params): ExtractorSearchContainerState {
+    private suspend fun performImageSearch(searchParams: SearchImageByKeyword.Params): ExtractorSearchContainerState {
         return imageSearch.execute(searchParams).fold(
             ifLeft = {
                 ExtractorSearchContainerState.NoSearchesLeft(
@@ -232,11 +205,10 @@ class ExtractorSearchViewModel(
                 )
             },
             ifRight = {
-                _isContainerStateLoading.update { false }
                 when {
                     it.isEmpty() -> ExtractorSearchContainerState.Empty(
                         onReset = {
-                            onSearchContainerContentEvent(
+                            searchContainerEventHandler(
                                 ExtractorSearchContainerEvents.OnReset
                             )
                         }
@@ -244,46 +216,40 @@ class ExtractorSearchViewModel(
 
                     else -> ExtractorSearchContainerState.Content(
                         images = it,
-                        eventHandler = ::onSearchContainerContentEvent
+                        eventSink = ::searchContainerEventHandler
                     )
                 }
             }
         )
     }
 
-    private suspend fun handleShowSuggestionState(suggestion: Option<Unit>): ExtractorSearchContainerState {
-        return when (suggestion) {
-            None -> panic("Invalid state, suggestion trigger has to be something.")
-            is Some -> {
-                generateSuggestedKeywords.invoke().fold(
-                    ifLeft = {
-                        ExtractorSearchContainerState.NoSearchesLeft(
-                            onGetMore = ::getMoreSearches
-                        )
-                    },
-                    ifRight = {
-                        _isContainerStateLoading.update { false }
-                        when {
-                            it.isEmpty() -> ExtractorSearchContainerState.ShowSuggestions(
-                                ExtractorSuggestedSearchState.Empty(
-                                    onStartSync = { spawnExtractorWork.invoke() }
-                                )
-                            )
-
-                            else -> ExtractorSearchContainerState.ShowSuggestions(
-                                ExtractorSuggestedSearchState.Content(
-                                    onSuggestionClick = ::imageSearchWithSuggestion,
-                                    suggestedSearches = it
-                                )
-                            )
-                        }
-                    }
+    private suspend fun generateSuggestions(): ExtractorSearchContainerState {
+        return generateSuggestedKeywords.invoke().fold(
+            ifLeft = {
+                ExtractorSearchContainerState.NoSearchesLeft(
+                    onGetMore = ::getMoreSearches
                 )
+            },
+            ifRight = {
+                when {
+                    it.isEmpty() -> ExtractorSearchContainerState.ShowSuggestions(
+                        ExtractorSuggestedSearchState.Empty(
+                            onStartSync = { spawnExtractorWork.invoke() }
+                        )
+                    )
+
+                    else -> ExtractorSearchContainerState.ShowSuggestions(
+                        ExtractorSuggestedSearchState.Content(
+                            onSuggestionClick = ::imageSearchWithSuggestion,
+                            suggestedSearches = it
+                        )
+                    )
+                }
             }
-        }
+        )
     }
 
-    private fun processSearchSheetEvents(event: ExtractorSearchSheetEvents) {
+    private fun searchSheetEventHandler(event: ExtractorSearchSheetEvents) {
         val params = when (event) {
             is ExtractorSearchSheetEvents.OnChange -> with(event.data) {
                 SearchImageByKeyword.Params(
@@ -321,7 +287,6 @@ class ExtractorSearchViewModel(
         if (params.query.isBlank()) return
 
         _searchTrigger.update { params }
-        _isContainerStateLoading.update { true }
     }
 
     private fun getMoreSearches() {
@@ -338,7 +303,6 @@ class ExtractorSearchViewModel(
             dateRange = null
         )
         _searchTrigger.update { params }
-        _isContainerStateLoading.update { true }
         with(searchSheetState.searchViewState) {
             updateQuery(suggestedSearch.query)
             updateSearchType(suggestedSearch.searchType)
@@ -346,7 +310,7 @@ class ExtractorSearchViewModel(
         }
     }
 
-    private fun onSearchContainerContentEvent(event: ExtractorSearchContainerEvents) {
+    private fun searchContainerEventHandler(event: ExtractorSearchContainerEvents) {
         when (event) {
             is ExtractorSearchContainerEvents.OnImageClick -> {
                 viewModelScope.launch {
@@ -366,8 +330,22 @@ class ExtractorSearchViewModel(
                     updateQuery("")
                 }
                 _searchTrigger.update { null }
-                _isContainerStateLoading.update { true }
             }
+
+            is ExtractorSearchContainerEvents.OnCreateAlbumClick ->
+                viewModelScope.launch {
+                    compileUserAlbum(event.images)
+
+                    val result = snackbarHostState.showSnackbar(
+                        message = stringProvider.get(R.string.snack_album_created),
+                        actionLabel = stringProvider.get(R.string.snack_view),
+                        duration = SnackbarDuration.Long
+                    )
+                    when (result) {
+                        SnackbarResult.Dismissed -> Unit
+                        SnackbarResult.ActionPerformed -> _events.send(ExtractorSearchScreenEvents.AlbumCreated)
+                    }
+                }
         }
     }
 

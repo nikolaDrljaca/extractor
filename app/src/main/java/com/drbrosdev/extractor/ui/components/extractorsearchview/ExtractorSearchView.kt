@@ -23,8 +23,8 @@ import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.ImageLabelFilterChips
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toKeywordType
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTextField
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTypeSwitch
-import com.drbrosdev.extractor.ui.components.shared.ExtractorTextField
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.KeyboardState
 import com.drbrosdev.extractor.util.rememberKeyboardState
@@ -39,7 +39,6 @@ fun ExtractorSearchView(
     modifier: Modifier = Modifier,
     isHidden: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(16.dp),
-    textFieldPadding: PaddingValues = PaddingValues()
 ) {
     val alphaOffset by animateFloatAsState(targetValue = if (isHidden) 0f else 1f, label = "")
     val interactionSource = remember { MutableInteractionSource() }
@@ -71,13 +70,12 @@ fun ExtractorSearchView(
             modifier = Modifier.padding(contentPadding),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            ExtractorTextField(
+            ExtractorSearchTextField(
                 text = state.query,
                 onChange = state::updateQuery,
                 onDoneSubmit = onDone,
                 textColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
-                    .padding(textFieldPadding)
                     .fillMaxWidth(),
                 interactionSource = interactionSource,
                 enabled = !state.disabled

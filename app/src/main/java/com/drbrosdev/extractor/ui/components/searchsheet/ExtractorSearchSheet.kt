@@ -41,7 +41,6 @@ fun ExtractorSearchSheet(
             state = state.searchViewState,
             isHidden = isHidden,
             contentPadding = PaddingValues(),
-            textFieldPadding = PaddingValues(bottom = 16.dp),
             onDone = state::onSearch,
             onKeywordTypeChange = state::onChange,
             onSearchTypeChange = state::onChange
