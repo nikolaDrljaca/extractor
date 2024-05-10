@@ -48,7 +48,7 @@ fun ExtractorSearchTypeSwitch(
                 FilterChip(
                     selected = selection == item,
                     onClick = {
-                              onSelectionChanged(item)
+                        onSelectionChanged(item)
                     },
                     label = { Text(text = stringResource(id = item.asStringRes())) },
                     leadingIcon = {},

@@ -302,12 +302,12 @@ class ExtractorSearchViewModel(
             type = suggestedSearch.searchType,
             dateRange = null
         )
-        _searchTrigger.update { params }
         with(searchSheetState.searchViewState) {
             updateQuery(suggestedSearch.query)
             updateSearchType(suggestedSearch.searchType)
             updateKeywordType(suggestedSearch.keywordType)
         }
+        _searchTrigger.update { params }
     }
 
     private fun searchContainerEventHandler(event: ExtractorSearchContainerEvents) {

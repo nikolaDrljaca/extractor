@@ -90,14 +90,6 @@ fun ExtractorSearchViewState.isNotBlank(): Boolean {
     return !isBlank()
 }
 
-fun ExtractorSearchViewState.initialLabelTypeIndex(): Int {
-    return when (keywordType) {
-        KeywordType.ALL -> 0
-        KeywordType.TEXT -> 1
-        KeywordType.IMAGE -> 2
-    }
-}
-
 
 @Composable
 fun rememberExtractorSearchViewState(

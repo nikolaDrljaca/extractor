@@ -21,7 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
-import com.drbrosdev.extractor.ui.components.extractorlabelfilter.ImageLabelFilterChips
+import com.drbrosdev.extractor.ui.components.extractorlabelfilter.KeywordTypeChips
+import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toChipDataIndex
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toKeywordType
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTextField
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTypeSwitch
@@ -86,14 +87,14 @@ fun ExtractorSearchView(
                     alpha = alphaOffset
                 }
             ) {
-                ImageLabelFilterChips(
+                KeywordTypeChips(
                     onFilterChanged = {
                         val keywordType = it.toKeywordType()
                         state.updateKeywordType(keywordType)
                         onKeywordTypeChange()
                     },
                     contentColor = MaterialTheme.colorScheme.onPrimary,
-                    initial = state.initialLabelTypeIndex(),
+                    selection = state.keywordType.toChipDataIndex(),
                     enabled = !state.disabled
                 )
 

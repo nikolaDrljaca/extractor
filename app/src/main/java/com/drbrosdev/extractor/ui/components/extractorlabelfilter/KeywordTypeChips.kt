@@ -10,11 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,29 +25,25 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 
 @Composable
-fun ImageLabelFilterChips(
+fun KeywordTypeChips(
     modifier: Modifier = Modifier,
     contentColor: Color = Color.White,
-    initial: Int = 0,
-    onFilterChanged: (ImageLabelFilterChipData) -> Unit,
+    selection: Int = 0,
+    onFilterChanged: (KeywordTypeChipData) -> Unit,
     enabled: Boolean = true
 ) {
-    var selected by rememberSaveable {
-        mutableIntStateOf(initial)
-    }
-
     val context = LocalContext.current
     val chipItems = remember {
         listOf(
-            ImageLabelFilterChipData.All(
+            KeywordTypeChipData.All(
                 label = context.getString(R.string.chip_all),
                 resId = R.drawable.round_tag_24
             ),
-            ImageLabelFilterChipData.Text(
+            KeywordTypeChipData.Text(
                 label = context.getString(R.string.chip_text),
                 resId = R.drawable.round_text_fields_24
             ),
-            ImageLabelFilterChipData.Image(
+            KeywordTypeChipData.Image(
                 label = context.getString(R.string.chip_image),
                 resId = R.drawable.round_image_search_24
             ),
@@ -75,9 +67,8 @@ fun ImageLabelFilterChips(
         ) {
             chipItems.forEachIndexed { index, item ->
                 FilterChip(
-                    selected = selected == index,
+                    selected = selection == index,
                     onClick = {
-                        selected = index
                         onFilterChanged(chipItems[index])
                     },
                     enabled = enabled,
@@ -102,7 +93,7 @@ fun ImageLabelFilterChips(
                     ),
                     border = FilterChipDefaults.filterChipBorder(
                         enabled = enabled,
-                        selected = selected == index,
+                        selected = selection == index,
                         borderColor = contentColor,
                         disabledBorderColor = Color.Gray,
                         disabledSelectedBorderColor = Color.Gray
@@ -117,6 +108,6 @@ fun ImageLabelFilterChips(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme {
-        ImageLabelFilterChips(onFilterChanged = {})
+        KeywordTypeChips(onFilterChanged = {})
     }
 }
