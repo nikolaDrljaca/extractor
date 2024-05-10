@@ -96,6 +96,8 @@ class ExtractorSearchViewModel(
         when (progress) {
             is ExtractionStatus.Running -> ExtractorSearchContainerState.StillIndexing
             is ExtractionStatus.Done -> when {
+                search is ExtractorSearchContainerState.Content -> search
+
                 count == 0 -> ExtractorSearchContainerState.NoSearchesLeft(
                     onGetMore = ::getMoreSearches
                 )
