@@ -1,13 +1,8 @@
 package com.drbrosdev.extractor.ui.root
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import com.drbrosdev.extractor.framework.navigation.BlankNavTarget
 import com.drbrosdev.extractor.framework.navigation.BottomSheetNavTarget
@@ -17,6 +12,7 @@ import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.animspec.DefaultTransitionSpec
+import com.drbrosdev.extractor.framework.permission.ReadPermissionAccess
 import com.drbrosdev.extractor.ui.onboarding.ExtractorOnboardingNavTarget
 import com.drbrosdev.extractor.ui.permhandler.ExtractorPermissionRequestNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
@@ -34,11 +30,11 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun Root() {
     val viewModel: RootViewModel = koinViewModel()
-    val context = LocalContext.current
-    val startDestination = determineStartDestination(context)
+    val startDestination = determineStartDestination {
+        viewModel.getPermissionAccessStatus()
+    }
 
-    val navController =
-        rememberNavController<NavTarget>(startDestination = startDestination)
+    val navController = rememberNavController(startDestination = startDestination)
     val dialogNavController = rememberNavController<DialogNavTarget>(initialBackstack = emptyList())
     val bottomSheetNavController =
         rememberNavController<BottomSheetNavTarget>(initialBackstack = emptyList())
@@ -51,18 +47,12 @@ fun Root() {
         } else {
             //Has seen onboarding, but permission is denied
             //Probably manually revoked
-            val perm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Manifest.permission.READ_MEDIA_IMAGES
-            } else {
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            }
-
-            when (context.checkSelfPermission(perm)) {
-                PackageManager.PERMISSION_DENIED -> navController.replaceAll(
+            when (viewModel.getPermissionAccessStatus()) {
+                ReadPermissionAccess.DENIED -> navController.replaceAll(
                     ExtractorPermissionRequestNavTarget
                 )
 
-                PackageManager.PERMISSION_GRANTED -> Unit
+                else -> Unit
             }
         }
     }
@@ -104,15 +94,12 @@ fun Root() {
     }
 }
 
-private fun determineStartDestination(context: Context): NavTarget {
-    val perm = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        Manifest.permission.READ_MEDIA_IMAGES
-    } else {
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    }
-
-    return when (context.checkSelfPermission(perm)) {
-        PackageManager.PERMISSION_DENIED -> BlankNavTarget
+private fun determineStartDestination(
+    readPermissionAccessProvider: () -> ReadPermissionAccess
+): NavTarget {
+    val perm = readPermissionAccessProvider()
+    return when (perm) {
+        ReadPermissionAccess.DENIED -> BlankNavTarget
         else -> ExtractorSearchNavTarget
     }
 }

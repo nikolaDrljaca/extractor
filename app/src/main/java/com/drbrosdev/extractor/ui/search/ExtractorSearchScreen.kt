@@ -101,7 +101,9 @@ fun ExtractorSearchScreen(
 
                     SheetContent.SearchView -> ExtractorSearchSheet(
                         state = searchSheetState,
-                        modifier = Modifier.navigationBarsPadding(),
+                        modifier = Modifier.padding(
+                            bottom = bottomPadding + 4.dp
+                        ),
                         isHidden = scaffoldState.bottomSheetState.targetValue == SheetValue.PartiallyExpanded
                     )
                 }

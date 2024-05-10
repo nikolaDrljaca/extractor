@@ -36,7 +36,8 @@ val viewModelModule = module {
 
     viewModel {
         RootViewModel(
-            datastore = get()
+            datastore = get(),
+            permissionService = get()
         )
     }
 

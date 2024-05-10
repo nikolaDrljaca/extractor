@@ -1,8 +1,5 @@
 package com.drbrosdev.extractor.ui.onboarding
 
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
-import com.drbrosdev.extractor.framework.requiresApi
+import com.drbrosdev.extractor.framework.permission.PermissionService
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import dev.olshevski.navigation.reimagined.replaceAll
@@ -34,14 +31,13 @@ object ExtractorOnboardingNavTarget : NavTarget {
         val scope = rememberCoroutineScope()
         val navController = LocalNavController.current
 
-        val imagePermissionResultLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                if (isGranted) scope.launch {
+        val permissionRequest = PermissionService.requestPermissions {
+            if (it) {
+                scope.launch {
                     pagerState.animateScrollToPage(3)
                 }
             }
-        )
+        }
 
         ExtractorOnboardingScreen(
             pagerState = pagerState,
@@ -55,19 +51,7 @@ object ExtractorOnboardingNavTarget : NavTarget {
                     }
 
                     OnboardingEvents.RequestPermissions -> {
-                        requiresApi(
-                            apiLevel = Build.VERSION_CODES.TIRAMISU,
-                            fallback = {
-                                imagePermissionResultLauncher.launch(
-                                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                                )
-                            },
-                            block = {
-                                imagePermissionResultLauncher.launch(
-                                    android.Manifest.permission.READ_MEDIA_IMAGES
-                                )
-                            }
-                        )
+                        permissionRequest.invoke()
                     }
 
                     OnboardingEvents.StartWorker -> {
