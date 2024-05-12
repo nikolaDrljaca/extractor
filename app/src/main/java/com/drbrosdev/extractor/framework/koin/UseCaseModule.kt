@@ -19,7 +19,9 @@ import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
 import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
 import com.drbrosdev.extractor.domain.usecase.image.create.DefaultCreateInputImage
+import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByDateRange
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByQuery
+import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRange
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitExtractVisualEmbeds
@@ -185,7 +187,15 @@ val useCaseModule = module {
         SearchImages(
             dispatcher = get(named(CoroutineModuleName.Default)),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
+            searchImageByDateRange = get<DefaultSearchImageByDateRange>(),
             dataStore = get(),
         )
     }
+
+    factory {
+        DefaultSearchImageByDateRange(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            extractionDao = get()
+        )
+    } bind SearchImageByDateRange::class
 }

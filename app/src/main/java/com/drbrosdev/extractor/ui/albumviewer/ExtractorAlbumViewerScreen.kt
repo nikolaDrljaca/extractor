@@ -35,8 +35,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGrid
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGrid
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialog
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
@@ -131,7 +131,7 @@ fun ExtractorAlbumViewerScreen(
                     centerSlot = {
                         AlbumHeader(
                             onBack = onBack,
-                            keyword = state.album.keyword,
+                            keyword = state.album.name,
                             metadata = state.metadata
                         )
                     }
