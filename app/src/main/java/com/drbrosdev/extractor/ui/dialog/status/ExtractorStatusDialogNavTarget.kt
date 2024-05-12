@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
 import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CollectFlow
 import com.drbrosdev.extractor.util.CombinedPreview
 import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
@@ -26,9 +27,14 @@ object ExtractorStatusDialogNavTarget : DialogNavTarget {
 
         val dialogNavController = LocalDialogNavController.current
 
+        CollectFlow(flow = viewModel.events) {
+            when (it) {
+                ExtractorStatusDialogEvents.CloseDialog -> dialogNavController.pop()
+            }
+        }
+
         ExtractorStatusDialog(
             state = state,
-            onClick = { viewModel.startExtraction() },
             onCloseClick = {
                 dialogNavController.pop()
             }
@@ -41,8 +47,9 @@ object ExtractorStatusDialogNavTarget : DialogNavTarget {
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         ExtractorStatusDialog(
-            state = ExtractorStatusDialogUiModel(),
-            onClick = {},
+            state = ExtractorStatusDialogUiState.Done(
+                122, 122, {}
+            ),
             onCloseClick = {}
         )
     }
@@ -52,9 +59,10 @@ private fun CurrentPreview() {
 @Composable
 private fun CurrentPreview2() {
     ExtractorTheme(dynamicColor = false) {
-        val state = ExtractorStatusDialogUiModel(
+        val state = ExtractorStatusDialogUiState.InProgress(
             inStorageCount = 23,
-            onDeviceCount = 162
+            onDeviceCount = 162,
+            eventSink = {}
         )
 
         Column(
@@ -62,13 +70,11 @@ private fun CurrentPreview2() {
         ) {
             ExtractorStatusDialog(
                 state = state,
-                onClick = {},
                 onCloseClick = {}
             )
 
             ExtractorStatusDialog(
-                state = state.copy(isExtractionRunning = true),
-                onClick = {},
+                state = state,
                 onCloseClick = {}
             )
         }

@@ -37,10 +37,9 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
 
 @Composable
 fun ExtractorStatusDialog(
-    onClick: () -> Unit,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
-    state: ExtractorStatusDialogUiModel
+    state: ExtractorStatusDialogUiState
 ) {
     val scrollState = rememberScrollState()
 
@@ -75,6 +74,7 @@ fun ExtractorStatusDialog(
                 text = stringResource(R.string.status_explanation),
                 style = MaterialTheme.typography.labelMedium
             )
+
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
 
             ExtractorCountChips(
@@ -86,26 +86,21 @@ fun ExtractorStatusDialog(
             Spacer(modifier = Modifier.height(12.dp))
 
             ExtractorButton(
-                onClick = onClick,
-                enabled = state.shouldAllowExtraction,
+                onClick = { state.eventSink() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                with(state) {
-                    when {
-                        isExtractionRunning -> {
-                            Text(text = state.percentageText)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                strokeCap = StrokeCap.Round,
-                                trackColor = Color.Transparent,
-                                color = Color.LightGray
-                            )
-                        }
-
-                        onDeviceCount == 0 -> Text(text = stringResource(R.string.no_images_found))
-                        onDeviceCount == inStorageCount -> Text(text = stringResource(R.string.all_done))
-                        else -> Text(text = stringResource(id = R.string.start_sync))
+                when (state) {
+                    is ExtractorStatusDialogUiState.CanStart -> Text(text = stringResource(id = R.string.start_sync))
+                    is ExtractorStatusDialogUiState.Done -> Text(text = stringResource(id = R.string.all_done))
+                    is ExtractorStatusDialogUiState.InProgress -> {
+                        Text(text = state.percentageText)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeCap = StrokeCap.Round,
+                            trackColor = Color.Transparent,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 }
             }
