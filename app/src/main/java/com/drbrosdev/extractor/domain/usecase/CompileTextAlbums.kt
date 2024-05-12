@@ -5,7 +5,7 @@ import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
+import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.toList
 class CompileTextAlbums(
     private val dispatcher: CoroutineDispatcher,
     private val textEmbeddingDao: TextEmbeddingDao,
-    private val searchImageByKeyword: SearchImageByKeyword,
+    private val searchImageByQuery: SearchImageByQuery,
     private val albumRepository: AlbumRepository,
     private val tokenizeText: TokenizeText,
     private val validateSuggestedSearchToken: ValidateSuggestedSearchToken,
@@ -32,13 +32,13 @@ class CompileTextAlbums(
         generateMostCommonTokens.invoke(tokens)
             .map { it.text }
             .map { topWord ->
-                val params = SearchImageByKeyword.Params(
+                val params = SearchImageByQuery.Params(
                     query = topWord,
                     keywordType = KeywordType.TEXT,
                     type = SearchType.PARTIAL,
                     dateRange = null
                 )
-                val result = searchImageByKeyword.execute(params)
+                val result = searchImageByQuery.execute(params)
                 result to topWord
             }
             .filter { (embeddings, _) -> embeddings.isNotEmpty() }

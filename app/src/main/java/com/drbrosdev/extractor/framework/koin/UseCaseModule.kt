@@ -19,8 +19,8 @@ import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
 import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
 import com.drbrosdev.extractor.domain.usecase.image.create.DefaultCreateInputImage
-import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByKeyword
-import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
+import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByQuery
+import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
@@ -72,13 +72,13 @@ val useCaseModule = module {
     }
 
     factory {
-        DefaultSearchImageByKeyword(
+        DefaultSearchImageByQuery(
             dispatcher = get(named(CoroutineModuleName.IO)),
             imageEmbedDao = get(),
             tokenizeText = get(),
             createAdaptedQuery = get()
         )
-    } bind SearchImageByKeyword::class
+    } bind SearchImageByQuery::class
 
     single {
         TrackExtractionProgress(
@@ -99,7 +99,7 @@ val useCaseModule = module {
         CompileVisualAlbum(
             dispatcher = get(named(CoroutineModuleName.Default)),
             visualEmbeddingDao = get(),
-            searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
+            searchImageByQuery = get<DefaultSearchImageByQuery>(),
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
             validateSuggestedToken = get(),
@@ -134,7 +134,7 @@ val useCaseModule = module {
         CompileTextAlbums(
             dispatcher = get(named(CoroutineModuleName.Default)),
             textEmbeddingDao = get(),
-            searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
+            searchImageByQuery = get<DefaultSearchImageByQuery>(),
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
             validateSuggestedSearchToken = get(),
@@ -184,7 +184,7 @@ val useCaseModule = module {
     factory {
         SearchImages(
             dispatcher = get(named(CoroutineModuleName.Default)),
-            searchImageByKeyword = get<DefaultSearchImageByKeyword>(),
+            searchImageByQuery = get<DefaultSearchImageByQuery>(),
             dataStore = get(),
         )
     }

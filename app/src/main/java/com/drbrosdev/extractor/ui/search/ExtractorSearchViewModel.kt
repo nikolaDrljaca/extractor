@@ -22,7 +22,7 @@ import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
+import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
@@ -61,7 +61,7 @@ class ExtractorSearchViewModel(
 ) : ViewModel() {
 
     //this can now be modelled with a bespoke sealed interface to distinguish between search and suggestion
-    private val _searchTrigger = MutableStateFlow<SearchImageByKeyword.Params?>(null)
+    private val _searchTrigger = MutableStateFlow<SearchImageByQuery.Params?>(null)
 
     private val _searchTriggerResult = _searchTrigger
         .flatMapLatest { params ->
@@ -199,7 +199,7 @@ class ExtractorSearchViewModel(
         }
     }
 
-    private suspend fun performImageSearch(searchParams: SearchImageByKeyword.Params): ExtractorSearchContainerState {
+    private suspend fun performImageSearch(searchParams: SearchImageByQuery.Params): ExtractorSearchContainerState {
         return imageSearch.execute(searchParams).fold(
             ifLeft = {
                 ExtractorSearchContainerState.NoSearchesLeft(
@@ -254,7 +254,7 @@ class ExtractorSearchViewModel(
     private fun searchSheetEventHandler(event: ExtractorSearchSheetEvents) {
         val params = when (event) {
             is ExtractorSearchSheetEvents.OnChange -> with(event.data) {
-                SearchImageByKeyword.Params(
+                SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
@@ -263,7 +263,7 @@ class ExtractorSearchViewModel(
             }
 
             is ExtractorSearchSheetEvents.OnDateChange -> with(event.data) {
-                SearchImageByKeyword.Params(
+                SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
@@ -276,7 +276,7 @@ class ExtractorSearchViewModel(
                     _events.send(ExtractorSearchScreenEvents.HideKeyboard)
                 }
 
-                SearchImageByKeyword.Params(
+                SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
@@ -298,7 +298,7 @@ class ExtractorSearchViewModel(
     }
 
     private fun imageSearchWithSuggestion(suggestedSearch: SuggestedSearch) {
-        val params = SearchImageByKeyword.Params(
+        val params = SearchImageByQuery.Params(
             query = suggestedSearch.query,
             keywordType = suggestedSearch.keywordType,
             type = suggestedSearch.searchType,
