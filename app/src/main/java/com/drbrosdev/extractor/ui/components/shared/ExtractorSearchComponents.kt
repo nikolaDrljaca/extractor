@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -170,7 +169,10 @@ fun ExtractorSearchFabStack(
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.primary
         ) {
-            Icon(imageVector = Icons.Rounded.Add, contentDescription = null)
+            Icon(
+                painter = painterResource(id = R.drawable.round_save_24),
+                contentDescription = null
+            )
         }
     }
 }
