@@ -168,7 +168,7 @@ fun ExtractorDateFilter(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Refresh,
-                    contentDescription = "Search Images",
+                    contentDescription = "",
                     tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
                     modifier = Modifier.padding(12.dp)
                 )

@@ -16,14 +16,16 @@ import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
+import com.drbrosdev.extractor.domain.model.asAlbumName
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByKeyword
+import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.framework.StringResourceProvider
+import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetEvents
@@ -61,7 +63,7 @@ class ExtractorSearchViewModel(
 ) : ViewModel() {
 
     //this can now be modelled with a bespoke sealed interface to distinguish between search and suggestion
-    private val _searchTrigger = MutableStateFlow<SearchImageByKeyword.Params?>(null)
+    private val _searchTrigger = MutableStateFlow<SearchImageByQuery.Params?>(null)
 
     private val _searchTriggerResult = _searchTrigger
         .flatMapLatest { params ->
@@ -199,7 +201,9 @@ class ExtractorSearchViewModel(
         }
     }
 
-    private suspend fun performImageSearch(searchParams: SearchImageByKeyword.Params): ExtractorSearchContainerState {
+    private suspend fun performImageSearch(
+        searchParams: SearchImageByQuery.Params
+    ): ExtractorSearchContainerState {
         return imageSearch.execute(searchParams).fold(
             ifLeft = {
                 ExtractorSearchContainerState.NoSearchesLeft(
@@ -254,7 +258,7 @@ class ExtractorSearchViewModel(
     private fun searchSheetEventHandler(event: ExtractorSearchSheetEvents) {
         val params = when (event) {
             is ExtractorSearchSheetEvents.OnChange -> with(event.data) {
-                SearchImageByKeyword.Params(
+                SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
@@ -263,7 +267,7 @@ class ExtractorSearchViewModel(
             }
 
             is ExtractorSearchSheetEvents.OnDateChange -> with(event.data) {
-                SearchImageByKeyword.Params(
+                SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
@@ -276,7 +280,7 @@ class ExtractorSearchViewModel(
                     _events.send(ExtractorSearchScreenEvents.HideKeyboard)
                 }
 
-                SearchImageByKeyword.Params(
+                SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
@@ -286,7 +290,7 @@ class ExtractorSearchViewModel(
         }
 
         //don't perform a search with no query
-        if (params.query.isBlank()) return
+        if (params.query.isBlank() and (params.dateRange == null)) return
 
         _searchTrigger.update { params }
     }
@@ -298,7 +302,7 @@ class ExtractorSearchViewModel(
     }
 
     private fun imageSearchWithSuggestion(suggestedSearch: SuggestedSearch) {
-        val params = SearchImageByKeyword.Params(
+        val params = SearchImageByQuery.Params(
             query = suggestedSearch.query,
             keywordType = suggestedSearch.keywordType,
             type = suggestedSearch.searchType,
@@ -331,6 +335,7 @@ class ExtractorSearchViewModel(
                     updateKeywordType(KeywordType.ALL)
                     updateQuery("")
                 }
+                searchSheetState.dateFilterState.clearDates()
                 _searchTrigger.update { null }
             }
 
@@ -352,9 +357,18 @@ class ExtractorSearchViewModel(
     }
 
     private suspend fun compileUserAlbum(input: List<Extraction>) {
+        // decide album name based on query type -> Text or Date
+        val albumName = with(searchSheetState) {
+            when {
+                searchViewState.query.isNotBlank() -> searchViewState.query
+                dateFilterState.dateRange() != null -> dateFilterState.dateRange()!!.asAlbumName()
+                else -> ""
+            }
+        }
+
         val newAlbum = NewAlbum(
+            name = albumName,
             keyword = searchSheetState.searchViewState.query,
-            name = searchSheetState.searchViewState.query,
             searchType = searchSheetState.searchViewState.searchType,
             keywordType = searchSheetState.searchViewState.keywordType,
             origin = NewAlbum.Origin.USER_GENERATED,

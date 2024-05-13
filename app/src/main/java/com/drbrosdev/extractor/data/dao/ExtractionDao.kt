@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.first
 @Dao
 interface ExtractionDao {
 
-    //TODO: CRUD methods on ImageExtractionEntity should have their own dao
     @Query("SELECT * FROM image_extraction_entity")
     fun findAllAsFlow(): Flow<List<ExtractionEntity>>
 
@@ -43,4 +42,12 @@ interface ExtractionDao {
     fun getCountAsFlow(): Flow<Int>
 
     suspend fun getCount(): Int = getCountAsFlow().first()
+
+    @Query("""
+        SELECT * 
+        FROM image_extraction_entity
+        WHERE date_added BETWEEN :start AND :end
+        ORDER BY date_added DESC
+    """)
+    suspend fun findByDateRange(start: String, end: String): List<ExtractionEntity>
 }

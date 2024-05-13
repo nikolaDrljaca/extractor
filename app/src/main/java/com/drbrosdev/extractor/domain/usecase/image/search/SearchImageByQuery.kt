@@ -6,7 +6,7 @@ import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 
 
-interface SearchImageByKeyword {
+interface SearchImageByQuery {
 
     suspend fun execute(params: Params): List<Extraction>
 

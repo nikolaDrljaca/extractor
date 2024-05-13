@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.domain.usecase.image.search
 
-import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
@@ -12,14 +11,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 
-class DefaultSearchImageByKeyword(
+class DefaultSearchImageByQuery(
     private val dispatcher: CoroutineDispatcher,
     private val imageEmbedDao: ImageEmbeddingsDao,
     private val tokenizeText: TokenizeText,
     private val createAdaptedQuery: CreateAdaptedQuery
-) : SearchImageByKeyword {
+) : SearchImageByQuery {
 
-    override suspend fun execute(params: SearchImageByKeyword.Params): List<Extraction> =
+    override suspend fun execute(params: SearchImageByQuery.Params): List<Extraction> =
         withContext(dispatcher) {
             val cleanQuery = tokenizeText.invoke(params.query)
                 .toList()
@@ -33,7 +32,7 @@ class DefaultSearchImageByKeyword(
             val adaptedQuery = createAdaptedQuery.invoke(createAdaptedQueryParams)
 
             imageEmbedDao.findByKeyword(adaptedQuery.query)
-                .parMap(context = dispatcher) { it.imageEntity.toExtraction() }
+                .map { it.imageEntity.toExtraction() }
                 .filterByDateRange(params.dateRange)
         }
 
