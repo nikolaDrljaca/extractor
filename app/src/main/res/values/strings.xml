@@ -145,4 +145,5 @@
     <string name="webage" translatable="false">https://lupa-hazel.vercel.app/</string>
     <string name="webpage_privacy" translatable="false">https://lupa-hazel.vercel.app/privacy</string>
     <string name="app_store_link" translatable="false">https://play.google.com/store/apps/details?id=com.drbrosdev.extractor</string>
+    <string name="disabled">Disabled.</string>
 </resources>

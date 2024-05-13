@@ -54,8 +54,14 @@ fun ExtractorSearchTextField(
 ) {
     val textStyle = MaterialTheme.typography.titleLarge
 
+    val placeholderText = when {
+        enabled -> stringResource(id = R.string.search_here)
+        else -> stringResource(R.string.disabled)
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
@@ -108,7 +114,7 @@ fun ExtractorSearchTextField(
                     ),
                     placeholder = {
                         Text(
-                            text = stringResource(R.string.search_here),
+                            text = placeholderText,
                             style = textStyle,
                             color = textColor.copy(alpha = 0.5f)
                         )
@@ -139,7 +145,9 @@ fun ExtractorSearchTextField(
 private fun CurrentPreview() {
     ExtractorTheme {
         Column {
-            ExtractorSearchTextField(text = "", onChange = {}, onDoneSubmit = {})
+            ExtractorSearchTextField(
+                text = "", onChange = {}, onDoneSubmit = {}, enabled = false
+            )
             ExtractorSearchTextField(text = "sample", onChange = {}, onDoneSubmit = {})
         }
     }
