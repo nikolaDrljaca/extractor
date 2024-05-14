@@ -134,7 +134,7 @@
     <string name="get_more">Get More</string>
     <string name="buy_disclaimer">*We don\'t store any info about your purchases. That means any searches purchased are stored only on your device. Should you uninstall the app we\'ll try our best to restore your searches using Google Plays purchase history.</string>
     <string name="buy_more">Buy More</string>
-    <string name="direct_support">You can also support us directly and not watch ads by selecting one of the options below.*</string>
+    <string name="direct_support">You get more searches and support us directly by selecting one of the options below.*</string>
     <string name="watch_an_ad">Watch an Ad</string>
     <string name="ad_support">You can get 100 searches by viewing a full screen ad that lasts 5 seconds. This will provide a kickback to us, and allow you to keep using the app for free.</string>
     <string name="indexing_active_albums_create">Indexing is still active. When finished, you can create albums based on most common keywords.</string>
