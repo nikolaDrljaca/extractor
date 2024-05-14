@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.getmore
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -51,87 +53,84 @@ fun ExtractorGetMoreScreen(
     )
 
     val scrollState = rememberScrollState()
-
-    ConstraintLayout(
-        modifier = Modifier
-            .systemBarsPadding()
-            .fillMaxSize()
-            .verticalScroll(scrollState),
-        constraintSet = getMoreScreenConstraintSet()
-    ) {
-        Row(
+    Box(modifier = Modifier.fillMaxSize()) {
+        ConstraintLayout(
             modifier = Modifier
-                .fillMaxWidth()
-                .layoutId(ViewIds.HEADER),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .systemBarsPadding()
+                .fillMaxSize()
+                .verticalScroll(scrollState),
+            constraintSet = getMoreScreenConstraintSet()
         ) {
-            BackIconButton(
-                onBack = onBack,
-            )
-        }
-
-        ExtractorViewAdContainer(
-            modifier = Modifier.layoutId(ViewIds.AD_VIEW)
-        )
-
-        Column(
-            modifier = Modifier.layoutId(ViewIds.BUY_VIEW),
-            verticalArrangement = Arrangement.spacedBy(space = 8.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.buy_more),
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Text(
-                text = stringResource(R.string.direct_support),
-                style = textStyle
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            FlowRow(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                maxItemsInEachRow = 2
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .layoutId(ViewIds.HEADER),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                repeat(4) {
-                    ExtractorShopItem(
-                        onClick = onPurchaseItemClick,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+                BackIconButton(
+                    onBack = onBack,
+                )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.buy_disclaimer),
-                style = smallLabel
+            ExtractorViewAdContainer(
+                modifier = Modifier.layoutId(ViewIds.AD_VIEW)
             )
+
+            Column(
+                modifier = Modifier.layoutId(ViewIds.BUY_VIEW),
+                verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.buy_more),
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Text(
+                    text = stringResource(R.string.direct_support),
+                    style = textStyle
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                FlowRow(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    maxItemsInEachRow = 2
+                ) {
+                    repeat(4) {
+                        ExtractorShopItem(
+                            onClick = onPurchaseItemClick,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = stringResource(R.string.buy_disclaimer),
+                    style = smallLabel
+                )
+            }
+
         }
 
         SnackbarHost(
             hostState = snackbarState,
-            modifier = Modifier.layoutId(ViewIds.SNACKBAR)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(24.dp)
         ) {
             RewardSnackbar()
         }
     }
+
 }
 
 private fun getMoreScreenConstraintSet() = ConstraintSet {
     val adsView = createRefFor(ViewIds.AD_VIEW)
     val buyView = createRefFor(ViewIds.BUY_VIEW)
     val header = createRefFor(ViewIds.HEADER)
-    val snackbar = createRefFor(ViewIds.SNACKBAR)
-
-    constrain(snackbar) {
-        bottom.linkTo(parent.bottom, margin = 24.dp)
-        start.linkTo(parent.start, margin = 16.dp)
-        end.linkTo(parent.end, margin = 16.dp)
-        width = Dimension.fillToConstraints
-    }
 
     constrain(header) {
         start.linkTo(parent.start)
@@ -157,5 +156,4 @@ private object ViewIds {
     const val AD_VIEW = "ad_view"
     const val BUY_VIEW = "buy_view"
     const val HEADER = "header_view"
-    const val SNACKBAR = "get_more_snackbar"
 }
