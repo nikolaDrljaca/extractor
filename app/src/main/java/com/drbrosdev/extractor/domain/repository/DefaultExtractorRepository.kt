@@ -45,6 +45,16 @@ class DefaultExtractorRepository(
         searchIndexDao.deleteByMediaId(mediaImageId)
     }
 
+    override suspend fun deleteExtractionDataAndSearchIndex() {
+        txRunner.withTransaction {
+            searchIndexDao.deleteAll()
+            userEmbeddingDao.deleteAll()
+            visualEmbeddingDao.deleteAll()
+            textEmbeddingDao.deleteAll()
+            extractionDao.deleteAll()
+        }
+    }
+
     override suspend fun getAllIds(): Set<Long> {
         return extractionDao.findAllIds().toSet()
     }

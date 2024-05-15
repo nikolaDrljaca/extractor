@@ -16,8 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -84,29 +84,27 @@ fun ExtractorButton(
 fun OutlinedExtractorActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
-    content: @Composable (RowScope.() -> Unit)
-) {
-    val mainColor = if (isSystemInDarkTheme()) {
+    contentColor: Color = if (isSystemInDarkTheme()) {
         MaterialTheme.colorScheme.onBackground
     } else {
         MaterialTheme.colorScheme.primary
-    }
+    },
+    contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
+    content: @Composable (RowScope.() -> Unit)
+) {
 
     OutlinedButton(
         onClick = onClick,
         modifier = Modifier
             .then(modifier),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = mainColor
+            contentColor = contentColor
         ),
         contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp),
         border = ButtonDefaults.outlinedButtonBorder.copy(
             width = 1.dp,
-            brush = Brush.linearGradient(
-                listOf(mainColor, mainColor)
-            )
+            brush = SolidColor(contentColor)
         )
     ) {
         content()

@@ -146,4 +146,9 @@
     <string name="webpage_privacy" translatable="false">https://lupa-hazel.vercel.app/privacy</string>
     <string name="app_store_link" translatable="false">https://play.google.com/store/apps/details?id=com.drbrosdev.extractor</string>
     <string name="disabled">Disabled.</string>
+    <string name="reset_index">Reset Index</string>
+    <string name="clear_event_logs">Clear Event Logs</string>
+    <string name="delete_index_and_start_worker">Delete Index and start worker</string>
+    <string name="reset_index_expl">Delete the built image index and restart the indexing process. This is useful if you believe the index was corrupted, or when the app receives an update to its algorithm and models.\nThis action is not reversible.</string>
+    <string name="this_is_a_destructive_action">This is a destructive action.</string>
 </resources>

@@ -33,6 +33,7 @@ import com.drbrosdev.extractor.ui.components.actionchips.AboutLink
 import com.drbrosdev.extractor.ui.components.actionchips.ExtractorActionChips
 import com.drbrosdev.extractor.ui.components.extractorabout.ExtractorAbout
 import com.drbrosdev.extractor.ui.components.extractorlicenses.ExtractorLicenses
+import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorRedZoneSettings
 import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettings
 import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettingsState
 import com.drbrosdev.extractor.ui.components.settingstabs.ExtractorSettingsTabContainer
@@ -50,6 +51,8 @@ fun ExtractorSettingsScreen(
     onLicenseClick: (link: String) -> Unit,
     onPeriodicSyncClick: () -> Unit,
     onAboutLink: (AboutLink) -> Unit,
+    onResetIndex: () -> Unit,
+    onClearEventLogs: () -> Unit,
     modifier: Modifier = Modifier,
     settingsState: ExtractorSettingsState
 ) {
@@ -93,10 +96,19 @@ fun ExtractorSettingsScreen(
                         .fillMaxWidth(),
                 ) {
                     when (it) {
-                        SettingsTabItem.Settings -> ExtractorSettings(
-                            onPeriodicSyncClick = onPeriodicSyncClick,
-                            state = settingsState
-                        )
+                        SettingsTabItem.Settings -> {
+                            Column {
+                                ExtractorSettings(
+                                    onPeriodicSyncClick = onPeriodicSyncClick,
+                                    state = settingsState
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+                                ExtractorRedZoneSettings(
+                                    onResetIndex = onResetIndex,
+                                    onClearEventLogs = onClearEventLogs
+                                )
+                            }
+                        }
 
                         SettingsTabItem.About -> ExtractorAbout()
                         SettingsTabItem.Licenses -> ExtractorLicenses(onClick = onLicenseClick)

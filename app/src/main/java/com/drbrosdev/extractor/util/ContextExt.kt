@@ -72,6 +72,8 @@ fun Context.launchPrivacyPolicyIntent() {
     startActivity(intent)
 }
 
+
+
 suspend fun Context.launchEditIntent(media: MediaStoreImage) =
     withContext(Dispatchers.Default) {
         val intent = Intent(Intent.ACTION_EDIT).apply {
@@ -127,4 +129,9 @@ fun Context.checkAndRequestPermission(
 
 fun Context.showToast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, message, duration).show()
+}
+
+fun Context.showToast(messageResId: Int) {
+    val message = getString(messageResId)
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }

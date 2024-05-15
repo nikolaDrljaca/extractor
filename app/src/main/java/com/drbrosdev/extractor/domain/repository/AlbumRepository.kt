@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {
 
+    suspend fun deleteAllData()
+
     suspend fun createAlbum(newAlbum: NewAlbum)
 
     fun findAlbumByIdAsFlow(albumId: Long): Flow<Album?>
