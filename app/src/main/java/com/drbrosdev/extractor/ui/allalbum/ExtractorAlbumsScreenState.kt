@@ -32,7 +32,7 @@ data class AlbumItemUiModel(
 
 fun Album.toItemUiModel(): AlbumItemUiModel {
     return AlbumItemUiModel(
-        keyword = this.keyword,
+        keyword = this.name,
         metadata = "${keywordType.name.lowercase()} \u00B7 ${searchType.name.lowercase()} \u00B7 ${entries.size}",
         id = this.id,
         thumbnails = this.entries.map { it.uri.toUri() }

@@ -155,8 +155,8 @@ fun ExtractorSearchFabStack(
     ) {
         SmallFloatingActionButton(
             onClick = onResetClick,
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
         ) {
             Icon(
                 imageVector = Icons.Rounded.Refresh,
@@ -166,8 +166,8 @@ fun ExtractorSearchFabStack(
 
         FloatingActionButton(
             onClick = onAddClick,
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.round_save_24),
