@@ -16,6 +16,7 @@ import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
 import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackViewModel
+import com.drbrosdev.extractor.ui.settings.clearevent.ExtractorClearEventsViewModel
 import com.drbrosdev.extractor.ui.settings.index.ExtractorResetIndexViewModel
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -26,6 +27,12 @@ val viewModelModule = module {
         ExtractorResetIndexViewModel(
             extractorRepository = get<DefaultExtractorRepository>(),
             spawnExtractorWork = get()
+        )
+    }
+
+    viewModel {
+        ExtractorClearEventsViewModel(
+            eventDao = get()
         )
     }
 

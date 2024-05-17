@@ -8,6 +8,7 @@ import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.components.actionchips.AboutLink
 import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettingsState
 import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackNavTarget
+import com.drbrosdev.extractor.ui.settings.clearevent.ExtractorClearEventsNavTarget
 import com.drbrosdev.extractor.ui.settings.index.ExtractorResetIndexNavTarget
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -49,7 +50,9 @@ object ExtractorSettingsNavTarget : NavTarget {
                     AboutLink.RATE -> context.launchPlayStorePage()
                 }
             },
-            onClearEventLogs = {},
+            onClearEventLogs = {
+                navController.navigate(ExtractorClearEventsNavTarget)
+            },
             onResetIndex = {
                 navController.navigate(ExtractorResetIndexNavTarget)
             },

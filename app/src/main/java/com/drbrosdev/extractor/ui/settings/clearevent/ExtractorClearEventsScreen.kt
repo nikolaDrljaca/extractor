@@ -1,9 +1,5 @@
-package com.drbrosdev.extractor.ui.settings.index
+package com.drbrosdev.extractor.ui.settings.clearevent
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,17 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,11 +25,12 @@ import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
 
+
 @Composable
-fun ExtractorResetIndexScreen(
+fun ExtractorClearEventsScreen(
     onBack: () -> Unit,
-    onResetIndex: () -> Unit,
-    isLoading: Boolean
+    onClearLogs: () -> Unit,
+    eventCount: Int = 0,
 ) {
     val textStyle = MaterialTheme.typography.bodyMedium.copy(
         fontWeight = FontWeight.Normal
@@ -57,7 +50,7 @@ fun ExtractorResetIndexScreen(
             Spacer(modifier = Modifier.height(120.dp))
 
             Text(
-                text = stringResource(R.string.reset_index),
+                text = "Clear Event Logs",
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -83,38 +76,28 @@ fun ExtractorResetIndexScreen(
             }
 
             Text(
-                text = stringResource(R.string.reset_index_expl),
+                text = "Clear the application event log. Event logs are stored locally and describe things that happen while you use the app.\nThis can be very helpful to the developers when the app crashes or does something unexpected. Whilst they should not take up too much space, you still have the control to delete them all here, if you wish.",
                 style = textStyle,
                 modifier = Modifier.padding(
                     vertical = 8.dp
                 )
             )
 
+            Text(
+                text = "Logs stored: $eventCount",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
             OutlinedExtractorActionButton(
-                onClick = onResetIndex,
+                onClick = onClearLogs,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 contentColor = MaterialTheme.colorScheme.error
             ) {
-                AnimatedContent(
-                    targetState = isLoading,
-                    label = "",
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }
-                ) {
-                    if (it) {
-                        CircularProgressIndicator(
-                            trackColor = Color.Transparent,
-                            strokeCap = StrokeCap.Round,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    } else {
-                        Text(text = stringResource(R.string.delete_index_and_start_worker))
-                    }
-                }
+                Text(text = "Delete Event Logs")
             }
-
         }
 
         ExtractorTopBar(

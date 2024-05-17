@@ -1,12 +1,16 @@
 package com.drbrosdev.extractor.ui.settings.index
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CollectFlow
+import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.showToast
 import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
@@ -36,5 +40,21 @@ data object ExtractorResetIndexNavTarget : NavTarget {
             onResetIndex = viewModel::resetImageIndex,
             isLoading = isActionLoading
         )
+    }
+}
+
+@ScreenPreview
+@Composable
+private fun CurrentPreview() {
+    ExtractorTheme(dynamicColor = false) {
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+            ExtractorResetIndexScreen(
+                onBack = { /*TODO*/ },
+                onResetIndex = { /*TODO*/ },
+                isLoading = false
+            )
+        }
     }
 }
