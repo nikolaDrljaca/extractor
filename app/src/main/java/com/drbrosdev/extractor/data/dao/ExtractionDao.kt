@@ -35,6 +35,9 @@ interface ExtractionDao {
     @Delete
     suspend fun delete(value: ExtractionEntity)
 
+    @Query("DELETE FROM image_extraction_entity")
+    suspend fun deleteAll()
+
     @Query("DELETE FROM image_extraction_entity WHERE media_store_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long): Int
 

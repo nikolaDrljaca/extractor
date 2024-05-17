@@ -43,6 +43,9 @@ interface TextEmbeddingDao {
     @Delete
     suspend fun delete(value: TextEmbeddingEntity)
 
+    @Query("DELETE FROM text_embedding")
+    suspend fun deleteAll()
+
     @Query("DELETE FROM text_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
 

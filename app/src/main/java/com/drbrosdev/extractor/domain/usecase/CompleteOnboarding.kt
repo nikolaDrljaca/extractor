@@ -13,7 +13,7 @@ class CompleteOnboarding(
         spawnExtractorWork.invoke()
 
         withContext(dispatcher) {
-            dataStore.incrementSearchCount(amount = 100)
+            dataStore.incrementSearchCountBy(amount = 100)
             dataStore.finishOnboarding()
         }
     }

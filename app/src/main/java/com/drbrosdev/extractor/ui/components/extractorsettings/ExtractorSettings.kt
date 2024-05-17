@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
@@ -48,7 +49,7 @@ fun ExtractorSettings(
         }
 
         ExtractorSettingsItem(
-            trailingSlot =  {
+            trailingSlot = {
                 Switch(
                     checked = state.enabledTextAlbums,
                     onCheckedChange = state::updateEnabledTextAlbums,
@@ -59,7 +60,7 @@ fun ExtractorSettings(
         }
 
         ExtractorSettingsItem(
-            trailingSlot =  {
+            trailingSlot = {
                 Switch(
                     checked = state.enableDynamicColor,
                     onCheckedChange = state::updateEnableDynamicColor,
@@ -73,7 +74,10 @@ fun ExtractorSettings(
             itemPosition = ExtractorSettingsItemPosition.LAST,
             onClick = onPeriodicSyncClick,
             trailingSlot = {
-                Icon(imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null)
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                    contentDescription = null
+                )
             }
         ) {
             Text(text = stringResource(R.string.periodic_sync))
@@ -90,24 +94,37 @@ enum class ExtractorSettingsItemPosition {
 @Composable
 fun ExtractorSettingsItem(
     modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
     itemPosition: ExtractorSettingsItemPosition = ExtractorSettingsItemPosition.NORMAL,
     onClick: () -> Unit,
     trailingSlot: (@Composable RowScope.() -> Unit)? = null,
     slot: @Composable RowScope.() -> Unit
 ) {
     val shape = when (itemPosition) {
-        ExtractorSettingsItemPosition.FIRST -> RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp, bottomEnd = 2.dp, bottomStart = 2.dp)
+        ExtractorSettingsItemPosition.FIRST -> RoundedCornerShape(
+            topStart = 12.dp,
+            topEnd = 12.dp,
+            bottomEnd = 2.dp,
+            bottomStart = 2.dp
+        )
+
         ExtractorSettingsItemPosition.NORMAL -> RoundedCornerShape(2.dp)
-        ExtractorSettingsItemPosition.LAST -> RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp, bottomEnd = 12.dp, bottomStart = 12.dp)
+        ExtractorSettingsItemPosition.LAST -> RoundedCornerShape(
+            topStart = 2.dp,
+            topEnd = 2.dp,
+            bottomEnd = 12.dp,
+            bottomStart = 12.dp
+        )
     }
 
     Surface(
         onClick = onClick,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = color,
         shape = shape,
         modifier = Modifier
             .then(modifier),
-        contentColor = MaterialTheme.colorScheme.onBackground
+        contentColor = contentColor,
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -124,24 +141,37 @@ fun ExtractorSettingsItem(
 }
 
 @Composable
-private fun ExtractorSettingsItem(
+fun ExtractorSettingsItem(
     modifier: Modifier = Modifier,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
+    color: Color = MaterialTheme.colorScheme.surfaceVariant,
     itemPosition: ExtractorSettingsItemPosition = ExtractorSettingsItemPosition.NORMAL,
     trailingSlot: (@Composable RowScope.() -> Unit)? = null,
     slot: @Composable RowScope.() -> Unit
 ) {
     val shape = when (itemPosition) {
-        ExtractorSettingsItemPosition.FIRST -> RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp, bottomEnd = 2.dp, bottomStart = 2.dp)
+        ExtractorSettingsItemPosition.FIRST -> RoundedCornerShape(
+            topStart = 12.dp,
+            topEnd = 12.dp,
+            bottomEnd = 2.dp,
+            bottomStart = 2.dp
+        )
+
         ExtractorSettingsItemPosition.NORMAL -> RoundedCornerShape(2.dp)
-        ExtractorSettingsItemPosition.LAST -> RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp, bottomEnd = 12.dp, bottomStart = 12.dp)
+        ExtractorSettingsItemPosition.LAST -> RoundedCornerShape(
+            topStart = 2.dp,
+            topEnd = 2.dp,
+            bottomEnd = 12.dp,
+            bottomStart = 12.dp
+        )
     }
 
     Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = color,
         shape = shape,
         modifier = Modifier
             .then(modifier),
-        contentColor = MaterialTheme.colorScheme.onBackground
+        contentColor = contentColor
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,

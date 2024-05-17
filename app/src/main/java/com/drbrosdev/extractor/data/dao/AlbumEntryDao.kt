@@ -31,6 +31,9 @@ interface AlbumEntryDao {
     @Delete
     suspend fun delete(entry: AlbumEntryEntity)
 
+    @Query("DELETE FROM album_entry")
+    suspend fun deleteAll()
+
     @Query("DELETE FROM album_entry WHERE id=:entryId")
     suspend fun deleteById(entryId: Long)
 

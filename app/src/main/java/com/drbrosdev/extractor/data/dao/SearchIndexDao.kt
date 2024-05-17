@@ -60,6 +60,9 @@ interface SearchIndexDao {
     @Delete
     suspend fun delete(value: SearchIndexEntity)
 
+    @Query("DELETE FROM search_index")
+    suspend fun deleteAll()
+
     @Update
     suspend fun update(value: SearchIndexEntity)
 }

@@ -30,6 +30,9 @@ interface AlbumDao {
     @Delete
     suspend fun delete(albumEntity: AlbumEntity)
 
+    @Query("DELETE FROM album")
+    suspend fun deleteAll()
+
     @Query("DELETE FROM album WHERE album_id=:albumId")
     suspend fun deleteById(albumId: Long)
 

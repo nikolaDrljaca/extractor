@@ -41,6 +41,14 @@ class DefaultAlbumRepository(
         albumEntryDao.deleteByIds(albumItemIds)
     }
 
+    override suspend fun deleteAllData() {
+        runner.withTransaction {
+            albumDao.deleteAll()
+            albumEntryDao.deleteAll()
+            albumConfigurationDao.deleteAll()
+        }
+    }
+
     override suspend fun createAlbum(newAlbum: NewAlbum) = runner.withTransaction {
         val albumId = albumDao.insert(
             AlbumEntity(

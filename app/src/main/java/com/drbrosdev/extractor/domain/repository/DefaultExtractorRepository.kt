@@ -16,6 +16,7 @@ import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
+import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.util.toImageEmbeds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +36,7 @@ class DefaultExtractorRepository(
 ) : ExtractorRepository {
 
     override suspend fun deleteExtractionData(mediaImageId: Long) {
+        logEvent("Reset search index invoked.")
         val countDeleted = extractionDao.deleteByMediaId(mediaImageId)
         if (countDeleted == 0) return
 
@@ -43,6 +45,16 @@ class DefaultExtractorRepository(
         userEmbeddingDao.deleteByMediaId(mediaImageId)
         // update search index
         searchIndexDao.deleteByMediaId(mediaImageId)
+    }
+
+    override suspend fun deleteExtractionDataAndSearchIndex() {
+        txRunner.withTransaction {
+            searchIndexDao.deleteAll()
+            userEmbeddingDao.deleteAll()
+            visualEmbeddingDao.deleteAll()
+            textEmbeddingDao.deleteAll()
+            extractionDao.deleteAll()
+        }
     }
 
     override suspend fun getAllIds(): Set<Long> {

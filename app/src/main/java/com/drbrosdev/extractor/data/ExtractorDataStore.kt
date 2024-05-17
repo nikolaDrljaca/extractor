@@ -44,7 +44,7 @@ class ExtractorDataStore(
         }
     }
 
-    suspend fun incrementSearchCount(amount: Int = 1) {
+    suspend fun incrementSearchCountBy(amount: Int = 1) {
         datastore.edit {
             val current = it[SEARCH_COUNTER] ?: 0
             it[SEARCH_COUNTER] = current.plus(amount)

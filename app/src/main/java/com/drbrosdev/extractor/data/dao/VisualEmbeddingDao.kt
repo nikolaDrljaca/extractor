@@ -31,6 +31,9 @@ interface VisualEmbeddingDao {
     @Delete
     suspend fun delete(value: VisualEmbeddingEntity)
 
+    @Query("DELETE FROM visual_embedding")
+    suspend fun deleteAll()
+
     @Query("DELETE FROM visual_embedding WHERE id=:id")
     suspend fun deleteById(id: Long)
 

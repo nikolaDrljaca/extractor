@@ -41,6 +41,9 @@ interface UserEmbeddingDao {
     @Delete
     suspend fun delete(value: UserEmbeddingEntity)
 
+    @Query("DELETE FROM user_embedding")
+    suspend fun deleteAll()
+
     @Query("DELETE FROM user_embedding WHERE extraction_entity_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
 

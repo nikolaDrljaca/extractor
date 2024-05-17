@@ -31,6 +31,9 @@ interface EventLogDao {
     @Delete
     suspend fun delete(entry: EventEntity)
 
+    @Query("DELETE FROM event_entity")
+    suspend fun deleteAll()
+
     @Query(
         """
         SELECT *
@@ -49,5 +52,13 @@ interface EventLogDao {
     """
     )
     suspend fun count(): Int
+
+    @Query(
+        """
+        SELECT count(*)
+        FROM event_entity
+    """
+    )
+    fun countAsFlow(): Flow<Int>
 
 }
