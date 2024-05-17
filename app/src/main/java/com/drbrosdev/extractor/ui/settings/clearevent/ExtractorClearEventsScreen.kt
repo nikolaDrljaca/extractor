@@ -50,7 +50,7 @@ fun ExtractorClearEventsScreen(
             Spacer(modifier = Modifier.height(120.dp))
 
             Text(
-                text = "Clear Event Logs",
+                text = stringResource(id = R.string.clear_event_logs),
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -76,7 +76,7 @@ fun ExtractorClearEventsScreen(
             }
 
             Text(
-                text = "Clear the application event log. Event logs are stored locally and describe things that happen while you use the app.\nThis can be very helpful to the developers when the app crashes or does something unexpected. Whilst they should not take up too much space, you still have the control to delete them all here, if you wish.",
+                text = stringResource(R.string.expl_clear_event_logs),
                 style = textStyle,
                 modifier = Modifier.padding(
                     vertical = 8.dp
@@ -84,7 +84,7 @@ fun ExtractorClearEventsScreen(
             )
 
             Text(
-                text = "Logs stored: $eventCount",
+                text = stringResource(R.string.logs_stored, eventCount),
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
@@ -96,7 +96,7 @@ fun ExtractorClearEventsScreen(
                     .padding(vertical = 8.dp),
                 contentColor = MaterialTheme.colorScheme.error
             ) {
-                Text(text = "Delete Event Logs")
+                Text(text = stringResource(R.string.delete_event_logs))
             }
         }
 

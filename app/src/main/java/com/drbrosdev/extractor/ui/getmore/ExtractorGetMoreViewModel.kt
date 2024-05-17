@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import kotlinx.coroutines.launch
 
+// TODO: wip
 class ExtractorGetMoreViewModel(
     private val datastore: ExtractorDataStore
 ) : ViewModel() {
@@ -16,12 +17,13 @@ class ExtractorGetMoreViewModel(
     fun rewardPurchase() {
         viewModelScope.launch {
             snackbarHostState.showSnackbar(message = "", duration = SnackbarDuration.Long)
+            datastore.incrementSearchCountBy(amount = 100)
         }
     }
 
     fun rewardSearches() {
         viewModelScope.launch {
-            datastore.incrementSearchCount(amount = 100)
+            datastore.incrementSearchCountBy(amount = 100)
         }
     }
 }

@@ -124,7 +124,6 @@ fun ExtractorGetMoreScreen(
             RewardSnackbar()
         }
     }
-
 }
 
 private fun getMoreScreenConstraintSet() = ConstraintSet {
