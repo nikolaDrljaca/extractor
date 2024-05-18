@@ -19,13 +19,16 @@ class ExtractorImageInfoViewModel(
 ) : ViewModel() {
     private val checkedVisualEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
+    private val checkedUserEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+
     val imageInfoModel = extractorDataRepository
         .findImageDataByMediaId(mediaImageId = MediaImageId(mediaImageId))
         .filterNotNull()
         .combine(checkedVisualEmbeds) { imageInfoUiModel, checkedEmbeds ->
             ExtractorImageInfoUiState(
                 mediaImageId = MediaImageId(mediaImageId),
-                userEmbedding = imageInfoUiModel.userEmbeds?.value,
+                // TODO
+                userEmbedding = imageInfoUiModel.userEmbeds.joinToString(separator = ",") { it.value },
                 textEmbedding = imageInfoUiModel.textEmbed.value,
                 visualEmbedding = imageInfoUiModel.visualEmbeds.map {
                     VisualEmbedUiModel(
@@ -45,6 +48,15 @@ class ExtractorImageInfoViewModel(
         }
     }
 
+    // Will run on click of the already existing(added) embeds
+    fun updateUserEmbedding(embedding: String) {
+        checkedUserEmbeds.update {
+            val current = it[embedding] ?: false
+            val out = mapOf(embedding to current.not())
+            it + out
+        }
+    }
+
     fun saveEmbeddings() {
         viewModelScope.launch {
             extractorDataRepository.updateTextEmbed(
@@ -54,16 +66,22 @@ class ExtractorImageInfoViewModel(
                 )
             )
 
-            extractorDataRepository.upsertUserEmbed(
-                EmbedUpdate(
-                    value = imageInfoModel.value.embeddingsFormState.userEmbedding.trim(),
-                    mediaImageId = MediaImageId(mediaImageId)
-                )
-            )
+            // TODO Disabled as this update logic will be different
+//            extractorDataRepository.upsertUserEmbed(
+//                EmbedUpdate(
+//                    value = imageInfoModel.value.embeddingsFormState.userEmbedding.trim(),
+//                    mediaImageId = MediaImageId(mediaImageId)
+//                )
+//            )
 
             imageInfoModel.value.visualEmbedding
                 .filter { it.isChecked }
-                .forEach { extractorDataRepository.deleteVisualEmbed(MediaImageId(mediaImageId), it.text) }
+                .forEach {
+                    extractorDataRepository.deleteVisualEmbed(
+                        MediaImageId(mediaImageId),
+                        it.text
+                    )
+                }
         }
     }
 }

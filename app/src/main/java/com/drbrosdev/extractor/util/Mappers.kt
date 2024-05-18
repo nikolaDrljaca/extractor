@@ -44,7 +44,6 @@ fun ExtractionEntity.toExtraction() = Extraction(
 
 fun ImageEmbeddingsRelation.toImageEmbeds(): ImageEmbeds {
     val textEmbed = Embed.Text(value = this.textEmbeddingEntity.value)
-    val userEmbed = Embed.User(value = this.userEmbeddingEntity.value)
 
     val visualEmbeds = when {
         this.visualEmbeddingEntity.value.isBlank() -> emptyList()
@@ -53,10 +52,17 @@ fun ImageEmbeddingsRelation.toImageEmbeds(): ImageEmbeds {
             .map { Embed.Visual(it) }
     }
 
+    val userEmbeds = when {
+        this.userEmbeddingEntity.value.isBlank() -> emptyList()
+        else -> this.userEmbeddingEntity.value
+            .split(",")
+            .map { Embed.User(it) }
+    }
+
     return ImageEmbeds(
         textEmbed = textEmbed,
         visualEmbeds = visualEmbeds,
-        userEmbeds = userEmbed
+        userEmbeds = userEmbeds
     )
 }
 
