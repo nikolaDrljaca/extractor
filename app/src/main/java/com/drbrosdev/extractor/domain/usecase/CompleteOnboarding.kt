@@ -10,10 +10,13 @@ class CompleteOnboarding(
     private val spawnExtractorWork: SpawnExtractorWork
 ) {
     suspend operator fun invoke() {
-        spawnExtractorWork.invoke()
 
         withContext(dispatcher) {
+            // allocate initial searches
             dataStore.incrementSearchCountBy(amount = 100)
+            // start indexing
+            spawnExtractorWork.invoke()
+            // mark onboarding as finished
             dataStore.finishOnboarding()
         }
     }

@@ -5,7 +5,7 @@ import com.drbrosdev.extractor.domain.model.Token
 class ValidateSuggestedSearchToken {
 
     operator fun invoke(token: Token): Boolean {
-        val value by token
+        val value = token.text
 
         return when {
             value.length < 4 -> false

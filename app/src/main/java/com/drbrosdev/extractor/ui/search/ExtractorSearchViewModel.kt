@@ -6,9 +6,6 @@ import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import arrow.core.None
-import arrow.core.Some
-import arrow.core.toOption
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.Extraction
@@ -19,11 +16,12 @@ import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.model.asAlbumName
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.usecase.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
+import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
+import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestionsError
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
@@ -35,7 +33,7 @@ import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSea
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -48,8 +46,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
 
 class ExtractorSearchViewModel(
     private val stateHandle: SavedStateHandle,
@@ -62,24 +60,38 @@ class ExtractorSearchViewModel(
     private val stringProvider: StringResourceProvider
 ) : ViewModel() {
 
-    //this can now be modelled with a bespoke sealed interface to distinguish between search and suggestion
-    private val _searchTrigger = MutableStateFlow<SearchImageByQuery.Params?>(null)
+    private val _searchTrigger = MutableSharedFlow<SearchTrigger>()
 
     private val _searchTriggerResult = _searchTrigger
-        .flatMapLatest { params ->
-            flow {
-                emit(ExtractorSearchContainerState.Loading)
-                when (val out = params.toOption()) {
-                    None -> emit(generateSuggestions())
-                    is Some -> emit(performImageSearch(out.value))
-                }
-            }
-        }
+        .flatMapLatest { searchTriggerProcessFlow(it) }
 
     private val _progress = trackExtractionProgress.invoke()
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
-    val searchCount = datastore.searchCount
+    private val _searchCount = datastore.searchCount
+        .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
+
+    /*
+    Emit a new value to the search trigger every time:
+    - search count changes from 0 to a positive value
+    - extraction status is done
+
+    Covers cases where we trigger search after extraction progress status changes as well
+    as search count changes.
+
+    Can be a usecase to check if search functionality is available.
+     */
+    private val _changeTriggerJob = _searchCount
+        .map { it != 0 }
+        .distinctUntilChanged()
+        .combine(_progress) { countStatus, status ->
+            countStatus and (status is ExtractionStatus.Done)
+        }
+        .filter { it }
+        .onEach { _searchTrigger.emit(SearchTrigger.GenerateSuggestions) }
+        .launchIn(viewModelScope)
+
+    val searchCount = _searchCount
         .onEach {
             if (it == 0) searchSheetState.disable()
             else searchSheetState.enable()
@@ -93,19 +105,10 @@ class ExtractorSearchViewModel(
     val containerState = combine(
         _searchTriggerResult,
         _progress,
-        searchCount,
-    ) { search, progress, count ->
+    ) { search, progress ->
         when (progress) {
             is ExtractionStatus.Running -> ExtractorSearchContainerState.StillIndexing
-            is ExtractionStatus.Done -> when {
-                search is ExtractorSearchContainerState.Content -> search
-
-                count == 0 -> ExtractorSearchContainerState.NoSearchesLeft(
-                    onGetMore = ::getMoreSearches
-                )
-
-                else -> search
-            }
+            is ExtractionStatus.Done -> search
         }
     }
         .distinctUntilChanged()
@@ -176,7 +179,7 @@ class ExtractorSearchViewModel(
                     val result = snackbarHostState.showSnackbar(
                         message = stringProvider.get(R.string.snack_album_created),
                         actionLabel = stringProvider.get(R.string.snack_view),
-                        duration = SnackbarDuration.Long
+                        duration = SnackbarDuration.Short
                     )
                     when (result) {
                         SnackbarResult.Dismissed -> Unit
@@ -199,60 +202,6 @@ class ExtractorSearchViewModel(
 
             MultiselectAction.Delete -> Unit // Unsupported for this grid
         }
-    }
-
-    private suspend fun performImageSearch(
-        searchParams: SearchImageByQuery.Params
-    ): ExtractorSearchContainerState {
-        return imageSearch.execute(searchParams).fold(
-            ifLeft = {
-                ExtractorSearchContainerState.NoSearchesLeft(
-                    onGetMore = ::getMoreSearches
-                )
-            },
-            ifRight = {
-                when {
-                    it.isEmpty() -> ExtractorSearchContainerState.Empty(
-                        onReset = {
-                            searchContainerEventHandler(
-                                ExtractorSearchContainerEvents.OnReset
-                            )
-                        }
-                    )
-
-                    else -> ExtractorSearchContainerState.Content(
-                        images = it,
-                        eventSink = ::searchContainerEventHandler
-                    )
-                }
-            }
-        )
-    }
-
-    private suspend fun generateSuggestions(): ExtractorSearchContainerState {
-        return generateSuggestedKeywords.invoke().fold(
-            ifLeft = {
-                ExtractorSearchContainerState.NoSearchesLeft(
-                    onGetMore = ::getMoreSearches
-                )
-            },
-            ifRight = {
-                when {
-                    it.isEmpty() -> ExtractorSearchContainerState.ShowSuggestions(
-                        ExtractorSuggestedSearchState.Empty(
-                            onStartSync = { spawnExtractorWork.invoke() }
-                        )
-                    )
-
-                    else -> ExtractorSearchContainerState.ShowSuggestions(
-                        ExtractorSuggestedSearchState.Content(
-                            onSuggestionClick = ::imageSearchWithSuggestion,
-                            suggestedSearches = it
-                        )
-                    )
-                }
-            }
-        )
     }
 
     private fun searchSheetEventHandler(event: ExtractorSearchSheetEvents) {
@@ -292,28 +241,11 @@ class ExtractorSearchViewModel(
         //don't perform a search with no query
         if (params.query.isBlank() and (params.dateRange == null)) return
 
-        _searchTrigger.update { params }
-    }
-
-    private fun getMoreSearches() {
         viewModelScope.launch {
-            _events.send(ExtractorSearchScreenEvents.NavToGetMore)
+            _searchTrigger.emit(
+                SearchTrigger.Search(params)
+            )
         }
-    }
-
-    private fun imageSearchWithSuggestion(suggestedSearch: SuggestedSearch) {
-        val params = SearchImageByQuery.Params(
-            query = suggestedSearch.query,
-            keywordType = suggestedSearch.keywordType,
-            type = suggestedSearch.searchType,
-            dateRange = null
-        )
-        with(searchSheetState.searchViewState) {
-            updateQuery(suggestedSearch.query)
-            updateSearchType(suggestedSearch.searchType)
-            updateKeywordType(suggestedSearch.keywordType)
-        }
-        _searchTrigger.update { params }
     }
 
     private fun searchContainerEventHandler(event: ExtractorSearchContainerEvents) {
@@ -336,7 +268,9 @@ class ExtractorSearchViewModel(
                     updateQuery("")
                 }
                 searchSheetState.dateFilterState.clearDates()
-                _searchTrigger.update { null }
+                viewModelScope.launch {
+                    _searchTrigger.emit(SearchTrigger.GenerateSuggestions)
+                }
             }
 
             is ExtractorSearchContainerEvents.OnCreateAlbumClick ->
@@ -346,7 +280,7 @@ class ExtractorSearchViewModel(
                     val result = snackbarHostState.showSnackbar(
                         message = stringProvider.get(R.string.snack_album_created),
                         actionLabel = stringProvider.get(R.string.snack_view),
-                        duration = SnackbarDuration.Long
+                        duration = SnackbarDuration.Short
                     )
                     when (result) {
                         SnackbarResult.Dismissed -> Unit
@@ -356,12 +290,123 @@ class ExtractorSearchViewModel(
         }
     }
 
+    private fun getMoreSearches() {
+        viewModelScope.launch {
+            _events.send(ExtractorSearchScreenEvents.NavToGetMore)
+        }
+    }
+
+    private fun performImageSearchUsingSuggestion(suggestedSearch: SuggestedSearch) {
+        val params = SearchImageByQuery.Params(
+            query = suggestedSearch.query,
+            keywordType = suggestedSearch.keywordType,
+            type = suggestedSearch.searchType,
+            dateRange = null
+        )
+        with(searchSheetState.searchViewState) {
+            updateQuery(suggestedSearch.query)
+            updateSearchType(suggestedSearch.searchType)
+            updateKeywordType(suggestedSearch.keywordType)
+        }
+
+        viewModelScope.launch {
+            _searchTrigger.emit(SearchTrigger.Search(params))
+        }
+    }
+
+    private fun searchTriggerProcessFlow(searchTrigger: SearchTrigger) = flow {
+        when (searchTrigger) {
+            SearchTrigger.GenerateSuggestions -> {
+                emit(
+                    ExtractorSearchContainerState.ShowSuggestions(
+                        ExtractorSuggestedSearchState.Loading
+                    )
+                )
+                emit(generateSuggestions())
+            }
+
+            is SearchTrigger.Search -> {
+                emit(ExtractorSearchContainerState.Loading)
+                emit(performImageSearch(searchTrigger.params))
+            }
+
+            SearchTrigger.Noop -> emit(ExtractorSearchContainerState.StillIndexing)
+        }
+    }
+
+    private suspend fun performImageSearch(
+        searchParams: SearchImageByQuery.Params
+    ): ExtractorSearchContainerState {
+        return imageSearch.execute(searchParams).fold(
+            ifLeft = {
+                ExtractorSearchContainerState.NoSearchesLeft(
+                    onGetMore = ::getMoreSearches
+                )
+            },
+            ifRight = {
+                when {
+                    it.isEmpty() -> ExtractorSearchContainerState.Empty(
+                        onReset = {
+                            searchContainerEventHandler(
+                                ExtractorSearchContainerEvents.OnReset
+                            )
+                        }
+                    )
+
+                    else -> ExtractorSearchContainerState.Content(
+                        images = it,
+                        eventSink = ::searchContainerEventHandler
+                    )
+                }
+            }
+        )
+    }
+
+    private suspend fun generateSuggestions(): ExtractorSearchContainerState {
+        return generateSuggestedKeywords.invoke().fold(
+            ifLeft = {
+                when (it) {
+                    GenerateSuggestionsError.NoExtractionsPresent ->
+                        ExtractorSearchContainerState.ShowSuggestions(
+                            ExtractorSuggestedSearchState.Empty(
+                                onStartSync = { spawnExtractorWork.invoke() }
+                            )
+                        )
+
+                    GenerateSuggestionsError.NoSearchesLeft ->
+                        ExtractorSearchContainerState
+                            .NoSearchesLeft(
+                                onGetMore = ::getMoreSearches
+                            )
+                }
+            },
+            ifRight = {
+                when {
+                    it.isEmpty() -> ExtractorSearchContainerState.ShowSuggestions(
+                        ExtractorSuggestedSearchState.Empty(
+                            onStartSync = { spawnExtractorWork.invoke() }
+                        )
+                    )
+
+                    else -> ExtractorSearchContainerState.ShowSuggestions(
+                        ExtractorSuggestedSearchState.Content(
+                            onSuggestionClick = ::performImageSearchUsingSuggestion,
+                            suggestedSearches = it
+                        )
+                    )
+                }
+            }
+        )
+    }
+
     private suspend fun compileUserAlbum(input: List<Extraction>) {
         // decide album name based on query type -> Text or Date
         val albumName = with(searchSheetState) {
+            val dateRange = dateFilterState.dateRange()
+
             when {
                 searchViewState.query.isNotBlank() -> searchViewState.query
-                dateFilterState.dateRange() != null -> dateFilterState.dateRange()!!.asAlbumName()
+                dateRange != null -> dateRange.asAlbumName()
                 else -> ""
             }
         }
@@ -383,3 +428,14 @@ class ExtractorSearchViewModel(
     }
 }
 
+
+private sealed interface SearchTrigger {
+
+    data object Noop : SearchTrigger
+
+    data object GenerateSuggestions : SearchTrigger
+
+    data class Search(
+        val params: SearchImageByQuery.Params
+    ) : SearchTrigger
+}

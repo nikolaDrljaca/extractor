@@ -20,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -68,6 +69,8 @@ fun ExtractorSuggestedSearch(
                     onClick = { it.onStartSync() }
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -227,23 +230,27 @@ private fun CurrentPreview() {
         val loadingState = ExtractorSuggestedSearchState.Loading
         val emptyState = ExtractorSuggestedSearchState.Empty({})
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        Surface(
+            color = MaterialTheme.colorScheme.background
         ) {
-            ExtractorSuggestedSearch(
-                modifier = Modifier.fillMaxWidth(),
-                state = contentState
-            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                ExtractorSuggestedSearch(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = contentState
+                )
 
-            ExtractorSuggestedSearch(
-                modifier = Modifier.fillMaxWidth(),
-                state = loadingState
-            )
+                ExtractorSuggestedSearch(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = loadingState
+                )
 
-            ExtractorSuggestedSearch(
-                modifier = Modifier.fillMaxWidth(),
-                state = emptyState
-            )
+                ExtractorSuggestedSearch(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = emptyState
+                )
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain.usecase
+package com.drbrosdev.extractor.domain.usecase.suggestion
 
 import arrow.core.Either
 import arrow.core.left
@@ -11,8 +11,11 @@ import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
+import com.drbrosdev.extractor.domain.usecase.TokenizeText
+import com.drbrosdev.extractor.domain.usecase.ValidateSuggestedSearchToken
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.toList
@@ -29,15 +32,18 @@ class GenerateSuggestedKeywords(
     private val validateSuggestedSearchToken: ValidateSuggestedSearchToken
 ) {
 
-    suspend operator fun invoke(): Either<Unit, List<SuggestedSearch>> = withContext(dispatcher) {
-        if (dataStore.getSearchCount() == 0) {
-            return@withContext Unit.left()
+    suspend operator fun invoke(): Either<GenerateSuggestionsError, List<SuggestedSearch>> =
+        withContext(dispatcher) {
+            when {
+                dataStore.getSearchCount() == 0 -> GenerateSuggestionsError.NoSearchesLeft.left()
+
+                extractionDao.getCount() == 0 -> GenerateSuggestionsError.NoExtractionsPresent.left()
+
+                else -> generateSuggestions().right()
+            }
         }
 
-        if (extractionDao.getCount() == 0) {
-            return@withContext Unit.left()
-        }
-
+    private suspend fun generateSuggestions(): List<SuggestedSearch> = coroutineScope {
         val textSuggestions = async {
             produceSuggestions(
                 textEmbeddingDao.getValueConcatAtRandom(),
@@ -45,7 +51,6 @@ class GenerateSuggestedKeywords(
                 KeywordType.TEXT
             )
         }
-
         val userSuggestions = async {
             produceSuggestions(
                 userEmbeddingDao.getValueConcatAtRandom(),
@@ -53,7 +58,6 @@ class GenerateSuggestedKeywords(
                 KeywordType.ALL
             )
         }
-
         val visualSuggestions = async {
             produceSuggestions(
                 visualEmbeddingDao.getValuesAtRandom()?.replace(",", " "),
@@ -66,7 +70,7 @@ class GenerateSuggestedKeywords(
         val userOut = userSuggestions.await()
         val visual = visualSuggestions.await()
 
-        (textOut + userOut + visual).right()
+        (textOut + userOut + visual)
     }
 
     private suspend fun produceSuggestions(
