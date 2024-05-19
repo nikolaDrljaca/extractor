@@ -88,6 +88,7 @@ fun Root() {
     ) {
         CompositionLocalProvider(
             LocalBottomSheetNavController provides bottomSheetNavController,
+            LocalDialogNavController provides dialogNavController,
         ) {
             it.Content(this.sheetState)
         }

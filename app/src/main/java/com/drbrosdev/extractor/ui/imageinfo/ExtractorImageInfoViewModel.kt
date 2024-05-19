@@ -1,12 +1,15 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.saveable
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
+import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
+import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
@@ -15,30 +18,50 @@ import kotlinx.coroutines.launch
 
 class ExtractorImageInfoViewModel(
     private val mediaImageId: Long,
+    private val stateHandle: SavedStateHandle,
     private val extractorDataRepository: ExtractorRepository
 ) : ViewModel() {
     private val checkedVisualEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
     private val checkedUserEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
-    val imageInfoModel = extractorDataRepository
-        .findImageDataByMediaId(mediaImageId = MediaImageId(mediaImageId))
-        .filterNotNull()
-        .combine(checkedVisualEmbeds) { imageInfoUiModel, checkedEmbeds ->
-            ExtractorImageInfoUiState(
-                mediaImageId = MediaImageId(mediaImageId),
-                // TODO
-                userEmbedding = imageInfoUiModel.userEmbeds.joinToString(separator = ",") { it.value },
-                textEmbedding = imageInfoUiModel.textEmbed.value,
-                visualEmbedding = imageInfoUiModel.visualEmbeds.map {
-                    VisualEmbedUiModel(
-                        text = it.value,
-                        isChecked = checkedEmbeds.getOrDefault(it.value, false),
-                    )
-                }
-            )
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), ExtractorImageInfoUiState())
+    val textEmbedding = stateHandle.saveable(
+        key = "text_embedding",
+        saver = ExtractorTextFieldState.Saver
+    ) {
+        ExtractorTextFieldState()
+    }
+
+    val imageInfoModel = combine(
+        extractorDataRepository.findImageDataByMediaId(mediaImageId = MediaImageId(mediaImageId))
+            .filterNotNull(),
+        checkedVisualEmbeds,
+        checkedUserEmbeds
+    ) { imageEmbeds, visualChecked, userChecked ->
+        // set the text state
+        textEmbedding.updateTextValue(imageEmbeds.textEmbed.value)
+
+        ExtractorImageInfoUiState(
+            mediaImageId = MediaImageId(mediaImageId),
+            userEmbedding = imageEmbeds.userEmbeds.map {
+                UserEmbedUiModel(
+                    text = it.value,
+                    isChecked = userChecked.getOrDefault(it.value, false)
+                )
+            },
+            visualEmbedding = imageEmbeds.visualEmbeds.map {
+                VisualEmbedUiModel(
+                    text = it.value,
+                    isChecked = visualChecked.getOrDefault(it.value, false),
+                )
+            }
+        )
+    }
+        .stateIn(
+            viewModelScope,
+            WhileUiSubscribed,
+            ExtractorImageInfoUiState()
+        )
 
     fun clearVisualEmbedding(embedding: String) {
         checkedVisualEmbeds.update {
@@ -61,7 +84,7 @@ class ExtractorImageInfoViewModel(
         viewModelScope.launch {
             extractorDataRepository.updateTextEmbed(
                 EmbedUpdate(
-                    value = imageInfoModel.value.embeddingsFormState.textEmbedding.trim(),
+                    value = textEmbedding.textValue.trim(),
                     mediaImageId = MediaImageId(mediaImageId)
                 )
             )
