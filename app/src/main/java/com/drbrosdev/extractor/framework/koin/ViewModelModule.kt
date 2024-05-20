@@ -120,7 +120,9 @@ val viewModelModule = module {
     viewModel {
         ExtractorUserEmbedViewModel(
             mediaImageId = it.get(),
-            stateHandle = get()
+            stateHandle = get(),
+            suggestUserKeywords = get(),
+            extractorRepository = get<DefaultExtractorRepository>()
         )
     }
 

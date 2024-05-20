@@ -67,6 +67,22 @@ class DefaultExtractorRepository(
             .map { it?.toImageEmbeds() }
     }
 
+    override suspend fun deleteUserEmbed(mediaImageId: MediaImageId, value: String) {
+        userEmbeddingDao.findByMediaId(mediaImageId.id)?.let { userEmbed ->
+            val updated = withContext(dispatcher) {
+                userEmbed.value
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.lowercase() != value.lowercase() }
+                    .joinToString(separator = ",") { it }
+            }
+
+            userEmbeddingDao.update(userEmbed.copy(value = updated))
+            // update search index
+            searchIndexDao.updateUserIndex(updated, userEmbed.extractionEntityId)
+        }
+    }
+
     override suspend fun updateTextEmbed(embedUpdate: EmbedUpdate) = with(embedUpdate) {
         textEmbeddingDao.update(value, mediaImageId.id)
         // update search index
@@ -81,6 +97,7 @@ class DefaultExtractorRepository(
         userEmbeddingDao.findByMediaId(mediaId)?.let { embedding ->
             val value = embedUpdate
                 .map { it.value.trim() }
+                .distinct() // Make sure each user keyword is unique for a certain image
                 .joinToString(separator = ",") { it }
 
             userEmbeddingDao.update(embedding.copy(value = value))

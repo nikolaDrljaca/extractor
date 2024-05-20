@@ -22,6 +22,8 @@ interface ExtractorRepository {
 
     suspend fun deleteVisualEmbed(mediaImageId: MediaImageId, value: String)
 
+    suspend fun deleteUserEmbed(mediaImageId: MediaImageId, value: String)
+
     suspend fun createExtractionData(data: NewExtraction)
 
 }

@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Icon
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +38,7 @@ fun ExtractorEmbeddingChips(
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         embeddings.forEach {
-            ExtractorEmbeddingChip(
+            EmbeddingChip(
                 onClick = onClear,
                 text = it.text,
                 isChecked = it.isChecked
@@ -59,7 +62,7 @@ fun ExtractorEmbeddingChips(
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
         embeddings.forEach {
-            ExtractorEmbeddingChip(
+            EmbeddingChip(
                 onClick = onClear,
                 text = it.text,
                 isChecked = it.isChecked
@@ -69,8 +72,31 @@ fun ExtractorEmbeddingChips(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ExtractorEmbeddingChip(
+fun ExtractorSuggestedEmbeddingChips(
+    modifier: Modifier = Modifier,
+    onClick: (String) -> Unit,
+    embeddings: List<UserEmbedUiModel>,
+) {
+    FlowRow(
+        modifier = Modifier
+            .then(modifier),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(0.dp)
+    ) {
+        embeddings.forEach {
+            SuggestedEmbeddingChip(
+                onClick = { onClick(it.text) },
+                text = "# ${it.text}",
+                isChecked = it.isChecked
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmbeddingChip(
     modifier: Modifier = Modifier,
     onClick: (String) -> Unit,
     text: String,
@@ -92,6 +118,26 @@ private fun ExtractorEmbeddingChip(
     )
 }
 
+@Composable
+private fun SuggestedEmbeddingChip(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String,
+    isChecked: Boolean,
+) {
+    InputChip(
+        modifier = modifier,
+        selected = !isChecked,
+        onClick = onClick,
+        label = { Text(text) },
+        border = InputChipDefaults.inputChipBorder(
+            enabled = true,
+            selected = isChecked
+        ),
+        shape = CircleShape,
+        colors = ExtractorChipDefaults.chipColors()
+    )
+}
 
 @Preview
 @Composable
@@ -99,8 +145,11 @@ private fun CurrentPreview() {
     ExtractorTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column {
-                ExtractorEmbeddingChip(onClick = {}, text = "sample", isChecked = false)
-                ExtractorEmbeddingChip(onClick = {}, text = "sample", isChecked = true)
+                EmbeddingChip(onClick = {}, text = "sample", isChecked = false)
+                EmbeddingChip(onClick = {}, text = "sample", isChecked = true)
+
+                SuggestedEmbeddingChip(onClick = {}, text = "suggested", isChecked = false)
+                SuggestedEmbeddingChip(onClick = {}, text = "suggested", isChecked = true)
             }
         }
     }

@@ -82,29 +82,22 @@ class ExtractorImageInfoViewModel(
 
     fun saveEmbeddings() {
         viewModelScope.launch {
+            val id = MediaImageId(mediaImageId)
+
             extractorDataRepository.updateTextEmbed(
                 EmbedUpdate(
                     value = textEmbedding.textValue.trim(),
-                    mediaImageId = MediaImageId(mediaImageId)
+                    mediaImageId = id
                 )
             )
 
-            // TODO Disabled as this update logic will be different
-//            extractorDataRepository.upsertUserEmbed(
-//                EmbedUpdate(
-//                    value = imageInfoModel.value.embeddingsFormState.userEmbedding.trim(),
-//                    mediaImageId = MediaImageId(mediaImageId)
-//                )
-//            )
+            imageInfoModel.value.userEmbedding
+                .filter { it.isChecked }
+                .forEach { extractorDataRepository.deleteUserEmbed(id, it.text) }
 
             imageInfoModel.value.visualEmbedding
                 .filter { it.isChecked }
-                .forEach {
-                    extractorDataRepository.deleteVisualEmbed(
-                        MediaImageId(mediaImageId),
-                        it.text
-                    )
-                }
+                .forEach { extractorDataRepository.deleteVisualEmbed(id, it.text) }
         }
     }
 }

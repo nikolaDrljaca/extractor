@@ -27,6 +27,7 @@ import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbed
 import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
+import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
 import com.drbrosdev.extractor.domain.usecase.text.extractor.ExtractTextEmbed
 import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitExtractTextEmbed
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
@@ -37,6 +38,15 @@ import org.koin.dsl.module
 
 
 val useCaseModule = module {
+
+    factory {
+        SuggestUserKeywords(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            userEmbeddingDao = get(),
+            tokenizeText = get(),
+            validateSuggestedSearchToken = get()
+        )
+    }
 
     factory {
         DefaultCreateInputImage(context = androidContext())
