@@ -151,11 +151,5 @@ val FadeThroughEnterTransition =
 val FadeThroughExitTransition =
     fadeOut(animationSpec = tween(durationMillis = 90, easing = FastOutLinearInEasing))
 
-val FadeEnterTransition =
-    fadeIn(animationSpec = tween(durationMillis = 45, easing = LinearEasing)) +
-            scaleIn(
-                initialScale = 0.8f,
-                animationSpec = tween(durationMillis = 150, easing = LinearOutSlowInEasing)
-            )
-
+val FadeEnterTransition = fadeIn(animationSpec = tween(durationMillis = 45, easing = LinearEasing))
 val FadeExitTransition = fadeOut(animationSpec = tween(durationMillis = 75, easing = LinearEasing))
