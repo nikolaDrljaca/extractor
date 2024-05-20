@@ -120,6 +120,10 @@ fun ExtractorUserEmbedDialog(
                     text = "Enter New",
                     style = MaterialTheme.typography.titleMedium
                 )
+                Text(
+                    text = "To add multiple, separate them with a comma.",
+                    style = smallLabel
+                )
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth(),
