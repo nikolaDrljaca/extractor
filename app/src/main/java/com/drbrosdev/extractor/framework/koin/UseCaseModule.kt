@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.framework.koin
 
+import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
 import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
@@ -8,7 +9,6 @@ import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.GenerateMostCommonTokens
-import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
@@ -27,6 +27,7 @@ import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbed
 import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
+import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
 import com.drbrosdev.extractor.domain.usecase.text.extractor.ExtractTextEmbed
 import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitExtractTextEmbed
@@ -45,6 +46,14 @@ val useCaseModule = module {
             userEmbeddingDao = get(),
             tokenizeText = get(),
             validateSuggestedSearchToken = get()
+        )
+    }
+
+    factory {
+        BuildUserCollage(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            userEmbeddingDao = get(),
+            userExtractionDao = get()
         )
     }
 
