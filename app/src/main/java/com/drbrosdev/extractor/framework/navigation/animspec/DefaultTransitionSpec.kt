@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.framework.navigation.animspec
 
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.Density
 import com.drbrosdev.extractor.framework.navigation.NavTarget
@@ -13,7 +12,7 @@ import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
 
 fun createTransitionSpec(density: Density) = NavTransitionSpec<NavTarget?> { action, from, to ->
-    val fade = createFade(action)
+    val fade = FadeEnterTransition togetherWith FadeExitTransition
     val fadeThrough = createFadeThrough(action)
     val default = createDefaultTransition(action, density)
 
@@ -25,15 +24,6 @@ fun createTransitionSpec(density: Density) = NavTransitionSpec<NavTarget?> { act
         handleGetMore(from, to) -> fadeThrough
 
         else -> default
-    }
-}
-
-private fun createFade(
-    action: NavAction
-): ContentTransform {
-    return when (action) {
-        is NavAction.Pop, NavAction.Replace -> EnterTransition.None togetherWith FadeExitTransition
-        else -> FadeEnterTransition togetherWith FadeExitTransition
     }
 }
 
@@ -62,11 +52,7 @@ private fun createDefaultTransition(
 
 private fun goingFromImageViewer(from: NavTarget?, to: NavTarget?): Boolean {
     val goingFrom = from is ExtractorImageViewerNavTarget
-    val goingTo = when (to) {
-        is ExtractorAlbumViewerNavTarget -> true
-        is ExtractorSearchNavTarget -> true
-        else -> false
-    }
+    val goingTo = (to is ExtractorAlbumViewerNavTarget) or (to is ExtractorSearchNavTarget)
 
     return goingFrom and goingTo
 }
@@ -92,12 +78,8 @@ private fun goingToImageViewer(
     from: NavTarget?,
     to: NavTarget?
 ): Boolean {
-    val goingFrom = when (from) {
-        is ExtractorSearchNavTarget -> true
-        is ExtractorAlbumViewerNavTarget -> true
-        else -> false
-    }
-
+    val goingFrom = (from is ExtractorSearchNavTarget) or (from is ExtractorAlbumViewerNavTarget)
     val goingTo = to is ExtractorImageViewerNavTarget
+
     return goingFrom and goingTo
 }

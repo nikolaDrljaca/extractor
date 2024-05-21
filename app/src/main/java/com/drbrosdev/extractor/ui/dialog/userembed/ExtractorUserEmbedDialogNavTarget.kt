@@ -28,7 +28,6 @@ data class ExtractorUserEmbedDialogNavTarget(
         val dialogNavController = LocalDialogNavController.current
 
         val suggested by viewModel.suggestedEmbeddingsState.collectAsStateWithLifecycle()
-        val loading by viewModel.loading.collectAsStateWithLifecycle()
 
         CollectFlow(flow = viewModel.events) {
             when (it) {
@@ -37,9 +36,8 @@ data class ExtractorUserEmbedDialogNavTarget(
         }
 
         ExtractorUserEmbedDialog(
-            suggestedKeywords = suggested,
+            suggestedEmbedsState = suggested,
             textFieldState = viewModel.embedTextFieldState,
-            loading = loading,
             onCheck = viewModel::checkEmbedding,
             onCreateNew = viewModel::createNewUserEmbed,
             onSave = viewModel::saveChanges
@@ -52,14 +50,15 @@ data class ExtractorUserEmbedDialogNavTarget(
 private fun CurrentPreview() {
     ExtractorTheme {
         ExtractorUserEmbedDialog(
-            suggestedKeywords = listOf(
-                UserEmbedUiModel("Some", false),
-                UserEmbedUiModel("Some", false),
-                UserEmbedUiModel("Some", false),
-                UserEmbedUiModel("Some", false),
+            suggestedEmbedsState = ExtractorSuggestedEmbedsUiState.Content(
+                listOf(
+                    UserEmbedUiModel("Some", false),
+                    UserEmbedUiModel("Some", false),
+                    UserEmbedUiModel("Some", false),
+                    UserEmbedUiModel("Some", false),
+                )
             ),
             textFieldState = ExtractorTextFieldState(),
-            loading = true,
             onCheck = {},
             onCreateNew = {},
             onSave = {},

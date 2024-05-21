@@ -15,12 +15,10 @@ import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -41,9 +39,6 @@ class ExtractorUserEmbedViewModel(
         ExtractorTextFieldState()
     }
 
-    private val _loading = MutableStateFlow(true)
-    val loading = _loading.asStateFlow()
-
     private val checkedUserEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
     private val _events = Channel<ExtractorUserEmbedDialogEvents>()
@@ -58,24 +53,26 @@ class ExtractorUserEmbedViewModel(
         checkedUserEmbeds,
         _suggested
     ) { checked, suggested ->
-        suggested.map {
-            UserEmbedUiModel(
-                text = it.value,
-                isChecked = checked.getOrDefault(it.value, false)
+        when {
+            suggested.isEmpty() -> ExtractorSuggestedEmbedsUiState.Empty
+            else -> ExtractorSuggestedEmbedsUiState.Content(
+                suggestions = suggested.map {
+                    UserEmbedUiModel(
+                        text = it.value,
+                        isChecked = checked.getOrDefault(it.value, false)
+                    )
+                }
             )
         }
     }
-        .onEach { _loading.update { false } }
         .stateIn(
             viewModelScope,
             WhileUiSubscribed,
-            emptyList()
+            ExtractorSuggestedEmbedsUiState.Loading
         )
 
     fun createNewUserEmbed() {
         viewModelScope.launch {
-            _loading.update { true }
-
             // fetch existing
             val id = MediaImageId(mediaImageId)
             val existing = extractorRepository.findImageDataByMediaId(id)
@@ -97,7 +94,6 @@ class ExtractorUserEmbedViewModel(
 
             // clear text field
             embedTextFieldState.updateTextValue("")
-            _loading.update { false }
         }
     }
 
@@ -111,14 +107,13 @@ class ExtractorUserEmbedViewModel(
 
     fun saveChanges() {
         viewModelScope.launch {
-            _loading.update { true }
             // fetch existing
             val id = MediaImageId(mediaImageId)
             val existing = extractorRepository.findImageDataByMediaId(id)
                 .map { it?.userEmbeds }
                 .first() ?: return@launch
 
-            val newUserEmbeds = suggestedEmbeddingsState.value
+            val newUserEmbeds = suggestedEmbeddingsState.value.getSuggestions()
                 .filter { it.isChecked }
                 .map { Embed.User(it.text) }
             val updated = (newUserEmbeds + existing)
