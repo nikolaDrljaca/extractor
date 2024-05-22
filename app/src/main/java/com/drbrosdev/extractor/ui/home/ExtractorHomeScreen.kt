@@ -29,6 +29,7 @@ import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
+import com.drbrosdev.extractor.ui.components.usercollage.ExtractorUserCollageThumbnail
 
 @Composable
 fun ExtractorHomeScreen(
@@ -40,6 +41,8 @@ fun ExtractorHomeScreen(
     onInitTextPreview: () -> Unit,
     onAlbumPreviewClick: (albumId: Long) -> Unit,
     onViewAllUserAlbums: () -> Unit,
+    onCollageClicked: () -> Unit,
+    collageThumbnail: ExtractorUserCollageThumbnailUiState,
     visualAlbums: ExtractorCategoryViewState,
     userAlbums: ExtractorCategoryViewState,
     textAlbums: ExtractorCategoryViewState,
@@ -54,6 +57,18 @@ fun ExtractorHomeScreen(
             .verticalScroll(scrollState),
         constraintSet = homeScreenConstraintSet()
     ) {
+        when (collageThumbnail) {
+            ExtractorUserCollageThumbnailUiState.Empty -> Unit
+            is ExtractorUserCollageThumbnailUiState.Content -> {
+                ExtractorUserCollageThumbnail(
+                    modifier = Modifier.layoutId(ViewIds.COLLAGE),
+                    onClick = onCollageClicked,
+                    imageUri = collageThumbnail.mediaImageUri,
+                    keywords = collageThumbnail.keywords
+                )
+            }
+        }
+
         ExtractorCategoryView(
             onViewAllClicked = onViewAllUserAlbums,
             onAlbumPreviewClick = onAlbumPreviewClick,
@@ -78,7 +93,7 @@ fun ExtractorHomeScreen(
 
         if (settings.shouldShowTextAlbums) {
             ExtractorCategoryView(
-                onViewAllClicked = {  },
+                onViewAllClicked = { },
                 onAlbumPreviewClick = onAlbumPreviewClick,
                 onInitClick = onInitTextPreview,
                 contentPadding = PaddingValues(horizontal = 12.dp),
@@ -125,6 +140,8 @@ private fun homeScreenConstraintSet() = ConstraintSet {
     val settingsButton = createRefFor(ViewIds.SETTINGS_BUTTON)
     val syncButton = createRefFor(ViewIds.SYNC_BUTTON)
 
+    val collage = createRefFor(ViewIds.COLLAGE)
+
     val userAlbum = createRefFor(ViewIds.USER_ALBUM)
     val textAlbum = createRefFor(ViewIds.TEXT_ALBUM)
     val visualAlbum = createRefFor(ViewIds.VISUAL_ALBUM)
@@ -135,6 +152,13 @@ private fun homeScreenConstraintSet() = ConstraintSet {
         start.linkTo(buttonGuideline, margin = 4.dp)
         top.linkTo(topBar.bottom, margin = 8.dp)
         end.linkTo(parent.end, margin = 12.dp)
+        width = Dimension.fillToConstraints
+    }
+
+    constrain(collage) {
+        start.linkTo(parent.start, margin = 12.dp)
+        end.linkTo(parent.end, margin = 12.dp)
+        top.linkTo(syncButton.bottom, margin = 12.dp)
         width = Dimension.fillToConstraints
     }
 
@@ -155,7 +179,7 @@ private fun homeScreenConstraintSet() = ConstraintSet {
     constrain(userAlbum) {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        top.linkTo(settingsButton.bottom, margin = 16.dp)
+        top.linkTo(collage.bottom, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
 
@@ -181,5 +205,6 @@ private object ViewIds {
     const val USER_ALBUM = "userAlbum"
     const val TEXT_ALBUM = "textAlbum"
     const val VISUAL_ALBUM = "visualAlbum"
+    const val COLLAGE = "collage"
 }
 

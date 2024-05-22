@@ -20,6 +20,7 @@ import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackViewModel
 import com.drbrosdev.extractor.ui.settings.clearevent.ExtractorClearEventsViewModel
 import com.drbrosdev.extractor.ui.settings.index.ExtractorResetIndexViewModel
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkViewModel
+import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -99,6 +100,7 @@ val viewModelModule = module {
             compileTextAlbum = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             homeScreenSettingsProvider = get(),
+            buildUserCollage = get(),
             extractionStatus = get()
         )
     }
@@ -123,6 +125,13 @@ val viewModelModule = module {
             stateHandle = get(),
             suggestUserKeywords = get(),
             extractorRepository = get<DefaultExtractorRepository>()
+        )
+    }
+
+    viewModel {
+        ExtractorUserCollageViewModel(
+            stateHandle = get(),
+            buildUserCollage = get()
         )
     }
 

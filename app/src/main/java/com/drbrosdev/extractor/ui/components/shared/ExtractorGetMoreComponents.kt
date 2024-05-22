@@ -5,18 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -130,63 +125,12 @@ fun AdViewConsentBanner(
     onViewFormClick: () -> Unit,
     onViewPolicyClick: () -> Unit
 ) {
-    val contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
 
-    val contentTextStyle = MaterialTheme.typography.bodyMedium.copy(
-        fontWeight = FontWeight.Normal
-    )
-
-    OutlinedCard(
+    AttentionContainer(
         modifier = Modifier
             .then(modifier),
-        shape = RoundedCornerShape(18.dp)
-    ) {
-        Spacer(modifier = Modifier.height(14.dp))
-        Row(
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.rounded_release_alert_24),
-                contentDescription = "",
-                tint = MaterialTheme.colorScheme.tertiary
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = "Before you continue",
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .padding(contentPadding)
-                .padding(vertical = 12.dp)
-        ) {
-            Text(
-                text = "Viewing ads will transfer some of your non-identifiable information to Google, the provider of the ad platform. No data will be transferred if you do not consent to the policy provided by Google Ads.",
-                style = contentTextStyle
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = "You can find out more on our privacy policy page.",
-                style = contentTextStyle
-            )
-        }
-
-        // Button row
-        Row(
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        ) {
+        header = "Before you continue",
+        actionRow = {
             ExtractorTextButton(
                 onClick = onViewPolicyClick,
                 contentColor = MaterialTheme.colorScheme.tertiary
@@ -200,6 +144,14 @@ fun AdViewConsentBanner(
                 Text(text = "View Form")
             }
         }
+    ) {
+        Text(
+            text = "Viewing ads will transfer some of your non-identifiable information to Google, the provider of the ad platform. No data will be transferred if you do not consent to the policy provided by Google Ads.",
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = "You can find out more on our privacy policy page.",
+        )
     }
 }
 

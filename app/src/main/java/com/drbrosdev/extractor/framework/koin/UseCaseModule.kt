@@ -1,8 +1,8 @@
 package com.drbrosdev.extractor.framework.koin
 
-import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
 import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
@@ -45,7 +45,6 @@ val useCaseModule = module {
             dispatcher = get(named(CoroutineModuleName.Default)),
             userEmbeddingDao = get(),
             tokenizeText = get(),
-            validateSuggestedSearchToken = get()
         )
     }
 

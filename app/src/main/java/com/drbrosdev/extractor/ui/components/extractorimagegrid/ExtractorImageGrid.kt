@@ -2,6 +2,8 @@ package com.drbrosdev.extractor.ui.components.extractorimagegrid
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -53,6 +55,33 @@ fun ExtractorImageGrid(
         }
         item {
             Spacer(modifier = Modifier.height(120.dp))
+        }
+    }
+}
+
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ExtractorImageFlowRow(
+    onClick: (index: Int) -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = ExtractorImageGridDefaults.paddingValues,
+    images: List<Extraction>,
+) {
+    val imageSize = 96
+
+    FlowRow(
+        modifier = Modifier
+            .then(modifier),
+        verticalArrangement = Arrangement.spacedBy(1.dp),
+        horizontalArrangement = Arrangement.spacedBy(1.dp),
+    ) {
+        images.forEachIndexed { index, it ->
+            ExtractorImageItem(
+                imageUri = it.uri.toUri(),
+                size = imageSize,
+                onClick = { onClick(index) },
+            )
         }
     }
 }

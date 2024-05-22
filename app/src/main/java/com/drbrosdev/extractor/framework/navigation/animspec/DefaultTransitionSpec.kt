@@ -8,6 +8,7 @@ import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreNavTarget
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
+import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageNavTarget
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
 
@@ -52,7 +53,8 @@ private fun createDefaultTransition(
 
 private fun goingFromImageViewer(from: NavTarget?, to: NavTarget?): Boolean {
     val goingFrom = from is ExtractorImageViewerNavTarget
-    val goingTo = (to is ExtractorAlbumViewerNavTarget) or (to is ExtractorSearchNavTarget)
+    val goingTo =
+        (to is ExtractorAlbumViewerNavTarget) or (to is ExtractorSearchNavTarget) or (to is ExtractorUserCollageNavTarget)
 
     return goingFrom and goingTo
 }
@@ -78,7 +80,8 @@ private fun goingToImageViewer(
     from: NavTarget?,
     to: NavTarget?
 ): Boolean {
-    val goingFrom = (from is ExtractorSearchNavTarget) or (from is ExtractorAlbumViewerNavTarget)
+    val goingFrom =
+        (from is ExtractorSearchNavTarget) or (from is ExtractorAlbumViewerNavTarget) or (from is ExtractorUserCollageNavTarget)
     val goingTo = to is ExtractorImageViewerNavTarget
 
     return goingFrom and goingTo

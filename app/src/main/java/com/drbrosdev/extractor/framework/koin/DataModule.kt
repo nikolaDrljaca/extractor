@@ -22,6 +22,7 @@ val dataModule = module {
     single { get<ExtractorDatabase>().albumConfigurationDao() }
     single { get<ExtractorDatabase>().albumRelationDao() }
     single { get<ExtractorDatabase>().searchIndexDao() }
+    single { get<ExtractorDatabase>().userExtractionDao() }
 
     single {
         TransactionProvider(
