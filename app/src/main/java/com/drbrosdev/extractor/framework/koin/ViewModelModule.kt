@@ -7,6 +7,7 @@ import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageReposi
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
+import com.drbrosdev.extractor.ui.dialog.userembed.ExtractorUserEmbedViewModel
 import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
@@ -19,6 +20,7 @@ import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackViewModel
 import com.drbrosdev.extractor.ui.settings.clearevent.ExtractorClearEventsViewModel
 import com.drbrosdev.extractor.ui.settings.index.ExtractorResetIndexViewModel
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkViewModel
+import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -79,6 +81,7 @@ val viewModelModule = module {
     viewModel {
         ExtractorImageInfoViewModel(
             mediaImageId = it.get(),
+            stateHandle = get(),
             extractorDataRepository = get<DefaultExtractorRepository>(),
         )
     }
@@ -97,6 +100,7 @@ val viewModelModule = module {
             compileTextAlbum = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             homeScreenSettingsProvider = get(),
+            buildUserCollage = get(),
             extractionStatus = get()
         )
     }
@@ -112,6 +116,23 @@ val viewModelModule = module {
     viewModel {
         ExtractorSettingsViewModel(
             settingsDatastore = get()
+        )
+    }
+
+    viewModel {
+        ExtractorUserEmbedViewModel(
+            mediaImageId = it.get(),
+            stateHandle = get(),
+            suggestUserKeywords = get(),
+            extractorRepository = get<DefaultExtractorRepository>()
+        )
+    }
+
+    viewModel {
+        ExtractorUserCollageViewModel(
+            stateHandle = get(),
+            buildUserCollage = get(),
+            datastore = get()
         )
     }
 

@@ -80,8 +80,19 @@ class GenerateSuggestedKeywords(
     ): List<SuggestedSearch> {
         if (input == null) return emptyList()
 
-        return tokenizeText.invoke(input)
-            .filter { token -> validateSuggestedSearchToken.invoke(token) }
+        // Do not perform validation on User created keywords
+        val out = when (keywordType) {
+            KeywordType.ALL -> tokenizeText.invoke(input)
+            else -> tokenizeText.invoke(input)
+                .filter { token -> validateSuggestedSearchToken.invoke(token) }
+        }
+
+        val searchType = when (keywordType) {
+            KeywordType.ALL -> SearchType.FULL
+            else -> SearchType.PARTIAL
+        }
+
+        return out
             .flowOn(dispatcher)
             .toList()
             .shuffled()
@@ -90,7 +101,7 @@ class GenerateSuggestedKeywords(
                 SuggestedSearch(
                     query = token.text,
                     keywordType = keywordType,
-                    searchType = SearchType.PARTIAL
+                    searchType = searchType
                 )
             }
             .toList()

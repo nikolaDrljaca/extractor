@@ -14,6 +14,7 @@ import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.dao.SearchIndexDao
 import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
+import com.drbrosdev.extractor.data.dao.UserExtractionDao
 import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.entity.AlbumConfigurationEntity
 import com.drbrosdev.extractor.data.entity.AlbumEntity
@@ -61,6 +62,8 @@ abstract class ExtractorDatabase : RoomDatabase() {
     abstract fun albumEntryDao(): AlbumEntryDao
 
     abstract fun searchIndexDao(): SearchIndexDao
+
+    abstract fun userExtractionDao(): UserExtractionDao
 
     companion object {
         fun createExtractorDatabase(context: Context): ExtractorDatabase {

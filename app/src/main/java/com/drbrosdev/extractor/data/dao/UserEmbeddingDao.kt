@@ -51,7 +51,7 @@ interface UserEmbeddingDao {
         WITH out AS (
             SELECT value 
             FROM user_embedding AS ue
-            WHERE ue.value IS NOT NULL AND ue.value !=''
+            WHERE ue.value IS NOT NULL AND ue.value != ''
             ORDER BY random()
             LIMIT 10
         )
@@ -59,4 +59,11 @@ interface UserEmbeddingDao {
         FROM out
     """)
     suspend fun getValueConcatAtRandom() : String?
+
+    @Query("""
+        SELECT DISTINCT value
+        FROM user_embedding
+        WHERE value IS NOT NULL AND value != ''
+    """)
+    suspend fun findAllEmbeddingValues(): List<String>
 }

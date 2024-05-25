@@ -18,9 +18,11 @@ interface ExtractorRepository {
 
     suspend fun updateTextEmbed(embedUpdate: EmbedUpdate)
 
-    suspend fun upsertUserEmbed(embedUpdate: EmbedUpdate)
+    suspend fun updateUserEmbed(embedUpdate: List<EmbedUpdate>)
 
     suspend fun deleteVisualEmbed(mediaImageId: MediaImageId, value: String)
+
+    suspend fun deleteUserEmbed(mediaImageId: MediaImageId, value: String)
 
     suspend fun createExtractionData(data: NewExtraction)
 

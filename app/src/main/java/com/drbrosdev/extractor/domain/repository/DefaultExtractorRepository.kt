@@ -67,16 +67,43 @@ class DefaultExtractorRepository(
             .map { it?.toImageEmbeds() }
     }
 
+    override suspend fun deleteUserEmbed(mediaImageId: MediaImageId, value: String) {
+        userEmbeddingDao.findByMediaId(mediaImageId.id)?.let { userEmbed ->
+            val updated = withContext(dispatcher) {
+                userEmbed.value
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.lowercase() != value.lowercase() }
+                    .joinToString(separator = ",") { it }
+            }
+
+            userEmbeddingDao.update(userEmbed.copy(value = updated))
+            // update search index
+            searchIndexDao.updateUserIndex(updated, userEmbed.extractionEntityId)
+        }
+    }
+
     override suspend fun updateTextEmbed(embedUpdate: EmbedUpdate) = with(embedUpdate) {
         textEmbeddingDao.update(value, mediaImageId.id)
         // update search index
         searchIndexDao.updateTextIndex(value, mediaImageId.id)
     }
 
-    override suspend fun upsertUserEmbed(embedUpdate: EmbedUpdate) = with(embedUpdate) {
-        userEmbeddingDao.update(value, mediaImageId.id)
-        // update search index
-        searchIndexDao.updateUserIndex(value, mediaImageId.id)
+    override suspend fun updateUserEmbed(embedUpdate: List<EmbedUpdate>) {
+        // check if input is empty, and that only 1 media ID is in the list
+        if (embedUpdate.map { it.mediaImageId.id }.toSet().size != 1) return
+
+        val mediaId = embedUpdate.first().mediaImageId.id
+        userEmbeddingDao.findByMediaId(mediaId)?.let { embedding ->
+            val value = embedUpdate
+                .map { it.value.trim() }
+                .distinct() // Make sure each user keyword is unique for a certain image
+                .joinToString(separator = ",") { it }
+
+            userEmbeddingDao.update(embedding.copy(value = value))
+            // update search index
+            searchIndexDao.updateUserIndex(value, mediaId)
+        }
     }
 
     override suspend fun deleteVisualEmbed(mediaImageId: MediaImageId, value: String) {
@@ -90,6 +117,7 @@ class DefaultExtractorRepository(
             }
 
             visualEmbeddingDao.update(visualEmbed.copy(value = updated))
+            // update search index
             searchIndexDao.updateVisualIndex(updated, visualEmbed.extractionEntityId)
         }
     }
@@ -132,7 +160,6 @@ class DefaultExtractorRepository(
             extractionEntityId = mediaImageId.id
         )
 
-        //NOTE: Ordering is important for relationships
         txRunner.withTransaction {
             extractionDao.insert(extractionEntity)
             textEmbeddingDao.insert(textEntity)

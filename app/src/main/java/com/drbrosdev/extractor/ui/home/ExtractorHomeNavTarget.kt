@@ -16,6 +16,7 @@ import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewS
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageNavTarget
 import com.drbrosdev.extractor.util.ScreenPreview
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
@@ -41,7 +42,7 @@ object ExtractorHomeNavTarget : NavTarget {
         val userAlbums by viewModel.userAlbums.collectAsStateWithLifecycle()
         val textAlbums by viewModel.textAlbums.collectAsStateWithLifecycle()
         val settings by viewModel.settings.collectAsStateWithLifecycle()
-
+        val collage by viewModel.collage.collectAsStateWithLifecycle()
 
         ExtractorHomeScreen(
             onSyncClick = { dialogNavController.navigate(ExtractorStatusDialogNavTarget) },
@@ -50,6 +51,7 @@ object ExtractorHomeNavTarget : NavTarget {
             userAlbums = userAlbums,
             textAlbums = textAlbums,
             settings = settings,
+            collageThumbnail = collage,
             onInitTextPreview = viewModel::compileTextAlbums,
             onInitUserPreviews = { navController.pop() },
             onInitVisualPreview = viewModel::compileVisualAlbums,
@@ -61,6 +63,9 @@ object ExtractorHomeNavTarget : NavTarget {
             },
             onViewAllUserAlbums = {
                 navController.navigate(ExtractorAlbumsNavTarget)
+            },
+            onCollageClicked = {
+                navController.navigate(ExtractorUserCollageNavTarget)
             }
         )
     }
@@ -77,13 +82,15 @@ private fun SearchScreenPreview() {
                 visualAlbums = ExtractorCategoryViewState.Initial(),
                 userAlbums = ExtractorCategoryViewState.Initial(),
                 textAlbums = ExtractorCategoryViewState.Initial(),
+                collageThumbnail = ExtractorUserCollageThumbnailUiState.Empty,
                 settings = ExtractorHomeScreenSettings(),
                 onInitTextPreview = {},
                 onInitUserPreviews = {},
                 onInitVisualPreview = {},
                 onAlbumPreviewClick = {},
                 onSettingsClick = {},
-                onViewAllUserAlbums = {}
+                onViewAllUserAlbums = {},
+                onCollageClicked = {}
             )
         }
     }

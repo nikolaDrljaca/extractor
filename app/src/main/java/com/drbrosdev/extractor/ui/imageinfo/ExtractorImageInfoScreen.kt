@@ -1,6 +1,8 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -8,16 +10,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -26,74 +29,109 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.components.embeddingsform.EmbeddingsForm
+import com.drbrosdev.extractor.ui.components.shared.EmbeddingTextField
 import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorButtonDefaults
+import com.drbrosdev.extractor.ui.components.shared.ExtractorEmbeddingChips
+import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorImageInfoScreen(
     onClearVisual: (String) -> Unit,
+    onClearUser: (String) -> Unit,
     onSaveEmbeddings: () -> Unit,
+    onAddNewUser: () -> Unit,
     modifier: Modifier = Modifier,
     model: ExtractorImageInfoUiState,
+    textEmbedState: ExtractorTextFieldState
 ) {
     val scrollState = rememberScrollState()
+    val smallLabel = MaterialTheme.typography.labelSmall.copy(
+        color = Color.Gray
+    )
 
-    Surface(
-        tonalElevation = BottomSheetDefaults.Elevation,
-        color = MaterialTheme.colorScheme.background,
-        shape = RoundedCornerShape(18.dp)
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(horizontal = 16.dp)
+            .systemBarsPadding()
+            .then(modifier),
+        constraintSet = imageInfoConstraintSet()
     ) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(horizontal = 16.dp)
-                .systemBarsPadding()
-                .then(modifier),
-            constraintSet = imageInfoConstraintSet()
+        Column(
+            modifier = Modifier.layoutId(ViewIds.IMAGE_INFO)
         ) {
-            Column(
-                modifier = Modifier.layoutId(ViewIds.IMAGE_INFO)
-            ) {
-                Text(
-                    text = stringResource(R.string.extractor_image_info),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(text = stringResource(R.string.info_screen_image_id, model.mediaImageId.id))
-            }
+            Text(
+                text = stringResource(R.string.extractor_image_info),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(text = stringResource(R.string.info_screen_image_id, model.mediaImageId.id))
+        }
 
-            EmbeddingsForm(
-                modifier = Modifier.layoutId(ViewIds.EMBEDDINGS),
-                formState = model.embeddingsFormState,
-                visualEmbeddings = model.visualEmbedding,
-                onClearVisual = onClearVisual
+        Column(
+            modifier = Modifier
+                .layoutId(ViewIds.EMBEDDINGS)
+                .then(modifier),
+            verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.visual_embeddings),
+                style = MaterialTheme.typography.titleMedium
+            )
+            ExtractorEmbeddingChips(onClear = onClearVisual, embeddings = model.visualEmbedding)
+
+            Text(
+                text = stringResource(R.string.user_embeddings),
+                style = MaterialTheme.typography.titleMedium
+            )
+            ExtractorEmbeddingChips(
+                onClear = onClearUser,
+                embeddings = model.userEmbedding,
+                trailingSlot = {
+                    AssistChip(
+                        onClick = onAddNewUser,
+                        label = { Text(text = "Add") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.Add,
+                                contentDescription = null
+                            )
+                        },
+                        shape = CircleShape
+                    )
+                }
             )
 
-            ExtractorButton(
-                onClick = onSaveEmbeddings,
-                modifier = Modifier.layoutId(ViewIds.SAVE_BUTTON),
-                contentPadding = ExtractorButtonDefaults.paddingValues(vertical = 4.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.round_save_24),
-                    contentDescription = "null"
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = stringResource(R.string.info_screen_save))
-            }
+            Spacer(modifier = Modifier.height(8.dp))
+            EmbeddingTextField(
+                value = textEmbedState.textValue,
+                onTextChange = textEmbedState::updateTextValue,
+                label = { Text(text = stringResource(R.string.text_embeddings)) }
+            )
+        }
 
-            Column(
-                modifier = Modifier.layoutId(ViewIds.NOTE)
-            ) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(text = stringResource(R.string.info_screen_note_head))
-                Text(
-                    text = stringResource(R.string.extractor_info_about_image),
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
+        ExtractorButton(
+            onClick = onSaveEmbeddings,
+            modifier = Modifier.layoutId(ViewIds.SAVE_BUTTON),
+            contentPadding = ExtractorButtonDefaults.paddingValues(vertical = 4.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.round_save_24),
+                contentDescription = "null"
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = stringResource(R.string.info_screen_save))
+        }
+
+        Column(
+            modifier = Modifier.layoutId(ViewIds.NOTE)
+        ) {
+            Text(
+                text = stringResource(R.string.extractor_info_about_image),
+                style = smallLabel
+            )
         }
     }
 }
@@ -110,9 +148,9 @@ private fun imageInfoConstraintSet() = ConstraintSet {
     val barGuideline = createGuidelineFromTop(0.09f)
 
     constrain(note) {
-        top.linkTo(embeddings.bottom)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
+        bottom.linkTo(parent.bottom)
         width = Dimension.fillToConstraints
     }
 

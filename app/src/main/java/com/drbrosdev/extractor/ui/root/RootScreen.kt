@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.ui.root
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.window.Dialog
 import com.drbrosdev.extractor.framework.navigation.BlankNavTarget
 import com.drbrosdev.extractor.framework.navigation.BottomSheetNavTarget
@@ -11,7 +12,7 @@ import com.drbrosdev.extractor.framework.navigation.LocalBottomSheetNavControlle
 import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
 import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
-import com.drbrosdev.extractor.framework.navigation.animspec.DefaultTransitionSpec
+import com.drbrosdev.extractor.framework.navigation.animspec.createTransitionSpec
 import com.drbrosdev.extractor.framework.permission.ReadPermissionAccess
 import com.drbrosdev.extractor.ui.onboarding.ExtractorOnboardingNavTarget
 import com.drbrosdev.extractor.ui.permhandler.ExtractorPermissionRequestNavTarget
@@ -38,6 +39,7 @@ fun Root() {
     val dialogNavController = rememberNavController<DialogNavTarget>(initialBackstack = emptyList())
     val bottomSheetNavController =
         rememberNavController<BottomSheetNavTarget>(initialBackstack = emptyList())
+    val density = LocalDensity.current
 
     LaunchedEffect(key1 = Unit) {
         val isOnboardingFinished = viewModel.isOnboardingFinished().first()
@@ -63,7 +65,7 @@ fun Root() {
 
     AnimatedNavHost(
         controller = navController,
-        transitionSpec = DefaultTransitionSpec,
+        transitionSpec = createTransitionSpec(density),
     ) {
         CompositionLocalProvider(
             LocalNavController provides navController,
@@ -88,6 +90,7 @@ fun Root() {
     ) {
         CompositionLocalProvider(
             LocalBottomSheetNavController provides bottomSheetNavController,
+            LocalDialogNavController provides dialogNavController,
         ) {
             it.Content(this.sheetState)
         }

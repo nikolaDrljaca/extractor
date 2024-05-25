@@ -46,7 +46,7 @@ class DefaultRunExtractor(
             val out = ImageEmbeds(
                 textEmbed = outText,
                 visualEmbeds = outVisual,
-                userEmbeds = null
+                userEmbeds = emptyList()
             )
 
             Result.success(out)
