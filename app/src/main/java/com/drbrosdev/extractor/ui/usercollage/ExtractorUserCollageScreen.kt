@@ -21,18 +21,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.AttentionContainer
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
@@ -46,6 +41,8 @@ import com.drbrosdev.extractor.ui.components.usercollage.ExtractorUserCollageIte
 fun ExtractorUserCollageScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
+    onHideBanner: () -> Unit,
+    showBanner: Boolean,
     state: ExtractorUserCollageUiState
 ) {
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
@@ -55,10 +52,6 @@ fun ExtractorUserCollageScreen(
             if (lazyListState.firstVisibleItemIndex > 0) ExtractorTopBarState.ELEVATED
             else ExtractorTopBarState.NORMAL
         }
-    }
-
-    var containerVisible by remember {
-        mutableStateOf(true)
     }
 
     Box(
@@ -79,7 +72,7 @@ fun ExtractorUserCollageScreen(
             }
 
             is ExtractorUserCollageUiState.Content -> LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(18.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
                 state = lazyListState,
                 contentPadding = systemBarsPadding
             ) {
@@ -89,24 +82,22 @@ fun ExtractorUserCollageScreen(
 
                 item {
                     AnimatedVisibility(
-                        visible = containerVisible,
+                        visible = showBanner,
                         modifier = Modifier.padding(horizontal = 12.dp),
                         enter = fadeIn(),
                         exit = fadeOut()
                     ) {
                         AttentionContainer(
-                            header = "What are these?",
+                            header = stringResource(R.string.what_are_these),
                             actionRow = {
-                                ExtractorTextButton(onClick = {
-                                    containerVisible = false
-                                }) {
-                                    Text(text = "Got It!")
+                                ExtractorTextButton(onClick = onHideBanner) {
+                                    Text(text = stringResource(id = R.string.got_it))
                                 }
                             }
                         ) {
-                            Text(text = "A collection of all images where you have left your own tag! They are grouped by keyword for organisation.")
+                            Text(text = stringResource(R.string.your_keywords_expl))
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text(text = "This collection will constantly update as you keep adding you own tags. You can use this area to tag images you want to find quickly.")
+                            Text(text = stringResource(R.string.your_keywords_expl_2))
                         }
                     }
                 }
@@ -135,34 +126,4 @@ fun ExtractorUserCollageScreen(
             state = extractorTopBarState.value
         )
     }
-}
-
-private fun userCollageScreenConstraintSet() = ConstraintSet {
-    val topBar = createRefFor(ViewIds.TOP_BAR)
-    val banner = createRefFor(ViewIds.BANNER)
-    val collages = createRefFor(ViewIds.COLLAGES)
-
-    constrain(topBar) {
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-        top.linkTo(parent.top)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(banner) {
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-        top.linkTo(topBar.bottom, margin = 8.dp)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(collages) {
-
-    }
-}
-
-private object ViewIds {
-    const val TOP_BAR = "top_bar"
-    const val BANNER = "banner"
-    const val COLLAGES = "collages"
 }

@@ -29,6 +29,7 @@ object ExtractorUserCollageNavTarget : NavTarget {
         val context = LocalContext.current
 
         val state by viewModel.userCollageState.collectAsStateWithLifecycle()
+        val showBanner by viewModel.showBanner.collectAsStateWithLifecycle()
 
         CollectFlow(flow = viewModel.events) {
             when (it) {
@@ -49,7 +50,9 @@ object ExtractorUserCollageNavTarget : NavTarget {
 
         ExtractorUserCollageScreen(
             state = state,
-            onBack = { navController.pop() }
+            showBanner = showBanner,
+            onBack = { navController.pop() },
+            onHideBanner = { viewModel.hideYourKeywordsBannerBanner() }
         )
     }
 }
@@ -61,7 +64,9 @@ private fun CurrentPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ExtractorUserCollageScreen(
                 state = ExtractorUserCollageUiState.Loading,
-                onBack = {}
+                showBanner = false,
+                onBack = {},
+                onHideBanner = {}
             )
         }
     }

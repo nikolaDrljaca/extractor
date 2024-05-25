@@ -161,4 +161,7 @@
     <string name="add_multiple_user">To add multiple, separate them with a comma.</string>
     <string name="custom_keyword">Custom Keyword</string>
     <string name="your_keywords"># Your Keywords</string>
+    <string name="what_are_these">What are these?</string>
+    <string name="your_keywords_expl">A collection of all images where you have left your own tag! They are grouped by keyword for organisation.</string>
+    <string name="your_keywords_expl_2">This collection will constantly update as you keep adding you own tags. You can use this area to tag images you want to find quickly.</string>
 </resources>

@@ -111,7 +111,6 @@ class ExtractorSearchViewModel(
             is ExtractionStatus.Done -> search
         }
     }
-        .distinctUntilChanged()
         .stateIn(
             viewModelScope,
             SharingStarted.Lazily,

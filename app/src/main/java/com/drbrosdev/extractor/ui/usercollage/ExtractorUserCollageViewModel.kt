@@ -3,11 +3,13 @@ package com.drbrosdev.extractor.ui.usercollage
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -17,11 +19,19 @@ import kotlinx.coroutines.withContext
 
 class ExtractorUserCollageViewModel(
     private val stateHandle: SavedStateHandle,
+    private val datastore: ExtractorDataStore,
     private val buildUserCollage: BuildUserCollage
 ) : ViewModel() {
 
     private val _events = Channel<ExtractorUserCollageEvents>()
     val events = _events.receiveAsFlow()
+
+    val showBanner = datastore.showYourKeywordsBanner
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            false
+        )
 
     val userCollageState = flow {
         emit(ExtractorUserCollageUiState.Loading)
@@ -41,6 +51,12 @@ class ExtractorUserCollageViewModel(
             WhileUiSubscribed,
             ExtractorUserCollageUiState.Loading
         )
+
+    fun hideYourKeywordsBannerBanner() {
+        viewModelScope.launch {
+            datastore.hasSeenYourKeywordsBanner()
+        }
+    }
 
     private fun onImageItemClicked(keyword: String, index: Int) {
         viewModelScope.launch {

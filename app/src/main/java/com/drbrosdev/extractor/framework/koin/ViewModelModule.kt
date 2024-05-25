@@ -131,7 +131,8 @@ val viewModelModule = module {
     viewModel {
         ExtractorUserCollageViewModel(
             stateHandle = get(),
-            buildUserCollage = get()
+            buildUserCollage = get(),
+            datastore = get()
         )
     }
 
