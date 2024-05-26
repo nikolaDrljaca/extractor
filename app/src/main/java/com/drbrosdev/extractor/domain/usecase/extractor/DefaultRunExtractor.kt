@@ -16,9 +16,10 @@ import kotlinx.coroutines.withContext
 
 class DefaultRunExtractor(
     private val dispatcher: CoroutineDispatcher,
-    private val extractVisualEmbeds: ExtractVisualEmbeds<InputImage>,
-    private val extractTextEmbed: ExtractTextEmbed<InputImage>,
     private val createInputImage: CreateInputImage,
+    private val extractTextEmbed: ExtractTextEmbed<InputImage>,
+    private val extractVisualEmbeds: ExtractVisualEmbeds<InputImage>,
+    private val mediaPipeExtractVisualEmbeds: ExtractVisualEmbeds<InputImage>,
 ) : RunExtractor {
 
     override suspend fun execute(mediaImageUri: MediaImageUri): Result<ImageEmbeds> {
@@ -39,13 +40,22 @@ class DefaultRunExtractor(
                 extractVisualEmbeds.execute(inputImage.getOrThrow())
             }
 
+            val mediaPipeVisuals = async {
+                mediaPipeExtractVisualEmbeds.execute(inputImage.getOrThrow())
+            }
+
             val outText = text.await().getOrDefault(Embed.defaultTextEmbed)
 
-            val outVisual = visuals.await().getOrDefault(emptyList())
+            val outVisualEmbeds = visuals.await().getOrDefault(emptyList())
+                .asSequence()
+                .plus(mediaPipeVisuals.await().getOrDefault(emptyList())
+                    .asSequence())
+                .distinctBy { it.value.lowercase() }
+                .toList()
 
             val out = ImageEmbeds(
                 textEmbed = outText,
-                visualEmbeds = outVisual,
+                visualEmbeds = outVisualEmbeds,
                 userEmbeds = emptyList()
             )
 

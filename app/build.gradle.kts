@@ -151,6 +151,9 @@ dependencies {
     // timber logging
     implementation("com.jakewharton.timber:timber:5.0.1")
 
+    // mediaPipe image classification
+    implementation("com.google.mediapipe:tasks-vision:0.20230731")
+
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     implementation("io.arrow-kt:arrow-core:1.2.0")

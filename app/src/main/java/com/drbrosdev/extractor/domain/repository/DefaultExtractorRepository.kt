@@ -156,7 +156,6 @@ class DefaultExtractorRepository(
             textIndex = textEmbed.value,
             visualIndex = visuals,
             userIndex = "", // Empty on first creation
-            colorIndex = "", // TODO
             extractionEntityId = mediaImageId.id
         )
 
