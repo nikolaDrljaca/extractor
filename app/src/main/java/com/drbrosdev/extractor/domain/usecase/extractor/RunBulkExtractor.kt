@@ -4,7 +4,6 @@ import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
-import com.drbrosdev.extractor.framework.logger.logErrorEvent
 import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.util.mediaImageId
 import com.drbrosdev.extractor.util.mediaImageUri
@@ -35,13 +34,7 @@ class RunBulkExtractor(
                 mediaImageRepository.findAllByIdAsFlow(isOnDevice.toList())
                     .map { mediaStoreImage ->
                         val embeds = runExtractor.execute(mediaStoreImage.mediaImageUri())
-                            .onFailure { exception ->
-                                logErrorEvent(
-                                    "Extraction failed for image",
-                                    exception
-                                )
-                            }
-                            .getOrNull()
+
                         NewExtraction(
                             mediaImageId = mediaStoreImage.mediaImageId(),
                             extractorImageUri = mediaStoreImage.mediaImageUri(),

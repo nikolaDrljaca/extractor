@@ -5,5 +5,10 @@ import com.drbrosdev.extractor.domain.model.MediaImageUri
 
 interface RunExtractor {
 
-    suspend fun execute(mediaImageUri: MediaImageUri): Result<ImageEmbeds>
+    /**
+     * Performs extraction/inference on an media item pointed to by [mediaImageUri].
+     *
+     * Underlying captured errors are swallowed and null is returned instead.
+     */
+    suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds?
 }
