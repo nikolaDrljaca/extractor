@@ -15,9 +15,10 @@ sealed interface ExtractorSuggestedEmbedsUiState {
 }
 
 
-fun ExtractorSuggestedEmbedsUiState.getSuggestions(): List<UserEmbedUiModel> {
-    return when (this) {
+fun ExtractorSuggestedEmbedsUiState.getSuggestions(): List<UserEmbedUiModel> =
+    when (this) {
         is ExtractorSuggestedEmbedsUiState.Content -> this.suggestions
+        is ExtractorSuggestedEmbedsUiState.Empty -> emptyList()
         else -> error("Accessing suggestions outside of Content state.")
     }
-}
+

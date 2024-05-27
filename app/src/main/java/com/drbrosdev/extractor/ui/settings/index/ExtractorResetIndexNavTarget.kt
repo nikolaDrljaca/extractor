@@ -27,7 +27,7 @@ data object ExtractorResetIndexNavTarget : NavTarget {
 
         val viewModel: ExtractorResetIndexViewModel = koinViewModel()
 
-        val isActionLoading by viewModel.actionLoading.collectAsStateWithLifecycle()
+        val isActionLoading by viewModel.loading.collectAsStateWithLifecycle()
 
         CollectFlow(flow = viewModel.events) {
             when (it) {
