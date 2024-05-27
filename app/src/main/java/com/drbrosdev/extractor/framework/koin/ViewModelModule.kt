@@ -28,7 +28,8 @@ val viewModelModule = module {
     viewModel {
         ExtractorResetIndexViewModel(
             extractorRepository = get<DefaultExtractorRepository>(),
-            spawnExtractorWork = get()
+            spawnExtractorWork = get(),
+            extractionProgress = get()
         )
     }
 
