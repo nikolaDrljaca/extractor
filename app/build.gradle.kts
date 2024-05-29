@@ -37,7 +37,7 @@ android {
         applicationId = "com.drbrosdev.extractor"
         minSdk = 24
         targetSdk = 34
-        versionCode = 7
+        versionCode = 8
         versionName = "24.05"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -48,8 +48,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
