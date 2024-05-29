@@ -38,7 +38,7 @@ import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
         SearchIndexEntity::class,
         SearchIndexFts::class
     ],
-    version = 14,
+    version = 15,
 )
 @TypeConverters(DatabaseConverters::class)
 abstract class ExtractorDatabase : RoomDatabase() {

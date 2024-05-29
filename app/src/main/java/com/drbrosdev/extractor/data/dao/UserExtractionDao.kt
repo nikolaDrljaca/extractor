@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.data.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import com.drbrosdev.extractor.data.relation.UserExtractionRelation
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +20,7 @@ interface UserExtractionDao {
         FROM image_extraction_entity AS extraction JOIN out ON out.extraction_entity_id = extraction.media_store_id
     """
     )
+    @Transaction
     suspend fun findAllContaining(keyword: String): List<UserExtractionRelation>
 
     @Query(
@@ -32,5 +34,6 @@ interface UserExtractionDao {
         FROM image_extraction_entity AS extraction JOIN out ON out.extraction_entity_id = extraction.media_store_id
     """
     )
+    @Transaction
     fun findAllContainingAsFlow(keyword: String): Flow<List<UserExtractionRelation>>
 }

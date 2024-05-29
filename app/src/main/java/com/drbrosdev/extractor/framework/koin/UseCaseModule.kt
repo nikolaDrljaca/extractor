@@ -25,6 +25,7 @@ import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRang
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.label.extractor.MediaPipeExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
@@ -75,9 +76,10 @@ val useCaseModule = module {
 
     factory {
         DefaultRunExtractor(
-            extractVisualEmbeds = get(),
-            extractTextEmbed = get(),
             createInputImage = get(),
+            extractVisualEmbeds = get<MLKitExtractVisualEmbeds>(),
+            extractTextEmbed = get(),
+            mediaPipeExtractVisualEmbeds = get<MediaPipeExtractVisualEmbeds>(),
             dispatcher = get(named(CoroutineModuleName.Default)),
         )
     } bind RunExtractor::class
@@ -216,4 +218,13 @@ val useCaseModule = module {
             extractionDao = get()
         )
     } bind SearchImageByDateRange::class
+
+    // Keep this single due to the ImageClassifier instance created inside
+    // NOTE: Maybe move this into a provider use case?
+    single {
+        MediaPipeExtractVisualEmbeds(
+            context = androidContext(),
+            dispatcher = get(named(CoroutineModuleName.Default))
+        )
+    } bind ExtractVisualEmbeds::class
 }

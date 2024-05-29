@@ -37,7 +37,7 @@ android {
         applicationId = "com.drbrosdev.extractor"
         minSdk = 24
         targetSdk = 34
-        versionCode = 7
+        versionCode = 8
         versionName = "24.05"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -48,8 +48,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -150,6 +150,9 @@ dependencies {
 
     // timber logging
     implementation("com.jakewharton.timber:timber:5.0.1")
+
+    // mediaPipe image classification
+    implementation("com.google.mediapipe:tasks-vision:0.20230731")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 

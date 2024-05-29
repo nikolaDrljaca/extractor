@@ -11,7 +11,6 @@ data class SearchIndexEntity(
     val textIndex: String,
     val visualIndex: String,
     val userIndex: String,
-    val colorIndex: String,
     // relation
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "extraction_entity_id") val extractionEntityId: Long
@@ -23,5 +22,4 @@ data class SearchIndexFts(
     val textIndex: String,
     val visualIndex: String,
     val userIndex: String,
-    val colorIndex: String,
 )

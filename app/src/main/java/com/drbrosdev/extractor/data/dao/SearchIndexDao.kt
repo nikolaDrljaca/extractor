@@ -42,15 +42,6 @@ interface SearchIndexDao {
 
     @Query(
         """
-        UPDATE search_index 
-        SET colorIndex = :value
-        WHERE extraction_entity_id = :extractionEntityId
-    """
-    )
-    suspend fun updateColorIndex(value: String, extractionEntityId: Long)
-
-    @Query(
-        """
         DELETE FROM search_index
         WHERE extraction_entity_id = :id
     """
