@@ -20,6 +20,7 @@ import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
+import com.drbrosdev.extractor.domain.usecase.searchCountPositiveDelta
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestionsError
 import com.drbrosdev.extractor.framework.StringResourceProvider
@@ -33,9 +34,12 @@ import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSea
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -82,9 +86,14 @@ class ExtractorSearchViewModel(
         }
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(3000L),
+            SharingStarted.Lazily,
             0
         )
+
+    private val positiveDeltaJob = datastore.searchCountPositiveDelta()
+        .filter { it }
+        .onEach { _searchTrigger.emit(SearchTrigger.GenerateSuggestions) }
+        .launchIn(viewModelScope)
 
     val containerState = combine(
         _searchTriggerResult,
