@@ -16,14 +16,14 @@ class ExtractorGetMoreViewModel(
 
     fun rewardPurchase() {
         viewModelScope.launch {
-            datastore.incrementSearchCountBy(amount = 10)
+            datastore.incrementSearchCountBy(amount = 100)
             snackbarHostState.showSnackbar(message = "", duration = SnackbarDuration.Long)
         }
     }
 
     fun rewardSearches() {
         viewModelScope.launch {
-            datastore.incrementSearchCountBy(amount = 10)
+            datastore.incrementSearchCountBy(amount = 100)
         }
     }
 }
