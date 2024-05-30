@@ -3,11 +3,11 @@ package com.drbrosdev.extractor.domain.usecase
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
-import arrow.core.toOption
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRange
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
+import com.drbrosdev.extractor.framework.logger.logEvent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
@@ -27,18 +27,16 @@ class SearchImages(
             val out = when {
                 shouldUseDateRangeSearch(params) -> {
                     // NOTE: Should never be empty based on the above check
-                    params.dateRange.toOption()
-                        .fold(
-                            ifEmpty = { emptyList() },
-                            ifSome = { searchImageByDateRange.execute(it) }
-                        )
+                    val dateRange = requireNotNull(params.dateRange) {
+                        logEvent("SearchImages: shouldUseDateRangeSearch is true but dateRange is null!")
+                    }
+                    searchImageByDateRange.execute(dateRange)
                 }
 
                 else -> {
                     searchImageByQuery.execute(params)
                 }
             }
-
 
             dataStore.decrementSearchCount()
             out.right()

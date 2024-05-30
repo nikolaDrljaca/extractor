@@ -97,6 +97,7 @@ class GenerateSuggestedKeywords(
             .toList()
             .shuffled()
             .take(size)
+            .distinct() // skip duplicates
             .map { token ->
                 SuggestedSearch(
                     query = token.text,

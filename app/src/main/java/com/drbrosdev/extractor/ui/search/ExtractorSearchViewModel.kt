@@ -36,13 +36,13 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -60,45 +60,29 @@ class ExtractorSearchViewModel(
     private val stringProvider: StringResourceProvider
 ) : ViewModel() {
 
-    private val _searchTrigger = MutableSharedFlow<SearchTrigger>()
+    val searchSheetState = ExtractorSearchSheetState(
+        stateHandle = stateHandle,
+        eventHandler = ::searchSheetEventHandler
+    )
 
+    val snackbarHostState = SnackbarHostState()
+
+    private val _searchTrigger = MutableSharedFlow<SearchTrigger>()
     private val _searchTriggerResult = _searchTrigger
         .flatMapLatest { searchTriggerProcessFlow(it) }
 
     private val _progress = trackExtractionProgress.invoke()
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
-    private val _searchCount = datastore.searchCount
-        .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
-
-    /*
-    Emit a new value to the search trigger every time:
-    - search count changes from 0 to a positive value
-    - extraction status is done
-
-    Covers cases where we trigger search after extraction progress status changes as well
-    as search count changes.
-
-    Can be a usecase to check if search functionality is available.
-     */
-    private val _changeTriggerJob = _searchCount
-        .map { it != 0 }
-        .distinctUntilChanged()
-        .combine(_progress) { countStatus, status ->
-            countStatus and (status is ExtractionStatus.Done)
-        }
-        .filter { it }
-        .onEach { _searchTrigger.emit(SearchTrigger.GenerateSuggestions) }
-        .launchIn(viewModelScope)
-
-    val searchCount = _searchCount
+    val searchCount = datastore.searchCount
+        .onStart { _searchTrigger.emit(SearchTrigger.GenerateSuggestions) }
         .onEach {
             if (it == 0) searchSheetState.disable()
             else searchSheetState.enable()
         }
         .stateIn(
             viewModelScope,
-            WhileUiSubscribed,
+            SharingStarted.WhileSubscribed(3000L),
             0
         )
 
@@ -137,13 +121,6 @@ class ExtractorSearchViewModel(
             WhileUiSubscribed,
             ExtractorStatusButtonState.Idle
         )
-
-    val searchSheetState = ExtractorSearchSheetState(
-        stateHandle = stateHandle,
-        eventHandler = ::searchSheetEventHandler
-    )
-
-    val snackbarHostState = SnackbarHostState()
 
     private val _events = Channel<ExtractorSearchScreenEvents>()
     val events = _events.receiveAsFlow()
@@ -204,23 +181,32 @@ class ExtractorSearchViewModel(
     }
 
     private fun searchSheetEventHandler(event: ExtractorSearchSheetEvents) {
-        val params = when (event) {
+        when (event) {
             is ExtractorSearchSheetEvents.OnChange -> with(event.data) {
-                SearchImageByQuery.Params(
+                val params = SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
                     keywordType = keywordType
                 )
+                // don't perform search if the query is blank
+                if (params.query.isBlank()) return
+                viewModelScope.launch {
+                    _searchTrigger.emit(SearchTrigger.Search(params))
+                }
             }
 
             is ExtractorSearchSheetEvents.OnDateChange -> with(event.data) {
-                SearchImageByQuery.Params(
+                val params = SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
                     keywordType = keywordType
                 )
+                if (params.dateRange == null) return
+                viewModelScope.launch {
+                    _searchTrigger.emit(SearchTrigger.Search(params))
+                }
             }
 
             is ExtractorSearchSheetEvents.OnSearchClick -> with(event.data) {
@@ -228,22 +214,17 @@ class ExtractorSearchViewModel(
                     _events.send(ExtractorSearchScreenEvents.HideKeyboard)
                 }
 
-                SearchImageByQuery.Params(
+                val params = SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
                     keywordType = keywordType
                 )
+
+                viewModelScope.launch {
+                    _searchTrigger.emit(SearchTrigger.Search(params))
+                }
             }
-        }
-
-        //don't perform a search with no query
-        if (params.query.isBlank() and (params.dateRange == null)) return
-
-        viewModelScope.launch {
-            _searchTrigger.emit(
-                SearchTrigger.Search(params)
-            )
         }
     }
 
@@ -326,14 +307,14 @@ class ExtractorSearchViewModel(
 
             is SearchTrigger.Search -> {
                 emit(ExtractorSearchContainerState.Loading)
-                emit(performImageSearch(searchTrigger.params))
+                emit(runImageSearch(searchTrigger.params))
             }
 
             SearchTrigger.Noop -> emit(ExtractorSearchContainerState.StillIndexing)
         }
     }
 
-    private suspend fun performImageSearch(
+    private suspend fun runImageSearch(
         searchParams: SearchImageByQuery.Params
     ): ExtractorSearchContainerState {
         return imageSearch.execute(searchParams).fold(
