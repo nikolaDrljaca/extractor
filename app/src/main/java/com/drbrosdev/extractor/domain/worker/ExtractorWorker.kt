@@ -65,7 +65,7 @@ class ExtractorWorker(
         notificationId: Int,
         notification: Notification
     ): ForegroundInfo {
-        return requiresApi<ForegroundInfo>(
+        return requiresApi(
             versionCode = Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
             fallback = {
                 ForegroundInfo(notificationId, notification)

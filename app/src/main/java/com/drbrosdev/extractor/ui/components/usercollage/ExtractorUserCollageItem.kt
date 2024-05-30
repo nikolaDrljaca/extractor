@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.ui.components.usercollage
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,7 +52,7 @@ fun ExtractorUserCollageItem(
 
             AssistChip(
                 modifier = Modifier
-                    .padding(start = 8.dp),
+                    .padding(start = 10.dp),
                 onClick = onShareClick,
                 label = {
                     Text(text = stringResource(R.string.bottom_bar_share))
@@ -68,9 +67,9 @@ fun ExtractorUserCollageItem(
         Spacer(modifier = Modifier.height(4.dp))
 
         ExtractorImageFlowRow(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onItemClick,
             images = extractions,
-            contentPadding = PaddingValues(0.dp),
         )
     }
 }

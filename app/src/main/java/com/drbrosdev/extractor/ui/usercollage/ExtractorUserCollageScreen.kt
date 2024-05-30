@@ -77,7 +77,7 @@ fun ExtractorUserCollageScreen(
                 contentPadding = systemBarsPadding
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(56.dp))
+                    Spacer(modifier = Modifier.height(44.dp))
                 }
 
                 item {

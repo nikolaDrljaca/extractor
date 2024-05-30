@@ -65,7 +65,6 @@ fun ExtractorImageGrid(
 fun ExtractorImageFlowRow(
     onClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = ExtractorImageGridDefaults.paddingValues,
     images: List<Extraction>,
 ) {
     val imageSize = 96
@@ -78,6 +77,7 @@ fun ExtractorImageFlowRow(
     ) {
         images.forEachIndexed { index, it ->
             ExtractorImageItem(
+                modifier = Modifier.weight(1f),
                 imageUri = it.uri.toUri(),
                 size = imageSize,
                 onClick = { onClick(index) },
