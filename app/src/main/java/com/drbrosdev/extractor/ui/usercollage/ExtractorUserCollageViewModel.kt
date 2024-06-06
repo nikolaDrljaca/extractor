@@ -52,7 +52,7 @@ class ExtractorUserCollageViewModel(
             ExtractorUserCollageUiState.Loading
         )
 
-    fun hideYourKeywordsBannerBanner() {
+    fun hideYourKeywordsBanner() {
         viewModelScope.launch {
             datastore.hasSeenYourKeywordsBanner()
         }

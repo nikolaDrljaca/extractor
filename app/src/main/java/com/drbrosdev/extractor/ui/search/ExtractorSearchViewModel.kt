@@ -34,12 +34,10 @@ import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSea
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -73,6 +71,9 @@ class ExtractorSearchViewModel(
 
     private val _searchTrigger = MutableSharedFlow<SearchTrigger>()
     private val _searchTriggerResult = _searchTrigger
+        // suppress emission of SearchTrigger.Params values that are the same
+        .distinctUntilChanged { old, new -> distinctSearchTrigger(old, new) }
+        // map into appropriate calls -> loading -> search or generateSuggestions
         .flatMapLatest { searchTriggerProcessFlow(it) }
 
     private val _progress = trackExtractionProgress.invoke()
@@ -219,16 +220,18 @@ class ExtractorSearchViewModel(
             }
 
             is ExtractorSearchSheetEvents.OnSearchClick -> with(event.data) {
-                viewModelScope.launch {
-                    _events.send(ExtractorSearchScreenEvents.HideKeyboard)
-                }
-
                 val params = SearchImageByQuery.Params(
                     dateRange = dateRange,
                     query = query,
                     type = searchType,
                     keywordType = keywordType
                 )
+                // don't perform search if the query is blank
+                if (params.query.isBlank()) return
+
+                viewModelScope.launch {
+                    _events.send(ExtractorSearchScreenEvents.HideKeyboard)
+                }
 
                 viewModelScope.launch {
                     _searchTrigger.emit(SearchTrigger.Search(params))
@@ -320,6 +323,21 @@ class ExtractorSearchViewModel(
             }
 
             SearchTrigger.Noop -> emit(ExtractorSearchContainerState.StillIndexing)
+        }
+    }
+
+    private fun distinctSearchTrigger(old: SearchTrigger, new: SearchTrigger): Boolean {
+        // return true if equal
+        return when (old) {
+            SearchTrigger.GenerateSuggestions -> false
+            SearchTrigger.Noop -> false
+            is SearchTrigger.Search -> {
+                when (new) {
+                    SearchTrigger.GenerateSuggestions -> false
+                    SearchTrigger.Noop -> false
+                    is SearchTrigger.Search -> old.params == new.params
+                }
+            }
         }
     }
 

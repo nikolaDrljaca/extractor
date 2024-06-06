@@ -12,18 +12,19 @@ class ExtractorGetMoreViewModel(
     private val datastore: ExtractorDataStore
 ) : ViewModel() {
 
+    private val increaseAmount = 100
     val snackbarHostState = SnackbarHostState()
 
     fun rewardPurchase() {
         viewModelScope.launch {
-            datastore.incrementSearchCountBy(amount = 10)
+            datastore.incrementSearchCountBy(amount = increaseAmount)
             snackbarHostState.showSnackbar(message = "", duration = SnackbarDuration.Long)
         }
     }
 
     fun rewardSearches() {
         viewModelScope.launch {
-            datastore.incrementSearchCountBy(amount = 10)
+            datastore.incrementSearchCountBy(amount = increaseAmount)
         }
     }
 }

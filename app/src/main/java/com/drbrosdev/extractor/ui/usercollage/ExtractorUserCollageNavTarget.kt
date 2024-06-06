@@ -57,7 +57,7 @@ object ExtractorUserCollageNavTarget : NavTarget {
             state = state,
             showBanner = showBanner,
             onBack = { navController.pop() },
-            onHideBanner = { viewModel.hideYourKeywordsBannerBanner() }
+            onHideBanner =  viewModel::hideYourKeywordsBanner
         )
     }
 }

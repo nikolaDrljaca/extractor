@@ -77,7 +77,7 @@ fun ExtractorImageFlowRow(
     ) {
         images.forEachIndexed { index, it ->
             ExtractorImageItem(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier,
                 imageUri = it.uri.toUri(),
                 size = imageSize,
                 onClick = { onClick(index) },
