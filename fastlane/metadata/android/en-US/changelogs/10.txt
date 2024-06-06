@@ -1,0 +1,3 @@
+* Filtering will no longer trigger searches if the filter is unchanged
+* UI changes to Home to align with existing styles
+* Bugfixes and performance improvements
