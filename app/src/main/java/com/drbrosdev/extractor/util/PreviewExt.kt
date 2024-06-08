@@ -8,13 +8,13 @@ import androidx.compose.ui.tooling.preview.Preview
 @Preview(
     showBackground = true,
     showSystemUi = true,
-    device = Devices.PIXEL_7
+    device = Devices.PIXEL_7_PRO
 )
 @Preview(
     showBackground = true,
     showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = Devices.PIXEL_7,
+    device = Devices.PIXEL_7_PRO
 )
 @Preview(
     showBackground = true,

@@ -162,7 +162,7 @@ private fun homeScreenConstraintSet() = ConstraintSet {
     val visualAlbum = createRefFor(ViewIds.VISUAL_ALBUM)
 
     val buttonGuideline = createGuidelineFromStart(0.5f)
-    val topGuideline = createGuidelineFromTop(0.1f)
+    val topGuideline = createGuidelineFromTop(0.105f)
 
     constrain(settingsButton) {
         start.linkTo(buttonGuideline, margin = 4.dp)

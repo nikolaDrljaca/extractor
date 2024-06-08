@@ -93,6 +93,8 @@ class ExtractorSearchViewModel(
 
     private val positiveDeltaJob = datastore.searchCountPositiveDelta()
         .filter { it }
+        // if content is shown do not trigger
+        .filter { containerState.value !is ExtractorSearchContainerState.Content }
         .onEach { _searchTrigger.emit(SearchTrigger.GenerateSuggestions) }
         .launchIn(viewModelScope)
 
