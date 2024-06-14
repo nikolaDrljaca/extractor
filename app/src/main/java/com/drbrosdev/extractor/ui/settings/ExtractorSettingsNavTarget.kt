@@ -3,8 +3,8 @@ package com.drbrosdev.extractor.ui.settings
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.actionchips.AboutLink
 import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettingsState
 import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackNavTarget
@@ -27,11 +27,11 @@ import org.koin.androidx.compose.koinViewModel
 object ExtractorSettingsNavTarget : NavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorSettingsViewModel = koinViewModel()
 
         val context = LocalContext.current
-        val navController = LocalNavController.current
+        val navController = navigators.navController
 
         ExtractorSettingsScreen(
             onBack = { navController.pop() },

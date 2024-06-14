@@ -7,8 +7,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.framework.permission.PermissionService
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -23,13 +23,13 @@ object ExtractorOnboardingNavTarget : NavTarget {
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         val viewModel: OnboardingViewModel = koinViewModel()
         val pagerState = rememberPagerState {
             4
         }
         val scope = rememberCoroutineScope()
-        val navController = LocalNavController.current
+        val navController = navigators.navController
 
         val permissionRequest = PermissionService.requestPermissions {
             if (it) {

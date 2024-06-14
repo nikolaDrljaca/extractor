@@ -18,8 +18,8 @@ import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
 import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumBottomSheetAction
@@ -42,7 +42,7 @@ data class ExtractorAlbumViewerNavTarget(
 ) : NavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorAlbumViewerViewModel = koinViewModel {
             parametersOf(albumId)
         }
@@ -52,7 +52,7 @@ data class ExtractorAlbumViewerNavTarget(
             SnackbarHostState()
         }
 
-        val navController = LocalNavController.current
+        val navController = navigators.navController
         val context = LocalContext.current
         val scope = rememberCoroutineScope()
 

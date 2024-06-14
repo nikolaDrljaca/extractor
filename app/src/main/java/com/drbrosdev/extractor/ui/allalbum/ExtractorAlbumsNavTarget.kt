@@ -8,8 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
@@ -23,11 +23,11 @@ import org.koin.androidx.compose.koinViewModel
 data object ExtractorAlbumsNavTarget : NavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorAlbumsViewModel = koinViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        val navController = LocalNavController.current
+        val navController = navigators.navController
         val context = LocalContext.current
 
         ExtractorAlbumsScreen(

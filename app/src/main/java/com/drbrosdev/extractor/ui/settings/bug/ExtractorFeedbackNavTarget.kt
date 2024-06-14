@@ -6,8 +6,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CollectFlow
 import com.drbrosdev.extractor.util.ScreenPreview
@@ -21,10 +21,10 @@ import org.koin.androidx.compose.koinViewModel
 object ExtractorFeedbackNavTarget : NavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorFeedbackViewModel = koinViewModel()
 
-        val navController = LocalNavController.current
+        val navController = navigators.navController
         val context = LocalContext.current
 
         CollectFlow(flow = viewModel.events) {

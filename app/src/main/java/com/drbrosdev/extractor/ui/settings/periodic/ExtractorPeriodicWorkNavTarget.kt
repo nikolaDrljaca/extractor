@@ -5,8 +5,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
 import dev.olshevski.navigation.reimagined.pop
@@ -18,11 +18,11 @@ import org.koin.androidx.compose.koinViewModel
 object ExtractorPeriodicWorkNavTarget : NavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorPeriodicWorkViewModel = koinViewModel()
         val isChecked by viewModel.doesPeriodicWorkExist.collectAsStateWithLifecycle()
 
-        val navController = LocalNavController.current
+        val navController = navigators.navController
 
         ExtractorPeriodicWorkScreen(
             checked = isChecked,

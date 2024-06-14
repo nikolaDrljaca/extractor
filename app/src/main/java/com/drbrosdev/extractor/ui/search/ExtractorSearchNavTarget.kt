@@ -9,9 +9,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetState
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
@@ -33,14 +32,14 @@ data object ExtractorSearchNavTarget : NavTarget {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorSearchViewModel = koinViewModel()
         val containerState by viewModel.containerState.collectAsStateWithLifecycle()
         val statusButtonState by viewModel.statusButtonState.collectAsStateWithLifecycle()
         val searchCount by viewModel.searchCount.collectAsStateWithLifecycle()
 
-        val navController = LocalNavController.current
-        val dialogNavController = LocalDialogNavController.current
+        val navController = navigators.navController
+        val dialogNavController = navigators.dialogNavController
         val context = LocalContext.current
         val keyboardController = LocalSoftwareKeyboardController.current
 

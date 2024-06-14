@@ -5,11 +5,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
-import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
 import com.drbrosdev.extractor.ui.imageinfo.UserEmbedUiModel
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CollectFlow
+import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
@@ -21,17 +21,16 @@ data class ExtractorUserEmbedDialogNavTarget(
 ) : DialogNavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navController: NavController<DialogNavTarget>) {
         val viewModel: ExtractorUserEmbedViewModel = koinViewModel {
             parametersOf(mediaImageId)
         }
-        val dialogNavController = LocalDialogNavController.current
 
         val suggested by viewModel.suggestedEmbeddingsState.collectAsStateWithLifecycle()
 
         CollectFlow(flow = viewModel.events) {
             when (it) {
-                ExtractorUserEmbedDialogEvents.ChangesSaved -> dialogNavController.pop()
+                ExtractorUserEmbedDialogEvents.ChangesSaved -> navController.pop()
             }
         }
 

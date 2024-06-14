@@ -11,12 +11,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.framework.navigation.BottomSheetNavTarget
-import com.drbrosdev.extractor.framework.navigation.LocalBottomSheetNavController
-import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
+import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
 import com.drbrosdev.extractor.ui.dialog.userembed.ExtractorUserEmbedDialogNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
+import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.material.BottomSheetState
 import dev.olshevski.navigation.reimagined.navigate
 import dev.olshevski.navigation.reimagined.pop
@@ -31,13 +31,15 @@ data class ExtractorImageInfoNavTarget(
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun Content(sheetState: BottomSheetState) {
+    override fun Content(
+        sheetState: BottomSheetState,
+        dialogNavController: NavController<DialogNavTarget>,
+        sheetNavController: NavController<BottomSheetNavTarget>
+    ) {
         val viewModel: ExtractorImageInfoViewModel = koinViewModel {
             parametersOf(mediaImageId)
         }
         val imageInfoModel by viewModel.imageInfoModel.collectAsStateWithLifecycle()
-        val sheetNavigator = LocalBottomSheetNavController.current
-        val dialogNavigator = LocalDialogNavController.current
 
         LaunchedEffect(key1 = Unit) {
             sheetState.expand()
@@ -54,11 +56,11 @@ data class ExtractorImageInfoNavTarget(
                 onClearVisual = viewModel::clearVisualEmbedding,
                 onSaveEmbeddings = {
                     viewModel.saveEmbeddings()
-                    sheetNavigator.pop()
+                    sheetNavController.pop()
                 },
                 onClearUser = viewModel::updateUserEmbedding,
                 onAddNewUser = {
-                    dialogNavigator.navigate(ExtractorUserEmbedDialogNavTarget(mediaImageId))
+                    dialogNavController.navigate(ExtractorUserEmbedDialogNavTarget(mediaImageId))
                 }
             )
         }

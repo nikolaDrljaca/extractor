@@ -9,9 +9,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.framework.navigation.LocalBottomSheetNavController
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
@@ -31,15 +30,15 @@ data class ExtractorImageViewerNavTarget(
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorImageViewerModel = koinViewModel()
 
         val currentImageInfo by viewModel.currentMediaImageInfo.collectAsStateWithLifecycle()
         val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
 
         val context = LocalContext.current
-        val navController = LocalNavController.current
-        val bottomSheetNavigator = LocalBottomSheetNavController.current
+        val navController = navigators.navController
+        val bottomSheetNavigator = navigators.bottomSheetNavController
 
         LaunchedEffect(key1 = Unit) {
             snapshotFlow { pagerState.currentPage }

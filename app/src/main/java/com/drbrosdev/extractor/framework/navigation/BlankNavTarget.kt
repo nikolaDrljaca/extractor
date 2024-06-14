@@ -11,7 +11,7 @@ import kotlinx.parcelize.Parcelize
 object BlankNavTarget : NavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background

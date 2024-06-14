@@ -7,9 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
-import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsNavTarget
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
@@ -28,15 +27,15 @@ import org.koin.androidx.compose.koinViewModel
 object ExtractorHomeNavTarget : NavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         // Bind the viewModel to the ActivityScope so it does not load data every time
         // Flows are hot anyways
         val viewModel: ExtractorHomeViewModel = koinViewModel(
             viewModelStoreOwner = LocalContext.current as ComponentActivity
         )
 
-        val navController = LocalNavController.current
-        val dialogNavController = LocalDialogNavController.current
+        val navController = navigators.navController
+        val dialogNavController = navigators.dialogNavController
 
         val visualAlbums by viewModel.visualAlbums.collectAsStateWithLifecycle()
         val userAlbums by viewModel.userAlbums.collectAsStateWithLifecycle()

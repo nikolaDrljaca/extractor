@@ -4,8 +4,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
 import dev.olshevski.navigation.reimagined.pop
@@ -16,10 +16,10 @@ import org.koin.androidx.compose.koinViewModel
 object ExtractorGetMoreNavTarget : NavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorGetMoreViewModel = koinViewModel()
 
-        val navController = LocalNavController.current
+        val navController = navigators.navController
 
         ExtractorGetMoreScreen(
             snackbarState = viewModel.snackbarHostState,

@@ -6,5 +6,6 @@ import androidx.compose.runtime.Composable
 interface NavTarget : Parcelable {
 
     @Composable
-    fun Content()
+    fun Content(navigators: Navigators)
 }
+

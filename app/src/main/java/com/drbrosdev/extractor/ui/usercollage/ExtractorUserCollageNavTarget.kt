@@ -10,8 +10,8 @@ import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.UserCollage
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CollectFlow
@@ -27,10 +27,10 @@ import java.time.LocalDateTime
 object ExtractorUserCollageNavTarget : NavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navigators: Navigators) {
 
         val viewModel: ExtractorUserCollageViewModel = koinViewModel()
-        val navController = LocalNavController.current
+        val navController = navigators.navController
         val context = LocalContext.current
 
         val state by viewModel.userCollageState.collectAsStateWithLifecycle()
@@ -57,7 +57,7 @@ object ExtractorUserCollageNavTarget : NavTarget {
             state = state,
             showBanner = showBanner,
             onBack = { navController.pop() },
-            onHideBanner =  viewModel::hideYourKeywordsBanner
+            onHideBanner = viewModel::hideYourKeywordsBanner
         )
     }
 }

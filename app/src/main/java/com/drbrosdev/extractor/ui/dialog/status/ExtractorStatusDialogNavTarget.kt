@@ -8,10 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
-import com.drbrosdev.extractor.framework.navigation.LocalDialogNavController
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CollectFlow
 import com.drbrosdev.extractor.util.CombinedPreview
+import dev.olshevski.navigation.reimagined.NavController
 import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
@@ -21,22 +21,20 @@ import org.koin.androidx.compose.koinViewModel
 object ExtractorStatusDialogNavTarget : DialogNavTarget {
 
     @Composable
-    override fun Content() {
+    override fun Content(navController: NavController<DialogNavTarget>) {
         val viewModel: ExtractorStatusDialogViewModel = koinViewModel()
         val state by viewModel.state.collectAsState()
 
-        val dialogNavController = LocalDialogNavController.current
-
         CollectFlow(flow = viewModel.events) {
             when (it) {
-                ExtractorStatusDialogEvents.CloseDialog -> dialogNavController.pop()
+                ExtractorStatusDialogEvents.CloseDialog -> navController.pop()
             }
         }
 
         ExtractorStatusDialog(
             state = state,
             onCloseClick = {
-                dialogNavController.pop()
+                navController.pop()
             }
         )
     }

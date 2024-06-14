@@ -5,8 +5,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.framework.navigation.LocalNavController
 import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
 import dev.olshevski.navigation.reimagined.pop
@@ -17,8 +17,8 @@ import org.koin.androidx.compose.koinViewModel
 data object ExtractorClearEventsNavTarget : NavTarget {
 
     @Composable
-    override fun Content() {
-        val navController = LocalNavController.current
+    override fun Content(navigators: Navigators) {
+        val navController = navigators.navController
         val viewModel: ExtractorClearEventsViewModel = koinViewModel()
 
         val eventCount by viewModel.eventCountState.collectAsStateWithLifecycle()
