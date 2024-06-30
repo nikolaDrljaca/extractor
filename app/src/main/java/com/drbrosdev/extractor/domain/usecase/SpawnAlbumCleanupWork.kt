@@ -14,6 +14,7 @@ class SpawnAlbumCleanupWork(
     private val workManager: WorkManager
 ) {
 
+    // TODO Set up Koin injection and wire in viewModel on album load
     operator fun invoke(albumId: Long) {
         val workRequest = OneTimeWorkRequestBuilder<AlbumCleanupWorker>()
             .setInputData(

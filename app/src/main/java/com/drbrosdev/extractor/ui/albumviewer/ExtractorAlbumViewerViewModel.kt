@@ -48,6 +48,8 @@ and then emitted via event
     private val _events = Channel<ExtractorAlbumViewerEvents>()
     val events = _events.receiveAsFlow()
 
+    // TODO: would possibly need to flatmap this flow into a flow of album entries
+    // so that they get updated as the cleanup worker is running
     private val albumFlow = albumRepository.findAlbumByIdAsFlow(albumId)
         .filterNotNull()
         .onEach { album -> _imageUris.update { getUris(album.entries) } }
