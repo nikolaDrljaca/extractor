@@ -32,6 +32,13 @@ class ExtractorAlbumViewerViewModel(
     private val albumRepository: AlbumRepository,
     private val albumId: Long
 ) : ViewModel() {
+
+    /*
+TODO:
+used only for sharing and navigation, but uses additional memory
+refactor this to be a function processed by a coroutine (mapping to uris)
+and then emitted via event
+*/
     private val _imageUris = MutableStateFlow(emptyList<Uri>())
     val imageUris = _imageUris.asStateFlow()
 
@@ -146,7 +153,7 @@ class ExtractorAlbumViewerViewModel(
             }
 
             if (ids.isNotEmpty()) {
-                albumRepository.deleteAlbumItems(ids)
+                albumRepository.deleteAlbumEntries(ids)
                 _events.send(ExtractorAlbumViewerEvents.SelectionDeleted)
             }
             gridState.clearSelection()

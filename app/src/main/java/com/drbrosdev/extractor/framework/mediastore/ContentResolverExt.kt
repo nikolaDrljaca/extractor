@@ -194,19 +194,23 @@ suspend fun ContentResolver.findByUri(
         MediaStore.Images.Media.WIDTH
     )
 
-    query(
+    val cursor = query(
         uri,
         projection,
         null,
         null,
         null
-    )?.use { cursor ->
-        if (cursor.moveToFirst()) {
-            return@withContext cursor.toMediaStoreImage()
-        }
-    }
+    )
 
-    null
+    when {
+        cursor != null -> cursor.use {
+            when {
+                it.moveToFirst() -> it.toMediaStoreImage()
+                else -> null
+            }
+        }
+        else -> null
+    }
 }
 
 suspend fun ContentResolver.getCount(
@@ -214,17 +218,18 @@ suspend fun ContentResolver.getCount(
 ): Int = withContext(dispatcher) {
     val projection = arrayOf(MediaStore.Images.Media._ID)
 
-    query(
+    val cursor = query(
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
         projection,
         null,
         null,
         null
-    )?.use { cursor ->
-        return@withContext cursor.count
-    }
+    )
 
-    0
+    when {
+        cursor != null -> cursor.use { it.count }
+        else -> 0
+    }
 }
 
 private fun Cursor.toMediaStoreImage(): MediaStoreImage {
