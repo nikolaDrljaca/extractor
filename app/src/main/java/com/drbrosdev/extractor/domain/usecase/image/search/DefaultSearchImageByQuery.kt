@@ -3,7 +3,7 @@ package com.drbrosdev.extractor.domain.usecase.image.search
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.isIn
+import com.drbrosdev.extractor.domain.model.contains
 import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.util.toExtraction
@@ -32,12 +32,14 @@ class DefaultSearchImageByQuery(
             val adaptedQuery = createAdaptedQuery.invoke(createAdaptedQueryParams)
 
             imageEmbedDao.findByKeyword(adaptedQuery.query)
+                .asSequence()
                 .map { it.imageEntity.toExtraction() }
-                .filterByDateRange(params.dateRange)
+                .filter { it.byDateRange(params.dateRange) }
+                .toList()
         }
 
-    private fun List<Extraction>.filterByDateRange(range: DateRange?) = when {
-        range != null -> this.filter { it.dateAdded isIn range }
-        else -> this
+    private fun Extraction.byDateRange(range: DateRange?): Boolean {
+        if (range == null) return false
+        return dateAdded in range
     }
 }

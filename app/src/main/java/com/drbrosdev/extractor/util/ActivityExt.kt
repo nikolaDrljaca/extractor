@@ -20,11 +20,13 @@ fun Activity.setupInitialThemeLoad(condition: () -> Boolean?) {
         object : ViewTreeObserver.OnPreDrawListener {
             override fun onPreDraw(): Boolean {
                 val value = condition()
-                return if (value != null) {
-                    content.viewTreeObserver.removeOnPreDrawListener(this)
-                    true
-                } else {
-                    false
+                return when {
+                    value != null -> {
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    }
+
+                    else -> false
                 }
             }
         }

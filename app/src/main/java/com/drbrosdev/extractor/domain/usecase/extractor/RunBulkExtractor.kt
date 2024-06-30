@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
 class RunBulkExtractor(
     private val dispatcher: CoroutineDispatcher,
@@ -54,6 +55,9 @@ class RunBulkExtractor(
                 //delete diff
                 isInStorage
                     .asFlow()
+                    .onStart {
+                        logEvent("Reset search index invoked.")
+                    }
                     .collect {
                         extractorRepository.deleteExtractionData(it)
                     }

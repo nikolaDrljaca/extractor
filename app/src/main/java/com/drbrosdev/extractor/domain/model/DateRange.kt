@@ -8,6 +8,10 @@ data class DateRange(
     val end: LocalDateTime
 )
 
+operator fun DateRange.contains(localDateTime: LocalDateTime): Boolean {
+    return localDateTime.isAfter(start) && localDateTime.isBefore(end)
+}
+
 infix fun LocalDateTime.isIn(range: DateRange): Boolean {
     return this.isAfter(range.start) && this.isBefore(range.end)
 }
