@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase.image.search
 
+import arrow.core.toOption
 import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
@@ -31,15 +32,20 @@ class DefaultSearchImageByQuery(
 
             val adaptedQuery = createAdaptedQuery.invoke(createAdaptedQueryParams)
 
-            imageEmbedDao.findByKeyword(adaptedQuery.query)
+            val imageEntitySequence = imageEmbedDao.findByKeyword(adaptedQuery.query)
                 .asSequence()
                 .map { it.imageEntity.toExtraction() }
-                .filter { it.byDateRange(params.dateRange) }
+
+            params.dateRange.toOption()
+                .fold(
+                    ifSome = { dateRange -> imageEntitySequence.filter { it.byDateRange(dateRange) } },
+                    ifEmpty = { imageEntitySequence }
+                )
                 .toList()
         }
 
     private fun Extraction.byDateRange(range: DateRange?): Boolean {
-        if (range == null) return false
+        if (range == null) return true
         return dateAdded in range
     }
 }

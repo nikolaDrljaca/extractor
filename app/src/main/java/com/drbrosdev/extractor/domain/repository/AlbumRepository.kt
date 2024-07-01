@@ -28,6 +28,6 @@ interface AlbumRepository {
 
     suspend fun deleteAlbumById(albumId: Long)
 
-    suspend fun deleteAlbumItems(albumItemIds: List<Long>)
+    suspend fun deleteAlbumEntries(albumEntryIds: List<Long>)
 }
 

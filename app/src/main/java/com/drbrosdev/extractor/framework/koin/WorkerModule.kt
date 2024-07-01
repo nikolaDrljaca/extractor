@@ -1,6 +1,8 @@
 package com.drbrosdev.extractor.framework.koin
 
 import androidx.work.WorkManager
+import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
+import com.drbrosdev.extractor.domain.worker.AlbumCleanupWorker
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import org.koin.android.ext.koin.androidContext
@@ -21,5 +23,14 @@ val workerModule = module {
             notificationService = get()
         )
     }
+    worker(named<AlbumCleanupWorker>()) {
+        AlbumCleanupWorker(
+            context = androidContext(),
+            workerParameters = it.get(),
+            mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
+            albumRepository = get<DefaultAlbumRepository>()
+        )
+    }
+
     single { WorkManager.getInstance(androidContext()) }
 }
