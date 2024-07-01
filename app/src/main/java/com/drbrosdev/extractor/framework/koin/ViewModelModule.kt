@@ -109,6 +109,7 @@ val viewModelModule = module {
     viewModel { params ->
         ExtractorAlbumViewerViewModel(
             stateHandle = get(),
+            spawnAlbumCleanupWork = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             albumId = params.get()
         )

@@ -84,20 +84,21 @@ data class ExtractorAlbumViewerNavTarget(
                     }
                 }
 
-                ExtractorAlbumViewerEvents.SelectionShared -> {
-                    context.launchShareIntent(viewModel.imageUris.value)
+                is ExtractorAlbumViewerEvents.NavigateToImageViewer -> {
+                    val destination = ExtractorImageViewerNavTarget(
+                        images = it.uris,
+                        initialIndex = it.initialIndex
+                    )
+                    navController.navigate(destination)
+                }
+                is ExtractorAlbumViewerEvents.ShareAlbumEntries -> {
+                    context.launchShareIntent(it.uris)
                 }
             }
         }
 
         ExtractorAlbumViewerScreen(
-            onImageClick = { index ->
-                val destination = ExtractorImageViewerNavTarget(
-                    images = viewModel.imageUris.value,
-                    initialIndex = index
-                )
-                navController.navigate(destination)
-            },
+            onImageClick = viewModel::onNavigateToViewer,
             state = state,
             imageGridState = viewModel.gridState,
             snackbarHostState = snackbarHostState,
@@ -124,7 +125,7 @@ data class ExtractorAlbumViewerNavTarget(
             onShareDialogAction = {
                 when (it) {
                     ConfirmationDialogActions.Confirm -> {
-                        context.launchShareIntent(viewModel.imageUris.value)
+                        viewModel.onShareConfirmed()
                         viewModel.onDismissDialog()
                     }
 

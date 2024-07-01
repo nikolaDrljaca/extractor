@@ -10,6 +10,7 @@ import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.SearchImages
+import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
@@ -218,6 +219,12 @@ val useCaseModule = module {
             extractionDao = get()
         )
     } bind SearchImageByDateRange::class
+
+    factory {
+        SpawnAlbumCleanupWork(
+            workManager = get()
+        )
+    }
 
     // Keep this single due to the ImageClassifier instance created inside
     // NOTE: Maybe move this into a provider use case?
