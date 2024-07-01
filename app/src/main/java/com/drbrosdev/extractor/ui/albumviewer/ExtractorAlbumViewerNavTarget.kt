@@ -91,6 +91,7 @@ data class ExtractorAlbumViewerNavTarget(
                     )
                     navController.navigate(destination)
                 }
+
                 is ExtractorAlbumViewerEvents.ShareAlbumEntries -> {
                     context.launchShareIntent(it.uris)
                 }

@@ -75,7 +75,7 @@ class ExtractorAlbumViewerViewModel(
     }
 
     fun onShareAction() {
-        val albumEntries = state.value.getAlbum().entries
+        val albumEntries = state.value.albumEntries()
             .map { it.uri.toUri() }
 
         when {
@@ -90,7 +90,7 @@ class ExtractorAlbumViewerViewModel(
     }
 
     fun onShareConfirmed() {
-        val albumEntries = state.value.getAlbum().entries
+        val albumEntries = state.value.albumEntries()
             .map { it.uri.toUri() }
         viewModelScope.launch {
             _events.send(ExtractorAlbumViewerEvents.ShareAlbumEntries(albumEntries))
@@ -103,14 +103,14 @@ class ExtractorAlbumViewerViewModel(
 
     // NOTE: Potential bottleneck with albums of very large size
     fun getSelectedUris(): List<Uri> {
-        val entries = state.value.getAlbum().entries
+        val entries = state.value.albumEntries()
             .map { it.uri.toUri() }
         return gridState.checkedIndices().map { entries[it] }
     }
 
     fun onSelectionCreate() {
         viewModelScope.launch {
-            val album = state.value.getAlbum()
+            val album = state.value.album()
             val newAlbum = NewAlbum(
                 name = album.name,
                 keyword = album.keyword,
@@ -141,7 +141,7 @@ class ExtractorAlbumViewerViewModel(
 
     fun onDeleteSelection() {
         viewModelScope.launch {
-            val album = state.value.getAlbum()
+            val album = state.value.album()
             val ids = gridState.checkedIndices().map { album.entries[it].id.id }
 
             val albumCount = album.entries.count()
@@ -162,7 +162,7 @@ class ExtractorAlbumViewerViewModel(
 
     fun onNavigateToViewer(index: Int) {
         viewModelScope.launch {
-            val albums = state.value.getAlbum().entries
+            val albums = state.value.albumEntries()
                 .map { it.uri.toUri() }
             _events.send(
                 ExtractorAlbumViewerEvents.NavigateToImageViewer(

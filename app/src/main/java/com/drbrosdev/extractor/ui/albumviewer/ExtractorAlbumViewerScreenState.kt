@@ -19,18 +19,23 @@ sealed interface ExtractorAlbumViewerScreenState {
     data object Loading : ExtractorAlbumViewerScreenState
 }
 
-fun ExtractorAlbumViewerScreenState.getAlbum() = when (this) {
+fun ExtractorAlbumViewerScreenState.album() = when (this) {
     is ExtractorAlbumViewerScreenState.Content -> this.album
     ExtractorAlbumViewerScreenState.Loading -> panic("Accessing album outside of content state.")
+}
+
+fun ExtractorAlbumViewerScreenState.albumEntries() = when (this) {
+    is ExtractorAlbumViewerScreenState.Content -> album.entries
+    else -> panic("Accessing album outside of content state.")
 }
 
 sealed interface ExtractorAlbumDialogSelection {
 
     data object None : ExtractorAlbumDialogSelection
 
-    data object ConfirmShare: ExtractorAlbumDialogSelection
+    data object ConfirmShare : ExtractorAlbumDialogSelection
 
-    data object ConfirmDelete: ExtractorAlbumDialogSelection
+    data object ConfirmDelete : ExtractorAlbumDialogSelection
 
-    data object BottomSheet: ExtractorAlbumDialogSelection
+    data object BottomSheet : ExtractorAlbumDialogSelection
 }
