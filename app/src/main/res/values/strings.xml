@@ -156,7 +156,7 @@
     <string name="delete_event_logs">Delete Event Logs</string>
     <string name="custom_keywords">Custom Keywords</string>
     <string name="existing_keywords">Existing Keywords</string>
-    <string name="click_one_to_add_to_this_image">Click one to add to this image.</string>
+    <string name="click_one_to_add_to_this_image">Tap to add to this image.</string>
     <string name="enter_new">Enter New</string>
     <string name="add_multiple_user">To add multiple, separate them with a comma.</string>
     <string name="custom_keyword">Custom Keyword</string>

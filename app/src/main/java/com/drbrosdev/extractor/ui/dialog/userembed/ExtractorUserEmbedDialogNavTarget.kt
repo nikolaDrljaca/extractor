@@ -1,8 +1,11 @@
 package com.drbrosdev.extractor.ui.dialog.userembed
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
@@ -26,7 +29,7 @@ data class ExtractorUserEmbedDialogNavTarget(
             parametersOf(mediaImageId)
         }
 
-        val suggested by viewModel.suggestedEmbeddingsState.collectAsStateWithLifecycle()
+        val suggested by viewModel.suggestedEmbeddings.collectAsStateWithLifecycle()
 
         CollectFlow(flow = viewModel.events) {
             when (it) {
@@ -39,7 +42,6 @@ data class ExtractorUserEmbedDialogNavTarget(
             textFieldState = viewModel.embedTextFieldState,
             onCheck = viewModel::checkEmbedding,
             onCreateNew = viewModel::createNewUserEmbed,
-            onSave = viewModel::saveChanges
         )
     }
 }
@@ -47,20 +49,30 @@ data class ExtractorUserEmbedDialogNavTarget(
 @Preview
 @Composable
 private fun CurrentPreview() {
-    ExtractorTheme {
-        ExtractorUserEmbedDialog(
-            suggestedEmbedsState = ExtractorSuggestedEmbedsUiState.Content(
-                listOf(
-                    UserEmbedUiModel("Some", false),
-                    UserEmbedUiModel("Some", false),
-                    UserEmbedUiModel("Some", false),
-                    UserEmbedUiModel("Some", false),
-                )
-            ),
-            textFieldState = ExtractorTextFieldState(),
-            onCheck = {},
-            onCreateNew = {},
-            onSave = {},
-        )
+    ExtractorTheme(dynamicColor = false) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            ExtractorUserEmbedDialog(
+                suggestedEmbedsState = ExtractorSuggestedEmbedsUiState.Content(
+                    listOf(
+                        UserEmbedUiModel("Some", false),
+                        UserEmbedUiModel("Some", false),
+                        UserEmbedUiModel("Some", false),
+                        UserEmbedUiModel("Some", false),
+                    )
+                ),
+                textFieldState = ExtractorTextFieldState(),
+                onCheck = {},
+                onCreateNew = {},
+            )
+
+            ExtractorUserEmbedDialog(
+                suggestedEmbedsState = ExtractorSuggestedEmbedsUiState.Empty,
+                textFieldState = ExtractorTextFieldState(),
+                onCheck = {},
+                onCreateNew = {},
+            )
+        }
     }
 }
