@@ -52,7 +52,7 @@ fun ExtractorUserEmbedDialog(
         ) {
             Text(
                 text = stringResource(R.string.custom_keywords),
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.headlineSmall,
             )
 
             // suggestion chips

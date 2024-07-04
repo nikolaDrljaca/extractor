@@ -90,6 +90,7 @@ class ExtractorUserEmbedViewModel(
 
             // clear text field
             embedTextFieldState.updateTextValue("")
+            _events.send(ExtractorUserEmbedDialogEvents.KeywordAdded)
         }
     }
 
@@ -119,6 +120,7 @@ class ExtractorUserEmbedViewModel(
                     it.getSuggestionsExcluding(embed)
                 )
             }
+            _events.send(ExtractorUserEmbedDialogEvents.KeywordAdded)
         }
     }
 }
