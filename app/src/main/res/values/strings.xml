@@ -149,7 +149,7 @@
     <string name="reset_index">Reset Index</string>
     <string name="clear_event_logs">Clear Event Logs</string>
     <string name="delete_index_and_start_worker">Delete Index and start worker</string>
-    <string name="reset_index_expl">Delete the built image index and restart the indexing process. This is useful if you believe the index was corrupted, or when the app receives an update to its algorithm and models.\nThis action is not reversible.</string>
+    <string name="reset_index_expl">Delete the built image index and restart the indexing process. This is useful if you believe the index was corrupted, or when the app receives an update to its algorithm and models.\nThis action is not reversible.\n\nNote that this will also delete your own assigned tags.</string>
     <string name="this_is_a_destructive_action">This is a destructive action.</string>
     <string name="expl_clear_event_logs">Clear the application event log. Event logs are stored locally and describe things that happen while you use the app.\nThis can be very helpful to the developers when the app crashes or does something unexpected. Whilst they should not take up too much space, you still have the control to delete them all here, if you wish.</string>
     <string name="logs_stored">Logs stored: %1$s</string>
@@ -165,4 +165,6 @@
     <string name="your_keywords_expl">A collection of all images where you have left your own tag! They are grouped by keyword for organisation.</string>
     <string name="your_keywords_expl_2">This collection will constantly update as you keep adding you own tags. You can use this area to tag images you want to find quickly.</string>
     <string name="keyword_added">Keyword added!</string>
+    <string name="alternative">Alternative</string>
+    <string name="alternative_expl">If you want to continue using the app for free, you can reset the application data and get a fresh start with a 1000 searches.\n\nNote that this will delete all your data in the application and start the onboarding again. You will have to wait for indexing to complete.</string>
 </resources>

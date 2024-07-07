@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -33,16 +37,15 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.rewards.RewardSnackbar
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorShopItem
-import com.drbrosdev.extractor.ui.components.shared.ExtractorViewAdContainer
+import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
 
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorGetMoreScreen(
     onBack: () -> Unit,
-    onViewAdClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onPurchaseItemClick: () -> Unit,
-    modifier: Modifier = Modifier,
     snackbarState: SnackbarHostState,
 ) {
     val textStyle = MaterialTheme.typography.bodyMedium.copy(
@@ -73,9 +76,36 @@ fun ExtractorGetMoreScreen(
                 )
             }
 
+            Column(
+                modifier = Modifier.layoutId(ViewIds.ALTERNATIVE),
+                verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.alternative),
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Text(
+                    text = stringResource(R.string.alternative_expl),
+                    style = textStyle
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                OutlinedExtractorActionButton(
+                    onClick = onSettingsClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(imageVector = Icons.Rounded.Settings, contentDescription = "")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "Open Settings")
+                }
+            }
+
+            /*
             ExtractorViewAdContainer(
                 modifier = Modifier.layoutId(ViewIds.AD_VIEW)
             )
+             */
 
             Column(
                 modifier = Modifier.layoutId(ViewIds.BUY_VIEW),
@@ -127,32 +157,32 @@ fun ExtractorGetMoreScreen(
 }
 
 private fun getMoreScreenConstraintSet() = ConstraintSet {
-    val adsView = createRefFor(ViewIds.AD_VIEW)
     val buyView = createRefFor(ViewIds.BUY_VIEW)
     val header = createRefFor(ViewIds.HEADER)
+    val alternative = createRefFor(ViewIds.ALTERNATIVE)
 
     constrain(header) {
         start.linkTo(parent.start)
         top.linkTo(parent.top, margin = 8.dp)
     }
 
-    constrain(adsView) {
+    constrain(alternative) {
         start.linkTo(parent.start, margin = 16.dp)
         end.linkTo(parent.end, margin = 16.dp)
-        top.linkTo(header.bottom, margin = 4.dp)
+        top.linkTo(buyView.bottom, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
 
     constrain(buyView) {
         start.linkTo(parent.start, margin = 16.dp)
         end.linkTo(parent.end, margin = 16.dp)
-        top.linkTo(adsView.bottom, margin = 24.dp)
+        top.linkTo(header.bottom, margin = 24.dp)
         width = Dimension.fillToConstraints
     }
 }
 
 private object ViewIds {
-    const val AD_VIEW = "ad_view"
+    const val ALTERNATIVE = "alternative"
     const val BUY_VIEW = "buy_view"
     const val HEADER = "header_view"
 }
