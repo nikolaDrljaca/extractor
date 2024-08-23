@@ -7,5 +7,6 @@ interface NavTarget : Parcelable {
 
     @Composable
     fun Content(navigators: Navigators)
+
 }
 

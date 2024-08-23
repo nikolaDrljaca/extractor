@@ -72,8 +72,6 @@ fun Context.launchPrivacyPolicyIntent() {
     startActivity(intent)
 }
 
-
-
 suspend fun Context.launchEditIntent(media: MediaStoreImage) =
     withContext(Dispatchers.Default) {
         val intent = Intent(Intent.ACTION_EDIT).apply {

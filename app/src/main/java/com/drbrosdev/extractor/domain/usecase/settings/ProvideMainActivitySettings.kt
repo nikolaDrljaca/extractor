@@ -22,5 +22,5 @@ class ProvideMainActivitySettings(
 }
 
 data class ExtractorMainActivitySettings(
-    val enableDynamicTheme: Boolean = ExtractorSettingsDefaults.enableDynamicColors
+    val enableDynamicTheme: Boolean = ExtractorSettingsDefaults.ENABLE_DYNAMIC_COLORS
 )

@@ -55,7 +55,7 @@ class ExtractorWorker(
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return createForegroundInfo(
             notificationId = NotificationService.PROGRESS_ID,
-            notification = notificationService.createNotification(NotificationService.PROGRESS_CHANNEL_ID) {
+            notification = notificationService.extractionInProgressNotification(NotificationService.PROGRESS_CHANNEL_ID) {
                 it.setContentInfo("Extraction is running")
             }
         )

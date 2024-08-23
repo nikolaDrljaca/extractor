@@ -19,7 +19,6 @@ class CompileVisualAlbum(
     private val albumRepository: AlbumRepository,
     private val searchImageByQuery: SearchImageByQuery,
     private val tokenizeText: TokenizeText,
-    private val validateSuggestedToken: ValidateSuggestedSearchToken,
     private val generateMostCommonTokens: GenerateMostCommonTokens
 ) {
 
@@ -28,7 +27,7 @@ class CompileVisualAlbum(
 
         val clean = allVisuals.replace(",", " ")
         val tokens = tokenizeText.invoke(clean)
-            .filter { validateSuggestedToken.invoke(it) }
+            .filter { it.isValidSearchToken() }
             .flowOn(dispatcher)
             .toList()
 

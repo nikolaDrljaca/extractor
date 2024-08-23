@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 
 class RunBulkExtractor(
     private val dispatcher: CoroutineDispatcher,
@@ -35,7 +34,6 @@ class RunBulkExtractor(
                 mediaImageRepository.findAllByIdAsFlow(isOnDevice.toList())
                     .map { mediaStoreImage ->
                         val embeds = runExtractor.execute(mediaStoreImage.mediaImageUri())
-
                         NewExtraction(
                             mediaImageId = mediaStoreImage.mediaImageId(),
                             extractorImageUri = mediaStoreImage.mediaImageUri(),
@@ -55,9 +53,6 @@ class RunBulkExtractor(
                 //delete diff
                 isInStorage
                     .asFlow()
-                    .onStart {
-                        logEvent("Reset search index invoked.")
-                    }
                     .collect {
                         extractorRepository.deleteExtractionData(it)
                     }

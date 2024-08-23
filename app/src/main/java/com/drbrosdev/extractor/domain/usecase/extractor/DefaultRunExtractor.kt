@@ -23,7 +23,6 @@ class DefaultRunExtractor(
     private val extractVisualEmbeds: ExtractVisualEmbeds<InputImage>,
     private val mediaPipeExtractVisualEmbeds: ExtractVisualEmbeds<InputImage>,
 ) : RunExtractor {
-
     override suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds? {
         return withContext(dispatcher) {
             val inputImage =

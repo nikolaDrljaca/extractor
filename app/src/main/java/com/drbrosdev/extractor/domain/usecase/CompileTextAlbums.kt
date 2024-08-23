@@ -18,7 +18,6 @@ class CompileTextAlbums(
     private val searchImageByQuery: SearchImageByQuery,
     private val albumRepository: AlbumRepository,
     private val tokenizeText: TokenizeText,
-    private val validateSuggestedSearchToken: ValidateSuggestedSearchToken,
     private val generateMostCommonTokens: GenerateMostCommonTokens
 ) {
 
@@ -26,7 +25,7 @@ class CompileTextAlbums(
         val allText = textEmbeddingDao.findAllTextEmbedValues() ?: return
 
         val tokens = tokenizeText.invoke(allText)
-            .filter { validateSuggestedSearchToken.invoke(it) }
+            .filter { it.isValidSearchToken() }
             .toList()
 
         generateMostCommonTokens.invoke(tokens)

@@ -18,17 +18,17 @@ class ExtractorSettingsDatastore(
 ) {
     private val showVisualAlbums: Flow<Boolean>
         get() = settingsDatastore.data.map {
-            it[SHOW_VISUAL] ?: ExtractorSettingsDefaults.showVisualDefault
+            it[SHOW_VISUAL] ?: ExtractorSettingsDefaults.SHOW_VISUAL_DEFAULT
         }
 
     private val showTextAlbums: Flow<Boolean>
         get() = settingsDatastore.data.map {
-            it[SHOW_TEXT] ?: ExtractorSettingsDefaults.showTextDefault
+            it[SHOW_TEXT] ?: ExtractorSettingsDefaults.SHOW_TEXT_DEFAULT
         }
 
     private val enableDynamicColorsFlow: Flow<Boolean>
         get() = settingsDatastore.data.map {
-            it[ENABLE_DYNAMIC_COLOR] ?: ExtractorSettingsDefaults.enableDynamicColors
+            it[ENABLE_DYNAMIC_COLOR] ?: ExtractorSettingsDefaults.ENABLE_DYNAMIC_COLORS
         }
 
     val extractorSettings: Flow<ExtractorSettings> = combine(
