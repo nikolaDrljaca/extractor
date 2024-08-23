@@ -12,7 +12,7 @@ import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
-import com.drbrosdev.extractor.domain.usecase.ValidateSuggestedSearchToken
+import com.drbrosdev.extractor.domain.usecase.isValidSearchToken
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -29,7 +29,6 @@ class GenerateSuggestedKeywords(
     private val extractionDao: ExtractionDao,
     private val dataStore: ExtractorDataStore,
     private val tokenizeText: TokenizeText,
-    private val validateSuggestedSearchToken: ValidateSuggestedSearchToken
 ) {
 
     suspend operator fun invoke(): Either<GenerateSuggestionsError, List<SuggestedSearch>> =
@@ -84,7 +83,7 @@ class GenerateSuggestedKeywords(
         val out = when (keywordType) {
             KeywordType.ALL -> tokenizeText.invoke(input)
             else -> tokenizeText.invoke(input)
-                .filter { token -> validateSuggestedSearchToken.invoke(token) }
+                .filter { token -> token.isValidSearchToken() }
         }
 
         val searchType = when (keywordType) {

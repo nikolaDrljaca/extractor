@@ -10,11 +10,12 @@ import java.util.regex.Pattern
 class TokenizeText(
     private val dispatcher: CoroutineDispatcher
 ) {
+    private val wordPattern = Regex("\\b\\w+(?:'\\w+)?\\b")
 
     operator fun invoke(text: String): Flow<Token> = flow {
         val prepared = prepare(text)
 
-        val pattern = Pattern.compile("\\b\\w+\\b") // Matches word boundaries
+        val pattern = Pattern.compile(wordPattern.pattern)
         val matcher = pattern.matcher(prepared)
 
         while (matcher.find()) {

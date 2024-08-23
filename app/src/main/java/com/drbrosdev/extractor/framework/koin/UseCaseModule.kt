@@ -14,7 +14,6 @@ import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.ValidateSuggestedSearchToken
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
@@ -125,7 +124,6 @@ val useCaseModule = module {
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
-            validateSuggestedToken = get(),
             generateMostCommonTokens = get()
         )
     }
@@ -137,10 +135,6 @@ val useCaseModule = module {
     }
 
     factory {
-        ValidateSuggestedSearchToken()
-    }
-
-    factory {
         GenerateSuggestedKeywords(
             dispatcher = get(named(CoroutineModuleName.Default)),
             visualEmbeddingDao = get(),
@@ -148,7 +142,6 @@ val useCaseModule = module {
             userEmbeddingDao = get(),
             extractionDao = get(),
             tokenizeText = get(),
-            validateSuggestedSearchToken = get(),
             dataStore = get()
         )
     }
@@ -160,7 +153,6 @@ val useCaseModule = module {
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
-            validateSuggestedSearchToken = get(),
             generateMostCommonTokens = get()
         )
     }
