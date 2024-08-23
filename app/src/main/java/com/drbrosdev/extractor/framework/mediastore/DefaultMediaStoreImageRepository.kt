@@ -8,10 +8,8 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Size
-import arrow.fx.coroutines.parMap
 import com.drbrosdev.extractor.domain.model.MediaStoreImage
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
-import com.drbrosdev.extractor.util.CONCURRENCY
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -71,7 +69,7 @@ class DefaultMediaStoreImageRepository(
     override suspend fun getThumbnails(
         imagesPaths: List<MediaStoreImageRepository.ImagePaths>
     ): List<Bitmap> =
-        imagesPaths.parMap(concurrency = CONCURRENCY, context = dispatcher) {
+        imagesPaths.map {
             it.generateThumbnail()
         }
 
