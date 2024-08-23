@@ -16,4 +16,5 @@ interface SearchImageByQuery {
         val dateRange: DateRange?,
         val type: SearchType
     )
+
 }

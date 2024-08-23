@@ -24,7 +24,7 @@ class MlKitExtractTextEmbed(
                 textRecognizer.process(image).await()
             }
 
-            out.mapCatching {
+            out.map {
                 val clean = tokenizeText.invoke(it.text.lowercase())
                     .toList()
                     .joinToString(separator = " ") { token -> token.text }

@@ -9,4 +9,5 @@ interface SearchImageByDateRange {
      * Search all indexed images using just the [DateRange], independent of other query strings.
      */
     suspend fun execute(dateRange: DateRange): List<Extraction>
+
 }

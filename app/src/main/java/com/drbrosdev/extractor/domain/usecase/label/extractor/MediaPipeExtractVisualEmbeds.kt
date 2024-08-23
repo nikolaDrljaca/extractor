@@ -44,7 +44,8 @@ class MediaPipeExtractVisualEmbeds(
         // classify is blocking so make sure to wrap in coroutine
         val result = imageClassifier.classify(mediaPipeImage)
 
-        val out = result.classificationResult().classifications()
+        val out = result.classificationResult()
+            .classifications()
             .asSequence()
             .flatMap { it.categories().asSequence() }
             // NOTE: category score values are between 0.1 and 0.00 -> times 1000 the range is 100 and 0

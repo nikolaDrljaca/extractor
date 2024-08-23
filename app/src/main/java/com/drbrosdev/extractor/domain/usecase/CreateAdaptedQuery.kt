@@ -8,7 +8,11 @@ import com.drbrosdev.extractor.domain.model.Token
 class CreateAdaptedQuery {
 
     operator fun invoke(params: Params): AdaptedQuery = with(params) {
-        val query = buildFtsAdaptedQuery(tokens, searchType, keywordType)
+        val query = buildFtsAdaptedQuery(
+            tokens = tokens,
+            searchType = searchType,
+            keywordType = keywordType
+        )
         AdaptedQuery(query)
     }
 

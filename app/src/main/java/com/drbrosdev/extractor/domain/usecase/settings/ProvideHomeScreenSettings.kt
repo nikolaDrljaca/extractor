@@ -33,6 +33,6 @@ class ProvideHomeScreenSettings(
  * Settings values to be used by the home screen.
  */
 data class ExtractorHomeScreenSettings(
-    val shouldShowVisualAlbums: Boolean = ExtractorSettingsDefaults.showVisualDefault,
-    val shouldShowTextAlbums: Boolean = ExtractorSettingsDefaults.showTextDefault,
+    val shouldShowVisualAlbums: Boolean = ExtractorSettingsDefaults.SHOW_VISUAL_DEFAULT,
+    val shouldShowTextAlbums: Boolean = ExtractorSettingsDefaults.SHOW_TEXT_DEFAULT,
 )

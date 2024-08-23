@@ -17,7 +17,11 @@ class NotificationService(
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    fun createNotification(
+    /**
+     * Create an extraction in progress notification object.
+     * @param block Use to configure or override default values on the notification.
+     */
+    fun extractionInProgressNotification(
         channelId: String,
         block: (NotificationCompat.Builder) -> Unit = {}
     ): Notification {

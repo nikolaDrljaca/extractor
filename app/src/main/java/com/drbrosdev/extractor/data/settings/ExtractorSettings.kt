@@ -8,7 +8,7 @@ data class ExtractorSettings(
 )
 
 object ExtractorSettingsDefaults {
-    const val showVisualDefault = true
-    const val showTextDefault = true
-    const val enableDynamicColors = false
+    const val SHOW_VISUAL_DEFAULT = true
+    const val SHOW_TEXT_DEFAULT = true
+    const val ENABLE_DYNAMIC_COLORS = false
 }

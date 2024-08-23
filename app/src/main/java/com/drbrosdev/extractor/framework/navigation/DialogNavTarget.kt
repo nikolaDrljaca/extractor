@@ -9,4 +9,5 @@ interface DialogNavTarget : Parcelable {
 
     @Composable
     fun Content(navController: NavController<DialogNavTarget>)
+
 }

@@ -16,16 +16,16 @@ class DefaultCreateInputImage(
 ) : CreateInputImage {
 
     override fun execute(type: InputImageType): Either<InputImageCreationFailed, InputImage> {
-        val out = when (type) {
-            is InputImageType.BitmapInputImage -> Either.catch {
-                InputImage.fromBitmap(
-                    type.bitmap,
-                    type.rotationDegrees
-                )
-            }
+        val out = Either.catch {
+            when (type) {
+                is InputImageType.BitmapInputImage ->
+                    InputImage.fromBitmap(
+                        type.bitmap,
+                        type.rotationDegrees
+                    )
 
-            is InputImageType.UriInputImage -> Either.catch {
-                InputImage.fromFilePath(context, type.uri)
+                is InputImageType.UriInputImage ->
+                    InputImage.fromFilePath(context, type.uri)
             }
         }
 

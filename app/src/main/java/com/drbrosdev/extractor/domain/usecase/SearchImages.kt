@@ -33,9 +33,7 @@ class SearchImages(
                     searchImageByDateRange.execute(dateRange)
                 }
 
-                else -> {
-                    searchImageByQuery.execute(params)
-                }
+                else -> searchImageByQuery.execute(params)
             }
 
             dataStore.decrementSearchCount()

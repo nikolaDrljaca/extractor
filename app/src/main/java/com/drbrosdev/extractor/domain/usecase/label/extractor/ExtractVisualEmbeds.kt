@@ -6,4 +6,5 @@ import com.drbrosdev.extractor.domain.model.Embed
 interface ExtractVisualEmbeds<T> {
 
     suspend fun execute(image: T): Result<List<Embed.Visual>>
+
 }

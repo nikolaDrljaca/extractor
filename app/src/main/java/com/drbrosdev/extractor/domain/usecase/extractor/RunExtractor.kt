@@ -11,4 +11,5 @@ interface RunExtractor {
      * Underlying captured errors are swallowed and null is returned instead.
      */
     suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds?
+
 }

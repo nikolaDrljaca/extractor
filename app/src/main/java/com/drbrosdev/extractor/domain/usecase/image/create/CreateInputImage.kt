@@ -8,5 +8,6 @@ import com.google.mlkit.vision.common.InputImage
 interface CreateInputImage {
 
     fun execute(type: InputImageType): Either<InputImageCreationFailed, InputImage>
+
 }
 

@@ -7,17 +7,16 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 
-/**
- * Fetch existing user keywords made as tags for images.
- *
- * Values are fetched at random, up to a maximum of 8 values.
- */
 class SuggestUserKeywords(
     private val dispatcher: CoroutineDispatcher,
     private val userEmbeddingDao: UserEmbeddingDao,
     private val tokenizeText: TokenizeText,
 ) {
 
+    /**
+     * Fetch existing user keywords made as tags for images.
+     * Values are fetched at random, up to a maximum of 8 values.
+     */
     suspend operator fun invoke(): List<Embed.User> {
         val input = userEmbeddingDao.getValueConcatAtRandom() ?: return emptyList()
 
@@ -30,7 +29,6 @@ class SuggestUserKeywords(
                 .map { token -> Embed.User(token.text) }
                 .toList()
         }
-            .also { println(it) }
     }
 }
 
