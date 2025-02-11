@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.ui.components.extractorimagegrid
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -86,7 +85,6 @@ fun ExtractorImageFlowRow(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtractorImageGrid(
     onClick: (index: Int) -> Unit,
@@ -106,13 +104,12 @@ fun ExtractorImageGrid(
         horizontalArrangement = Arrangement.spacedBy(1.dp),
         contentPadding = contentPadding
     ) {
-
         itemsIndexed(
             albumEntries,
             key = { _, it -> it.id.id }
         ) { index, entry ->
             ExtractorImageItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(),
                 imageUri = entry.uri.toUri(),
                 size = imageSize,
                 onClick = {

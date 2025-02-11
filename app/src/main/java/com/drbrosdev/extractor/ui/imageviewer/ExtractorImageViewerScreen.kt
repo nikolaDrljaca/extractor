@@ -62,7 +62,7 @@ fun ExtractorImageViewerScreen(
             state = pagerState,
             verticalAlignment = Alignment.CenterVertically,
             pageSize = PageSize.Fill,
-            beyondBoundsPageCount = 1
+            beyondViewportPageCount = 1
         ) {
             val zoomState = rememberZoomState()
 

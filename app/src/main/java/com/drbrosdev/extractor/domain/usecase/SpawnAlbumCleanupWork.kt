@@ -13,7 +13,6 @@ import com.drbrosdev.extractor.framework.requiresApi
 class SpawnAlbumCleanupWork(
     private val workManager: WorkManager
 ) {
-
     operator fun invoke(albumId: Long) {
         val workRequest = OneTimeWorkRequestBuilder<AlbumCleanupWorker>()
             .setInputData(

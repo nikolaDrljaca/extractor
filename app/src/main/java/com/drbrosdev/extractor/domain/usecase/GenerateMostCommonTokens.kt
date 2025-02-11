@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.flowOn
 class GenerateMostCommonTokens(
     private val dispatcher: CoroutineDispatcher
 ) {
-
     operator fun invoke(tokens: List<Token>, amount: Int = 7): Flow<Token> {
         return tokens
             .groupingBy { it.text.lowercase() }

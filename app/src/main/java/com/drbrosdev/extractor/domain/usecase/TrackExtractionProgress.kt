@@ -17,7 +17,6 @@ class TrackExtractionProgress(
     private val mediaStoreImageRepository: MediaStoreImageRepository,
     private val workManager: WorkManager
 ) {
-
     operator fun invoke(): Flow<ExtractionStatus> =
         combine(
             workManager.getWorkInfosForUniqueWorkLiveData(WorkNames.EXTRACTOR_WORK).asFlow(),

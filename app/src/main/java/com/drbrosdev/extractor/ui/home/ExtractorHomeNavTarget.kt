@@ -1,10 +1,10 @@
 package com.drbrosdev.extractor.ui.home
 
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
 import com.drbrosdev.extractor.framework.navigation.NavTarget
@@ -31,7 +31,7 @@ object ExtractorHomeNavTarget : NavTarget {
         // Bind the viewModel to the ActivityScope so it does not load data every time
         // Flows are hot anyways
         val viewModel: ExtractorHomeViewModel = koinViewModel(
-            viewModelStoreOwner = LocalContext.current as ComponentActivity
+            viewModelStoreOwner = LocalActivity.current as ComponentActivity
         )
 
         val navController = navigators.navController

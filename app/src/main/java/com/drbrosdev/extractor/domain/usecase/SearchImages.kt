@@ -17,29 +17,28 @@ class SearchImages(
     private val searchImageByDateRange: SearchImageByDateRange,
     private val dataStore: ExtractorDataStore
 ) {
-
     suspend fun execute(params: SearchImageByQuery.Params): Either<Unit, List<Extraction>> =
         withContext(dispatcher) {
-            if (dataStore.getSearchCount() == 0) {
-                return@withContext Unit.left()
-            }
+            when {
+                dataStore.getSearchCount() == 0 -> Unit.left()
 
-            val out = when {
-                shouldUseDateRangeSearch(params) -> {
-                    // NOTE: Should never be empty based on the above check
-                    val dateRange = requireNotNull(params.dateRange) {
-                        logEvent("SearchImages: shouldUseDateRangeSearch is true but dateRange is null!")
-                    }
-                    searchImageByDateRange.execute(dateRange)
+                else -> executeSearch(params).right().also {
+                    dataStore.decrementSearchCount()
                 }
-
-                else -> searchImageByQuery.execute(params)
             }
-
-            dataStore.decrementSearchCount()
-            out.right()
         }
 
+    private suspend fun executeSearch(params: SearchImageByQuery.Params): List<Extraction> = when {
+        shouldUseDateRangeSearch(params) -> {
+            // NOTE: Should never be empty based on the above check
+            val dateRange = requireNotNull(params.dateRange) {
+                logEvent("SearchImages: shouldUseDateRangeSearch is true but dateRange is null!")
+            }
+            searchImageByDateRange.execute(dateRange)
+        }
+
+        else -> searchImageByQuery.execute(params)
+    }
 
     private fun shouldUseDateRangeSearch(params: SearchImageByQuery.Params): Boolean {
         return (params.query.isBlank()) and (params.dateRange != null)

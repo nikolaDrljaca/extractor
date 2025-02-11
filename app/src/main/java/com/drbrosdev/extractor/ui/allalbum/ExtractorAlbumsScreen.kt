@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.ui.allalbum
 
 import android.net.Uri
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -54,7 +52,6 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtractorAlbumsScreen(
     onBack: () -> Unit,
@@ -98,7 +95,7 @@ fun ExtractorAlbumsScreen(
                             onClick = { onAlbumClick(it.id) },
                             onSwipeAction = onAction,
                             item = it,
-                            modifier = Modifier.animateItemPlacement()
+                            modifier = Modifier.animateItem()
                         )
                     }
                 }
@@ -155,7 +152,6 @@ sealed class ExtractorSwipeAction<T> {
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SwipeableAlbumCard(
     modifier: Modifier = Modifier,

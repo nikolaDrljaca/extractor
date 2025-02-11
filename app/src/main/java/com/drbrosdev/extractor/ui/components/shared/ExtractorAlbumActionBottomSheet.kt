@@ -44,7 +44,7 @@ fun ExtractorAlbumActionBottomSheet(
         dragHandle = { Spacer(modifier = Modifier.height(12.dp)) },
         modifier = Modifier
             .then(modifier),
-        windowInsets = WindowInsets(0, 0, 0, 0),
+        contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
         shape = RoundedCornerShape(14.dp)
     ) {
         ExtractorActionBottomSheetItem(

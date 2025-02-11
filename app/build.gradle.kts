@@ -1,9 +1,11 @@
+
 import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
 }
@@ -31,14 +33,14 @@ android {
     }
 
     namespace = "com.drbrosdev.extractor"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.drbrosdev.extractor"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 16
-        versionName = "24.08"
+        targetSdk = 35
+        versionCode = 17
+        versionName = "25.01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -71,7 +73,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     packaging {
         resources {
@@ -82,10 +84,10 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.9.0")
-    implementation(platform("androidx.compose:compose-bom:2024.05.00"))
+    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation("androidx.activity:activity-compose:1.10.0")
+    implementation(platform("androidx.compose:compose-bom:2025.01.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -94,53 +96,52 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0-RC")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.05.00"))
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.01.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     //Jetpack
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha13")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     //ML Kit
-    implementation("com.google.mlkit:image-labeling:17.0.8")
-    implementation("com.google.mlkit:text-recognition:16.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.2")
+    implementation("com.google.mlkit:image-labeling:17.0.9")
+    implementation("com.google.mlkit:text-recognition:16.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.0")
 
     //Navigation Reimagined
     implementation("dev.olshevski.navigation:reimagined:1.5.0")
     implementation("dev.olshevski.navigation:reimagined-material3:1.5.0")
 
     //Koin
-    val koinAndroidComposeVersion = "3.4.6"
-    val koinAndroidVersion = "3.4.3"
-    implementation("io.insert-koin:koin-android:$koinAndroidVersion")
-    implementation("io.insert-koin:koin-androidx-workmanager:$koinAndroidVersion")
-    implementation("io.insert-koin:koin-androidx-compose:$koinAndroidComposeVersion")
+    val koinVersion = "4.0.2"
+    implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-workmanager:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
 
     //Room
-    val roomVersion = "2.5.2"
+    val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
     //WorkManager
-    val workVersion = "2.9.0"
+    val workVersion = "2.10.0"
     implementation("androidx.work:work-runtime-ktx:$workVersion")
 
     //LiveData to Flow
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
 
     //DataStore Preferences
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.2")
 
     //zoomable modifier
     val zoomableVersion = "1.5.0"
@@ -155,7 +156,7 @@ dependencies {
     // mediaPipe image classification
     implementation("com.google.mediapipe:tasks-vision:0.20230731")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 
     implementation("io.arrow-kt:arrow-core:1.2.0")
     implementation("io.arrow-kt:arrow-fx-coroutines:1.2.0")
