@@ -8,11 +8,11 @@ import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.dialog.userembed.ExtractorUserEmbedViewModel
-import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
+import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
@@ -21,7 +21,7 @@ import com.drbrosdev.extractor.ui.settings.clearevent.ExtractorClearEventsViewMo
 import com.drbrosdev.extractor.ui.settings.index.ExtractorResetIndexViewModel
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkViewModel
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
@@ -47,7 +47,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        ExtractorGetMoreViewModel(
+        ExtractorPurchaseSearchViewModel(
             datastore = get()
         )
     }

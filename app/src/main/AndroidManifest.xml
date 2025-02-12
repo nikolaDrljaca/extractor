@@ -40,7 +40,7 @@
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:exported="false"
-            android:foregroundServiceType="dataSync"></service>
+            android:foregroundServiceType="dataSync" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

@@ -1,10 +1,9 @@
-package com.drbrosdev.extractor.ui.getmore
+package com.drbrosdev.extractor.ui.purchase
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,13 +35,13 @@ import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.rewards.RewardSnackbar
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
-import com.drbrosdev.extractor.ui.components.shared.ExtractorShopItem
+import com.drbrosdev.extractor.ui.components.shared.ExtractorShopPlaceholder
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
 
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ExtractorGetMoreScreen(
+fun ExtractorPurchaseSearchScreen(
     onBack: () -> Unit,
     onSettingsClick: () -> Unit,
     onPurchaseItemClick: () -> Unit,
@@ -101,12 +100,6 @@ fun ExtractorGetMoreScreen(
                 }
             }
 
-            /*
-            ExtractorViewAdContainer(
-                modifier = Modifier.layoutId(ViewIds.AD_VIEW)
-            )
-             */
-
             Column(
                 modifier = Modifier.layoutId(ViewIds.BUY_VIEW),
                 verticalArrangement = Arrangement.spacedBy(space = 8.dp)
@@ -122,27 +115,28 @@ fun ExtractorGetMoreScreen(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                FlowRow(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    maxItemsInEachRow = 2
-                ) {
-                    repeat(4) {
-                        ExtractorShopItem(
-                            onClick = onPurchaseItemClick,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
+                ExtractorShopPlaceholder()
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = stringResource(R.string.buy_disclaimer),
-                    style = smallLabel
-                )
+//                FlowRow(
+//                    verticalArrangement = Arrangement.spacedBy(4.dp),
+//                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+//                    maxItemsInEachRow = 2
+//                ) {
+//                    repeat(4) {
+//                        ExtractorShopItem(
+//                            onClick = onPurchaseItemClick,
+//                            modifier = Modifier.weight(1f)
+//                        )
+//                    }
+//                }
+//
+//                Spacer(modifier = Modifier.height(8.dp))
+//
+//                Text(
+//                    text = stringResource(R.string.buy_disclaimer),
+//                    style = smallLabel
+//                )
             }
-
         }
 
         SnackbarHost(

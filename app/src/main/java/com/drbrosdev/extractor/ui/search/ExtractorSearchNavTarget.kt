@@ -15,7 +15,7 @@ import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStat
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetState
 import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
-import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreNavTarget
+import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchNavTarget
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -54,7 +54,7 @@ data object ExtractorSearchNavTarget : NavTarget {
                 )
 
                 ExtractorSearchScreenEvents.NavToGetMore -> navController.navigate(
-                    ExtractorGetMoreNavTarget
+                    ExtractorPurchaseSearchNavTarget
                 )
 
                 is ExtractorSearchScreenEvents.NavToImage -> navController.navigate(
@@ -93,7 +93,7 @@ data object ExtractorSearchNavTarget : NavTarget {
             },
             onMultiselectAction = viewModel::multiselectEventHandler,
             onHeaderClick = {
-                navController.navigate(ExtractorGetMoreNavTarget)
+                navController.navigate(ExtractorPurchaseSearchNavTarget)
             },
         )
     }

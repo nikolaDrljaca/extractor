@@ -5,7 +5,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.Density
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
-import com.drbrosdev.extractor.ui.getmore.ExtractorGetMoreNavTarget
+import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchNavTarget
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageNavTarget
@@ -65,12 +65,12 @@ private fun handleGetMore(
 ): Boolean {
     val goingFrom = when (from) {
         is ExtractorSearchNavTarget -> true
-        is ExtractorGetMoreNavTarget -> true
+        is ExtractorPurchaseSearchNavTarget -> true
         else -> false
     }
     val goingTo = when (to) {
         is ExtractorSearchNavTarget -> true
-        is ExtractorGetMoreNavTarget -> true
+        is ExtractorPurchaseSearchNavTarget -> true
         else -> false
     }
     return goingFrom and goingTo

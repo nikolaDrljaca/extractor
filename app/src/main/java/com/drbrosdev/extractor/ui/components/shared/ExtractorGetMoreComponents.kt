@@ -1,176 +1,94 @@
 package com.drbrosdev.extractor.ui.components.shared
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
-
-private enum class SelectedView {
-    CONSENT,
-    BUTTON
-}
-
 @Composable
-fun ExtractorViewAdContainer(
+fun ExtractorShopItem(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectedView by remember {
-        mutableStateOf(SelectedView.CONSENT)
-    }
-
-    AdContainerLayout(
-        modifier = modifier
+    Surface(
+        shape = RoundedCornerShape(size = 12.dp),
+        onClick = onClick,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+            .then(modifier)
     ) {
-//        AdViewLoading(
-//            modifier = Modifier.fillMaxWidth()
-//        )
-
-        AnimatedContent(
-            targetState = selectedView,
-            label = ""
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.padding(10.dp)
         ) {
-            when (it) {
-                SelectedView.BUTTON -> Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedExtractorActionButton(
-                        onClick = { selectedView = SelectedView.CONSENT },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.rounded_rewarded_ads_24),
-                            contentDescription = ""
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "View Ad")
-                    }
-
-                    ExtractorTextButton(
-                        onClick = { },
-                        contentColor = MaterialTheme.colorScheme.tertiary
-                    ) {
-                        Text(text = "Review Policy")
-                    }
-                }
-
-                SelectedView.CONSENT -> AdViewConsentBanner(
-                    onViewFormClick = { selectedView = SelectedView.BUTTON },
-                    onViewPolicyClick = {}
+            Column(
+                verticalArrangement = Arrangement.spacedBy(
+                    4.dp,
+                    alignment = Alignment.Bottom
+                ),
+                horizontalAlignment = Alignment.Start,
+            ) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "$ 0.99", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = "500 Searches",
+                    style = MaterialTheme.typography.labelSmall
                 )
             }
+
+            Icon(
+                painter = painterResource(id = R.drawable.rounded_shop_24),
+                contentDescription = ""
+            )
         }
     }
 }
 
 @Composable
-private fun AdContainerLayout(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    val textStyle = MaterialTheme.typography.bodyMedium.copy(
-        fontWeight = FontWeight.Normal
-    )
-
-    Column(
-        modifier = Modifier
-            .then(modifier),
-        verticalArrangement = Arrangement.spacedBy(space = 8.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.watch_an_ad),
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Text(
-            text = stringResource(R.string.ad_support),
-            style = textStyle
-        )
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        content()
-    }
-}
-
-@Composable
-fun AdViewConsentBanner(
-    modifier: Modifier = Modifier,
-    onViewFormClick: () -> Unit,
-    onViewPolicyClick: () -> Unit
-) {
-
-    AttentionContainer(
-        modifier = Modifier
-            .then(modifier),
-        header = "Before you continue",
-        actionRow = {
-            ExtractorTextButton(
-                onClick = onViewPolicyClick,
-                contentColor = MaterialTheme.colorScheme.tertiary
-            ) {
-                Text(text = "Privacy Policy")
-            }
-            ExtractorTextButton(
-                onClick = onViewFormClick,
-                contentColor = MaterialTheme.colorScheme.tertiary
-            ) {
-                Text(text = "View Form")
-            }
-        }
-    ) {
-        Text(
-            text = "Viewing ads will transfer some of your non-identifiable information to Google, the provider of the ad platform. No data will be transferred if you do not consent to the policy provided by Google Ads.",
-        )
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            text = "You can find out more on our privacy policy page.",
-        )
-    }
-}
-
-@Composable
-private fun AdViewLoading(
+fun ExtractorShopPlaceholder(
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = Modifier.then(modifier),
-        contentAlignment = Alignment.Center
+    Surface(
+        shape = RoundedCornerShape(size = 12.dp),
+        color = MaterialTheme.colorScheme.secondary,
+        modifier = Modifier
+            .then(modifier)
     ) {
-        CircularProgressIndicator(
-            trackColor = Color.Transparent,
-            color = MaterialTheme.colorScheme.tertiary,
-            strokeCap = StrokeCap.Round
-        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(
+                8.dp,
+                alignment = Alignment.CenterVertically
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = "Coming soon!", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "Billing features are still a work in progress. For now, look at the alternative way to get more searches.",
+                style = MaterialTheme.typography.labelSmall,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+        }
     }
 }
-
 
 @Preview
 @Composable
@@ -179,10 +97,8 @@ private fun CurrentPreview() {
         Column(
             verticalArrangement = Arrangement.spacedBy(space = 30.dp)
         ) {
-            AdViewConsentBanner(
-                onViewFormClick = {},
-                onViewPolicyClick = {}
-            )
+            ExtractorShopItem(onClick = {})
+            ExtractorShopPlaceholder()
         }
     }
 }
