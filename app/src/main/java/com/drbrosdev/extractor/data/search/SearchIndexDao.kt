@@ -1,23 +1,22 @@
-package com.drbrosdev.extractor.data.dao
+package com.drbrosdev.extractor.data.search
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.drbrosdev.extractor.data.entity.SearchIndexEntity
 
 @Dao
 interface SearchIndexDao {
 
     @Insert
-    suspend fun insert(value: SearchIndexEntity)
+    suspend fun insert(value: SearchIndexRecord)
 
     @Query(
         """
         UPDATE search_index 
-        SET textIndex = :value
-        WHERE extraction_entity_id = :extractionEntityId
+        SET text_index = :value
+        WHERE extraction_id = :extractionEntityId
     """
     )
     suspend fun updateTextIndex(value: String, extractionEntityId: Long)
@@ -25,8 +24,8 @@ interface SearchIndexDao {
     @Query(
         """
         UPDATE search_index 
-        SET visualIndex = :value
-        WHERE extraction_entity_id = :extractionEntityId
+        SET visual_index = :value
+        WHERE extraction_id = :extractionEntityId
     """
     )
     suspend fun updateVisualIndex(value: String, extractionEntityId: Long)
@@ -34,8 +33,8 @@ interface SearchIndexDao {
     @Query(
         """
         UPDATE search_index 
-        SET userIndex = :value
-        WHERE extraction_entity_id = :extractionEntityId
+        SET user_index = :value
+        WHERE extraction_id = :extractionEntityId
     """
     )
     suspend fun updateUserIndex(value: String, extractionEntityId: Long)
@@ -43,17 +42,17 @@ interface SearchIndexDao {
     @Query(
         """
         DELETE FROM search_index
-        WHERE extraction_entity_id = :id
+        WHERE extraction_id = :id
     """
     )
     suspend fun deleteByMediaId(id: Long)
 
     @Delete
-    suspend fun delete(value: SearchIndexEntity)
+    suspend fun delete(value: SearchIndexRecord)
 
     @Query("DELETE FROM search_index")
     suspend fun deleteAll()
 
     @Update
-    suspend fun update(value: SearchIndexEntity)
+    suspend fun update(value: SearchIndexRecord)
 }

@@ -1,9 +1,9 @@
-package com.drbrosdev.extractor.data.dao
+package com.drbrosdev.extractor.data.extraction.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.drbrosdev.extractor.data.relation.ImageEmbeddingsRelation
+import com.drbrosdev.extractor.data.extraction.relation.ImageEmbeddingsRelation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
@@ -23,13 +23,13 @@ interface ImageEmbeddingsDao {
     @Query(
         """
         WITH lookup AS (
-            SELECT si.extraction_entity_id
+            SELECT si.extraction_id
             FROM search_index AS si
             JOIN search_index_fts AS fts ON fts.rowid = si.id
             WHERE search_index_fts MATCH :ftsQuery)
         SELECT im.media_store_id, im.uri, im.path, im.date_added
-        FROM image_extraction_entity AS im
-        JOIN lookup ON lookup.extraction_entity_id = im.media_store_id
+        FROM extraction AS im
+        JOIN lookup ON lookup.extraction_id = im.media_store_id
         GROUP BY im.media_store_id
         ORDER BY im.date_added DESC
     """
@@ -51,7 +51,7 @@ interface ImageEmbeddingsDao {
     @Query(
         """
         SELECT DISTINCT * 
-        FROM image_extraction_entity 
+        FROM extraction
         WHERE media_store_id=:mediaImageId
     """
     )

@@ -1,13 +1,11 @@
-package com.drbrosdev.extractor.data.entity
+package com.drbrosdev.extractor.data.album.record
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "album")
-data class AlbumEntity(
+data class AlbumRecord(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "album_id")
     val id: Long = 0,
 
     val name: String,

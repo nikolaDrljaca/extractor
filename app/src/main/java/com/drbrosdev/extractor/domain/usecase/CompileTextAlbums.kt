@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase
 
-import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.repository.AlbumRepository

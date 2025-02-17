@@ -1,8 +1,8 @@
 package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
-import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
-import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
+import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind

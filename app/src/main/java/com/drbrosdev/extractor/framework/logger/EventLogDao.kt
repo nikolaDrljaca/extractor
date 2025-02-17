@@ -15,9 +15,9 @@ interface EventLogDao {
         """
         WITH next AS (
             SELECT ifnull(max(event.event_order), 0) + 1
-            FROM event_entity as event
+            FROM event as event
         )       
-        INSERT INTO event_entity (event_order, tag, message, timestamp, localizedMessage)
+        INSERT INTO event (event_order, tag, message, timestamp, localized_message)
         VALUES ((SELECT * FROM next), :tag, :message, :timestamp, :localizedMessage)
     """
     )
@@ -29,26 +29,26 @@ interface EventLogDao {
     )
 
     @Delete
-    suspend fun delete(entry: EventEntity)
+    suspend fun delete(entry: EventRecord)
 
-    @Query("DELETE FROM event_entity")
+    @Query("DELETE FROM event")
     suspend fun deleteAll()
 
     @Query(
         """
         SELECT *
-        FROM event_entity
+        FROM event
         ORDER BY timestamp DESC
     """
     )
-    fun findAllAsFlow(): Flow<List<EventEntity>>
+    fun findAllAsFlow(): Flow<List<EventRecord>>
 
     suspend fun findAll() = withContext(Dispatchers.IO) { findAllAsFlow().first() }
 
     @Query(
         """
         SELECT count(*)
-        FROM event_entity
+        FROM event
     """
     )
     suspend fun count(): Int
@@ -56,7 +56,7 @@ interface EventLogDao {
     @Query(
         """
         SELECT count(*)
-        FROM event_entity
+        FROM event
     """
     )
     fun countAsFlow(): Flow<Int>

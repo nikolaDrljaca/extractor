@@ -1,9 +1,9 @@
-package com.drbrosdev.extractor.data.dao
+package com.drbrosdev.extractor.data.extraction.dao
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.drbrosdev.extractor.data.relation.UserExtractionRelation
+import com.drbrosdev.extractor.data.extraction.relation.UserExtractionRelation
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -12,12 +12,12 @@ interface UserExtractionDao {
     @Query(
         """
         WITH out as (
-            SELECT user.extraction_entity_id
+            SELECT user.extraction_id
             FROM user_embedding AS user
             WHERE user.value LIKE '%' || :keyword || '%'
         )
         SELECT extraction.uri, extraction.media_store_id, extraction.date_added, extraction.path 
-        FROM image_extraction_entity AS extraction JOIN out ON out.extraction_entity_id = extraction.media_store_id
+        FROM extraction JOIN out ON out.extraction_id = extraction.media_store_id
     """
     )
     @Transaction
@@ -26,12 +26,12 @@ interface UserExtractionDao {
     @Query(
         """
         WITH out as (
-            SELECT user.extraction_entity_id
+            SELECT user.extraction_id
             FROM user_embedding AS user
             WHERE user.value LIKE '%' || :keyword || '%'
         )
         SELECT extraction.uri, extraction.media_store_id, extraction.date_added, extraction.path 
-        FROM image_extraction_entity AS extraction JOIN out ON out.extraction_entity_id = extraction.media_store_id
+        FROM extraction JOIN out ON out.extraction_id = extraction.media_store_id
     """
     )
     @Transaction

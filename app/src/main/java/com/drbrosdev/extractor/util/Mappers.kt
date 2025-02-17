@@ -2,12 +2,12 @@ package com.drbrosdev.extractor.util
 
 import android.net.Uri
 import androidx.core.net.toUri
-import com.drbrosdev.extractor.data.entity.AlbumConfigurationEntity
-import com.drbrosdev.extractor.data.entity.AlbumEntity
-import com.drbrosdev.extractor.data.entity.AlbumEntryEntity
-import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.relation.AlbumRelation
-import com.drbrosdev.extractor.data.relation.ImageEmbeddingsRelation
+import com.drbrosdev.extractor.data.album.record.AlbumConfigurationRecord
+import com.drbrosdev.extractor.data.album.record.AlbumRecord
+import com.drbrosdev.extractor.data.album.record.AlbumEntryRecord
+import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
+import com.drbrosdev.extractor.data.album.AlbumRelation
+import com.drbrosdev.extractor.data.extraction.relation.ImageEmbeddingsRelation
 import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.model.AlbumEntry
 import com.drbrosdev.extractor.domain.model.AlbumPreview
@@ -35,7 +35,7 @@ fun MediaStoreImage.toExtraction() = Extraction(
     mediaImageId = mediaImageId()
 )
 
-fun ExtractionEntity.toExtraction() = Extraction(
+fun ExtractionRecord.toExtraction() = Extraction(
     mediaImageId = MediaImageId(this.mediaStoreId),
     uri = MediaImageUri(this.uri),
     path = this.path,
@@ -43,18 +43,18 @@ fun ExtractionEntity.toExtraction() = Extraction(
 )
 
 fun ImageEmbeddingsRelation.toImageEmbeds(): ImageEmbeds {
-    val textEmbed = Embed.Text(value = this.textEmbeddingEntity.value)
+    val textEmbed = Embed.Text(value = this.textEmbeddingRecord.value)
 
     val visualEmbeds = when {
-        this.visualEmbeddingEntity.value.isBlank() -> emptyList()
-        else -> this.visualEmbeddingEntity.value
+        this.visualEmbeddingRecord.value.isBlank() -> emptyList()
+        else -> this.visualEmbeddingRecord.value
             .split(",")
             .map { Embed.Visual(it) }
     }
 
     val userEmbeds = when {
-        this.userEmbeddingEntity.value.isBlank() -> emptyList()
-        else -> this.userEmbeddingEntity.value
+        this.userEmbeddingRecord.value.isBlank() -> emptyList()
+        else -> this.userEmbeddingRecord.value
             .split(",")
             .map { Embed.User(it) }
     }
@@ -66,35 +66,35 @@ fun ImageEmbeddingsRelation.toImageEmbeds(): ImageEmbeds {
     )
 }
 
-fun SearchType.toAlbumSearchType(): AlbumConfigurationEntity.SearchType = when (this) {
-    SearchType.FULL -> AlbumConfigurationEntity.SearchType.FULL
-    SearchType.PARTIAL -> AlbumConfigurationEntity.SearchType.PARTIAL
+fun SearchType.toAlbumSearchType(): AlbumConfigurationRecord.SearchType = when (this) {
+    SearchType.FULL -> AlbumConfigurationRecord.SearchType.FULL
+    SearchType.PARTIAL -> AlbumConfigurationRecord.SearchType.PARTIAL
 }
 
-fun KeywordType.toAlbumLabelType(): AlbumConfigurationEntity.LabelType = when (this) {
-    KeywordType.ALL -> AlbumConfigurationEntity.LabelType.ALL
-    KeywordType.TEXT -> AlbumConfigurationEntity.LabelType.TEXT
-    KeywordType.IMAGE -> AlbumConfigurationEntity.LabelType.IMAGE
+fun KeywordType.toAlbumLabelType(): AlbumConfigurationRecord.LabelType = when (this) {
+    KeywordType.ALL -> AlbumConfigurationRecord.LabelType.ALL
+    KeywordType.TEXT -> AlbumConfigurationRecord.LabelType.TEXT
+    KeywordType.IMAGE -> AlbumConfigurationRecord.LabelType.IMAGE
 }
 
-fun NewAlbum.Origin.toAlbumOrigin(): AlbumEntity.Origin = when (this) {
-    NewAlbum.Origin.VISUAL_COMPUTED -> AlbumEntity.Origin.VISUAL_COMPUTED
-    NewAlbum.Origin.TEXT_COMPUTED -> AlbumEntity.Origin.TEXT_COMPUTED
-    NewAlbum.Origin.USER_GENERATED -> AlbumEntity.Origin.USER_GENERATED
+fun NewAlbum.Origin.toAlbumOrigin(): AlbumRecord.Origin = when (this) {
+    NewAlbum.Origin.VISUAL_COMPUTED -> AlbumRecord.Origin.VISUAL_COMPUTED
+    NewAlbum.Origin.TEXT_COMPUTED -> AlbumRecord.Origin.TEXT_COMPUTED
+    NewAlbum.Origin.USER_GENERATED -> AlbumRecord.Origin.USER_GENERATED
 }
 
-fun AlbumConfigurationEntity.LabelType.toLabelType(): KeywordType = when (this) {
-    AlbumConfigurationEntity.LabelType.ALL -> KeywordType.ALL
-    AlbumConfigurationEntity.LabelType.TEXT -> KeywordType.TEXT
-    AlbumConfigurationEntity.LabelType.IMAGE -> KeywordType.IMAGE
+fun AlbumConfigurationRecord.LabelType.toLabelType(): KeywordType = when (this) {
+    AlbumConfigurationRecord.LabelType.ALL -> KeywordType.ALL
+    AlbumConfigurationRecord.LabelType.TEXT -> KeywordType.TEXT
+    AlbumConfigurationRecord.LabelType.IMAGE -> KeywordType.IMAGE
 }
 
-fun AlbumConfigurationEntity.SearchType.toSearchType(): SearchType = when (this) {
-    AlbumConfigurationEntity.SearchType.FULL -> SearchType.FULL
-    AlbumConfigurationEntity.SearchType.PARTIAL -> SearchType.PARTIAL
+fun AlbumConfigurationRecord.SearchType.toSearchType(): SearchType = when (this) {
+    AlbumConfigurationRecord.SearchType.FULL -> SearchType.FULL
+    AlbumConfigurationRecord.SearchType.PARTIAL -> SearchType.PARTIAL
 }
 
-fun AlbumEntryEntity.toAlbumEntry(): AlbumEntry {
+fun AlbumEntryRecord.toAlbumEntry(): AlbumEntry {
     return AlbumEntry(
         uri = MediaImageUri(this.uri),
         id = MediaImageId(this.id)
@@ -103,8 +103,8 @@ fun AlbumEntryEntity.toAlbumEntry(): AlbumEntry {
 
 fun AlbumRelation.toAlbum(): Album {
     return Album(
-        id = this.albumEntity.id,
-        name = this.albumEntity.name,
+        id = this.albumRecord.id,
+        name = this.albumRecord.name,
         keyword = this.configuration.keyword,
         searchType = this.configuration.searchType.toSearchType(),
         keywordType = this.configuration.labelType.toLabelType(),

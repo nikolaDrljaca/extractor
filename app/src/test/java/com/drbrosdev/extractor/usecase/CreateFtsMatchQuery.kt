@@ -10,7 +10,6 @@ class CreateFtsMatchQueryTest {
 
     private val createAdaptedQuery = CreateAdaptedQuery()
 
-
     @Test
     fun `does create expected match query - FULL ALL`() {
         val multiWord = CreateAdaptedQuery.Params(
@@ -71,13 +70,13 @@ class CreateFtsMatchQueryTest {
         )
 
         val singleOut = createAdaptedQuery(singleWord)
-        val expectedSingle = "textIndex:grey"
+        val expectedSingle = "text_index:grey"
         assert(singleOut.query == expectedSingle) {
             "Expected result { $expectedSingle }, got { ${singleOut.query} }"
         }
 
         val multiOut = createAdaptedQuery(multiWord)
-        val expectedMulti = "textIndex:grey textIndex:car textIndex:goes"
+        val expectedMulti = "text_index:grey text_index:car text_index:goes"
         assert(multiOut.query == expectedMulti) {
             "Expected result { $expectedMulti }, got { ${multiOut.query} }"
         }
@@ -95,13 +94,13 @@ class CreateFtsMatchQueryTest {
         )
 
         val singleOut = createAdaptedQuery(singleWord)
-        val expectedSingle = "textIndex:*grey*"
+        val expectedSingle = "text_index:*grey*"
         assert(singleOut.query == expectedSingle) {
             "Expected result { $expectedSingle }, got { ${singleOut.query} }"
         }
 
         val multiOut = createAdaptedQuery(multiWord)
-        val expectedMulti = "textIndex:*grey* OR textIndex:*car* OR textIndex:*goes*"
+        val expectedMulti = "text_index:*grey* OR text_index:*car* OR text_index:*goes*"
         assert(multiOut.query == expectedMulti) {
             "Expected result { $expectedMulti }, got { ${multiOut.query} }"
         }
@@ -119,13 +118,13 @@ class CreateFtsMatchQueryTest {
         )
 
         val singleOut = createAdaptedQuery(singleWord)
-        val expectedSingle = "visualIndex:grey"
+        val expectedSingle = "visual_index:grey"
         assert(singleOut.query == expectedSingle) {
             "Expected result { $expectedSingle }, got { ${singleOut.query} }"
         }
 
         val multiOut = createAdaptedQuery(multiWord)
-        val expectedMulti = "visualIndex:grey visualIndex:car visualIndex:goes"
+        val expectedMulti = "visual_index:grey visual_index:car visual_index:goes"
         assert(multiOut.query == expectedMulti) {
             "Expected result { $expectedMulti }, got { ${multiOut.query} }"
         }
@@ -143,13 +142,13 @@ class CreateFtsMatchQueryTest {
         )
 
         val singleOut = createAdaptedQuery(singleWord)
-        val expectedSingle = "visualIndex:*grey*"
+        val expectedSingle = "visual_index:*grey*"
         assert(singleOut.query == expectedSingle) {
             "Expected result { $expectedSingle }, got { ${singleOut.query} }"
         }
 
         val multiOut = createAdaptedQuery(multiWord)
-        val expectedMulti = "visualIndex:*grey* OR visualIndex:*car* OR visualIndex:*goes*"
+        val expectedMulti = "visual_index:*grey* OR visual_index:*car* OR visual_index:*goes*"
         assert(multiOut.query == expectedMulti) {
             "Expected result { $expectedMulti }, got { ${multiOut.query} }"
         }

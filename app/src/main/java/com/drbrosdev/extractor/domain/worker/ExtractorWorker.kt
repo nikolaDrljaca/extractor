@@ -7,7 +7,7 @@ import android.os.Build
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
-import com.drbrosdev.extractor.data.dao.ExtractionDao
+import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.framework.logger.logErrorEvent

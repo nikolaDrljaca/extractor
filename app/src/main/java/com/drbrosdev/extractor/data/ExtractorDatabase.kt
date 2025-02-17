@@ -5,40 +5,40 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.drbrosdev.extractor.data.dao.AlbumConfigurationDao
-import com.drbrosdev.extractor.data.dao.AlbumDao
-import com.drbrosdev.extractor.data.dao.AlbumEntryDao
-import com.drbrosdev.extractor.data.dao.AlbumRelationDao
-import com.drbrosdev.extractor.data.dao.ExtractionDao
-import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
-import com.drbrosdev.extractor.data.dao.SearchIndexDao
-import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
-import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
-import com.drbrosdev.extractor.data.dao.UserExtractionDao
-import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
-import com.drbrosdev.extractor.data.entity.AlbumConfigurationEntity
-import com.drbrosdev.extractor.data.entity.AlbumEntity
-import com.drbrosdev.extractor.data.entity.AlbumEntryEntity
-import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.entity.SearchIndexEntity
-import com.drbrosdev.extractor.data.entity.SearchIndexFts
-import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
-import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
-import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
+import com.drbrosdev.extractor.data.album.dao.AlbumConfigurationDao
+import com.drbrosdev.extractor.data.album.dao.AlbumDao
+import com.drbrosdev.extractor.data.album.dao.AlbumEntryDao
+import com.drbrosdev.extractor.data.album.dao.AlbumRelationDao
+import com.drbrosdev.extractor.data.album.record.AlbumConfigurationRecord
+import com.drbrosdev.extractor.data.album.record.AlbumEntryRecord
+import com.drbrosdev.extractor.data.album.record.AlbumRecord
+import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
+import com.drbrosdev.extractor.data.search.SearchIndexDao
+import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao
+import com.drbrosdev.extractor.data.search.SearchIndexRecord
+import com.drbrosdev.extractor.data.search.SearchIndexFts
+import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
+import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
+import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
+import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
+import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
 
 @Database(
     entities = [
-        ExtractionEntity::class,
-        TextEmbeddingEntity::class,
-        VisualEmbeddingEntity::class,
-        UserEmbeddingEntity::class,
-        AlbumEntity::class,
-        AlbumEntryEntity::class,
-        AlbumConfigurationEntity::class,
-        SearchIndexEntity::class,
+        ExtractionRecord::class,
+        TextEmbeddingRecord::class,
+        VisualEmbeddingRecord::class,
+        UserEmbeddingRecord::class,
+        AlbumRecord::class,
+        AlbumEntryRecord::class,
+        AlbumConfigurationRecord::class,
+        SearchIndexRecord::class,
         SearchIndexFts::class
     ],
-    version = 15,
+    version = 16,
 )
 @TypeConverters(DatabaseConverters::class)
 abstract class ExtractorDatabase : RoomDatabase() {

@@ -1,11 +1,11 @@
-package com.drbrosdev.extractor.data.dao
+package com.drbrosdev.extractor.data.album.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.drbrosdev.extractor.data.entity.AlbumEntryEntity
+import com.drbrosdev.extractor.data.album.record.AlbumEntryRecord
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
@@ -13,15 +13,15 @@ import kotlinx.coroutines.flow.first
 interface AlbumEntryDao {
 
     @Insert
-    suspend fun insert(entry: AlbumEntryEntity)
+    suspend fun insert(entry: AlbumEntryRecord)
 
     @Insert
-    suspend fun insertAll(entities: List<AlbumEntryEntity>)
+    suspend fun insertAll(entities: List<AlbumEntryRecord>)
 
     @Query("SELECT * FROM album_entry")
-    fun findAllAsFlow(): Flow<List<AlbumEntryEntity>>
+    fun findAllAsFlow(): Flow<List<AlbumEntryRecord>>
 
-    suspend fun findAll(): List<AlbumEntryEntity> = findAllAsFlow().first()
+    suspend fun findAll(): List<AlbumEntryRecord> = findAllAsFlow().first()
 
     @Query("SELECT count(*) FROM album_entry")
     fun getCountAsFlow(): Flow<Long>
@@ -29,7 +29,7 @@ interface AlbumEntryDao {
     suspend fun getCount(): Long = getCountAsFlow().first()
 
     @Delete
-    suspend fun delete(entry: AlbumEntryEntity)
+    suspend fun delete(entry: AlbumEntryRecord)
 
     @Query("DELETE FROM album_entry")
     suspend fun deleteAll()
@@ -37,8 +37,8 @@ interface AlbumEntryDao {
     @Query("DELETE FROM album_entry WHERE id=:entryId")
     suspend fun deleteById(entryId: Long)
 
-    @Query("DELETE FROM album_entry WHERE album_entity_id=:albumEntityId")
-    suspend fun deleteByAlbumEntityId(albumEntityId: Long)
+    @Query("DELETE FROM album_entry WHERE album_id=:albumEntityId")
+    suspend fun deleteByAlbumId(albumEntityId: Long)
 
     @Query("""
         DELETE FROM album_entry
@@ -47,5 +47,5 @@ interface AlbumEntryDao {
     suspend fun deleteByIds(entryIds: List<Long>)
 
     @Update
-    suspend fun update(entry: AlbumEntryEntity)
+    suspend fun update(entry: AlbumEntryRecord)
 }

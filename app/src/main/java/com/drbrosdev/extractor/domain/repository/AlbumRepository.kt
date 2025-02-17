@@ -12,7 +12,7 @@ interface AlbumRepository {
 
     fun findAlbumByIdAsFlow(albumId: Long): Flow<Album?>
 
-    suspend fun findAlbumById(albumId: Long) : Album?
+    suspend fun findAlbumById(albumId: Long): Album?
 
     fun getCommonVisualAlbumsAsFlow(): Flow<List<Album>>
 

@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.data.dao
+package com.drbrosdev.extractor.data.extraction.dao
 
 import android.database.sqlite.SQLiteConstraintException
 import androidx.room.Dao
@@ -6,7 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
+import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
 
 @Dao
 interface UserEmbeddingDao {
@@ -15,23 +15,23 @@ interface UserEmbeddingDao {
     suspend fun getCount(): Int
 
     @Query("SELECT * FROM user_embedding WHERE id=:id")
-    suspend fun findById(id: Long): UserEmbeddingEntity?
+    suspend fun findById(id: Long): UserEmbeddingRecord?
 
-    @Query("SELECT * FROM user_embedding WHERE extraction_entity_id=:mediaId")
-    suspend fun findByMediaId(mediaId: Long): UserEmbeddingEntity?
+    @Query("SELECT * FROM user_embedding WHERE extraction_id=:mediaId")
+    suspend fun findByMediaId(mediaId: Long): UserEmbeddingRecord?
 
     @Insert
-    suspend fun insert(value: UserEmbeddingEntity)
+    suspend fun insert(value: UserEmbeddingRecord)
 
     @Update
-    suspend fun update(value: UserEmbeddingEntity)
+    suspend fun update(value: UserEmbeddingRecord)
 
-    @Query("UPDATE user_embedding SET value=:value WHERE extraction_entity_id=:imageEntityId")
+    @Query("UPDATE user_embedding SET value=:value WHERE extraction_id=:imageEntityId")
     suspend fun update(value: String, imageEntityId: Long)
 
     suspend fun upsert(value: String, extractionEntityId: Long) {
         try {
-            val userEmbedding = UserEmbeddingEntity(value = value, extractionEntityId = extractionEntityId)
+            val userEmbedding = UserEmbeddingRecord(value = value, extractionId = extractionEntityId)
             insert(userEmbedding)
         } catch (e: SQLiteConstraintException) {
             update(value, extractionEntityId)
@@ -39,12 +39,12 @@ interface UserEmbeddingDao {
     }
 
     @Delete
-    suspend fun delete(value: UserEmbeddingEntity)
+    suspend fun delete(value: UserEmbeddingRecord)
 
     @Query("DELETE FROM user_embedding")
     suspend fun deleteAll()
 
-    @Query("DELETE FROM user_embedding WHERE extraction_entity_id=:mediaId")
+    @Query("DELETE FROM user_embedding WHERE extraction_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
 
     @Query("""

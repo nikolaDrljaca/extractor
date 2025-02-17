@@ -1,19 +1,20 @@
-package com.drbrosdev.extractor.domain.repository
+package com.drbrosdev.extractor.data.extraction
 
 import com.drbrosdev.extractor.data.TransactionProvider
-import com.drbrosdev.extractor.data.dao.ExtractionDao
-import com.drbrosdev.extractor.data.dao.ImageEmbeddingsDao
-import com.drbrosdev.extractor.data.dao.SearchIndexDao
-import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
-import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
-import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
-import com.drbrosdev.extractor.data.entity.ExtractionEntity
-import com.drbrosdev.extractor.data.entity.SearchIndexEntity
-import com.drbrosdev.extractor.data.entity.TextEmbeddingEntity
-import com.drbrosdev.extractor.data.entity.UserEmbeddingEntity
-import com.drbrosdev.extractor.data.entity.VisualEmbeddingEntity
+import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
+import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
+import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
+import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
+import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
+import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
+import com.drbrosdev.extractor.data.search.SearchIndexDao
+import com.drbrosdev.extractor.data.search.SearchIndexRecord
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.MediaImageId
+import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
 import com.drbrosdev.extractor.util.toImageEmbeds
@@ -77,7 +78,7 @@ class DefaultExtractorRepository(
 
             userEmbeddingDao.update(userEmbed.copy(value = updated))
             // update search index
-            searchIndexDao.updateUserIndex(updated, userEmbed.extractionEntityId)
+            searchIndexDao.updateUserIndex(updated, userEmbed.extractionId)
         }
     }
 
@@ -116,20 +117,20 @@ class DefaultExtractorRepository(
 
             visualEmbeddingDao.update(visualEmbed.copy(value = updated))
             // update search index
-            searchIndexDao.updateVisualIndex(updated, visualEmbed.extractionEntityId)
+            searchIndexDao.updateVisualIndex(updated, visualEmbed.extractionId)
         }
     }
 
     override suspend fun createExtractionData(data: NewExtraction) = with(data) {
-        val extractionEntity = ExtractionEntity(
+        val extractionRecord = ExtractionRecord(
             mediaStoreId = mediaImageId.id,
             uri = extractorImageUri.uri,
             dateAdded = dateAdded,
             path = path
         )
 
-        val textEntity = TextEmbeddingEntity(
-            extractionEntityId = mediaImageId.id,
+        val textEntity = TextEmbeddingRecord(
+            extractionId = mediaImageId.id,
             value = textEmbed.value
         )
 
@@ -139,26 +140,26 @@ class DefaultExtractorRepository(
             .map { it.value.lowercase() }
             .joinToString(separator = ",") { it }
 
-        val visualEntity = VisualEmbeddingEntity(
-            extractionEntityId = mediaImageId.id,
+        val visualEntity = VisualEmbeddingRecord(
+            extractionId = mediaImageId.id,
             value = visuals
         )
 
         // Create default empty user entity
-        val userEntity = UserEmbeddingEntity(
-            extractionEntityId = mediaImageId.id,
+        val userEntity = UserEmbeddingRecord(
+            extractionId = mediaImageId.id,
             value = ""
         )
 
-        val searchIndex = SearchIndexEntity(
+        val searchIndex = SearchIndexRecord(
             textIndex = textEmbed.value,
             visualIndex = visuals,
             userIndex = "", // Empty on first creation
-            extractionEntityId = mediaImageId.id
+            extractionId = mediaImageId.id
         )
 
         txRunner.withTransaction {
-            extractionDao.insert(extractionEntity)
+            extractionDao.insert(extractionRecord)
             textEmbeddingDao.insert(textEntity)
             visualEmbeddingDao.insert(visualEntity)
             userEmbeddingDao.insert(userEntity)

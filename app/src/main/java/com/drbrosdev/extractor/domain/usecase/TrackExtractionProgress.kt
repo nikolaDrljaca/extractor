@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.domain.usecase
 
 import androidx.lifecycle.asFlow
 import androidx.work.WorkManager
-import com.drbrosdev.extractor.data.dao.ExtractionDao
+import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.worker.WorkNames

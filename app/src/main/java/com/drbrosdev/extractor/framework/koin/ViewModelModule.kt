@@ -1,8 +1,8 @@
 package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.MainViewModel
-import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
-import com.drbrosdev.extractor.domain.repository.DefaultExtractorRepository
+import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
+import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.allalbum.ExtractorAlbumsViewModel

@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase.image.search
 
-import com.drbrosdev.extractor.data.dao.ExtractionDao
+import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.util.toExtraction

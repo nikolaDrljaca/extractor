@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.data.entity
+package com.drbrosdev.extractor.data.extraction.record
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -7,13 +7,15 @@ import java.time.LocalDateTime
 
 
 @Entity(
-    tableName = "image_extraction_entity"
+    tableName = "extraction"
 )
-data class ExtractionEntity(
+data class ExtractionRecord(
     @ColumnInfo(name = "media_store_id")
     @PrimaryKey
     val mediaStoreId: Long,
+
     val uri: String,
+
     @ColumnInfo(name = "date_added") val dateAdded: LocalDateTime,
     val path: String
 )

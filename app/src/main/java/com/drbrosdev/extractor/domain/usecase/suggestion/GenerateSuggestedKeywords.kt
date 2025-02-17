@@ -4,10 +4,10 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import com.drbrosdev.extractor.data.ExtractorDataStore
-import com.drbrosdev.extractor.data.dao.ExtractionDao
-import com.drbrosdev.extractor.data.dao.TextEmbeddingDao
-import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
-import com.drbrosdev.extractor.data.dao.VisualEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
+import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch

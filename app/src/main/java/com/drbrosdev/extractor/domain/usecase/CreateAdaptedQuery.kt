@@ -40,9 +40,9 @@ class CreateAdaptedQuery {
     private fun StringBuilder.appendTextQuery(tokens: List<Token>, searchType: SearchType) {
         val out = when (searchType) {
             //textIndex:grey textIndex:car
-            SearchType.FULL -> tokens.joinToString(separator = " ") { "textIndex:${it.text}" }
+            SearchType.FULL -> tokens.joinToString(separator = " ") { "text_index:${it.text}" }
             //textIndex:*grey* OR textIndex:*car*
-            SearchType.PARTIAL -> tokens.joinToString(separator = " OR ") { "textIndex:*${it.text}*" }
+            SearchType.PARTIAL -> tokens.joinToString(separator = " OR ") { "text_index:*${it.text}*" }
         }
         append(out)
     }
@@ -50,9 +50,9 @@ class CreateAdaptedQuery {
     private fun StringBuilder.appendImageQuery(tokens: List<Token>, searchType: SearchType) {
         val out = when (searchType) {
             //visualIndex:grey visualIndex:car
-            SearchType.FULL -> tokens.joinToString(separator = " ") { "visualIndex:${it.text}" }
+            SearchType.FULL -> tokens.joinToString(separator = " ") { "visual_index:${it.text}" }
             //visualIndex:*grey* OR visualIndex:*car*
-            SearchType.PARTIAL -> tokens.joinToString(separator = " OR ") { "visualIndex:*${it.text}*" }
+            SearchType.PARTIAL -> tokens.joinToString(separator = " OR ") { "visual_index:*${it.text}*" }
         }
         append(out)
     }

@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase.suggestion
 
-import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import kotlinx.coroutines.CoroutineDispatcher

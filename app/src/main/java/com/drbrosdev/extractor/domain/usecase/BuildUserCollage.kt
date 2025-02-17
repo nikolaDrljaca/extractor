@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.domain.usecase
 
-import com.drbrosdev.extractor.data.dao.UserEmbeddingDao
-import com.drbrosdev.extractor.data.dao.UserExtractionDao
+import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao
 import com.drbrosdev.extractor.domain.model.UserCollage
 import com.drbrosdev.extractor.util.toExtraction
 import kotlinx.coroutines.CoroutineDispatcher
@@ -30,7 +30,7 @@ class BuildUserCollage(
             val userCollage = UserCollage(
                 userEmbed = it,
                 extractions = extractions.map { relation ->
-                    relation.extractionEntity.toExtraction()
+                    relation.extractionRecord.toExtraction()
                 }
             )
             emit(userCollage)

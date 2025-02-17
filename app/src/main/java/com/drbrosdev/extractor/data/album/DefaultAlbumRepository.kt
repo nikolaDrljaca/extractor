@@ -1,14 +1,15 @@
-package com.drbrosdev.extractor.domain.repository
+package com.drbrosdev.extractor.data.album
 
 import com.drbrosdev.extractor.data.TransactionProvider
-import com.drbrosdev.extractor.data.dao.AlbumConfigurationDao
-import com.drbrosdev.extractor.data.dao.AlbumDao
-import com.drbrosdev.extractor.data.dao.AlbumEntryDao
-import com.drbrosdev.extractor.data.dao.AlbumRelationDao
-import com.drbrosdev.extractor.data.entity.AlbumConfigurationEntity
-import com.drbrosdev.extractor.data.entity.AlbumEntity
-import com.drbrosdev.extractor.data.entity.AlbumEntryEntity
+import com.drbrosdev.extractor.data.album.dao.AlbumConfigurationDao
+import com.drbrosdev.extractor.data.album.dao.AlbumDao
+import com.drbrosdev.extractor.data.album.dao.AlbumEntryDao
+import com.drbrosdev.extractor.data.album.dao.AlbumRelationDao
+import com.drbrosdev.extractor.data.album.record.AlbumConfigurationRecord
+import com.drbrosdev.extractor.data.album.record.AlbumEntryRecord
+import com.drbrosdev.extractor.data.album.record.AlbumRecord
 import com.drbrosdev.extractor.domain.model.Album
+import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.util.toAlbum
 import com.drbrosdev.extractor.util.toAlbumLabelType
@@ -33,8 +34,8 @@ class DefaultAlbumRepository(
 
     override suspend fun deleteAlbumById(albumId: Long) = runner.withTransaction {
         albumDao.deleteById(albumId)
-        albumEntryDao.deleteByAlbumEntityId(albumId)
-        albumConfigurationDao.deleteByAlbumEntityId(albumId)
+        albumEntryDao.deleteByAlbumId(albumId)
+        albumConfigurationDao.deleteByAlbumId(albumId)
     }
 
     override suspend fun deleteAlbumEntries(albumEntryIds: List<Long>) {
@@ -51,13 +52,13 @@ class DefaultAlbumRepository(
 
     override suspend fun createAlbum(newAlbum: NewAlbum) = runner.withTransaction {
         val albumId = albumDao.insert(
-            AlbumEntity(
+            AlbumRecord(
                 name = newAlbum.name,
                 origin = newAlbum.origin.toAlbumOrigin()
             )
         )
 
-        val configuration = AlbumConfigurationEntity(
+        val configuration = AlbumConfigurationRecord(
             albumId = albumId,
             keyword = newAlbum.keyword,
             searchType = newAlbum.searchType.toAlbumSearchType(),
@@ -68,7 +69,7 @@ class DefaultAlbumRepository(
         newAlbum.entries
             .asFlow()
             .collect {
-                val entry = AlbumEntryEntity(
+                val entry = AlbumEntryRecord(
                     albumId = albumId,
                     uri = it.uri.uri,
                     imageEntityId = it.id.id

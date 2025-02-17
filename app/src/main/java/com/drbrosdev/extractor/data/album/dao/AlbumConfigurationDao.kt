@@ -1,11 +1,11 @@
-package com.drbrosdev.extractor.data.dao
+package com.drbrosdev.extractor.data.album.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.drbrosdev.extractor.data.entity.AlbumConfigurationEntity
+import com.drbrosdev.extractor.data.album.record.AlbumConfigurationRecord
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
@@ -13,15 +13,15 @@ import kotlinx.coroutines.flow.first
 interface AlbumConfigurationDao {
 
     @Insert
-    suspend fun insert(albumConfigurationEntity: AlbumConfigurationEntity)
+    suspend fun insert(albumConfigurationRecord: AlbumConfigurationRecord)
 
     @Insert
-    suspend fun insertAll(entities: List<AlbumConfigurationEntity>)
+    suspend fun insertAll(entities: List<AlbumConfigurationRecord>)
 
     @Query("SELECT * FROM album_configuration")
-    fun findAllAsFlow(): Flow<List<AlbumConfigurationEntity>>
+    fun findAllAsFlow(): Flow<List<AlbumConfigurationRecord>>
 
-    suspend fun findAll(): List<AlbumConfigurationEntity> = findAllAsFlow().first()
+    suspend fun findAll(): List<AlbumConfigurationRecord> = findAllAsFlow().first()
 
     @Query("SELECT count(*) FROM album_configuration")
     fun getCountAsFlow(): Flow<Long>
@@ -29,7 +29,7 @@ interface AlbumConfigurationDao {
     suspend fun getCount(): Long = getCountAsFlow().first()
 
     @Delete
-    suspend fun delete(configuration: AlbumConfigurationEntity)
+    suspend fun delete(configuration: AlbumConfigurationRecord)
 
     @Query("DELETE FROM album_configuration")
     suspend fun deleteAll()
@@ -37,9 +37,9 @@ interface AlbumConfigurationDao {
     @Query("DELETE FROM album_configuration WHERE id=:configurationId")
     suspend fun deleteById(configurationId: Long)
 
-    @Query("DELETE FROM album_configuration WHERE album_entity_id=:albumEntityId")
-    suspend fun deleteByAlbumEntityId(albumEntityId: Long)
+    @Query("DELETE FROM album_configuration WHERE album_id=:albumId")
+    suspend fun deleteByAlbumId(albumId: Long)
 
     @Update
-    suspend fun update(configuration: AlbumConfigurationEntity)
+    suspend fun update(configuration: AlbumConfigurationRecord)
 }

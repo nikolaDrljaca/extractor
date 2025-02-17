@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.domain.usecase
 
 import android.os.Build
 import com.drbrosdev.extractor.BuildConfig
-import com.drbrosdev.extractor.framework.logger.EventEntity
+import com.drbrosdev.extractor.framework.logger.EventRecord
 import com.drbrosdev.extractor.framework.logger.EventLogDao
 import com.drbrosdev.extractor.framework.requiresApi
 import kotlinx.coroutines.CoroutineDispatcher
@@ -66,5 +66,5 @@ class GenerateFeedbackEmailContent(
         append(eventText)
     }
 
-    private fun parseEvent(event: EventEntity) = "${event.timestamp}|${event.tag}|${event.message}"
+    private fun parseEvent(event: EventRecord) = "${event.timestamp}|${event.tag}|${event.message}"
 }

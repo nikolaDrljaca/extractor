@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.framework.koin
 
 import androidx.work.WorkManager
-import com.drbrosdev.extractor.domain.repository.DefaultAlbumRepository
+import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
 import com.drbrosdev.extractor.domain.worker.AlbumCleanupWorker
 import com.drbrosdev.extractor.domain.worker.ExtractorWorker
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
