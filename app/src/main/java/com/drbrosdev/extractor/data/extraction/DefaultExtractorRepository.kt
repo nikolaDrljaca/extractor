@@ -10,6 +10,7 @@ import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
+import com.drbrosdev.extractor.data.extraction.relation.toImageEmbeds
 import com.drbrosdev.extractor.data.search.SearchIndexDao
 import com.drbrosdev.extractor.data.search.SearchIndexRecord
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
@@ -17,7 +18,6 @@ import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
-import com.drbrosdev.extractor.util.toImageEmbeds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged

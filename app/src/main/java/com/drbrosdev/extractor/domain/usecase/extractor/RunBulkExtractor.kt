@@ -1,12 +1,12 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
 import com.drbrosdev.extractor.domain.model.Embed
+import com.drbrosdev.extractor.domain.model.mediaImageId
+import com.drbrosdev.extractor.domain.model.mediaImageUri
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
 import com.drbrosdev.extractor.framework.logger.logEvent
-import com.drbrosdev.extractor.util.mediaImageId
-import com.drbrosdev.extractor.util.mediaImageUri
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn

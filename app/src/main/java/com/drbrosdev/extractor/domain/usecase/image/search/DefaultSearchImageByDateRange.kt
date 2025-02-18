@@ -1,9 +1,9 @@
 package com.drbrosdev.extractor.domain.usecase.image.search
 
 import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
+import com.drbrosdev.extractor.data.extraction.record.toExtraction
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.util.toExtraction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 

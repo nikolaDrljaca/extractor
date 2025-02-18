@@ -4,13 +4,13 @@ import android.net.Uri
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
 import com.drbrosdev.extractor.ui.components.searchsheet.SheetContent
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
 import com.drbrosdev.extractor.util.panic
-import com.drbrosdev.extractor.util.toUri
 
 sealed interface ExtractorSearchContainerEvents {
 

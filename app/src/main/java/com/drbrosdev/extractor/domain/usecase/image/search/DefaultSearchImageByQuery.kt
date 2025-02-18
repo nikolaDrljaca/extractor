@@ -2,12 +2,12 @@ package com.drbrosdev.extractor.domain.usecase.image.search
 
 import arrow.core.toOption
 import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
+import com.drbrosdev.extractor.data.extraction.record.toExtraction
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.contains
 import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
 import com.drbrosdev.extractor.domain.usecase.TokenizeText
-import com.drbrosdev.extractor.util.toExtraction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext

@@ -52,10 +52,10 @@ import coil.request.ImageRequest
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.AlbumPreview
 import com.drbrosdev.extractor.domain.model.MediaImageUri
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextButton
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
-import com.drbrosdev.extractor.util.toUri
 
 private const val IMAGE_SIZE = 130
 
@@ -251,7 +251,7 @@ private fun ExtractorCategoryContentView(
             key = { it.id }
         ) {
             AlbumThumbnailView(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(),
                 onClick = { onAlbumPreviewClick(it.id) },
                 imageUri = it.thumbnail.toUri(),
                 albumName = it.name

@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.ExtractorDataStore
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
 import com.drbrosdev.extractor.util.WhileUiSubscribed
-import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted

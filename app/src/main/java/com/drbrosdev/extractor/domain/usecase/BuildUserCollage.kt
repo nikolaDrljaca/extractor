@@ -2,8 +2,8 @@ package com.drbrosdev.extractor.domain.usecase
 
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao
+import com.drbrosdev.extractor.data.extraction.record.toExtraction
 import com.drbrosdev.extractor.domain.model.UserCollage
-import com.drbrosdev.extractor.util.toExtraction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

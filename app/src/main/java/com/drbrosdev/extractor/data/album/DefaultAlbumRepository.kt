@@ -8,13 +8,12 @@ import com.drbrosdev.extractor.data.album.dao.AlbumRelationDao
 import com.drbrosdev.extractor.data.album.record.AlbumConfigurationRecord
 import com.drbrosdev.extractor.data.album.record.AlbumEntryRecord
 import com.drbrosdev.extractor.data.album.record.AlbumRecord
+import com.drbrosdev.extractor.data.album.record.toAlbumLabelType
+import com.drbrosdev.extractor.data.album.record.toAlbumOrigin
+import com.drbrosdev.extractor.data.album.record.toAlbumSearchType
 import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.util.toAlbum
-import com.drbrosdev.extractor.util.toAlbumLabelType
-import com.drbrosdev.extractor.util.toAlbumOrigin
-import com.drbrosdev.extractor.util.toAlbumSearchType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow

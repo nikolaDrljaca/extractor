@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.Album
-import com.drbrosdev.extractor.util.toUri
+import com.drbrosdev.extractor.domain.model.toUri
 
 
 sealed class ExtractorAlbumsScreenState {

@@ -4,13 +4,13 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndicesAsFlow
-import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

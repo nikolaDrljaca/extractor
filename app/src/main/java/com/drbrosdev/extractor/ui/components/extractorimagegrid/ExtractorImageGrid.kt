@@ -17,9 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.AlbumEntry
 import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.toUri
 
 @Composable
 fun ExtractorImageGrid(

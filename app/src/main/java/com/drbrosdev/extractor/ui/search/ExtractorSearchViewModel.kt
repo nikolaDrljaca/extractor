@@ -14,6 +14,7 @@ import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.model.asAlbumName
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.SearchImages
@@ -32,7 +33,6 @@ import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetSta
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearchState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
-import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted

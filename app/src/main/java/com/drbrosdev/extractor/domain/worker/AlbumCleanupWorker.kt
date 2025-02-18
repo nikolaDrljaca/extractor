@@ -3,9 +3,9 @@ package com.drbrosdev.extractor.domain.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
-import com.drbrosdev.extractor.util.toUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterNotNull

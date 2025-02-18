@@ -27,8 +27,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.MediaImageUri
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.toUri
 
 @Composable
 fun ExtractorUserCollageThumbnail(

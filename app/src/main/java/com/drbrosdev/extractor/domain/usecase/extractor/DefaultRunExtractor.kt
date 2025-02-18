@@ -5,11 +5,11 @@ import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.InputImageType
 import com.drbrosdev.extractor.domain.model.MediaImageUri
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
 import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.text.extractor.ExtractTextEmbed
 import com.drbrosdev.extractor.framework.logger.logErrorEvent
-import com.drbrosdev.extractor.util.toUri
 import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async

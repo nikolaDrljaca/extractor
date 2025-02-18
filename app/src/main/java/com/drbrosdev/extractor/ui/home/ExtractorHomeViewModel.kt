@@ -8,6 +8,7 @@ import arrow.core.Some
 import arrow.core.toOption
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.MediaImageUri
+import com.drbrosdev.extractor.domain.model.toPreview
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
 import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
@@ -17,7 +18,6 @@ import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettin
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
-import com.drbrosdev.extractor.util.toPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
