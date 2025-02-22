@@ -11,7 +11,6 @@ import com.drbrosdev.extractor.framework.requiresApi
 class SpawnExtractorWork(
     private val workManager: WorkManager
 ) {
-
     operator fun invoke() {
         requiresApi(
             apiLevel = 31,

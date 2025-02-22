@@ -11,9 +11,9 @@ import com.drbrosdev.extractor.data.album.record.AlbumRecord
 import com.drbrosdev.extractor.data.album.record.toAlbumLabelType
 import com.drbrosdev.extractor.data.album.record.toAlbumOrigin
 import com.drbrosdev.extractor.data.album.record.toAlbumSearchType
-import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
+import com.drbrosdev.extractor.domain.model.Album
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow

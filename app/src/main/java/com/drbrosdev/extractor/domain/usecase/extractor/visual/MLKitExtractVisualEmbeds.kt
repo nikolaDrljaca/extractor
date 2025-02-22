@@ -1,6 +1,7 @@
-package com.drbrosdev.extractor.domain.usecase.label.extractor
+package com.drbrosdev.extractor.domain.usecase.extractor.visual
 
 import com.drbrosdev.extractor.domain.model.Embed
+import com.drbrosdev.extractor.framework.logger.logErrorEvent
 import com.drbrosdev.extractor.util.runCatching
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
@@ -19,16 +20,20 @@ class MLKitExtractVisualEmbeds(
 
     private val labeler = ImageLabeling.getClient(options)
 
-    override suspend fun execute(image: InputImage): Result<List<Embed.Visual>> {
+    override suspend fun execute(image: InputImage): List<Embed.Visual> {
         return withContext(dispatcher) {
-            val out = runCatching {
-                labeler.process(image).await()
-            }
-            out.mapCatching {
-                it.map { label ->
-                    Embed.Visual(label.text)
-                }
-            }
+            runCatching { labeler.process(image).await() }
+                .fold(
+                    onSuccess = {
+                        it.map { label ->
+                            Embed.Visual(label.text)
+                        }
+                    },
+                    onFailure = {
+                        logErrorEvent("Failed to process image with MLKit image labeler.")
+                        emptyList()
+                    }
+                )
         }
     }
 }

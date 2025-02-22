@@ -3,16 +3,16 @@ package com.drbrosdev.extractor.usecase
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.Token
-import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
+import com.drbrosdev.extractor.domain.usecase.image.BuildFtsQuery
 import org.junit.Test
 
 class CreateFtsMatchQueryTest {
 
-    private val createAdaptedQuery = CreateAdaptedQuery()
+    private val buildFtsQuery = BuildFtsQuery()
 
     @Test
     fun `does create expected match query - FULL ALL`() {
-        val multiWord = CreateAdaptedQuery.Params(
+        val multiWord = BuildFtsQuery.Params(
             tokens = listOf(Token("grey"), Token("car"), Token("goes")),
             keywordType = KeywordType.ALL,
             searchType = SearchType.FULL
@@ -21,22 +21,22 @@ class CreateFtsMatchQueryTest {
             tokens = listOf(Token("grey")),
         )
 
-        val singleOut = createAdaptedQuery(singleWord)
+        val singleOut = buildFtsQuery(singleWord)
         val expectedSingle = "grey"
-        assert(singleOut.query == expectedSingle) {
-            "Expected result { $expectedSingle }, got { ${singleOut.query} }"
+        assert(singleOut.value == expectedSingle) {
+            "Expected result { $expectedSingle }, got { ${singleOut.value} }"
         }
 
-        val multiOut = createAdaptedQuery(multiWord)
+        val multiOut = buildFtsQuery(multiWord)
         val expectedMulti = "grey car goes"
-        assert(multiOut.query == expectedMulti) {
-            "Expected result { $expectedMulti }, got { ${multiOut.query} }"
+        assert(multiOut.value == expectedMulti) {
+            "Expected result { $expectedMulti }, got { ${multiOut.value} }"
         }
     }
 
     @Test
     fun `does create expected match query - PARTIAL ALL`() {
-        val multiWord = CreateAdaptedQuery.Params(
+        val multiWord = BuildFtsQuery.Params(
             tokens = listOf(Token("grey"), Token("car"), Token("goes")),
             keywordType = KeywordType.ALL,
             searchType = SearchType.PARTIAL
@@ -45,22 +45,22 @@ class CreateFtsMatchQueryTest {
             tokens = listOf(Token("grey"))
         )
 
-        val singleOut = createAdaptedQuery(singleWord)
+        val singleOut = buildFtsQuery(singleWord)
         val expectedSingle = "*grey*"
-        assert(singleOut.query == expectedSingle) {
-            "Expected result { $expectedSingle }, got { ${singleOut.query} }"
+        assert(singleOut.value == expectedSingle) {
+            "Expected result { $expectedSingle }, got { ${singleOut.value} }"
         }
 
-        val multiOut = createAdaptedQuery(multiWord)
+        val multiOut = buildFtsQuery(multiWord)
         val expectedMulti = "*grey* OR *car* OR *goes*"
-        assert(multiOut.query == expectedMulti) {
-            "Expected result { $expectedMulti }, got { ${multiOut.query} }"
+        assert(multiOut.value == expectedMulti) {
+            "Expected result { $expectedMulti }, got { ${multiOut.value} }"
         }
     }
 
     @Test
     fun `does create expected match query - FULL TEXT`() {
-        val multiWord = CreateAdaptedQuery.Params(
+        val multiWord = BuildFtsQuery.Params(
             tokens = listOf(Token("grey"), Token("car"), Token("goes")),
             keywordType = KeywordType.TEXT,
             searchType = SearchType.FULL
@@ -69,22 +69,22 @@ class CreateFtsMatchQueryTest {
             tokens = listOf(Token("grey")),
         )
 
-        val singleOut = createAdaptedQuery(singleWord)
+        val singleOut = buildFtsQuery(singleWord)
         val expectedSingle = "text_index:grey"
-        assert(singleOut.query == expectedSingle) {
-            "Expected result { $expectedSingle }, got { ${singleOut.query} }"
+        assert(singleOut.value == expectedSingle) {
+            "Expected result { $expectedSingle }, got { ${singleOut.value} }"
         }
 
-        val multiOut = createAdaptedQuery(multiWord)
+        val multiOut = buildFtsQuery(multiWord)
         val expectedMulti = "text_index:grey text_index:car text_index:goes"
-        assert(multiOut.query == expectedMulti) {
-            "Expected result { $expectedMulti }, got { ${multiOut.query} }"
+        assert(multiOut.value == expectedMulti) {
+            "Expected result { $expectedMulti }, got { ${multiOut.value} }"
         }
     }
 
     @Test
     fun `does create expected match query - PARTIAL TEXT`() {
-        val multiWord = CreateAdaptedQuery.Params(
+        val multiWord = BuildFtsQuery.Params(
             tokens = listOf(Token("grey"), Token("car"), Token("goes")),
             keywordType = KeywordType.TEXT,
             searchType = SearchType.PARTIAL
@@ -93,22 +93,22 @@ class CreateFtsMatchQueryTest {
             tokens = listOf(Token("grey")),
         )
 
-        val singleOut = createAdaptedQuery(singleWord)
+        val singleOut = buildFtsQuery(singleWord)
         val expectedSingle = "text_index:*grey*"
-        assert(singleOut.query == expectedSingle) {
-            "Expected result { $expectedSingle }, got { ${singleOut.query} }"
+        assert(singleOut.value == expectedSingle) {
+            "Expected result { $expectedSingle }, got { ${singleOut.value} }"
         }
 
-        val multiOut = createAdaptedQuery(multiWord)
+        val multiOut = buildFtsQuery(multiWord)
         val expectedMulti = "text_index:*grey* OR text_index:*car* OR text_index:*goes*"
-        assert(multiOut.query == expectedMulti) {
-            "Expected result { $expectedMulti }, got { ${multiOut.query} }"
+        assert(multiOut.value == expectedMulti) {
+            "Expected result { $expectedMulti }, got { ${multiOut.value} }"
         }
     }
 
     @Test
     fun `does create expected match query - FULL IMAGE`() {
-        val multiWord = CreateAdaptedQuery.Params(
+        val multiWord = BuildFtsQuery.Params(
             tokens = listOf(Token("grey"), Token("car"), Token("goes")),
             keywordType = KeywordType.IMAGE,
             searchType = SearchType.FULL
@@ -117,22 +117,22 @@ class CreateFtsMatchQueryTest {
             tokens = listOf(Token("grey")),
         )
 
-        val singleOut = createAdaptedQuery(singleWord)
+        val singleOut = buildFtsQuery(singleWord)
         val expectedSingle = "visual_index:grey"
-        assert(singleOut.query == expectedSingle) {
-            "Expected result { $expectedSingle }, got { ${singleOut.query} }"
+        assert(singleOut.value == expectedSingle) {
+            "Expected result { $expectedSingle }, got { ${singleOut.value} }"
         }
 
-        val multiOut = createAdaptedQuery(multiWord)
+        val multiOut = buildFtsQuery(multiWord)
         val expectedMulti = "visual_index:grey visual_index:car visual_index:goes"
-        assert(multiOut.query == expectedMulti) {
-            "Expected result { $expectedMulti }, got { ${multiOut.query} }"
+        assert(multiOut.value == expectedMulti) {
+            "Expected result { $expectedMulti }, got { ${multiOut.value} }"
         }
     }
 
     @Test
     fun `does create expected match query - PARTIAL IMAGE`() {
-        val multiWord = CreateAdaptedQuery.Params(
+        val multiWord = BuildFtsQuery.Params(
             tokens = listOf(Token("grey"), Token("car"), Token("goes")),
             keywordType = KeywordType.IMAGE,
             searchType = SearchType.PARTIAL
@@ -141,16 +141,16 @@ class CreateFtsMatchQueryTest {
             tokens = listOf(Token("grey")),
         )
 
-        val singleOut = createAdaptedQuery(singleWord)
+        val singleOut = buildFtsQuery(singleWord)
         val expectedSingle = "visual_index:*grey*"
-        assert(singleOut.query == expectedSingle) {
-            "Expected result { $expectedSingle }, got { ${singleOut.query} }"
+        assert(singleOut.value == expectedSingle) {
+            "Expected result { $expectedSingle }, got { ${singleOut.value} }"
         }
 
-        val multiOut = createAdaptedQuery(multiWord)
+        val multiOut = buildFtsQuery(multiWord)
         val expectedMulti = "visual_index:*grey* OR visual_index:*car* OR visual_index:*goes*"
-        assert(multiOut.query == expectedMulti) {
-            "Expected result { $expectedMulti }, got { ${multiOut.query} }"
+        assert(multiOut.value == expectedMulti) {
+            "Expected result { $expectedMulti }, got { ${multiOut.value} }"
         }
     }
 }

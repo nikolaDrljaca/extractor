@@ -66,6 +66,18 @@ class DefaultExtractorRepository(
             .map { it?.toImageEmbeds() }
     }
 
+    override suspend fun getAllVisualEmbedValuesAsCsv(): String? {
+        return visualEmbeddingDao.findAllVisualEmbedValues()
+    }
+
+    override suspend fun getAllTextEmbedValuesAsCsv(): String? {
+        return textEmbeddingDao.findAllTextEmbedValues()
+    }
+
+    override fun getExtractionCountAsFlow(): Flow<Int> {
+        return extractionDao.getCountAsFlow()
+    }
+
     override suspend fun deleteUserEmbed(mediaImageId: MediaImageId, value: String) {
         userEmbeddingDao.findByMediaId(mediaImageId.id)?.let { userEmbed ->
             val updated = withContext(dispatcher) {

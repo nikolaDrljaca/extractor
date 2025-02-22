@@ -1,14 +1,13 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
 import arrow.core.Either
-import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.InputImageType
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
-import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
-import com.drbrosdev.extractor.domain.usecase.text.extractor.ExtractTextEmbed
+import com.drbrosdev.extractor.domain.usecase.extractor.visual.ExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.extractor.text.ExtractTextEmbed
 import com.drbrosdev.extractor.framework.logger.logErrorEvent
 import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineDispatcher
@@ -52,14 +51,10 @@ class DefaultRunExtractor(
             mediaPipeExtractVisualEmbeds.execute(inputImage)
         }
 
-        val outText = text.await().getOrDefault(Embed.defaultTextEmbed)
+        val outText = text.await()
 
-        val outVisualEmbeds = visuals.await().getOrDefault(emptyList())
-            .asSequence()
-            .plus(
-                mediaPipeVisuals.await().getOrDefault(emptyList())
-                    .asSequence()
-            )
+        val outVisualEmbeds = visuals.await()
+            .plus(mediaPipeVisuals.await())
             .distinctBy { it.value.lowercase() }
             .toList()
 

@@ -75,6 +75,7 @@ val viewModelModule = module {
             generateSuggestedKeywords = get(),
             spawnExtractorWork = get(),
             datastore = get(),
+            searchCountPositiveDelta = get(),
             stringProvider = get()
         )
     }

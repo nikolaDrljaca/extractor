@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain.usecase
+package com.drbrosdev.extractor.domain.usecase.image
 
 import arrow.core.Either
 import arrow.core.left

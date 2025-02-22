@@ -6,8 +6,8 @@ import com.drbrosdev.extractor.data.extraction.record.toExtraction
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.contains
-import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
-import com.drbrosdev.extractor.domain.usecase.TokenizeText
+import com.drbrosdev.extractor.domain.usecase.image.BuildFtsQuery
+import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
@@ -16,7 +16,7 @@ class DefaultSearchImageByQuery(
     private val dispatcher: CoroutineDispatcher,
     private val imageEmbedDao: ImageEmbeddingsDao,
     private val tokenizeText: TokenizeText,
-    private val createAdaptedQuery: CreateAdaptedQuery
+    private val buildFtsQuery: BuildFtsQuery
 ) : SearchImageByQuery {
 
     override suspend fun execute(params: SearchImageByQuery.Params): List<Extraction> =
@@ -24,15 +24,15 @@ class DefaultSearchImageByQuery(
             val cleanQuery = tokenizeText.invoke(params.query)
                 .toList()
 
-            val createAdaptedQueryParams = CreateAdaptedQuery.Params(
+            val buildFtsQueryParams = BuildFtsQuery.Params(
                 tokens = cleanQuery,
                 searchType = params.type,
                 keywordType = params.keywordType
             )
 
-            val adaptedQuery = createAdaptedQuery.invoke(createAdaptedQueryParams)
+            val adaptedQuery = buildFtsQuery.invoke(buildFtsQueryParams)
 
-            val imageEntitySequence = imageEmbedDao.findByKeyword(adaptedQuery.query)
+            val imageEntitySequence = imageEmbedDao.findByKeyword(adaptedQuery.value)
                 .map { it.imageEntity.toExtraction() }
 
             params.dateRange.toOption()

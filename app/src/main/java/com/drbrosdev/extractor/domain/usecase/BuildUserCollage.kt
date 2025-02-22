@@ -14,7 +14,6 @@ class BuildUserCollage(
     private val userExtractionDao: UserExtractionDao,
     private val userEmbeddingDao: UserEmbeddingDao
 ) {
-
     fun invoke(): Flow<UserCollage> = flow {
         // Get all keywords, each value is CSV (one,two...), parse into unique values
         val keywords = userEmbeddingDao.findAllEmbeddingValues()

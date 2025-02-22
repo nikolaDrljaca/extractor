@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.usecase
 
-import com.drbrosdev.extractor.domain.usecase.TokenizeText
+import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList

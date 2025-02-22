@@ -1,20 +1,20 @@
-package com.drbrosdev.extractor.domain.usecase
+package com.drbrosdev.extractor.domain.usecase.image
 
-import com.drbrosdev.extractor.domain.model.AdaptedQuery
+import com.drbrosdev.extractor.domain.model.FtsQuery
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.Token
 
-class CreateAdaptedQuery {
-
-    operator fun invoke(params: Params): AdaptedQuery = with(params) {
-        val query = buildFtsAdaptedQuery(
-            tokens = tokens,
-            searchType = searchType,
-            keywordType = keywordType
+// Build an FTS query that the sqlite3 FTS engine can execute
+class BuildFtsQuery {
+    operator fun invoke(params: Params): FtsQuery =
+        FtsQuery(
+            buildFtsAdaptedQuery(
+                tokens = params.tokens,
+                searchType = params.searchType,
+                keywordType = params.keywordType
+            )
         )
-        AdaptedQuery(query)
-    }
 
     private fun buildFtsAdaptedQuery(
         tokens: List<Token>,

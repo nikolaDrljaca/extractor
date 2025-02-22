@@ -1,7 +1,8 @@
-package com.drbrosdev.extractor.domain.usecase.label.extractor
+package com.drbrosdev.extractor.domain.usecase.extractor.visual
 
 import android.content.Context
 import com.drbrosdev.extractor.domain.model.Embed
+import com.drbrosdev.extractor.framework.logger.logErrorEvent
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
@@ -35,16 +36,23 @@ class MediaPipeExtractVisualEmbeds(
         invoke(image)
     }
 
-    private fun invoke(image: InputImage): Result<List<Embed.Visual>> {
-        val bitmap = image.bitmapInternal
-            ?: return Result.failure(Throwable("InputImage internal bitmap is null!"))
+    private fun invoke(image: InputImage): List<Embed.Visual> {
+        val bitmap = image.bitmapInternal ?: return emptyList()
 
         val mediaPipeImage = BitmapImageBuilder(bitmap).build()
 
         // classify is blocking so make sure to wrap in coroutine
-        val result = imageClassifier.classify(mediaPipeImage)
+        val result = runCatching {
+            imageClassifier.classify(mediaPipeImage)
+        }
 
-        val out = result.classificationResult()
+        if (result.isFailure) {
+            result.onFailure { logErrorEvent("Failed to process image with MediaPipe image classifier.") }
+            return emptyList()
+        }
+
+        val out = result.getOrThrow()
+            .classificationResult()
             .classifications()
             .asSequence()
             .flatMap { it.categories().asSequence() }
@@ -57,7 +65,7 @@ class MediaPipeExtractVisualEmbeds(
             }
             .toList()
 
-        return Result.success(out)
+        return out
     }
 
     companion object {

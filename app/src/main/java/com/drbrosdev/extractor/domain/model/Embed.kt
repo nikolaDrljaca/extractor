@@ -6,18 +6,19 @@ sealed class Embed {
 
     data class Text(
         override val value: String,
-//        val confidence: Float
-    ) : Embed()
+    ) : Embed() {
+        companion object {
+            val DEFAULT = Text("")
+        }
+    }
 
     data class User(override val value: String) : Embed()
 
     data class Visual(
         override val value: String,
-//        val confidence: Float
-    ) : Embed()
-
-    companion object {
-        val defaultTextEmbed = Text("")
-        val defaultVisualEmbed = Visual("")
+    ) : Embed() {
+        companion object {
+            val DEFAULT = Visual("")
+        }
     }
 }

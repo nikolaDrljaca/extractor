@@ -2,8 +2,8 @@ package com.drbrosdev.extractor.domain.usecase
 
 import android.os.Build
 import com.drbrosdev.extractor.BuildConfig
-import com.drbrosdev.extractor.framework.logger.EventRecord
 import com.drbrosdev.extractor.framework.logger.EventLogDao
+import com.drbrosdev.extractor.framework.logger.EventRecord
 import com.drbrosdev.extractor.framework.requiresApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -12,7 +12,6 @@ class GenerateFeedbackEmailContent(
     private val dispatcher: CoroutineDispatcher,
     private val eventLogDao: EventLogDao
 ) {
-
     suspend fun execute(
         userContent: String,
         includeEventLogs: Boolean = false

@@ -26,4 +26,9 @@ interface ExtractorRepository {
 
     suspend fun createExtractionData(data: NewExtraction)
 
+    suspend fun getAllVisualEmbedValuesAsCsv(): String?
+
+    suspend fun getAllTextEmbedValuesAsCsv(): String?
+
+    fun getExtractionCountAsFlow(): Flow<Int>
 }

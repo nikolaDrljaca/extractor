@@ -11,8 +11,8 @@ import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toPreview
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
-import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
-import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
+import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
+import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings

@@ -11,8 +11,8 @@ import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
-import com.drbrosdev.extractor.domain.usecase.TokenizeText
-import com.drbrosdev.extractor.domain.usecase.isValidSearchToken
+import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
+import com.drbrosdev.extractor.domain.usecase.token.isValidSearchToken
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -23,6 +23,7 @@ import kotlinx.coroutines.withContext
 
 class GenerateSuggestedKeywords(
     private val dispatcher: CoroutineDispatcher,
+    // TODO: All data level references should move to repository calls
     private val textEmbeddingDao: TextEmbeddingDao,
     private val userEmbeddingDao: UserEmbeddingDao,
     private val visualEmbeddingDao: VisualEmbeddingDao,
@@ -30,7 +31,7 @@ class GenerateSuggestedKeywords(
     private val dataStore: ExtractorDataStore,
     private val tokenizeText: TokenizeText,
 ) {
-
+    // TODO: leave this as it's own usecase?
     suspend operator fun invoke(): Either<GenerateSuggestionsError, List<SuggestedSearch>> =
         withContext(dispatcher) {
             when {
@@ -42,6 +43,7 @@ class GenerateSuggestedKeywords(
             }
         }
 
+    // TODO: Move into it's own usecase - CompileSearchSuggestions
     private suspend fun generateSuggestions(): List<SuggestedSearch> = coroutineScope {
         val textSuggestions = async {
             produceSuggestions(
@@ -85,6 +87,8 @@ class GenerateSuggestedKeywords(
             else -> tokenizeText.invoke(input)
                 .filter { token -> token.isValidSearchToken() }
         }
+            .flowOn(dispatcher)
+            .toList()
 
         val searchType = when (keywordType) {
             KeywordType.ALL -> SearchType.FULL
@@ -92,8 +96,6 @@ class GenerateSuggestedKeywords(
         }
 
         return out
-            .flowOn(dispatcher)
-            .toList()
             .shuffled()
             .take(size)
             .distinct() // skip duplicates
@@ -104,7 +106,6 @@ class GenerateSuggestedKeywords(
                     searchType = searchType
                 )
             }
-            .toList()
     }
 
     companion object {

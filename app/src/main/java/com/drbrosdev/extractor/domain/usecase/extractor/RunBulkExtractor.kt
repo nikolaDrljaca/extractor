@@ -39,7 +39,7 @@ class RunBulkExtractor(
                             extractorImageUri = mediaStoreImage.mediaImageUri(),
                             path = mediaStoreImage.path,
                             dateAdded = mediaStoreImage.dateAdded,
-                            textEmbed = embeds?.textEmbed ?: Embed.defaultTextEmbed,
+                            textEmbed = embeds?.textEmbed ?: Embed.Text.DEFAULT,
                             visualEmbeds = embeds?.visualEmbeds ?: listOf()
                         )
                     }

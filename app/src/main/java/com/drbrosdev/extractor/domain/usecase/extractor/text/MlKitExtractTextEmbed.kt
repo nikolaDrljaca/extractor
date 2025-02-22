@@ -1,7 +1,7 @@
-package com.drbrosdev.extractor.domain.usecase.text.extractor
+package com.drbrosdev.extractor.domain.usecase.extractor.text
 
 import com.drbrosdev.extractor.domain.model.Embed
-import com.drbrosdev.extractor.domain.usecase.TokenizeText
+import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import com.drbrosdev.extractor.util.runCatching
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -18,19 +18,19 @@ class MlKitExtractTextEmbed(
 ) : ExtractTextEmbed<InputImage> {
     private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
-    override suspend fun execute(image: InputImage): Result<Embed.Text> {
+    override suspend fun execute(image: InputImage): Embed.Text {
         return withContext(dispatcher) {
-            val out = runCatching {
-                textRecognizer.process(image).await()
-            }
+            runCatching { textRecognizer.process(image).await() }
+                .fold(
+                    onSuccess = { result ->
+                        val clean = tokenizeText.invoke(result.text.lowercase())
+                            .toList()
+                            .joinToString(separator = " ") { token -> token.text }
 
-            out.map {
-                val clean = tokenizeText.invoke(it.text.lowercase())
-                    .toList()
-                    .joinToString(separator = " ") { token -> token.text }
-
-                Embed.Text(clean)
-            }
+                        Embed.Text(clean)
+                    },
+                    onFailure = { Embed.Text.DEFAULT }
+                )
         }
     }
 }

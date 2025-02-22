@@ -3,35 +3,37 @@ package com.drbrosdev.extractor.framework.koin
 import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
 import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
-import com.drbrosdev.extractor.domain.usecase.CompileTextAlbums
-import com.drbrosdev.extractor.domain.usecase.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
-import com.drbrosdev.extractor.domain.usecase.CreateAdaptedQuery
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
-import com.drbrosdev.extractor.domain.usecase.GenerateMostCommonTokens
-import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
-import com.drbrosdev.extractor.domain.usecase.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.album.BuildNewAlbumPayload
+import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
+import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.text.ExtractTextEmbed
+import com.drbrosdev.extractor.domain.usecase.extractor.text.MlKitExtractTextEmbed
+import com.drbrosdev.extractor.domain.usecase.extractor.visual.ExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.extractor.visual.MLKitExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.extractor.visual.MediaPipeExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.image.BuildFtsQuery
+import com.drbrosdev.extractor.domain.usecase.image.SearchCountPositiveDelta
+import com.drbrosdev.extractor.domain.usecase.image.SearchImages
 import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
 import com.drbrosdev.extractor.domain.usecase.image.create.DefaultCreateInputImage
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByDateRange
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRange
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
-import com.drbrosdev.extractor.domain.usecase.label.extractor.ExtractVisualEmbeds
-import com.drbrosdev.extractor.domain.usecase.label.extractor.MLKitExtractVisualEmbeds
-import com.drbrosdev.extractor.domain.usecase.label.extractor.MediaPipeExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
-import com.drbrosdev.extractor.domain.usecase.text.extractor.ExtractTextEmbed
-import com.drbrosdev.extractor.domain.usecase.text.extractor.MlKitExtractTextEmbed
+import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
+import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
@@ -94,37 +96,41 @@ val useCaseModule = module {
     }
 
     factory {
+        SearchCountPositiveDelta(
+            dataStore = get()
+        )
+    }
+
+    factory {
         DefaultSearchImageByQuery(
             dispatcher = get(named(CoroutineModuleName.IO)),
             imageEmbedDao = get(),
             tokenizeText = get(),
-            createAdaptedQuery = get()
+            buildFtsQuery = get()
         )
     } bind SearchImageByQuery::class
 
     single {
         TrackExtractionProgress(
             dispatcher = get(named(CoroutineModuleName.Default)),
-            extractionDao = get(),
+            repo = get(),
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
             workManager = get()
         )
     }
 
-    factory {
-        GenerateMostCommonTokens(
-            dispatcher = get(named(CoroutineModuleName.Default))
-        )
-    }
+    factory { GenerateMostCommonTokens() }
+
+    factory { BuildNewAlbumPayload() }
 
     factory {
         CompileVisualAlbum(
-            dispatcher = get(named(CoroutineModuleName.Default)),
-            visualEmbeddingDao = get(),
+            repo = get(),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
-            generateMostCommonTokens = get()
+            generateMostCommonTokens = get(),
+            buildNewAlbumPayload = get()
         )
     }
 
@@ -148,12 +154,12 @@ val useCaseModule = module {
 
     factory {
         CompileTextAlbums(
-            dispatcher = get(named(CoroutineModuleName.Default)),
-            textEmbeddingDao = get(),
+            repo = get(),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
-            generateMostCommonTokens = get()
+            generateMostCommonTokens = get(),
+            buildNewAlbumPayload = get()
         )
     }
 
@@ -178,7 +184,7 @@ val useCaseModule = module {
     }
 
     factory {
-        CreateAdaptedQuery()
+        BuildFtsQuery()
     }
 
     factory {

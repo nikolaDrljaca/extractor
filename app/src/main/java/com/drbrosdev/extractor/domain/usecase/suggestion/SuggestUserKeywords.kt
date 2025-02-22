@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.domain.usecase.suggestion
 
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.domain.model.Embed
-import com.drbrosdev.extractor.domain.usecase.TokenizeText
+import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
@@ -12,7 +12,6 @@ class SuggestUserKeywords(
     private val userEmbeddingDao: UserEmbeddingDao,
     private val tokenizeText: TokenizeText,
 ) {
-
     /**
      * Fetch existing user keywords made as tags for images.
      * Values are fetched at random, up to a maximum of 8 values.

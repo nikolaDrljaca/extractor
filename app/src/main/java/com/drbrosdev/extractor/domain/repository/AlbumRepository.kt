@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.domain.repository
 
-import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
+import com.drbrosdev.extractor.domain.model.Album
 import kotlinx.coroutines.flow.Flow
 
 interface AlbumRepository {

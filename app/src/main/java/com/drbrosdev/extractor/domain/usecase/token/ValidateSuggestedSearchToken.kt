@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain.usecase
+package com.drbrosdev.extractor.domain.usecase.token
 
 import com.drbrosdev.extractor.domain.model.Token
 

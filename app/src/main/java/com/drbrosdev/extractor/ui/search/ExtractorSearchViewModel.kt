@@ -17,11 +17,11 @@ import com.drbrosdev.extractor.domain.model.asAlbumName
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.usecase.SearchImages
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.image.SearchCountPositiveDelta
+import com.drbrosdev.extractor.domain.usecase.image.SearchImages
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
-import com.drbrosdev.extractor.domain.usecase.searchCountPositiveDelta
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestionsError
 import com.drbrosdev.extractor.framework.StringResourceProvider
@@ -58,6 +58,7 @@ class ExtractorSearchViewModel(
     private val trackExtractionProgress: TrackExtractionProgress,
     private val generateSuggestedKeywords: GenerateSuggestedKeywords,
     private val spawnExtractorWork: SpawnExtractorWork,
+    private val searchCountPositiveDelta: SearchCountPositiveDelta,
     private val datastore: ExtractorDataStore,
     private val stringProvider: StringResourceProvider
 ) : ViewModel() {
@@ -91,7 +92,7 @@ class ExtractorSearchViewModel(
             0
         )
 
-    private val positiveDeltaJob = datastore.searchCountPositiveDelta()
+    private val positiveDeltaJob = searchCountPositiveDelta()
         .filter { it }
         // if content is shown do not trigger
         .filter { containerState.value !is ExtractorSearchContainerState.Content }

@@ -1,4 +1,4 @@
 package com.drbrosdev.extractor.domain.model
 
 @JvmInline
-value class AdaptedQuery(val query: String)
+value class FtsQuery(val value: String)
