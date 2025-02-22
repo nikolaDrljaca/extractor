@@ -30,6 +30,7 @@ import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRang
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
+import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
 import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
@@ -142,13 +143,19 @@ val useCaseModule = module {
 
     factory {
         GenerateSuggestedKeywords(
+            extractionDao = get(),
+            dataStore = get(),
+            compileSearchSuggestions = get()
+        )
+    }
+
+    factory {
+        CompileSearchSuggestions(
             dispatcher = get(named(CoroutineModuleName.Default)),
-            visualEmbeddingDao = get(),
             textEmbeddingDao = get(),
             userEmbeddingDao = get(),
-            extractionDao = get(),
-            tokenizeText = get(),
-            dataStore = get()
+            visualEmbeddingDao = get(),
+            tokenizeText = get()
         )
     }
 

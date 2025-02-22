@@ -17,6 +17,7 @@ class SuggestUserKeywords(
      * Values are fetched at random, up to a maximum of 8 values.
      */
     suspend operator fun invoke(): List<Embed.User> {
+        // will return at most 10 words in CSV format
         val input = userEmbeddingDao.getValueConcatAtRandom() ?: return emptyList()
 
         return withContext(dispatcher) {
@@ -26,7 +27,6 @@ class SuggestUserKeywords(
                 .take(8)
                 .distinct()
                 .map { token -> Embed.User(token.text) }
-                .toList()
         }
     }
 }
