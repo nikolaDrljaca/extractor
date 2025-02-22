@@ -32,7 +32,7 @@ fun ExtractorRedZoneSettings(
             trailingSlot = {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                    contentDescription = null
+                    contentDescription = stringResource(R.string.reset_index)
                 )
             },
             contentColor = MaterialTheme.colorScheme.error,
@@ -46,7 +46,7 @@ fun ExtractorRedZoneSettings(
             trailingSlot = {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                    contentDescription = null
+                    contentDescription = stringResource(R.string.clear_event_logs)
                 )
             },
             contentColor = MaterialTheme.colorScheme.error,

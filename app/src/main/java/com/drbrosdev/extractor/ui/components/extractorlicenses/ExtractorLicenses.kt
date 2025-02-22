@@ -42,7 +42,7 @@ fun ExtractorLicenses(
                 trailingSlot = {
                     Icon(
                         painter = painterResource(id = R.drawable.round_link_24),
-                        contentDescription = null,
+                        contentDescription = "Anchor link",
                     )
                 }
             ) {

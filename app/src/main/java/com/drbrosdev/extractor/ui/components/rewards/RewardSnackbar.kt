@@ -45,7 +45,7 @@ fun RewardSnackbar(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.rounded_featured_seasonal_and_gifts_24),
-                    contentDescription = null,
+                    contentDescription = "Reward box",
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))

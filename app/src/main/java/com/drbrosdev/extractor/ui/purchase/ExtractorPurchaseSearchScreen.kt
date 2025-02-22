@@ -94,7 +94,7 @@ fun ExtractorPurchaseSearchScreen(
                     onClick = onSettingsClick,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(imageVector = Icons.Rounded.Settings, contentDescription = "")
+                    Icon(imageVector = Icons.Rounded.Settings, contentDescription = "Settings")
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(text = "Open Settings")
                 }

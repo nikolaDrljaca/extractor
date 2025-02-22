@@ -66,7 +66,7 @@ fun ExtractorStatusDialog(
                     style = MaterialTheme.typography.displaySmall
                 )
                 IconButton(onClick = onCloseClick) {
-                    Icon(imageVector = Icons.Rounded.Close, contentDescription = "")
+                    Icon(imageVector = Icons.Rounded.Close, contentDescription = "Close")
                 }
             }
 

@@ -96,7 +96,7 @@ fun ExtractorImageInfoScreen(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Rounded.Add,
-                                contentDescription = null
+                                contentDescription = "Add"
                             )
                         },
                         shape = CircleShape

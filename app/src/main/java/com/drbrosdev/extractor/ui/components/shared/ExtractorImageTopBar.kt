@@ -33,7 +33,7 @@ fun ExtractorImageTopBar(
         IconButton(onClick = onBackClick) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = "",
+                contentDescription = "Go Back",
                 tint = Color.White
             )
         }

@@ -142,7 +142,7 @@ private fun SuggestedSearchEmpty(
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedExtractorActionButton(onClick = onClick) {
-            Icon(painter = painterResource(id = R.drawable.round_sync_24), contentDescription = "")
+            Icon(painter = painterResource(id = R.drawable.round_sync_24), contentDescription = stringResource(R.string.start_sync))
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = stringResource(id = R.string.start_sync))
         }

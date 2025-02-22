@@ -52,7 +52,7 @@ fun ExtractorAlbumActionBottomSheet(
             icon = {
                 Icon(
                     imageVector = Icons.Rounded.Share,
-                    contentDescription = "",
+                    contentDescription = stringResource(R.string.dropdown_share_all)
                 )
             }
         ) {
@@ -70,7 +70,7 @@ fun ExtractorAlbumActionBottomSheet(
             icon = {
                 Icon(
                     imageVector = Icons.Rounded.Delete,
-                    contentDescription = "",
+                    contentDescription = stringResource(R.string.dropdown_delete),
                 )
             }
         ) {

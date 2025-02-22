@@ -58,7 +58,10 @@ fun ExtractorUserCollageItem(
                     Text(text = stringResource(R.string.bottom_bar_share))
                 },
                 leadingIcon = {
-                    Icon(imageVector = Icons.Rounded.Share, contentDescription = null)
+                    Icon(
+                        imageVector = Icons.Rounded.Share,
+                        contentDescription = stringResource(R.string.bottom_bar_share)
+                    )
                 },
                 shape = CircleShape
             )

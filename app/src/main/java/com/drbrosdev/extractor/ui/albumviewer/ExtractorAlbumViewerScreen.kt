@@ -86,7 +86,7 @@ fun ExtractorAlbumViewerScreen(
                         icon = {
                             Icon(
                                 imageVector = Icons.Rounded.Delete,
-                                contentDescription = "",
+                                contentDescription = "Delete",
                                 modifier = Modifier.size(ConfirmationDialogDefaults.iconSize.dp)
                             )
                         },
@@ -172,7 +172,7 @@ fun ExtractorAlbumViewerScreen(
                     FloatingActionButton(
                         onClick = onFabClick,
                     ) {
-                        Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "")
+                        Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "More")
                     }
                 }
             }

@@ -201,7 +201,7 @@ private fun ExtractorCategoryInitialView(
                 TextButton(onClick = onInitClick) {
                     Icon(
                         painterResource(id = R.drawable.round_image_search_24),
-                        contentDescription = ""
+                        contentDescription = "Image search"
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = stringResource(R.string.go_to_search))
@@ -216,7 +216,7 @@ private fun ExtractorCategoryInitialView(
 
             else -> {
                 TextButton(onClick = onInitClick) {
-                    Icon(imageVector = Icons.Rounded.Add, contentDescription = "")
+                    Icon(imageVector = Icons.Rounded.Add, contentDescription = "Add")
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = stringResource(R.string.initialize))
                 }
@@ -232,7 +232,6 @@ private fun ExtractorCategoryInitialView(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ExtractorCategoryContentView(
     modifier: Modifier = Modifier,
@@ -289,7 +288,7 @@ private fun AlbumThumbnailView(
                 .size(scaleSize, scaleSize)
                 .crossfade(true)
                 .build(),
-            contentDescription = null,
+            contentDescription = "Loaded image",
             contentScale = ContentScale.Crop,
             placeholder = painterResource(id = R.drawable.baseline_image_24)
         )

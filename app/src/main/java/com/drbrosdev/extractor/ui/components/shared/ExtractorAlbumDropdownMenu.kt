@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -45,7 +44,7 @@ fun ExtractorAlbumDropdownMenu(
     ) {
 
         IconButton(onClick = { isDropdownOpen = true }) {
-            Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "")
+//            Icon(imageVector = Icons.Rounded.MoreVert, contentDescription = "")
         }
 
         DropdownMenu(
@@ -58,7 +57,7 @@ fun ExtractorAlbumDropdownMenu(
                     onAction(ExtractorDropdownAction.Share)
                     isDropdownOpen = false
                 },
-                leadingIcon = { Icon(imageVector = Icons.Rounded.Share, contentDescription = "") }
+                leadingIcon = { Icon(imageVector = Icons.Rounded.Share, contentDescription = stringResource(R.string.dropdown_share_all)) }
             )
 
             DropdownMenuItem(
@@ -75,7 +74,7 @@ fun ExtractorAlbumDropdownMenu(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Rounded.Delete,
-                        contentDescription = "",
+                        contentDescription = stringResource(R.string.dropdown_delete),
                         tint = MaterialTheme.colorScheme.error
                     )
                 }

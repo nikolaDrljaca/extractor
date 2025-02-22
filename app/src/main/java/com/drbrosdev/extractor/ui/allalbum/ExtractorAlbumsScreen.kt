@@ -220,7 +220,7 @@ private fun SwipeableAlbumCard(
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = alignment) {
                     Icon(
                         imageVector = icon,
-                        contentDescription = null,
+                        contentDescription = "Swipe action",
                         modifier = Modifier
                             .size(64.dp)
                             .padding(padding)

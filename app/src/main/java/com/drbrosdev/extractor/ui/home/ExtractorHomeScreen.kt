@@ -120,7 +120,7 @@ fun ExtractorHomeScreen(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_sync_24),
-                    contentDescription = ""
+                    contentDescription = "Sync"
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = stringResource(R.string.sync_status))
@@ -130,7 +130,7 @@ fun ExtractorHomeScreen(
                 onClick = onSettingsClick,
                 modifier = Modifier.layoutId(ViewIds.SETTINGS_BUTTON)
             ) {
-                Icon(imageVector = Icons.Rounded.Settings, contentDescription = "")
+                Icon(imageVector = Icons.Rounded.Settings, contentDescription = "Settings")
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = stringResource(R.string.settings))
             }

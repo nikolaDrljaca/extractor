@@ -137,7 +137,7 @@ private fun MultiselectActionBarItem(
         ) {
             Icon(
                 painter = painter,
-                contentDescription = "",
+                contentDescription = text,
                 modifier = Modifier.requiredSize(32.dp),
                 tint = contentColor
             )

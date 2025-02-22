@@ -47,7 +47,7 @@ fun StartWorkerCard(
         painter = {
             Image(
                 painter = painterResource(id = R.drawable.ilu_success),
-                contentDescription = "",
+                contentDescription = stringResource(R.string.start_extracting),
             )
         },
         topBar = {

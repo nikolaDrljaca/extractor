@@ -26,8 +26,6 @@ import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.ScreenPreview
 
 
 @Composable
@@ -54,7 +52,7 @@ fun ExtractorPermissionRequestScreen(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Warning,
-                    contentDescription = "",
+                    contentDescription = "Warning",
                     tint = MaterialTheme.colorScheme.onError,
                     modifier = Modifier
                         .size(56.dp)

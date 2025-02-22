@@ -84,7 +84,7 @@ fun ExtractorImageViewerScreen(
                     .data(images[it])
                     .crossfade(true)
                     .build(),
-                contentDescription = null,
+                contentDescription = "Image",
                 contentScale = ContentScale.Fit,
                 placeholder = painterResource(id = R.drawable.baseline_image_24),
                 onSuccess = { state ->

@@ -219,7 +219,7 @@ fun ExtractorSearchScreen(
                     IconButton(onClick = onExtractorHomeClicked) {
                         Icon(
                             painter = painterResource(id = R.drawable.extractor_icon),
-                            contentDescription = "",
+                            contentDescription = "Go Home",
                             modifier = Modifier.size(32.dp),
                         )
                     }

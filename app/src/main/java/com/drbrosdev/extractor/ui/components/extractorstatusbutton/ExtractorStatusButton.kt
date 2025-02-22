@@ -74,7 +74,7 @@ fun ExtractorStatusButton(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Warning,
-                    contentDescription = null,
+                    contentDescription = "Extraction Status",
                     tint = MaterialTheme.colorScheme.onError
                 )
             }

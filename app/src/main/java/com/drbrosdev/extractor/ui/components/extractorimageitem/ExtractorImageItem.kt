@@ -118,7 +118,7 @@ fun ExtractorImageItem(
             .size(scaleSize, scaleSize)
             .crossfade(true)
             .build(),
-        contentDescription = null,
+        contentDescription = "Loaded image",
         contentScale = ContentScale.Crop,
         placeholder = painterResource(id = R.drawable.baseline_image_24),
         error = painterResource(id = R.drawable.outline_hide_image_24)
@@ -154,7 +154,7 @@ fun ExtractorImageItem(
             .size(scaleSize, scaleSize)
             .crossfade(true)
             .build(),
-        contentDescription = null,
+        contentDescription = "Loaded image",
         contentScale = ContentScale.Crop,
         placeholder = painterResource(id = R.drawable.baseline_image_24)
     )
@@ -187,7 +187,7 @@ fun ExtractorImageItem(
             .size(scaleSize, scaleSize)
             .crossfade(true)
             .build(),
-        contentDescription = null,
+        contentDescription = "Loaded image",
         contentScale = ContentScale.Crop,
         placeholder = painterResource(id = R.drawable.baseline_image_24)
     )
@@ -216,7 +216,7 @@ fun ExtractorImageItem(
             .data(byteArray)
             .crossfade(true)
             .build(),
-        contentDescription = null,
+        contentDescription = "Loaded image",
         contentScale = ContentScale.Crop,
         placeholder = painterResource(id = R.drawable.baseline_image_24)
     )
@@ -243,7 +243,7 @@ fun ExtractorImageItem(
             .clickable { onClick() }
             .then(modifier),
         bitmap = bitmap.asImageBitmap(),
-        contentDescription = null,
+        contentDescription = "Loaded image",
         contentScale = ContentScale.Crop,
     )
 }

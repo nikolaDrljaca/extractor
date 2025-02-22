@@ -21,7 +21,7 @@ fun BackIconButton(
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-            contentDescription = ""
+            contentDescription = "Go Back"
         )
     }
 }

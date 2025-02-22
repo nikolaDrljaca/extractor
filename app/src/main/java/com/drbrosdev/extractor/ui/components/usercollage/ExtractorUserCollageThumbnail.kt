@@ -59,7 +59,7 @@ fun ExtractorUserCollageThumbnail(
                 .size(scaleSize, scaleSize)
                 .crossfade(true)
                 .build(),
-            contentDescription = null,
+            contentDescription = stringResource(R.string.your_keywords),
             contentScale = ContentScale.Crop,
             placeholder = painterResource(id = R.drawable.baseline_image_24)
         )

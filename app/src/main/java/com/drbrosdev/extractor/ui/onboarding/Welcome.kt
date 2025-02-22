@@ -55,7 +55,7 @@ fun WelcomeCard(
         painter = {
             Image(
                 painter = painter,
-                contentDescription = "",
+                contentDescription = stringResource(R.string.welcome),
                 modifier = Modifier.size(128.dp)
             )
         },

@@ -76,7 +76,7 @@ fun ExtractorSettings(
             trailingSlot = {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                    contentDescription = null
+                    contentDescription = stringResource(R.string.periodic_sync)
                 )
             }
         ) {

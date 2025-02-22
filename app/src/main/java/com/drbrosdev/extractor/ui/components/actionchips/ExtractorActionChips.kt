@@ -40,7 +40,7 @@ fun ExtractorActionChips(
                 leadingIcon = {
                     Icon(
                         painter = painterResource(id = it.iconResource),
-                        contentDescription = null
+                        contentDescription = "Chip action ${stringResource(it.nameResource)}"
                     )
                 },
                 colors = colors,

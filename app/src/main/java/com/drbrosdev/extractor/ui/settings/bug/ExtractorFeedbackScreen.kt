@@ -66,7 +66,7 @@ fun ExtractorFeedbackScreen(
             header = {
                 Image(
                     painter = painterResource(id = R.drawable.ilu_info),
-                    contentDescription = "",
+                    contentDescription = "Info graphic",
                     modifier = Modifier.size(164.dp)
                 )
             }

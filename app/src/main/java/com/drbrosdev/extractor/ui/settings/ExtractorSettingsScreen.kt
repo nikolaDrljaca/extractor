@@ -144,7 +144,7 @@ private fun AppInfo(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Image(painter = applicationIconResource(), contentDescription = "")
+        Image(painter = applicationIconResource(), contentDescription = "Lupa Icon")
         Text(
             text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.titleLarge

@@ -69,7 +69,7 @@ private fun ExtractorDialogContent(
             } else {
                 Icon(
                     imageVector = Icons.Rounded.Info,
-                    contentDescription = "",
+                    contentDescription = "Info",
                     modifier = Modifier.size(48.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )

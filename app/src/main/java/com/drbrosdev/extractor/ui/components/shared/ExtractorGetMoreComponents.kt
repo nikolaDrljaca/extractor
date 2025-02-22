@@ -54,7 +54,7 @@ fun ExtractorShopItem(
 
             Icon(
                 painter = painterResource(id = R.drawable.rounded_shop_24),
-                contentDescription = ""
+                contentDescription = "Play Store 500 searches"
             )
         }
     }

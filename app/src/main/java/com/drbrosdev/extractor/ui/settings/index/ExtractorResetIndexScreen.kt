@@ -68,7 +68,7 @@ fun ExtractorResetIndexScreen(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.rounded_release_alert_24),
-                    contentDescription = "",
+                    contentDescription = "Warning",
                     tint = MaterialTheme.colorScheme.error
                 )
                 Spacer(modifier = Modifier.width(8.dp))

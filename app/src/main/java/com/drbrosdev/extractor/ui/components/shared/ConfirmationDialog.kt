@@ -94,7 +94,7 @@ object ConfirmationDialogDefaults {
     fun Icon() {
         androidx.compose.material3.Icon(
             imageVector = Icons.Outlined.Info,
-            contentDescription = "",
+            contentDescription = "Info dialog",
             modifier = Modifier.size(iconSize.dp)
         )
     }

@@ -69,7 +69,7 @@ fun ExtractorEmptySearch(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.outline_hide_image_24),
-                contentDescription = "",
+                contentDescription = "No result",
                 tint = contentColor,
                 modifier = Modifier
                     .size(64.dp)
@@ -104,7 +104,7 @@ fun ExtractorResetSearch(
         ExtractorTextButton(
             onClick = onClick,
         ) {
-            Icon(imageVector = Icons.Rounded.Refresh, contentDescription = "")
+            Icon(imageVector = Icons.Rounded.Refresh, contentDescription = stringResource(R.string.reset))
             Spacer(modifier = Modifier.width(4.dp))
             Text(text = stringResource(R.string.reset))
         }
@@ -160,7 +160,7 @@ fun ExtractorSearchFabStack(
         ) {
             Icon(
                 imageVector = Icons.Rounded.Refresh,
-                contentDescription = ""
+                contentDescription = "Refresh"
             )
         }
 
@@ -171,7 +171,7 @@ fun ExtractorSearchFabStack(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.round_save_24),
-                contentDescription = null
+                contentDescription = "Save as album"
             )
         }
     }

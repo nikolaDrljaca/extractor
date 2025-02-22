@@ -56,7 +56,7 @@ fun ExtractorImageBottomBar(
             ) {
                 Icon(
                     painter = painterResource(id = barItem.iconRes),
-                    contentDescription = "",
+                    contentDescription = stringResource(barItem.stringRes),
                     modifier = Modifier.requiredSize(32.dp),
                     tint = Color.White
                 )

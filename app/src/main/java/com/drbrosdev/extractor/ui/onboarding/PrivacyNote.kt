@@ -51,7 +51,7 @@ fun PrivacyNoteCard(
         painter = {
             Image(
                 painter = painterResource(id = R.drawable.ilu_privacy),
-                contentDescription = "",
+                contentDescription = stringResource(R.string.a_note_on_privacy),
             )
         },
         topBar = {

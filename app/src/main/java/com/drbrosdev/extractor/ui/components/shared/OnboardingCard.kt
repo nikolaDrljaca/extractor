@@ -184,7 +184,7 @@ fun OnboardingCardHeadline(
             IconButton(onClick = it) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = null
+                    contentDescription = "Go back"
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))

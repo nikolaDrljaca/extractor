@@ -51,7 +51,7 @@ fun PermissionCard(
         painter = {
             Image(
                 painter = painterResource(id = R.drawable.ilu_permissions),
-                contentDescription = "",
+                contentDescription = stringResource(R.string.permission),
             )
         },
         topBar = {

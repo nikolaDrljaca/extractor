@@ -21,7 +21,7 @@ fun InfoIconButton(
     ) {
         Icon(
             imageVector = Icons.Rounded.Info,
-            contentDescription = ""
+            contentDescription = "Info"
         )
     }
 }
