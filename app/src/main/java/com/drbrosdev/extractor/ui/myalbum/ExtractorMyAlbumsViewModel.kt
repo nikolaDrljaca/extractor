@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.allalbum
+package com.drbrosdev.extractor.ui.myalbum
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ExtractorAlbumsViewModel(
+class ExtractorMyAlbumsViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val albumRepository: AlbumRepository,
     private val stringProvider: StringResourceProvider
@@ -26,7 +26,7 @@ class ExtractorAlbumsViewModel(
 
     val state = albumRepository.getAllUserAlbumsAsFlow()
         .map {
-            ExtractorAlbumsScreenState.Content(
+            ExtractorMyAlbumsScreenState.Content(
                 albums = it.map { entry -> entry.toItemUiModel() },
                 snackBarHostState = snackBarHostState
             )
@@ -35,7 +35,7 @@ class ExtractorAlbumsViewModel(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
-            ExtractorAlbumsScreenState.Loading(snackBarHostState)
+            ExtractorMyAlbumsScreenState.Loading(snackBarHostState)
         )
 
     fun onDeleteAlbum(value: AlbumItemUiModel) {

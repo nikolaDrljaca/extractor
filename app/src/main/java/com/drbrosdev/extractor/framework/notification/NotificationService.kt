@@ -13,7 +13,6 @@ import com.drbrosdev.extractor.framework.requiresApi
 class NotificationService(
     private val context: Context
 ) {
-
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

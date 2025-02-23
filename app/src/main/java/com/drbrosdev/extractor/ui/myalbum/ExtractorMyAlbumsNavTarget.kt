@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.allalbum
+package com.drbrosdev.extractor.ui.myalbum
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -20,17 +20,17 @@ import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
 @Parcelize
-data object ExtractorAlbumsNavTarget : NavTarget {
+data object ExtractorMyAlbumsNavTarget : NavTarget {
 
     @Composable
     override fun Content(navigators: Navigators) {
-        val viewModel: ExtractorAlbumsViewModel = koinViewModel()
+        val viewModel: ExtractorMyAlbumsViewModel = koinViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         val navController = navigators.navController
         val context = LocalContext.current
 
-        ExtractorAlbumsScreen(
+        ExtractorMyAlbumsScreen(
             onBack = { navController.pop() },
             onAlbumClick = {
                 navController.navigate(ExtractorAlbumViewerNavTarget(it))
@@ -52,7 +52,7 @@ data object ExtractorAlbumsNavTarget : NavTarget {
 @ScreenPreview
 @Composable
 private fun CurrentPreview() {
-    val state = ExtractorAlbumsScreenState.Content(
+    val state = ExtractorMyAlbumsScreenState.Content(
         albums = buildList {
             repeat(4) {
                 add(AlbumItemUiModel(
@@ -72,7 +72,7 @@ private fun CurrentPreview() {
 
     ExtractorTheme(dynamicColor = false) {
         Surface(color = MaterialTheme.colorScheme.background) {
-            ExtractorAlbumsScreen(
+            ExtractorMyAlbumsScreen(
                 onBack = {},
                 onAlbumClick = {},
                 onAction = {},

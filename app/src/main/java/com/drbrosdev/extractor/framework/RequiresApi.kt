@@ -15,7 +15,6 @@ object VersionCodes {
     const val V_34 = Build.VERSION_CODES.UPSIDE_DOWN_CAKE
 }
 
-
 fun requiresApi(
     apiLevel: Int,
     fallback: (() -> Unit)? = null,

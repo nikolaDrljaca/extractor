@@ -51,7 +51,7 @@ suspend fun ContentResolver.runMediaStoreImageQuery(
         null,
         MediaStore.Images.Media.DATE_ADDED + " DESC"
     )?.use { cursor ->
-        //Cache column indexes, so not to create them inside while every time
+        //Cache column indexes, so not to create them inside `while` every time
         val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
         val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
         val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
@@ -126,7 +126,7 @@ fun ContentResolver.runMediaStoreImageQueryAsFlow(
         null,
         MediaStore.Images.Media.DATE_ADDED + " DESC"
     )?.use { cursor ->
-        //Cache column indexes, so not to create them inside while every time
+        //Cache column indexes, so not to create them inside `while` every time
         val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
         val displayNameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
         val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)

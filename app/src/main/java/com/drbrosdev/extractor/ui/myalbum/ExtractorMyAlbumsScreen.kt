@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.allalbum
+package com.drbrosdev.extractor.ui.myalbum
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
@@ -53,12 +53,12 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun ExtractorAlbumsScreen(
+fun ExtractorMyAlbumsScreen(
     onBack: () -> Unit,
     onAlbumClick: (Long) -> Unit,
     onAction: (ExtractorSwipeAction<AlbumItemUiModel>) -> Unit,
     modifier: Modifier = Modifier,
-    state: ExtractorAlbumsScreenState
+    state: ExtractorMyAlbumsScreenState
 ) {
     val lazyListState = rememberLazyListState()
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
@@ -75,7 +75,7 @@ fun ExtractorAlbumsScreen(
             .then(modifier)
     ) {
         when (state) {
-            is ExtractorAlbumsScreenState.Content -> {
+            is ExtractorMyAlbumsScreenState.Content -> {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(
                         8.dp,
@@ -101,7 +101,7 @@ fun ExtractorAlbumsScreen(
                 }
             }
 
-            is ExtractorAlbumsScreenState.Loading -> {
+            is ExtractorMyAlbumsScreenState.Loading -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

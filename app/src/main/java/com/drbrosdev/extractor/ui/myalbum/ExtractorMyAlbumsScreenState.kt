@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.allalbum
+package com.drbrosdev.extractor.ui.myalbum
 
 import android.net.Uri
 import androidx.compose.material3.SnackbarHostState
@@ -6,19 +6,18 @@ import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.model.toUri
 
-
-sealed class ExtractorAlbumsScreenState {
+sealed class ExtractorMyAlbumsScreenState {
     abstract val snackBarHostState: SnackbarHostState
 
     @Immutable
     data class Content(
         val albums: List<AlbumItemUiModel>,
         override val snackBarHostState: SnackbarHostState
-    ) : ExtractorAlbumsScreenState()
+    ) : ExtractorMyAlbumsScreenState()
 
     data class Loading(
         override val snackBarHostState: SnackbarHostState
-    ) : ExtractorAlbumsScreenState()
+    ) : ExtractorMyAlbumsScreenState()
 }
 
 

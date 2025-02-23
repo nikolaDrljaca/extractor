@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-
 class DefaultMediaStoreImageRepository(
     private val dispatcher: CoroutineDispatcher,
     private val contentResolver: ContentResolver

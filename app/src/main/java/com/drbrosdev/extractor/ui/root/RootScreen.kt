@@ -25,7 +25,6 @@ import dev.olshevski.navigation.reimagined.replaceAll
 import kotlinx.coroutines.flow.first
 import org.koin.androidx.compose.koinViewModel
 
-
 @Composable
 fun Root() {
     val viewModel: RootViewModel = koinViewModel()

@@ -15,7 +15,6 @@ sealed interface ExtractorSuggestedEmbedsUiState {
     ) : ExtractorSuggestedEmbedsUiState
 }
 
-
 fun ExtractorSuggestedEmbedsUiState.getSuggestions(): List<UserEmbedUiModel> =
     when (this) {
         is ExtractorSuggestedEmbedsUiState.Content -> this.suggestions

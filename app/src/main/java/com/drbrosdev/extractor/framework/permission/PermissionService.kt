@@ -14,7 +14,6 @@ typealias PermissionRequest = () -> Unit
 class PermissionService(
     private val context: Context
 ) {
-
     fun getReadPermissionAccessStatus(): ReadPermissionAccess {
         return when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
