@@ -12,12 +12,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.ExtractorDialog
 import com.drbrosdev.extractor.ui.components.shared.InfoIconButton
 import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.ScreenPreview
 
 
 @Composable
@@ -58,7 +58,7 @@ fun StartWorkerCard(
     }
 }
 
-@Preview
+@ScreenPreview
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
