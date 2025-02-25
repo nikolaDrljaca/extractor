@@ -85,6 +85,7 @@ fun ExtractorHeader(
     modifier: Modifier = Modifier,
     headerText: String = stringResource(id = R.string.app_name),
     bottomText: String? = null,
+    alignment: Alignment.Horizontal = Alignment.CenterHorizontally
 ) {
     Surface(
         modifier = Modifier
@@ -93,13 +94,11 @@ fun ExtractorHeader(
         shadowElevation = 0.dp,
         tonalElevation = 0.dp,
         onClick = onClick,
-        shape = RoundedCornerShape(14.dp),
     ) {
         Column(
-            modifier = Modifier
-                .padding(8.dp),
+            modifier = Modifier,
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = alignment
         ) {
             Text(
                 text = headerText,

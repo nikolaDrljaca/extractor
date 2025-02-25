@@ -66,7 +66,7 @@ fun ExtractorImageFlowRow(
     modifier: Modifier = Modifier,
     images: List<Extraction>,
 ) {
-    val imageSize = 96
+    val imageSize = 76
 
     FlowRow(
         modifier = Modifier

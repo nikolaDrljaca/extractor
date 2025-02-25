@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,13 +15,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,7 +45,6 @@ fun ExtractorSuggestedSearch(
     modifier: Modifier = Modifier,
     state: ExtractorSuggestedSearchState
 ) {
-
     AnimatedContent(
         targetState = state,
         label = "",
@@ -142,7 +143,10 @@ private fun SuggestedSearchEmpty(
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedExtractorActionButton(onClick = onClick) {
-            Icon(painter = painterResource(id = R.drawable.round_sync_24), contentDescription = stringResource(R.string.start_sync))
+            Icon(
+                painter = painterResource(id = R.drawable.round_sync_24),
+                contentDescription = stringResource(R.string.start_sync)
+            )
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = stringResource(id = R.string.start_sync))
         }
@@ -180,7 +184,34 @@ private fun SuggestedSearchLoading(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@Immutable
+data class SuggestedSearchUiModel(
+    val query: String,
+    val keywordType: KeywordType,
+    val searchType: SearchType
+)
+
+@Composable
+fun SuggestedSearchItem(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    suggestedSearch: SuggestedSearchUiModel
+) {
+    val icon = when (suggestedSearch.keywordType) {
+        KeywordType.ALL -> painterResource(R.drawable.round_tag_24)
+        KeywordType.TEXT -> painterResource(R.drawable.round_text_fields_24)
+        KeywordType.IMAGE -> painterResource(R.drawable.round_image_search_24)
+    }
+    SuggestionChip(
+        modifier = Modifier
+            .then(modifier),
+        onClick = onClick,
+        label = { Text(suggestedSearch.query) },
+        icon = { Icon(icon, "") },
+        shape = CircleShape
+    )
+}
+
 @Composable
 private fun SuggestedSearchItem(
     modifier: Modifier = Modifier,
@@ -236,20 +267,27 @@ private fun CurrentPreview() {
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                ExtractorSuggestedSearch(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = contentState
+                SuggestedSearchItem(
+                    onClick = {}, suggestedSearch = SuggestedSearchUiModel(
+                        query = "Sample",
+                        keywordType = KeywordType.IMAGE,
+                        searchType = SearchType.FULL
+                    )
                 )
-
-                ExtractorSuggestedSearch(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = loadingState
-                )
-
-                ExtractorSuggestedSearch(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = emptyState
-                )
+//                ExtractorSuggestedSearch(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    state = contentState
+//                )
+//
+//                ExtractorSuggestedSearch(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    state = loadingState
+//                )
+//
+//                ExtractorSuggestedSearch(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    state = emptyState
+//                )
             }
         }
     }

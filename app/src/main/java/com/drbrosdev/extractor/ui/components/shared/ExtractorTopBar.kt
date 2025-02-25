@@ -4,7 +4,6 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -68,18 +66,18 @@ fun ExtractorTopBar(
             .then(modifier),
         tonalElevation = elevation,
         shape = RoundedCornerShape(bottomEnd = cornerShape, bottomStart = cornerShape),
-        color = MaterialTheme.colorScheme.background //TODO Maybe keep default
+        color = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
-                .padding(
-                    PaddingValues(
-                        start = 8.dp,
-                        end = 8.dp,
-                        top = spacerHeight + topPadding,
-                        bottom = 4.dp
-                    )
-                )
+//                .padding(
+//                    PaddingValues(
+//                        start = 8.dp,
+//                        end = 8.dp,
+//                        top = spacerHeight + topPadding,
+//                        bottom = 4.dp
+//                    )
+//                )
         ) {
             Row(
                 modifier = Modifier
@@ -92,7 +90,9 @@ fun ExtractorTopBar(
                     verticalAlignment = Alignment.CenterVertically
                 ) { leadingSlot?.invoke(this) }
                 Row { centerSlot?.invoke(this) }
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     when {
                         trailingSlot != null -> trailingSlot()
                         else -> Spacer(modifier = Modifier.size(12.dp))

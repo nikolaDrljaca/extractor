@@ -3,12 +3,12 @@ package com.drbrosdev.extractor.ui.components.shared
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -140,15 +141,106 @@ fun ExtractorSearchTextField(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExtractorSearchPill(
+    modifier: Modifier = Modifier,
+    text: String,
+    onChange: (String) -> Unit,
+    onDoneSubmit: () -> Unit,
+    interactionSource: MutableInteractionSource = remember {
+        MutableInteractionSource()
+    },
+    textColor: Color = when {
+        isSystemInDarkTheme() -> Color.White
+        else -> Color.Black
+    },
+    enabled: Boolean = true
+) {
+    val textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Light)
+    val backgroundColor = MaterialTheme.colorScheme.surfaceVariant
+
+    val placeholderText = when {
+        enabled -> stringResource(id = R.string.search_here)
+        else -> stringResource(R.string.disabled)
+    }
+    BasicTextField(
+        interactionSource = interactionSource,
+        modifier = Modifier
+            .then(modifier),
+        value = text,
+        onValueChange = onChange,
+        keyboardOptions = KeyboardOptions(
+            autoCorrectEnabled = false,
+            imeAction = ImeAction.Search
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = { onDoneSubmit() },
+            onSearch = { onDoneSubmit() }
+        ),
+        enabled = enabled,
+        minLines = 1,
+        maxLines = 1,
+        readOnly = false,
+        textStyle = textStyle.copy(color = textColor),
+        cursorBrush = SolidColor(textColor),
+        decorationBox = {
+            TextFieldDefaults.DecorationBox(
+                value = text,
+                innerTextField = it,
+                enabled = enabled,
+                singleLine = true,
+                shape = CircleShape,
+                visualTransformation = VisualTransformation.None,
+                interactionSource = interactionSource,
+                contentPadding = PaddingValues(),
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = backgroundColor,
+                    focusedContainerColor = backgroundColor,
+                    errorContainerColor = backgroundColor,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Transparent,
+                    cursorColor = textColor,
+                    selectionColors = TextSelectionColors(
+                        backgroundColor = textColor.copy(alpha = 0.4f),
+                        handleColor = textColor
+                    ),
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContainerColor = backgroundColor,
+                    disabledTextColor = Color.Gray,
+                ),
+                leadingIcon = { Icon(Icons.Rounded.Search, "Search Icon") },
+                placeholder = {
+                    Text(
+                        text = placeholderText,
+                        style = textStyle,
+                        color = textColor.copy(alpha = 0.5f)
+                    )
+                }
+            )
+        }
+    )
+}
+
 @CombinedPreview
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme {
-        Column {
-            ExtractorSearchTextField(
-                text = "", onChange = {}, onDoneSubmit = {}, enabled = false
+//        Column {
+//            ExtractorSearchTextField(
+//                text = "", onChange = {}, onDoneSubmit = {}, enabled = false
+//            )
+//            ExtractorSearchTextField(text = "sample", onChange = {}, onDoneSubmit = {})
+//        }
+        Surface(color = MaterialTheme.colorScheme.primary) {
+            ExtractorSearchPill(
+                modifier = Modifier.padding(8.dp),
+                text = "",
+                onChange = {},
+                onDoneSubmit = {}
             )
-            ExtractorSearchTextField(text = "sample", onChange = {}, onDoneSubmit = {})
         }
     }
 }
