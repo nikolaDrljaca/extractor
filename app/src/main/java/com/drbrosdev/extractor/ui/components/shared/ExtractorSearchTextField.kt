@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.ui.components.shared
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
+@Deprecated("")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchTextField(
@@ -144,10 +146,8 @@ fun ExtractorSearchTextField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchPill(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    text: String,
-    onChange: (String) -> Unit,
-    onDoneSubmit: () -> Unit,
     interactionSource: MutableInteractionSource = remember {
         MutableInteractionSource()
     },
@@ -155,30 +155,22 @@ fun ExtractorSearchPill(
         isSystemInDarkTheme() -> Color.White
         else -> Color.Black
     },
-    enabled: Boolean = true
 ) {
     val textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Light)
     val backgroundColor = MaterialTheme.colorScheme.surfaceVariant
 
-    val placeholderText = when {
-        enabled -> stringResource(id = R.string.search_here)
-        else -> stringResource(R.string.disabled)
-    }
     BasicTextField(
         interactionSource = interactionSource,
         modifier = Modifier
+            .clickable { onClick() }
             .then(modifier),
-        value = text,
-        onValueChange = onChange,
+        value = "",
+        onValueChange = {},
         keyboardOptions = KeyboardOptions(
             autoCorrectEnabled = false,
             imeAction = ImeAction.Search
         ),
-        keyboardActions = KeyboardActions(
-            onDone = { onDoneSubmit() },
-            onSearch = { onDoneSubmit() }
-        ),
-        enabled = enabled,
+        enabled = false,
         minLines = 1,
         maxLines = 1,
         readOnly = false,
@@ -186,9 +178,9 @@ fun ExtractorSearchPill(
         cursorBrush = SolidColor(textColor),
         decorationBox = {
             TextFieldDefaults.DecorationBox(
-                value = text,
+                value = "",
                 innerTextField = it,
-                enabled = enabled,
+                enabled = false,
                 singleLine = true,
                 shape = CircleShape,
                 visualTransformation = VisualTransformation.None,
@@ -214,7 +206,7 @@ fun ExtractorSearchPill(
                 leadingIcon = { Icon(Icons.Rounded.Search, "Search Icon") },
                 placeholder = {
                     Text(
-                        text = placeholderText,
+                        text = stringResource(id = R.string.search_here),
                         style = textStyle,
                         color = textColor.copy(alpha = 0.5f)
                     )
@@ -228,18 +220,10 @@ fun ExtractorSearchPill(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme {
-//        Column {
-//            ExtractorSearchTextField(
-//                text = "", onChange = {}, onDoneSubmit = {}, enabled = false
-//            )
-//            ExtractorSearchTextField(text = "sample", onChange = {}, onDoneSubmit = {})
-//        }
         Surface(color = MaterialTheme.colorScheme.primary) {
             ExtractorSearchPill(
+                onClick = {},
                 modifier = Modifier.padding(8.dp),
-                text = "",
-                onChange = {},
-                onDoneSubmit = {}
             )
         }
     }

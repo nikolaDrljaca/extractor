@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.ui.components.shared
 
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,10 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,7 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPill
+import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
@@ -103,25 +110,64 @@ fun ExtractorTopBar(
     }
 }
 
+@Composable
+fun ExtractorTopBar(
+    modifier: Modifier = Modifier,
+    onHomeClick: () -> Unit,
+    onAlbumsClick: () -> Unit
+) {
+    // Top bar
+    Surface(
+        modifier = Modifier.then(modifier)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.clickable { onHomeClick() }
+            ) {
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
+                )
+                ExtractorStatusPill(state = ExtractorStatusPillState.OutOfSync)
+            }
+
+            Surface(
+                onClick = onAlbumsClick,
+                modifier = Modifier.size(48.dp),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                // Go to albums screen - current home screen
+                Icon(
+                    painter = painterResource(id = R.drawable.round_grid_view_24),
+                    contentDescription = "Go Home",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .padding(8.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+    }
+}
+
 @CombinedPreview
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         Column {
-            ExtractorTopBar {
-                Column {
-                    Text(text = "Header")
-                    Text(text = "small text", style = MaterialTheme.typography.labelSmall)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
             ExtractorTopBar(
-                state = ExtractorTopBarState.ELEVATED
-            ) {
-                Text(text = "Header")
-            }
+                onHomeClick = {},
+                onAlbumsClick = {},
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

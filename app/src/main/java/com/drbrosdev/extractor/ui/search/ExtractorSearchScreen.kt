@@ -54,7 +54,6 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorStillIndexing
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
-import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -182,10 +181,6 @@ fun ExtractorSearchScreen(
                             .fillMaxSize(),
                         contentAlignment = Alignment.BottomCenter
                     ) {
-                        ExtractorSuggestedSearch(
-                            modifier = Modifier.padding(horizontal = 12.dp),
-                            state = it.suggestedSearchState
-                        )
                     }
 
                     is ExtractorSearchContainerState.NoSearchesLeft ->
