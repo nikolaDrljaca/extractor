@@ -22,10 +22,9 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import java.time.LocalDateTime
 
 @Composable
-fun ExtractorUserCollageItem(
+fun ExtractorCollageItem(
     modifier: Modifier = Modifier,
     onItemClick: (index: Int) -> Unit,
-    onShareClick: () -> Unit,
     keyword: String,
     extractions: List<Extraction>,
 ) {
@@ -40,24 +39,8 @@ fun ExtractorUserCollageItem(
             Text(
                 text = "# $keyword",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
             )
-
-//            AssistChip(
-//                modifier = Modifier
-//                    .padding(start = 10.dp),
-//                onClick = onShareClick,
-//                label = {
-//                    Text(text = stringResource(R.string.bottom_bar_share))
-//                },
-//                leadingIcon = {
-//                    Icon(
-//                        imageVector = Icons.Rounded.Share,
-//                        contentDescription = stringResource(R.string.bottom_bar_share)
-//                    )
-//                },
-//                shape = CircleShape
-//            )
         }
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -76,9 +59,8 @@ private fun CurrentPreview() {
     ExtractorTheme {
         Surface {
             Column {
-                ExtractorUserCollageItem(
+                ExtractorCollageItem(
                     onItemClick = {},
-                    onShareClick = {},
                     keyword = "sample",
                     extractions = listOf(
                         Extraction(

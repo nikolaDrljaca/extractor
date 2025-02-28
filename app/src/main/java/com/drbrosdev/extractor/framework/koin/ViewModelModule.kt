@@ -5,16 +5,17 @@ import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
 import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
-import com.drbrosdev.extractor.ui.myalbum.ExtractorMyAlbumsViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.dialog.userembed.ExtractorUserEmbedViewModel
 import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
+import com.drbrosdev.extractor.ui.myalbum.ExtractorMyAlbumsViewModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
 import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
+import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel2
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
 import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackViewModel
 import com.drbrosdev.extractor.ui.settings.clearevent.ExtractorClearEventsViewModel
@@ -25,6 +26,17 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
+
+    viewModel {
+        ExtractorSearchViewModel2(
+            trackExtractionProgress = get(),
+            compileSearchSuggestions = get(),
+            compileTextAlbums = get(),
+            dataStore = get(),
+            generateUserCollage = get(),
+        )
+    }
+
     viewModel {
         ExtractorResetIndexViewModel(
             extractorRepository = get<DefaultExtractorRepository>(),
@@ -102,7 +114,7 @@ val viewModelModule = module {
             compileTextAlbum = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             homeScreenSettingsProvider = get(),
-            buildUserCollage = get(),
+            generateUserCollage = get(),
             extractionStatus = get()
         )
     }
@@ -134,7 +146,7 @@ val viewModelModule = module {
     viewModel {
         ExtractorUserCollageViewModel(
             stateHandle = get(),
-            buildUserCollage = get(),
+            generateUserCollage = get(),
             datastore = get()
         )
     }

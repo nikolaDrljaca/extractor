@@ -143,6 +143,7 @@ fun ExtractorSearchTextField(
     }
 }
 
+// TODO Redesign with a surface row icon text combo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchPill(

@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
 import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
-import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
+import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
@@ -53,7 +53,7 @@ val useCaseModule = module {
     }
 
     factory {
-        BuildUserCollage(
+        GenerateUserCollage(
             dispatcher = get(named(CoroutineModuleName.Default)),
             userEmbeddingDao = get(),
             userExtractionDao = get()

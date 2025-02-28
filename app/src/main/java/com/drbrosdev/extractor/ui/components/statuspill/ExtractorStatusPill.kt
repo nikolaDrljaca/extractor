@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -19,40 +18,16 @@ import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
-// Change to be outlined style
-// could even change to a pill shaped status button micro feature
-// show either leftover count / syncing / idle / outOfSync
-// increase the size overall - padding around components
-
-sealed interface ExtractorStatusPillState {
-    // sync is idle -- show leftover search count
-    data object Idle : ExtractorStatusPillState
-
-    // extraction is running -- report progress
-    data object SyncInProgress : ExtractorStatusPillState
-
-    // auto sync is off -- report extraction out of sync and numbers
-    data object OutOfSync : ExtractorStatusPillState
-}
-
 @Composable
 fun ExtractorStatusPill(
     modifier: Modifier = Modifier,
-    state: ExtractorStatusPillState = ExtractorStatusPillState.Idle
+    state: ExtractorStatusPillState
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = when (state) {
-            ExtractorStatusPillState.Idle -> MaterialTheme.colorScheme.surface
+            is ExtractorStatusPillState.Idle -> MaterialTheme.colorScheme.onSurface
             ExtractorStatusPillState.OutOfSync -> MaterialTheme.colorScheme.error
-            ExtractorStatusPillState.SyncInProgress -> MaterialTheme.colorScheme.tertiary
-        },
-        label = ""
-    )
-    val contentColor by animateColorAsState(
-        targetValue = when (state) {
-            ExtractorStatusPillState.Idle -> MaterialTheme.colorScheme.onSurface
-            ExtractorStatusPillState.OutOfSync -> MaterialTheme.colorScheme.onErrorContainer
-            ExtractorStatusPillState.SyncInProgress -> MaterialTheme.colorScheme.onTertiary
+            is ExtractorStatusPillState.SyncInProgress -> MaterialTheme.colorScheme.tertiary
         },
         label = ""
     )
@@ -69,25 +44,13 @@ fun ExtractorStatusPill(
         ) {
             AnimatedContent(targetState = state) {
                 when (it) {
-                    ExtractorStatusPillState.Idle -> Text(text = "Searches left: 1000")
+                    is ExtractorStatusPillState.Idle -> Text(text = "Searches left: ${it.searchesLeft}")
                     ExtractorStatusPillState.OutOfSync -> Text(text = "Data out of sync.")
-                    ExtractorStatusPillState.SyncInProgress -> Text(text = "Current progress: 323 / 1234")
+                    is ExtractorStatusPillState.SyncInProgress -> Text(text = "Current progress: ${it.progress}%")
                 }
             }
         }
     }
-}
-
-@Composable
-private fun StatusText(
-    modifier: Modifier = Modifier,
-    text: String
-) {
-    Text(
-        text = text,
-        modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-    )
 }
 
 
@@ -97,9 +60,9 @@ private fun CurrentPreview() {
     ExtractorTheme {
         Surface {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                ExtractorStatusPill(state = ExtractorStatusPillState.Idle)
+                ExtractorStatusPill(state = ExtractorStatusPillState.Idle(232))
                 ExtractorStatusPill(state = ExtractorStatusPillState.OutOfSync)
-                ExtractorStatusPill(state = ExtractorStatusPillState.SyncInProgress)
+                ExtractorStatusPill(state = ExtractorStatusPillState.SyncInProgress(90))
             }
         }
     }

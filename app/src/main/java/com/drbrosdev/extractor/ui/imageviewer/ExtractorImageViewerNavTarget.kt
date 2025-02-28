@@ -28,7 +28,6 @@ data class ExtractorImageViewerNavTarget(
     private val initialIndex: Int
 ) : NavTarget {
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content(navigators: Navigators) {
         val viewModel: ExtractorImageViewerModel = koinViewModel()

@@ -10,7 +10,7 @@ import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toPreview
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
-import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
+import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
@@ -45,7 +45,7 @@ class ExtractorHomeViewModel(
     private val compileVisualAlbum: CompileVisualAlbum,
     private val compileTextAlbum: CompileTextAlbums,
     private val albumRepository: AlbumRepository,
-    private val buildUserCollage: BuildUserCollage,
+    private val generateUserCollage: GenerateUserCollage,
     private val homeScreenSettingsProvider: ProvideHomeScreenSettings,
     private val extractionStatus: TrackExtractionProgress
 ) : ViewModel() {
@@ -60,7 +60,7 @@ class ExtractorHomeViewModel(
         )
 
     val collage = flow {
-        emit(buildUserCollage.invoke().firstOrNull())
+        emit(generateUserCollage.invoke().firstOrNull())
     }
         .map { it.toOption() }
         .map {

@@ -2,7 +2,6 @@ package com.drbrosdev.extractor.ui.components.shared
 
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -114,29 +113,37 @@ fun ExtractorTopBar(
 fun ExtractorTopBar(
     modifier: Modifier = Modifier,
     onHomeClick: () -> Unit,
-    onAlbumsClick: () -> Unit
+    onAlbumsClick: () -> Unit,
+    statusPillState: ExtractorStatusPillState,
 ) {
     // Top bar
     Surface(
-        modifier = Modifier.then(modifier)
+        modifier = Modifier
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(modifier),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.clickable { onHomeClick() }
+            Surface(
+                onClick = onHomeClick,
+                shape = RoundedCornerShape(14.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        color = MaterialTheme.colorScheme.onBackground
-                    ),
-                )
-                ExtractorStatusPill(state = ExtractorStatusPillState.OutOfSync)
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            color = MaterialTheme.colorScheme.onBackground
+                        ),
+                    )
+                    ExtractorStatusPill(state = statusPillState)
+                }
             }
 
             Surface(
@@ -164,9 +171,10 @@ private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         Column {
             ExtractorTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                statusPillState = ExtractorStatusPillState.OutOfSync,
                 onHomeClick = {},
                 onAlbumsClick = {},
-                modifier = Modifier.fillMaxWidth()
             )
         }
     }
