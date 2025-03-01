@@ -2,6 +2,10 @@ package com.drbrosdev.extractor.ui.search
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.FloatingActionButton
@@ -32,12 +38,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.ExtractorDataStore
+import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
+import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
+import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
@@ -47,7 +57,7 @@ import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchUiMode
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
 import com.drbrosdev.extractor.ui.components.usercollage.CollageRecommendationState
 import com.drbrosdev.extractor.ui.components.usercollage.CollageRecommendationsComponent
-import com.drbrosdev.extractor.ui.components.usercollage.ExtractorCollageItem
+import com.drbrosdev.extractor.ui.components.usercollage.ExtractionCollage
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -61,6 +71,7 @@ import org.koin.core.parameter.parametersOf
 fun ExtractorOverviewScreen(
     onHomeClick: () -> Unit,
     onHubClick: () -> Unit,
+    onCollageItemClicked: (entry: Extraction, collage: ExtractionCollage) -> Unit,
     statusPillState: ExtractorStatusPillState,
     collageRecommendationState: CollageRecommendationState,
     suggestedSearchUiModel: SuggestedSearchUiModel
@@ -74,13 +85,17 @@ fun ExtractorOverviewScreen(
         //TODO scrollable content - CONVERT TO GRID -- make usage of the grid state
         // ExtractorImageGrid!! -- gridState coupled with the multiselect bar
         // [ExtractorAlbumViewerScreen.kt]
-        LazyColumn(
+        LazyVerticalGrid(
             modifier = Modifier
                 .layoutId(ViewIds2.MAIN_CONTENT),
+            columns = GridCells.Adaptive(minSize = 96.dp),
+            verticalArrangement = Arrangement.spacedBy(1.dp),
+            horizontalArrangement = Arrangement.spacedBy(1.dp),
+            state = collageRecommendationState.gridState.lazyGridState
         ) {
             item { Spacer(Modifier.height(72.dp)) }
 
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Column {
                     ExtractorSearchPill(
                         onClick = {},
@@ -98,19 +113,44 @@ fun ExtractorOverviewScreen(
             item { Spacer(Modifier.height(12.dp)) }
 
             when (collageRecommendationState) {
-                // will have to split in two item { header } -> items(it.extractions) { GridItem }
-                is CollageRecommendationState.Content ->
-                    items(collageRecommendationState.items) {
-                        ExtractorCollageItem(
-                            modifier = Modifier.padding(top = 12.dp),
-                            onItemClick = {},
-                            keyword = it.keyword,
-                            extractions = it.extractions
-                        )
+                is CollageRecommendationState.Content -> {
+                    collageRecommendationState.items.forEach {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Text(
+                                text = "# ${it.keyword}",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(
+                                    start = 8.dp,
+                                    bottom = 4.dp,
+                                    top = 12.dp
+                                )
+                            )
+                        }
+
+                        items(it.extractions) { entry ->
+                            ExtractorImageItem(
+                                modifier = Modifier.animateItem(),
+                                imageUri = entry.uri.toUri(),
+                                size = 96,
+                                onClick = {
+                                    val handled = collageRecommendationState.gridState
+                                        .onItemClick(entry.mediaImageId)
+                                    if (!handled) {
+                                        onCollageItemClicked(entry, it)
+                                    }
+                                },
+                                checkedState = collageRecommendationState.gridState[entry.mediaImageId],
+                                onLongClick = {
+                                    collageRecommendationState.gridState
+                                        .onItemLongClick(entry.mediaImageId)
+                                }
+                            )
+                        }
                     }
+                }
 
                 // TODO
-                CollageRecommendationState.Empty -> item {
+                is CollageRecommendationState.Empty -> item {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -120,7 +160,7 @@ fun ExtractorOverviewScreen(
                 }
 
                 // TODO
-                CollageRecommendationState.Loading -> item {
+                is CollageRecommendationState.Loading -> item {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -132,8 +172,6 @@ fun ExtractorOverviewScreen(
             item { Spacer(Modifier.height(36.dp)) }
         }
 
-        // TODO Add multiselectBar based state -> sealed either floater or multiselect
-
         // TODO hide when scrolling down - translate on y axis animation
         ExtractorTopBar(
             modifier = Modifier
@@ -144,15 +182,28 @@ fun ExtractorOverviewScreen(
             statusPillState = statusPillState
         )
 
-        // TODO on scroll down hide
+        // TODO Hide when scrolling down
         FloatingActionButton(
+            onClick = {},
             modifier = Modifier
                 .layoutId(ViewIds2.FAB),
-            onClick = {}
         ) {
             Icon(
                 imageVector = Icons.Rounded.Search,
                 contentDescription = "Search"
+            )
+        }
+
+        // TODO Add multiselectBar based state -> sealed either floater or multiselect
+        AnimatedVisibility(
+            visible = collageRecommendationState.multiselectState,
+            modifier = Modifier
+                .layoutId(ViewIds2.ACTION_BAR),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            ExtractorMultiselectActionBar(
+                onAction = {}
             )
         }
     }
@@ -207,9 +258,10 @@ data object ExtractorOverviewNavTarget : NavTarget {
         ExtractorOverviewScreen(
             onHomeClick = { navController.navigate(ExtractorHomeNavTarget) },
             onHubClick = { navController.navigate(ExtractorPurchaseSearchNavTarget) },
+            onCollageItemClicked = { entry, collage -> },
             statusPillState = statusPillState,
             collageRecommendationState = collageRecommendationState,
-            suggestedSearchUiModel = suggestedSearchUiModel
+            suggestedSearchUiModel = suggestedSearchUiModel,
         )
     }
 }
@@ -218,6 +270,7 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
     val topBar = createRefFor(ViewIds2.TOP_BAR)
     val mainContent = createRefFor(ViewIds2.MAIN_CONTENT)
     val fab = createRefFor(ViewIds2.FAB)
+    val actionBar = createRefFor(ViewIds2.ACTION_BAR)
 
     constrain(topBar) {
         start.linkTo(parent.start)
@@ -237,12 +290,20 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
         end.linkTo(parent.end, margin = 32.dp)
         bottom.linkTo(parent.bottom, margin = 32.dp)
     }
+
+    constrain(actionBar) {
+        start.linkTo(parent.start, margin = 16.dp)
+        end.linkTo(parent.end, margin = 16.dp)
+        bottom.linkTo(parent.bottom, margin = 16.dp)
+        width = Dimension.fillToConstraints
+    }
 }
 
 private object ViewIds2 {
     const val FAB = "fab_view"
     const val MAIN_CONTENT = "main_content_view"
     const val TOP_BAR = "top_bar_view"
+    const val ACTION_BAR = "action_bar_view"
 }
 
 @CombinedPreview
@@ -253,6 +314,7 @@ private fun CurrentPreview() {
             ExtractorOverviewScreen(
                 onHomeClick = {},
                 onHubClick = {},
+                onCollageItemClicked = { _, _ -> },
                 statusPillState = ExtractorStatusPillState.OutOfSync,
                 collageRecommendationState = CollageRecommendationState.Loading,
                 suggestedSearchUiModel = SuggestedSearchUiModel.Loading
