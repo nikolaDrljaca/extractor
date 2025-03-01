@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -76,14 +77,14 @@ fun ExtractorTopBar(
     ) {
         Column(
             modifier = Modifier
-//                .padding(
-//                    PaddingValues(
-//                        start = 8.dp,
-//                        end = 8.dp,
-//                        top = spacerHeight + topPadding,
-//                        bottom = 4.dp
-//                    )
-//                )
+                .padding(
+                    PaddingValues(
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = spacerHeight + topPadding,
+                        bottom = 4.dp
+                    )
+                )
         ) {
             Row(
                 modifier = Modifier
@@ -111,14 +112,15 @@ fun ExtractorTopBar(
 
 @Composable
 fun ExtractorTopBar(
-    modifier: Modifier = Modifier,
     onHubClick: () -> Unit,
     onHomeClick: () -> Unit,
+    modifier: Modifier = Modifier,
     statusPillState: ExtractorStatusPillState,
 ) {
     // Top bar
     Surface(
-        modifier = Modifier
+        modifier = Modifier,
+        shape = RoundedCornerShape(bottomEnd = 14.dp, bottomStart = 14.dp)
     ) {
         Row(
             modifier = Modifier

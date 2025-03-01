@@ -14,7 +14,7 @@ import com.drbrosdev.extractor.framework.navigation.animspec.createTransitionSpe
 import com.drbrosdev.extractor.framework.permission.ReadPermissionAccess
 import com.drbrosdev.extractor.ui.onboarding.ExtractorOnboardingNavTarget
 import com.drbrosdev.extractor.ui.permhandler.ExtractorPermissionRequestNavTarget
-import com.drbrosdev.extractor.ui.search.ExtractorOverviewNavTarget
+import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.DialogNavHost
 import dev.olshevski.navigation.reimagined.NavBackHandler

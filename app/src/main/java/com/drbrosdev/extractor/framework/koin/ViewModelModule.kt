@@ -14,7 +14,7 @@ import com.drbrosdev.extractor.ui.myalbum.ExtractorMyAlbumsViewModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
 import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
-import com.drbrosdev.extractor.ui.search.ExtractorOverviewViewModel
+import com.drbrosdev.extractor.ui.overview.ExtractorOverviewViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
 import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackViewModel
