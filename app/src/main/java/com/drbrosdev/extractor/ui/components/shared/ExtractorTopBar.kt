@@ -112,8 +112,8 @@ fun ExtractorTopBar(
 @Composable
 fun ExtractorTopBar(
     modifier: Modifier = Modifier,
+    onHubClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onAlbumsClick: () -> Unit,
     statusPillState: ExtractorStatusPillState,
 ) {
     // Top bar
@@ -128,7 +128,7 @@ fun ExtractorTopBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
-                onClick = onHomeClick,
+                onClick = onHubClick,
                 shape = RoundedCornerShape(14.dp)
             ) {
                 Column(
@@ -147,7 +147,7 @@ fun ExtractorTopBar(
             }
 
             Surface(
-                onClick = onAlbumsClick,
+                onClick = onHomeClick,
                 modifier = Modifier.size(48.dp),
                 shape = RoundedCornerShape(14.dp)
             ) {
@@ -173,8 +173,8 @@ private fun CurrentPreview() {
             ExtractorTopBar(
                 modifier = Modifier.fillMaxWidth(),
                 statusPillState = ExtractorStatusPillState.OutOfSync,
+                onHubClick = {},
                 onHomeClick = {},
-                onAlbumsClick = {},
             )
         }
     }

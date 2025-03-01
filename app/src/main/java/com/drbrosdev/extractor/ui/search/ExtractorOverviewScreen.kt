@@ -1,6 +1,9 @@
 package com.drbrosdev.extractor.ui.search
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,14 +48,19 @@ import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
 import com.drbrosdev.extractor.ui.components.usercollage.CollageRecommendationState
 import com.drbrosdev.extractor.ui.components.usercollage.CollageRecommendationsComponent
 import com.drbrosdev.extractor.ui.components.usercollage.ExtractorCollageItem
+import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
+import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
+import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun ExtractorSearchScreen2(
-    modifier: Modifier = Modifier,
+fun ExtractorOverviewScreen(
+    onHomeClick: () -> Unit,
+    onHubClick: () -> Unit,
     statusPillState: ExtractorStatusPillState,
     collageRecommendationState: CollageRecommendationState,
     suggestedSearchUiModel: SuggestedSearchUiModel
@@ -61,36 +69,36 @@ fun ExtractorSearchScreen2(
         modifier = Modifier
             .systemBarsPadding()
             .fillMaxSize(),
-        constraintSet = searchScreenConstraintSet()
+        constraintSet = overviewScreenConstraintSet()
     ) {
-        // scrollable content
+        //TODO scrollable content - CONVERT TO GRID -- make usage of the grid state
+        // ExtractorImageGrid!! -- gridState coupled with the multiselect bar
+        // [ExtractorAlbumViewerScreen.kt]
         LazyColumn(
             modifier = Modifier
                 .layoutId(ViewIds2.MAIN_CONTENT),
         ) {
             item { Spacer(Modifier.height(72.dp)) }
-            // search bar -- total rework
+
             item {
-                ExtractorSearchPill(
-                    onClick = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
+                Column {
+                    ExtractorSearchPill(
+                        onClick = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
+
+                    SuggestedSearches(
+                        suggestionUiModel = suggestedSearchUiModel
+                    )
+                }
             }
-            // suggest searches using keywords/algorithm
-            // that is used when generating albums based on most common keywords
-            // clicking these navigates to search and uses this to search
-            item {
-                SuggestedSearches(
-                    suggestionUiModel = suggestedSearchUiModel
-                )
-            }
+
             item { Spacer(Modifier.height(12.dp)) }
-            // suggestion-generated view of images similar to collage
-            // these are searched with the current chatgpt like search
-            // instead of displaying search suggestions - just search and display
+
             when (collageRecommendationState) {
+                // will have to split in two item { header } -> items(it.extractions) { GridItem }
                 is CollageRecommendationState.Content ->
                     items(collageRecommendationState.items) {
                         ExtractorCollageItem(
@@ -124,13 +132,15 @@ fun ExtractorSearchScreen2(
             item { Spacer(Modifier.height(36.dp)) }
         }
 
+        // TODO Add multiselectBar based state -> sealed either floater or multiselect
+
         // TODO hide when scrolling down - translate on y axis animation
         ExtractorTopBar(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .layoutId(ViewIds2.TOP_BAR),
-            onHomeClick = {},
-            onAlbumsClick = {},
+            onHubClick = onHubClick,
+            onHomeClick = onHomeClick,
             statusPillState = statusPillState
         )
 
@@ -148,12 +158,13 @@ fun ExtractorSearchScreen2(
     }
 }
 
-class ExtractorSearchViewModel2(
+class ExtractorOverviewViewModel(
     private val trackExtractionProgress: TrackExtractionProgress,
     private val compileSearchSuggestions: CompileSearchSuggestions,
     private val compileTextAlbums: CompileTextAlbums,
     private val dataStore: ExtractorDataStore,
     private val generateUserCollage: GenerateUserCollage,
+    private val navigators: Navigators
 ) : ViewModel() {
     val statusPillComponent = StatusPillComponent(
         coroutineScope = viewModelScope,
@@ -175,11 +186,14 @@ class ExtractorSearchViewModel2(
 }
 
 @Parcelize
-data object ExtractorSearchNavTarget2 : NavTarget {
+data object ExtractorOverviewNavTarget : NavTarget {
 
     @Composable
     override fun Content(navigators: Navigators) {
-        val viewModel: ExtractorSearchViewModel2 = koinViewModel()
+        val viewModel: ExtractorOverviewViewModel = koinViewModel(
+            viewModelStoreOwner = LocalActivity.current as ComponentActivity,
+            parameters = { parametersOf(navigators) }
+        )
 
         val statusPillState by viewModel.statusPillComponent.state
             .collectAsStateWithLifecycle()
@@ -188,7 +202,11 @@ data object ExtractorSearchNavTarget2 : NavTarget {
         val suggestedSearchUiModel by viewModel.suggestedSearchComponent.state
             .collectAsStateWithLifecycle()
 
-        ExtractorSearchScreen2(
+        val navController = navigators.navController
+
+        ExtractorOverviewScreen(
+            onHomeClick = { navController.navigate(ExtractorHomeNavTarget) },
+            onHubClick = { navController.navigate(ExtractorPurchaseSearchNavTarget) },
             statusPillState = statusPillState,
             collageRecommendationState = collageRecommendationState,
             suggestedSearchUiModel = suggestedSearchUiModel
@@ -196,8 +214,7 @@ data object ExtractorSearchNavTarget2 : NavTarget {
     }
 }
 
-
-private fun searchScreenConstraintSet() = ConstraintSet {
+private fun overviewScreenConstraintSet() = ConstraintSet {
     val topBar = createRefFor(ViewIds2.TOP_BAR)
     val mainContent = createRefFor(ViewIds2.MAIN_CONTENT)
     val fab = createRefFor(ViewIds2.FAB)
@@ -233,7 +250,9 @@ private object ViewIds2 {
 private fun CurrentPreview() {
     ExtractorTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            ExtractorSearchScreen2(
+            ExtractorOverviewScreen(
+                onHomeClick = {},
+                onHubClick = {},
                 statusPillState = ExtractorStatusPillState.OutOfSync,
                 collageRecommendationState = CollageRecommendationState.Loading,
                 suggestedSearchUiModel = SuggestedSearchUiModel.Loading

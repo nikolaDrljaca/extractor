@@ -10,6 +10,14 @@ sealed interface CollageRecommendationState {
 
     @Immutable
     data class Content(
-        val items: List<ExtractionCollage>
+        val items: List<ExtractionCollage>,
+        val onImageClick: (keyword: String, index: Int) -> Unit
     ) : CollageRecommendationState
+}
+
+fun CollageRecommendationState.findCollageByKeyword(keyword: String) = when (this) {
+    is CollageRecommendationState.Content -> items
+        .find { it.keyword.lowercase() == keyword.lowercase() }
+
+    else -> error("Accessing Collage items outside of content state.")
 }

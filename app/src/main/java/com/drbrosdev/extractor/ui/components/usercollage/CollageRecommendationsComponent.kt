@@ -25,7 +25,10 @@ class CollageRecommendationsComponent(
         .map {
             when {
                 it.isEmpty() -> CollageRecommendationState.Empty
-                else -> CollageRecommendationState.Content(it)
+                else -> CollageRecommendationState.Content(
+                    items = it,
+                    onImageClick = { keyword, index  ->  }
+                )
             }
         }
         .stateIn(
@@ -33,6 +36,4 @@ class CollageRecommendationsComponent(
             WhileUiSubscribed,
             CollageRecommendationState.Loading
         )
-
-
 }

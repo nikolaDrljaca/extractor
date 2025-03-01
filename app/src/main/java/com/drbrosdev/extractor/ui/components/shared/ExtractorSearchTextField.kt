@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.ui.components.shared
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -143,78 +142,42 @@ fun ExtractorSearchTextField(
     }
 }
 
-// TODO Redesign with a surface row icon text combo
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchPill(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    interactionSource: MutableInteractionSource = remember {
-        MutableInteractionSource()
-    },
-    textColor: Color = when {
-        isSystemInDarkTheme() -> Color.White
-        else -> Color.Black
-    },
+    modifier: Modifier = Modifier
 ) {
     val textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Light)
-    val backgroundColor = MaterialTheme.colorScheme.surfaceVariant
 
-    BasicTextField(
-        interactionSource = interactionSource,
+    Surface(
+        onClick = onClick,
         modifier = Modifier
-            .clickable { onClick() }
             .then(modifier),
-        value = "",
-        onValueChange = {},
-        keyboardOptions = KeyboardOptions(
-            autoCorrectEnabled = false,
-            imeAction = ImeAction.Search
-        ),
-        enabled = false,
-        minLines = 1,
-        maxLines = 1,
-        readOnly = false,
-        textStyle = textStyle.copy(color = textColor),
-        cursorBrush = SolidColor(textColor),
-        decorationBox = {
-            TextFieldDefaults.DecorationBox(
-                value = "",
-                innerTextField = it,
-                enabled = false,
-                singleLine = true,
-                shape = CircleShape,
-                visualTransformation = VisualTransformation.None,
-                interactionSource = interactionSource,
-                contentPadding = PaddingValues(),
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = backgroundColor,
-                    focusedContainerColor = backgroundColor,
-                    errorContainerColor = backgroundColor,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent,
-                    cursorColor = textColor,
-                    selectionColors = TextSelectionColors(
-                        backgroundColor = textColor.copy(alpha = 0.4f),
-                        handleColor = textColor
-                    ),
-                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-                    disabledContainerColor = backgroundColor,
-                    disabledTextColor = Color.Gray,
-                ),
-                leadingIcon = { Icon(Icons.Rounded.Search, "Search Icon") },
-                placeholder = {
-                    Text(
-                        text = stringResource(id = R.string.search_here),
-                        style = textStyle,
-                        color = textColor.copy(alpha = 0.5f)
-                    )
-                }
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(space = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                Icons.Rounded.Search,
+                "Search Icon",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Text(
+                text = stringResource(id = R.string.search_here),
+                style = textStyle,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-    )
+    }
+
 }
 
 @CombinedPreview

@@ -1,11 +1,16 @@
 package com.drbrosdev.extractor.ui.components.usercollage
 
-import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 
-// renders a list of extractions
-@Immutable
+// TODO Domain model -- MOVE
 data class ExtractionCollage(
     val keyword: String,
     val extractions: List<Extraction>
+)
+
+data class ExtractionCollageState(
+    val keyword: String,
+    val extractions: List<Extraction>,
+    val gridState: ExtractorGridState = ExtractorGridState()
 )
