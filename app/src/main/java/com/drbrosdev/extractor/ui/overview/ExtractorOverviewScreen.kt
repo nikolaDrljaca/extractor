@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,17 +41,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
+import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.components.shared.SyncInProgressDisplay
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchUiModel
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
-import com.drbrosdev.extractor.ui.components.usercollage.ExtractionCollage
 import com.drbrosdev.extractor.ui.components.usercollage.RecommendedSearchesState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
@@ -62,7 +61,7 @@ import com.drbrosdev.extractor.util.maxLineSpanItem
 fun ExtractorOverviewScreen(
     onHomeClick: () -> Unit,
     onHubClick: () -> Unit,
-    onCollageItemClicked: (entry: Extraction, collage: ExtractionCollage) -> Unit,
+    onMultiselectAction: (MultiselectAction) -> Unit,
     overviewState: OverviewGridState,
     statusPillState: ExtractorStatusPillState,
     collageRecommendationState: RecommendedSearchesState,
@@ -117,14 +116,14 @@ fun ExtractorOverviewScreen(
                             )
                         }
 
-                        items(it.extractions) { entry ->
+                        itemsIndexed(it.extractions) { index, entry ->
                             ExtractorImageItem(
                                 modifier = Modifier.animateItem(),
                                 imageUri = entry.uri.toUri(),
                                 size = 96,
                                 onClick = {
                                     if (overviewState.onToggleCheckedItem(entry.mediaImageId)) {
-                                        onCollageItemClicked(entry, it)
+                                        collageRecommendationState.onImageClick(it.keyword, index)
                                     }
                                 },
                                 checkedState = overviewState.gridState[entry.mediaImageId],
@@ -231,7 +230,7 @@ fun ExtractorOverviewScreen(
             exit = fadeOut()
         ) {
             ExtractorMultiselectActionBar(
-                onAction = {}
+                onAction = onMultiselectAction
             )
         }
     }
@@ -285,7 +284,7 @@ private fun CurrentPreview() {
             ExtractorOverviewScreen(
                 onHomeClick = {},
                 onHubClick = {},
-                onCollageItemClicked = { _, _ -> },
+                onMultiselectAction = {},
                 overviewState = OverviewGridState(),
                 statusPillState = ExtractorStatusPillState.OutOfSync,
                 collageRecommendationState = RecommendedSearchesState.SyncInProgress(12),

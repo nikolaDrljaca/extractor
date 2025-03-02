@@ -1,7 +1,11 @@
 package com.drbrosdev.extractor.ui.components.usercollage
 
+import android.net.Uri
 import androidx.compose.runtime.Immutable
+import com.drbrosdev.extractor.domain.model.MediaImageId
+import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.dialog.status.safeDiv
+import com.drbrosdev.extractor.util.panic
 
 // loading and content
 sealed class RecommendedSearchesState {
@@ -27,5 +31,12 @@ fun RecommendedSearchesState.findCollageByKeyword(keyword: String) = when (this)
     is RecommendedSearchesState.Content -> items
         .find { it.keyword.lowercase() == keyword.lowercase() }
 
-    else -> error("Accessing Collage items outside of content state.")
+    else -> panic("Accessing Collage items outside of content state.")
+}
+
+fun RecommendedSearchesState.getImageUris(): Map<MediaImageId, Uri> = when (this) {
+    is RecommendedSearchesState.Content -> items.flatMap { it.extractions }
+        .associate { it.mediaImageId to it.uri.toUri() }
+
+    else -> panic("Accessing Collage items outside of content state.")
 }

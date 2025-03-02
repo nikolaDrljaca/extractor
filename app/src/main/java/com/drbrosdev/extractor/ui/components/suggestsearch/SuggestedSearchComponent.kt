@@ -5,6 +5,7 @@ import com.drbrosdev.extractor.domain.model.SuggestedSearch
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.domain.usecase.suggestion.buildSuggestionScope
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
@@ -14,7 +15,7 @@ class SuggestedSearchComponent(
     private val coroutineScope: CoroutineScope,
     private val trackExtractionProgress: TrackExtractionProgress,
     private val compileSearchSuggestions: CompileSearchSuggestions,
-    private val onSearch: (SuggestedSearch) -> Unit
+    private val navigators: Navigators
 ) {
     private val suggestedSearchScope = buildSuggestionScope {
         visual(amount = 4)
@@ -37,4 +38,8 @@ class SuggestedSearchComponent(
             WhileUiSubscribed,
             SuggestedSearchUiModel.Loading
         )
+
+    private fun onSearch(suggestedSearch: SuggestedSearch) {
+
+    }
 }
