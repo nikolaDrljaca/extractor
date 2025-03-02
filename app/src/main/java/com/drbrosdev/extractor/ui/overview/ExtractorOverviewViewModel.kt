@@ -8,9 +8,10 @@ import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.framework.navigation.Navigators
+import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.components.statuspill.StatusPillComponent
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchComponent
-import com.drbrosdev.extractor.ui.components.usercollage.CollageRecommendationsComponent
+import com.drbrosdev.extractor.ui.components.usercollage.RecommendedSearchesComponent
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchNavTarget
 import dev.olshevski.navigation.reimagined.navigate
@@ -34,13 +35,17 @@ class ExtractorOverviewViewModel(
     val suggestedSearchComponent = SuggestedSearchComponent(
         coroutineScope = viewModelScope,
         compileSearchSuggestions = compileSearchSuggestions,
-        onSearch = {}
+        trackExtractionProgress = trackExtractionProgress,
+        onSearch = { suggestedSearch ->
+            // navigate to search screen
+        }
     )
 
-    val collageRecommendationComponent = CollageRecommendationsComponent(
+    val collageRecommendationComponent = RecommendedSearchesComponent(
         coroutineScope = viewModelScope,
         generateUserCollage = generateUserCollage,
-        compileTextAlbums = compileTextAlbums
+        compileTextAlbums = compileTextAlbums,
+        trackExtractionProgress = trackExtractionProgress
     )
 
     fun onHomeClick() {
@@ -49,5 +54,12 @@ class ExtractorOverviewViewModel(
 
     fun onHubClick() {
         navigators.navController.navigate(ExtractorPurchaseSearchNavTarget)
+    }
+
+    fun multiselectBarEventHandler(event: MultiselectAction) = when (event) {
+        MultiselectAction.Cancel -> Unit
+        MultiselectAction.CreateAlbum -> Unit
+        MultiselectAction.Delete -> Unit
+        MultiselectAction.Share -> Unit
     }
 }

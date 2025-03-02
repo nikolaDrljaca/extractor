@@ -10,6 +10,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -180,6 +183,13 @@ fun <T> CollectFlow(
             flow.collect(action)
         }
     }
+}
+
+fun LazyGridScope.maxLineSpanItem(
+    key: Any? = null,
+    content: @Composable LazyGridItemScope.() -> Unit
+) = item(span = { GridItemSpan(maxLineSpan) }, key = key) {
+    content()
 }
 
 @Composable

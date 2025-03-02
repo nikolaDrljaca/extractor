@@ -18,16 +18,16 @@ class StatusPillComponent(
         dataStore.searchCount
     ) { progress, count ->
         when (progress) {
+            is ExtractionStatus.Running -> ExtractorStatusPillState.SyncInProgress(
+                progress = progress.percentage
+            )
+
             is ExtractionStatus.Done -> {
                 when {
                     progress.isDataIncomplete -> ExtractorStatusPillState.OutOfSync
                     else -> ExtractorStatusPillState.Idle(searchesLeft = count)
                 }
             }
-
-            is ExtractionStatus.Running -> ExtractorStatusPillState.SyncInProgress(
-                progress = progress.percentage
-            )
         }
     }
         .stateIn(

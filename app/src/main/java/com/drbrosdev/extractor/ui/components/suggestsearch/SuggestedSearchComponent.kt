@@ -1,16 +1,18 @@
 package com.drbrosdev.extractor.ui.components.suggestsearch
 
+import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.SuggestedSearch
+import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.domain.usecase.suggestion.buildSuggestionScope
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class SuggestedSearchComponent(
     private val coroutineScope: CoroutineScope,
+    private val trackExtractionProgress: TrackExtractionProgress,
     private val compileSearchSuggestions: CompileSearchSuggestions,
     private val onSearch: (SuggestedSearch) -> Unit
 ) {
@@ -18,20 +20,21 @@ class SuggestedSearchComponent(
         visual(amount = 4)
         text(amount = 4)
     }
-    // state handler
-    val state = flowOf(compileSearchSuggestions)
-        .map { it.invoke(suggestedSearchScope) }
+
+    val state = trackExtractionProgress.invoke()
         .map {
-            SuggestedSearchUiModel.Content(
-                onSuggestionClick = ::onSearchClick,
-                suggestions = it
-            )
+            when (it) {
+                is ExtractionStatus.Running -> SuggestedSearchUiModel.Empty
+
+                is ExtractionStatus.Done -> SuggestedSearchUiModel.Content(
+                    onSuggestionClick = { o -> onSearch(o) },
+                    suggestions = compileSearchSuggestions.invoke(suggestedSearchScope)
+                )
+            }
         }
         .stateIn(
             coroutineScope,
             WhileUiSubscribed,
             SuggestedSearchUiModel.Loading
         )
-    // events
-    fun onSearchClick(suggestedSearch: SuggestedSearch) = onSearch(suggestedSearch)
 }

@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.ui.components.statuspill
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,12 +41,10 @@ fun ExtractorStatusPill(
         CompositionLocalProvider(
             LocalTextStyle provides MaterialTheme.typography.labelSmall
         ) {
-            AnimatedContent(targetState = state) {
-                when (it) {
-                    is ExtractorStatusPillState.Idle -> Text(text = "Searches left: ${it.searchesLeft}")
-                    ExtractorStatusPillState.OutOfSync -> Text(text = "Data out of sync.")
-                    is ExtractorStatusPillState.SyncInProgress -> Text(text = "Current progress: ${it.progress}%")
-                }
+            when (state) {
+                is ExtractorStatusPillState.Idle -> Text(text = "Searches left: ${state.searchesLeft}")
+                ExtractorStatusPillState.OutOfSync -> Text(text = "Data out of sync.")
+                is ExtractorStatusPillState.SyncInProgress -> Text(text = "Current progress: ${state.progress}%")
             }
         }
     }

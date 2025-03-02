@@ -45,8 +45,9 @@ fun SuggestedSearches(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(24.dp)
+                        .height(32.dp)
                         .padding(horizontal = 16.dp)
+                        .padding(top = 4.dp)
                         .clip(CircleShape)
                         .shimmer()
                 )
@@ -65,6 +66,8 @@ fun SuggestedSearches(
                         )
                     }
                 }
+
+            SuggestedSearchUiModel.Empty -> Unit
         }
     }
 }

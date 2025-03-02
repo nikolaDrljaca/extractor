@@ -28,8 +28,6 @@ data object ExtractorOverviewNavTarget : NavTarget {
         val suggestedSearchUiModel by viewModel.suggestedSearchComponent.state
             .collectAsStateWithLifecycle()
 
-        val navController = navigators.navController
-
         ExtractorOverviewScreen(
             onHomeClick = viewModel::onHomeClick,
             onHubClick = viewModel::onHubClick,

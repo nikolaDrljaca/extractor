@@ -6,6 +6,8 @@ import com.drbrosdev.extractor.domain.model.SuggestedSearch
 sealed interface SuggestedSearchUiModel {
     data object Loading: SuggestedSearchUiModel
 
+    data object Empty: SuggestedSearchUiModel
+
     @Immutable
     data class Content(
         val onSuggestionClick: (SuggestedSearch) -> Unit,

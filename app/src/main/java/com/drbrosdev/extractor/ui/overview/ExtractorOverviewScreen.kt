@@ -8,18 +8,22 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,25 +32,31 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
+import com.drbrosdev.extractor.ui.components.shared.SyncInProgressDisplay
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchUiModel
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
-import com.drbrosdev.extractor.ui.components.usercollage.CollageRecommendationState
 import com.drbrosdev.extractor.ui.components.usercollage.ExtractionCollage
+import com.drbrosdev.extractor.ui.components.usercollage.RecommendedSearchesState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 import com.drbrosdev.extractor.util.isScrollingUp
+import com.drbrosdev.extractor.util.maxLineSpanItem
 
 @Composable
 fun ExtractorOverviewScreen(
@@ -55,7 +65,7 @@ fun ExtractorOverviewScreen(
     onCollageItemClicked: (entry: Extraction, collage: ExtractionCollage) -> Unit,
     overviewState: OverviewGridState,
     statusPillState: ExtractorStatusPillState,
-    collageRecommendationState: CollageRecommendationState,
+    collageRecommendationState: RecommendedSearchesState,
     suggestedSearchUiModel: SuggestedSearchUiModel
 ) {
     ConstraintLayout(
@@ -72,8 +82,8 @@ fun ExtractorOverviewScreen(
             horizontalArrangement = Arrangement.spacedBy(1.dp),
             state = overviewState.gridState.lazyGridState
         ) {
-            item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.padding(top = 54.dp)) }
-            item(span = { GridItemSpan(maxLineSpan) }) { Spacer(Modifier.padding(top = 54.dp)) }
+            maxLineSpanItem { Spacer(Modifier.padding(top = 54.dp)) }
+            maxLineSpanItem { Spacer(Modifier.padding(top = 26.dp)) }
 
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Column {
@@ -93,7 +103,7 @@ fun ExtractorOverviewScreen(
             item { Spacer(Modifier.height(12.dp)) }
 
             when (collageRecommendationState) {
-                is CollageRecommendationState.Content -> {
+                is RecommendedSearchesState.Content -> {
                     collageRecommendationState.items.forEach {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Text(
@@ -126,24 +136,54 @@ fun ExtractorOverviewScreen(
                     }
                 }
 
-                // TODO
-                is CollageRecommendationState.Empty -> item {
+                is RecommendedSearchesState.Empty -> maxLineSpanItem {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.height(350.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("No recommendations found")
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(
+                                space = 12.dp,
+                                alignment = Alignment.CenterVertically
+                            ),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.outline_hide_image_24),
+                                contentDescription = "No result",
+                                tint = Color.Gray,
+                                modifier = Modifier
+                                    .size(64.dp)
+                            )
+                            Text(
+                                text = "Could not generate recommendations.",
+                                color = Color.Gray,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.width(IntrinsicSize.Max),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(24.dp))
+                        }
                     }
                 }
 
-                // TODO
-                is CollageRecommendationState.Loading -> item {
+                is RecommendedSearchesState.Loading -> maxLineSpanItem {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.height(250.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Loading")
+                        CircularProgressIndicator(
+                            trackColor = Color.Transparent
+                        )
                     }
+                }
+
+                is RecommendedSearchesState.SyncInProgress -> maxLineSpanItem {
+                    SyncInProgressDisplay(
+                        modifier = Modifier.size(350.dp),
+                        progress = { collageRecommendationState.asFloat },
+                        progressCount = { collageRecommendationState.progress }
+                    )
                 }
             }
             item { Spacer(Modifier.height(36.dp)) }
@@ -158,8 +198,7 @@ fun ExtractorOverviewScreen(
         ) {
             ExtractorTopBar(
                 modifier = Modifier
-                    .padding(top = 24.dp)
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 2.dp),
                 onHubClick = onHubClick,
                 onHomeClick = onHomeClick,
                 statusPillState = statusPillState
@@ -249,7 +288,7 @@ private fun CurrentPreview() {
                 onCollageItemClicked = { _, _ -> },
                 overviewState = OverviewGridState(),
                 statusPillState = ExtractorStatusPillState.OutOfSync,
-                collageRecommendationState = CollageRecommendationState.Loading,
+                collageRecommendationState = RecommendedSearchesState.SyncInProgress(12),
                 suggestedSearchUiModel = SuggestedSearchUiModel.Loading
             )
         }
