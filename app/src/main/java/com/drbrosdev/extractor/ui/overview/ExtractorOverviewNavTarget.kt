@@ -2,6 +2,9 @@ package com.drbrosdev.extractor.ui.overview
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -10,7 +13,12 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesEvents
+import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesState
+import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
+import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchUiModel
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CollectFlow
+import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchShareIntent
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
@@ -59,5 +67,24 @@ data object ExtractorOverviewNavTarget : NavTarget {
             suggestedSearchUiModel = suggestedSearchUiModel,
             overviewState = viewModel.recommendedSearchesComponent.overviewGridState
         )
+    }
+}
+
+@ScreenPreview
+@Composable
+private fun CurrentPreview() {
+    ExtractorTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ExtractorOverviewScreen(
+                onHomeClick = {},
+                onHubClick = {},
+                onMultiselectAction = {},
+                overviewState = OverviewGridState(),
+                statusPillState = ExtractorStatusPillState.OutOfSync,
+                collageRecommendationState = RecommendedSearchesState.SyncInProgress(12),
+                suggestedSearchUiModel = SuggestedSearchUiModel.Loading,
+                snackbarState = SnackbarHostState()
+            )
+        }
     }
 }

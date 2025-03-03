@@ -296,21 +296,3 @@ private object ViewIds {
     const val ACTION_BAR = "action_bar_view"
 }
 
-@CombinedPreview
-@Composable
-private fun CurrentPreview() {
-    ExtractorTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            ExtractorOverviewScreen(
-                onHomeClick = {},
-                onHubClick = {},
-                onMultiselectAction = {},
-                overviewState = OverviewGridState(),
-                statusPillState = ExtractorStatusPillState.OutOfSync,
-                collageRecommendationState = RecommendedSearchesState.SyncInProgress(12),
-                suggestedSearchUiModel = SuggestedSearchUiModel.Loading,
-                snackbarState = SnackbarHostState()
-            )
-        }
-    }
-}

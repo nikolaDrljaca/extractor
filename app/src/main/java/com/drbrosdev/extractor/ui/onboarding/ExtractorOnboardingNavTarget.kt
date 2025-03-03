@@ -8,7 +8,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.framework.permission.PermissionService
-import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
+import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
 import dev.olshevski.navigation.reimagined.replaceAll
@@ -54,7 +54,7 @@ object ExtractorOnboardingNavTarget : NavTarget {
 
                     OnboardingEvents.StartWorker -> {
                         viewModel.finishOnboarding()
-                        navController.replaceAll(ExtractorSearchNavTarget)
+                        navController.replaceAll(ExtractorOverviewNavTarget)
                     }
                 }
             },
