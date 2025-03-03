@@ -27,6 +27,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,15 +45,16 @@ import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
+import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesState
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.components.shared.SyncInProgressDisplay
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchUiModel
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
-import com.drbrosdev.extractor.ui.components.usercollage.RecommendedSearchesState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 import com.drbrosdev.extractor.util.isScrollingUp
@@ -62,6 +65,7 @@ fun ExtractorOverviewScreen(
     onHomeClick: () -> Unit,
     onHubClick: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
+    snackbarState: SnackbarHostState,
     overviewState: OverviewGridState,
     statusPillState: ExtractorStatusPillState,
     collageRecommendationState: RecommendedSearchesState,
@@ -233,6 +237,14 @@ fun ExtractorOverviewScreen(
                 onAction = onMultiselectAction
             )
         }
+
+        SnackbarHost(
+            hostState = snackbarState,
+            modifier = Modifier
+                .layoutId(ViewIds.SNACKBAR)
+        ) {
+            ExtractorSnackbar(it)
+        }
     }
 }
 
@@ -241,6 +253,7 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
     val mainContent = createRefFor(ViewIds.MAIN_CONTENT)
     val fab = createRefFor(ViewIds.FAB)
     val actionBar = createRefFor(ViewIds.ACTION_BAR)
+    val snackbar = createRefFor(ViewIds.SNACKBAR)
 
     constrain(topBar) {
         start.linkTo(parent.start)
@@ -261,6 +274,12 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
         bottom.linkTo(parent.bottom, margin = 32.dp)
     }
 
+    constrain(snackbar) {
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+        bottom.linkTo(fab.top, margin = 8.dp)
+    }
+
     constrain(actionBar) {
         start.linkTo(parent.start, margin = 16.dp)
         end.linkTo(parent.end, margin = 16.dp)
@@ -270,6 +289,7 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
 }
 
 private object ViewIds {
+    const val SNACKBAR = "snackbar_view"
     const val FAB = "fab_view"
     const val MAIN_CONTENT = "main_content_view"
     const val TOP_BAR = "top_bar_view"
@@ -288,7 +308,8 @@ private fun CurrentPreview() {
                 overviewState = OverviewGridState(),
                 statusPillState = ExtractorStatusPillState.OutOfSync,
                 collageRecommendationState = RecommendedSearchesState.SyncInProgress(12),
-                suggestedSearchUiModel = SuggestedSearchUiModel.Loading
+                suggestedSearchUiModel = SuggestedSearchUiModel.Loading,
+                snackbarState = SnackbarHostState()
             )
         }
     }

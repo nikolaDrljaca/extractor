@@ -1,18 +1,23 @@
-package com.drbrosdev.extractor.ui.components.usercollage
+package com.drbrosdev.extractor.ui.components.recommendsearch
 
-import android.net.Uri
 import androidx.compose.runtime.Stable
+import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
+import com.drbrosdev.extractor.domain.model.KeywordType
+import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.toUri
+import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeys
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
+import com.drbrosdev.extractor.domain.model.ExtractionCollage
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.overview.OverviewGridState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
+import com.drbrosdev.extractor.util.asAlbumName
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +30,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-data class ShareImagesEvent(val uris: List<Uri>)
+import java.time.LocalDateTime
 
 @Stable
 class RecommendedSearchesComponent(
@@ -34,6 +38,7 @@ class RecommendedSearchesComponent(
     private val trackExtractionProgress: TrackExtractionProgress,
     private val generateUserCollage: GenerateUserCollage,
     private val compileTextAlbums: CompileTextAlbums,
+    private val createAlbum: suspend (NewAlbum) -> Unit,
     private val navigators: Navigators
 ) {
     private val recommendation = flowOf(compileTextAlbums)
@@ -46,15 +51,16 @@ class RecommendedSearchesComponent(
         }
     private val progress = trackExtractionProgress.invoke()
 
-    private val eventBus = Channel<ShareImagesEvent>()
+    private val eventBus = Channel<RecommendedSearchesEvents>()
     val events = eventBus.receiveAsFlow()
 
     val overviewGridState = OverviewGridState()
 
     val state = combine(
         recommendation,
-        progress
-    ) { content, progress -> transformState(content, progress) }
+        progress,
+        transform = { content, progress -> transformState(content, progress) }
+    )
         .stateIn(
             coroutineScope,
             WhileUiSubscribed,
@@ -63,9 +69,22 @@ class RecommendedSearchesComponent(
 
     fun multiselectBarEventHandler(event: MultiselectAction) {
         when (event) {
+            // Not supported here
             MultiselectAction.Delete -> Unit
-            // TODO
-            MultiselectAction.CreateAlbum -> Unit
+
+            MultiselectAction.CreateAlbum -> coroutineScope.launch {
+                withContext(Dispatchers.Default) {
+                    // retrieve from checked items
+                    val extractions = overviewGridState.gridState.checkedKeys()
+                        .mapNotNull { state.value.getImageUris()[it] }
+                    // create album
+                    createNewAlbum(extractions)
+                    // clear selection
+                    overviewGridState.gridState.clearSelection()
+                    // send event
+                    eventBus.send(RecommendedSearchesEvents.AlbumCreated)
+                }
+            }
 
             MultiselectAction.Cancel -> overviewGridState.gridState.clearSelection()
 
@@ -73,7 +92,9 @@ class RecommendedSearchesComponent(
                 withContext(Dispatchers.Default) {
                     val indices = overviewGridState.gridState.checkedKeys()
                         .mapNotNull { state.value.getImageUris()[it] }
-                    eventBus.send(ShareImagesEvent(indices))
+                        .map { it.uri.toUri() }
+                    eventBus.send(RecommendedSearchesEvents.ShareImages(indices))
+                    overviewGridState.gridState.clearSelection()
                 }
             }
         }
@@ -106,4 +127,26 @@ class RecommendedSearchesComponent(
                 )
             )
         }
+
+    private suspend fun createNewAlbum(extractions: List<Extraction>) {
+        if (extractions.isEmpty()) return
+        // create album
+        val name = LocalDateTime.now()
+            .asAlbumName()
+        val keyword = state.value.keywords().first()
+        val newAlbum = NewAlbum(
+            name = name,
+            keyword = keyword,
+            searchType = SearchType.PARTIAL,
+            keywordType = KeywordType.TEXT,
+            origin = NewAlbum.Origin.USER_GENERATED,
+            entries = extractions.map {
+                NewAlbum.Entry(
+                    uri = it.uri,
+                    id = it.mediaImageId
+                )
+            }
+        )
+        createAlbum(newAlbum)
+    }
 }

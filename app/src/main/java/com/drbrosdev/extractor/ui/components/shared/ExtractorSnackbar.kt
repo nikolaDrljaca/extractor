@@ -13,7 +13,6 @@ fun ExtractorSnackbar(
     snackbarData: SnackbarData,
     modifier: Modifier = Modifier,
 ) {
-
     Snackbar(
         snackbarData = snackbarData,
         modifier = Modifier.then(modifier),

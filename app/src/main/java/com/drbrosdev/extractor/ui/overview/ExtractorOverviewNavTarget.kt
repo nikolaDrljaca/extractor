@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
+import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesEvents
 import com.drbrosdev.extractor.util.CollectFlow
 import com.drbrosdev.extractor.util.launchShareIntent
 import kotlinx.parcelize.Parcelize
@@ -34,13 +36,24 @@ data object ExtractorOverviewNavTarget : NavTarget {
         val context = LocalContext.current
 
         CollectFlow(viewModel.recommendedSearchesComponent.events) {
-            context.launchShareIntent(it.uris)
+            when (it) {
+                RecommendedSearchesEvents.AlbumCreated -> {
+                    viewModel.showAlbumCreatedSnack(
+                        message = context.getString(R.string.album_created),
+                        actionLabel = context.getString(R.string.snack_view),
+                    )
+                }
+
+                is RecommendedSearchesEvents.ShareImages ->
+                    context.launchShareIntent(it.uris)
+            }
         }
 
         ExtractorOverviewScreen(
             onHomeClick = viewModel::onHomeClick,
             onHubClick = viewModel::onHubClick,
             onMultiselectAction = viewModel.recommendedSearchesComponent::multiselectBarEventHandler,
+            snackbarState = viewModel.snackbarHostState,
             statusPillState = statusPillState,
             collageRecommendationState = collageRecommendationState,
             suggestedSearchUiModel = suggestedSearchUiModel,

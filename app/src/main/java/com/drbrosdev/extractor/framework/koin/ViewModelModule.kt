@@ -12,9 +12,9 @@ import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.myalbum.ExtractorMyAlbumsViewModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
+import com.drbrosdev.extractor.ui.overview.ExtractorOverviewViewModel
 import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
-import com.drbrosdev.extractor.ui.overview.ExtractorOverviewViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
 import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackViewModel
@@ -34,6 +34,7 @@ val viewModelModule = module {
             compileTextAlbums = get(),
             dataStore = get(),
             generateUserCollage = get(),
+            albumRepository = get<DefaultAlbumRepository>(),
             navigators = it.get()
         )
     }

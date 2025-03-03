@@ -9,7 +9,7 @@ import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.token.isValidSearchToken
-import com.drbrosdev.extractor.ui.components.usercollage.ExtractionCollage
+import com.drbrosdev.extractor.domain.model.ExtractionCollage
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.toList
 
