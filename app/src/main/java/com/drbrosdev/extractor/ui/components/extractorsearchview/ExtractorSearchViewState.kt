@@ -90,7 +90,6 @@ fun ExtractorSearchViewState.isNotBlank(): Boolean {
     return !isBlank()
 }
 
-
 @Composable
 fun rememberExtractorSearchViewState(
     initialQuery: String,

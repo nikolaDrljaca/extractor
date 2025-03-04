@@ -84,7 +84,7 @@ class ExtractorDateFilterState(
     }
 
     companion object {
-        fun Saver() = listSaver<ExtractorDateFilterState, Long?>(
+        fun Saver() = listSaver(
             save = {
                 val start = it.startDate.getOrNull()
                 val end = it.endDate.getOrNull()

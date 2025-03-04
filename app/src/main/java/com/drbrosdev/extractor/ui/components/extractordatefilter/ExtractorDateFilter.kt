@@ -68,16 +68,16 @@ fun ExtractorDateFilter(
 
     val startContentColor by animateColorAsState(
         targetValue = when (state.startDate) {
-            None -> MaterialTheme.colorScheme.onPrimary
-            is Some -> Color.White
+            None -> MaterialTheme.colorScheme.onSurface
+            is Some -> MaterialTheme.colorScheme.onPrimary
         },
         label = ""
     )
 
     val endContentColor by animateColorAsState(
         targetValue = when (state.endDate) {
-            None -> MaterialTheme.colorScheme.onPrimary
-            is Some -> Color.White
+            None -> MaterialTheme.colorScheme.onSurface
+            is Some -> MaterialTheme.colorScheme.onPrimary
         },
         label = ""
     )
@@ -85,15 +85,15 @@ fun ExtractorDateFilter(
     val startCardColor by animateColorAsState(
         targetValue = when (state.startDate) {
             None -> Color.Transparent
-            is Some -> Color.Black
+            is Some -> MaterialTheme.colorScheme.primary
         },
         label = ""
     )
 
     val startCardBorderColor by animateColorAsState(
         targetValue = when (state.startDate) {
-            None -> MaterialTheme.colorScheme.onPrimary
-            is Some -> Color.Black
+            None -> MaterialTheme.colorScheme.onSurface
+            is Some -> MaterialTheme.colorScheme.primary
         },
         label = ""
     )
@@ -101,15 +101,15 @@ fun ExtractorDateFilter(
     val endCardColor by animateColorAsState(
         targetValue = when (state.endDate) {
             None -> Color.Transparent
-            is Some -> Color.Black
+            is Some -> MaterialTheme.colorScheme.primary
         },
         label = ""
     )
 
     val endCardBorderColor by animateColorAsState(
         targetValue = when (state.endDate) {
-            None -> MaterialTheme.colorScheme.onPrimary
-            is Some -> Color.Black
+            None -> MaterialTheme.colorScheme.onSurface
+            is Some -> MaterialTheme.colorScheme.primary
         },
         label = ""
     )
@@ -156,7 +156,7 @@ fun ExtractorDateFilter(
             Spacer(modifier = Modifier.width(4.dp))
 
             Surface(
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
                 onClick = {
                     state.clearDates()
                     onDateChanged()
@@ -169,7 +169,7 @@ fun ExtractorDateFilter(
                 Icon(
                     imageVector = Icons.Rounded.Refresh,
                     contentDescription = "Refresh",
-                    tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                     modifier = Modifier.padding(12.dp)
                 )
             }
@@ -242,13 +242,15 @@ private fun ExtractorDateFilterCard(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
-        Column {
-            ExtractorDateFilter(
-                state = ExtractorDateFilterState(
-                    initStart = Some(1L)
-                ),
-                onDateChanged = {},
-            )
+        Surface {
+            Column {
+                ExtractorDateFilter(
+                    state = ExtractorDateFilterState(
+                        initStart = Some(1L)
+                    ),
+                    onDateChanged = {},
+                )
+            }
         }
     }
 }

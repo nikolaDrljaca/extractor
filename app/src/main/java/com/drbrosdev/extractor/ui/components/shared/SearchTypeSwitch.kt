@@ -15,15 +15,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.asStringRes
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
-fun ExtractorSearchTypeSwitch(
+fun SearchTypeSwitch(
     modifier: Modifier = Modifier,
-    contentColor: Color = Color.White,
     selection: SearchType,
     onSelectionChanged: (SearchType) -> Unit,
     enabled: Boolean = true,
@@ -33,8 +33,9 @@ fun ExtractorSearchTypeSwitch(
         Text(
             text = stringResource(id = R.string.match_keyword),
             style = MaterialTheme.typography.titleLarge.copy(
-                color = contentColor,
-                fontWeight = FontWeight.Normal
+                color = MaterialTheme.colorScheme.onSurface,
+                fontWeight = FontWeight.Normal,
+                fontSize = 20.sp
             )
         )
 
@@ -55,18 +56,19 @@ fun ExtractorSearchTypeSwitch(
                     enabled = enabled,
                     colors = FilterChipDefaults.filterChipColors(
                         containerColor = Color.Transparent,
-                        selectedContainerColor = Color.Black,
-                        selectedLabelColor = Color.White,
-                        labelColor = contentColor,
-                        selectedLeadingIconColor = Color.White,
-                        iconColor = contentColor,
-                        disabledContainerColor = Color.Transparent,
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
+                        labelColor = MaterialTheme.colorScheme.onSurface,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        iconColor = MaterialTheme.colorScheme.onSurface,
+                        selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
                         disabledLabelColor = Color.Gray,
+                        disabledLeadingIconColor = Color.Gray,
+                        disabledContainerColor = Color.Transparent
                     ),
                     border = FilterChipDefaults.filterChipBorder(
                         enabled = enabled,
                         selected = selection == item,
-                        borderColor = contentColor,
+                        borderColor = MaterialTheme.colorScheme.onSurface,
                         disabledBorderColor = Color.Gray,
                         disabledSelectedBorderColor = Color.Gray
                     )
@@ -80,7 +82,7 @@ fun ExtractorSearchTypeSwitch(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme {
-        ExtractorSearchTypeSwitch(
+        SearchTypeSwitch(
             selection = SearchType.PARTIAL,
             onSelectionChanged = {}
         )

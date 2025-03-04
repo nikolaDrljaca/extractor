@@ -1,15 +1,17 @@
 package com.drbrosdev.extractor.ui.components.searchsheet
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.saveable
+import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
 import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
 import com.drbrosdev.extractor.ui.components.extractordatefilter.isEmpty
 import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
 
-
-class ExtractorSearchSheetState(
-    private val eventHandler: (ExtractorSearchSheetEvents) -> Unit,
+@Stable
+class ExtractorSearchSheetComponent(
+    private val eventHandler: (ExtractorSearchSheetEvent) -> Unit,
     private val stateHandle: SavedStateHandle
 ) {
     val searchViewState = stateHandle.saveable(
@@ -28,8 +30,8 @@ class ExtractorSearchSheetState(
 
     fun onSearch() {
         eventHandler(
-            ExtractorSearchSheetEvents.OnSearchClick(
-                data = ExtractorSearchSheetEvents.SheetData(
+            ExtractorSearchSheetEvent.OnSearch(
+                params = ImageSearchParams(
                     dateRange = null,
                     query = searchViewState.query,
                     keywordType = searchViewState.keywordType,
@@ -42,8 +44,8 @@ class ExtractorSearchSheetState(
     fun onDateChange() {
         if (dateFilterState.isEmpty()) {
             eventHandler(
-                ExtractorSearchSheetEvents.OnDateChange(
-                    data = ExtractorSearchSheetEvents.SheetData(
+                ExtractorSearchSheetEvent.OnDateChange(
+                    params = ImageSearchParams(
                         dateRange = null,
                         query = searchViewState.query,
                         keywordType = searchViewState.keywordType,
@@ -55,8 +57,8 @@ class ExtractorSearchSheetState(
         }
         dateFilterState.dateRange()?.let {
             eventHandler(
-                ExtractorSearchSheetEvents.OnDateChange(
-                    data = ExtractorSearchSheetEvents.SheetData(
+                ExtractorSearchSheetEvent.OnDateChange(
+                    params = ImageSearchParams(
                         dateRange = it,
                         query = searchViewState.query,
                         keywordType = searchViewState.keywordType,
@@ -69,8 +71,8 @@ class ExtractorSearchSheetState(
 
     fun onChange() {
         eventHandler(
-            ExtractorSearchSheetEvents.OnChange(
-                data = ExtractorSearchSheetEvents.SheetData(
+            ExtractorSearchSheetEvent.OnChange(
+                params = ImageSearchParams(
                     dateRange = dateFilterState.dateRange(),
                     query = searchViewState.query,
                     keywordType = searchViewState.keywordType,

@@ -1,21 +1,17 @@
 package com.drbrosdev.extractor.ui.components.extractorsearchview
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,7 +21,7 @@ import com.drbrosdev.extractor.ui.components.extractorlabelfilter.KeywordTypeChi
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toChipDataIndex
 import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toKeywordType
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTextField
-import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTypeSwitch
+import com.drbrosdev.extractor.ui.components.shared.SearchTypeSwitch
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.KeyboardState
 import com.drbrosdev.extractor.util.rememberKeyboardState
@@ -38,10 +34,8 @@ fun ExtractorSearchView(
     onKeywordTypeChange: () -> Unit,
     onSearchTypeChange: () -> Unit,
     modifier: Modifier = Modifier,
-    isHidden: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(16.dp),
 ) {
-    val alphaOffset by animateFloatAsState(targetValue = if (isHidden) 0f else 1f, label = "")
     val interactionSource = remember { MutableInteractionSource() }
     val focusManager = LocalFocusManager.current
     val keyboardState = rememberKeyboardState()
@@ -59,55 +53,43 @@ fun ExtractorSearchView(
         }
     }
 
-    Surface(
+    Column(
         modifier = Modifier
-            .then(modifier),
-        shape = RoundedCornerShape(14.dp),
-        color = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-        shadowElevation = 0.dp
+            .then(modifier)
+            .padding(contentPadding),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(contentPadding),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            ExtractorSearchTextField(
-                text = state.query,
-                onChange = state::updateQuery,
-                onDoneSubmit = onDone,
-                textColor = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                interactionSource = interactionSource,
+        ExtractorSearchTextField(
+            text = state.query,
+            onChange = state::updateQuery,
+            onDoneSubmit = onDone,
+            textColor = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxWidth(),
+            interactionSource = interactionSource,
+            enabled = !state.disabled
+        )
+
+        Column {
+            KeywordTypeChips(
+                onFilterChanged = {
+                    val keywordType = it.toKeywordType()
+                    state.updateKeywordType(keywordType)
+                    onKeywordTypeChange()
+                },
+                selection = state.keywordType.toChipDataIndex(),
                 enabled = !state.disabled
             )
 
-            Column(
-                modifier = Modifier.graphicsLayer {
-                    alpha = alphaOffset
-                }
-            ) {
-                KeywordTypeChips(
-                    onFilterChanged = {
-                        val keywordType = it.toKeywordType()
-                        state.updateKeywordType(keywordType)
-                        onKeywordTypeChange()
-                    },
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    selection = state.keywordType.toChipDataIndex(),
-                    enabled = !state.disabled
-                )
-
-                ExtractorSearchTypeSwitch(
-                    selection = state.searchType,
-                    onSelectionChanged = {
-                        state.updateSearchType(it)
-                        onSearchTypeChange()
-                    },
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    enabled = !state.disabled
-                )
-            }
+            SearchTypeSwitch(
+                selection = state.searchType,
+                onSelectionChanged = {
+                    state.updateSearchType(it)
+                    onSearchTypeChange()
+                },
+                enabled = !state.disabled
+            )
         }
     }
 }
@@ -117,16 +99,18 @@ fun ExtractorSearchView(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
-        ExtractorSearchView(
-            onDone = {},
-            state = ExtractorSearchViewState(
-                "",
-                KeywordType.ALL,
-                SearchType.PARTIAL,
-                initialIsDisabled = true,
-            ),
-            onKeywordTypeChange = {},
-            onSearchTypeChange = {}
-        )
+        Surface {
+            ExtractorSearchView(
+                onDone = {},
+                state = ExtractorSearchViewState(
+                    "",
+                    KeywordType.ALL,
+                    SearchType.PARTIAL,
+                    initialIsDisabled = true,
+                ),
+                onKeywordTypeChange = {},
+                onSearchTypeChange = {}
+            )
+        }
     }
 }

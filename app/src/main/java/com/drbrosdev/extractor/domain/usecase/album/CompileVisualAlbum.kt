@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase.album
 
+import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
@@ -30,13 +31,13 @@ class CompileVisualAlbum(
         generateMostCommonTokens.invoke(tokens)
             .map {
                 val topWord = it.text
-                val params = SearchImageByQuery.Params(
+                val imageSearchParams = ImageSearchParams(
                     query = topWord,
                     keywordType = KeywordType.IMAGE,
-                    type = SearchType.PARTIAL,
+                    searchType = SearchType.PARTIAL,
                     dateRange = null
                 )
-                val result = searchImageByQuery.execute(params)
+                val result = searchImageByQuery.execute(imageSearchParams)
                 buildNewAlbumPayload(result, topWord)
             }
             .filter { (embeds, _) -> embeds.isNotEmpty() }

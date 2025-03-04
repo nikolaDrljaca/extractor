@@ -10,6 +10,7 @@ import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.token.isValidSearchToken
 import com.drbrosdev.extractor.domain.model.ExtractionCollage
+import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.toList
 
@@ -47,13 +48,13 @@ class CompileTextAlbums(
         return generateMostCommonTokens(tokens, amount)
             .map {
                 val topWord = it.text
-                val params = SearchImageByQuery.Params(
+                val imageSearchParams = ImageSearchParams(
                     query = topWord,
                     keywordType = KeywordType.TEXT,
-                    type = SearchType.PARTIAL,
+                    searchType = SearchType.PARTIAL,
                     dateRange = null
                 )
-                topWord to searchImageByQuery.execute(params)
+                topWord to searchImageByQuery.execute(imageSearchParams)
             }
             .filter { (embeddings, _) -> embeddings.isNotEmpty() }
     }

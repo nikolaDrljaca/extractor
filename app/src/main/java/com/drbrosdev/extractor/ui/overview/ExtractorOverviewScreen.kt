@@ -29,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -55,8 +54,6 @@ import com.drbrosdev.extractor.ui.components.shared.SyncInProgressDisplay
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchUiModel
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.util.CombinedPreview
 import com.drbrosdev.extractor.util.isScrollingUp
 import com.drbrosdev.extractor.util.maxLineSpanItem
 
@@ -64,6 +61,7 @@ import com.drbrosdev.extractor.util.maxLineSpanItem
 fun ExtractorOverviewScreen(
     onHomeClick: () -> Unit,
     onHubClick: () -> Unit,
+    onSearchClick: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
     snackbarState: SnackbarHostState,
     overviewState: OverviewGridState,
@@ -91,7 +89,7 @@ fun ExtractorOverviewScreen(
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Column {
                     ExtractorSearchPill(
-                        onClick = {},
+                        onClick = onSearchClick,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
@@ -216,7 +214,7 @@ fun ExtractorOverviewScreen(
             exit = fadeOut()
         ) {
             FloatingActionButton(
-                onClick = {},
+                onClick = onSearchClick,
                 modifier = Modifier
             ) {
                 Icon(

@@ -1,15 +1,12 @@
 package com.drbrosdev.extractor.ui.components.shared
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,11 +30,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
-@Deprecated("")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchTextField(
@@ -48,13 +45,10 @@ fun ExtractorSearchTextField(
     interactionSource: MutableInteractionSource = remember {
         MutableInteractionSource()
     },
-    textColor: Color = when {
-        isSystemInDarkTheme() -> Color.White
-        else -> Color.Black
-    },
+    textColor: Color = MaterialTheme.colorScheme.onSurface,
     enabled: Boolean = true
 ) {
-    val textStyle = MaterialTheme.typography.titleLarge
+    val textStyle = MaterialTheme.typography.titleLarge.copy(fontSize = 24.sp)
 
     val placeholderText = when {
         enabled -> stringResource(id = R.string.search_here)
@@ -71,11 +65,12 @@ fun ExtractorSearchTextField(
         BasicTextField(
             interactionSource = interactionSource,
             modifier = Modifier
+                .padding(vertical = 4.dp)
                 .weight(1f),
             value = text,
             onValueChange = onChange,
             keyboardOptions = KeyboardOptions(
-                autoCorrect = false,
+                autoCorrectEnabled = false,
                 imeAction = ImeAction.Search
             ),
             keyboardActions = KeyboardActions(
@@ -84,7 +79,8 @@ fun ExtractorSearchTextField(
             ),
             enabled = enabled,
             minLines = 1,
-            maxLines = 2,
+            maxLines = 1,
+            singleLine = true,
             readOnly = false,
             textStyle = textStyle.copy(color = textColor),
             cursorBrush = SolidColor(textColor),
@@ -93,7 +89,7 @@ fun ExtractorSearchTextField(
                     value = text,
                     innerTextField = it,
                     enabled = enabled,
-                    singleLine = false,
+                    singleLine = true,
                     visualTransformation = VisualTransformation.None,
                     interactionSource = interactionSource,
                     contentPadding = PaddingValues(),
@@ -112,7 +108,7 @@ fun ExtractorSearchTextField(
                         ),
                         focusedTextColor = MaterialTheme.colorScheme.onPrimary,
                         disabledContainerColor = Color.Transparent,
-                        disabledTextColor = Color.Gray,
+                        disabledTextColor = textColor.copy(alpha = 0.5f),
                     ),
                     placeholder = {
                         Text(
@@ -124,21 +120,6 @@ fun ExtractorSearchTextField(
                 )
             }
         )
-
-        Surface(
-            color = textColor.copy(alpha = 0.2f),
-            onClick = onDoneSubmit,
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.size(48.dp),
-            enabled = enabled
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Search,
-                contentDescription = "Search Images",
-                tint = textColor.copy(alpha = 0.5f),
-                modifier = Modifier.padding(8.dp)
-            )
-        }
     }
 }
 

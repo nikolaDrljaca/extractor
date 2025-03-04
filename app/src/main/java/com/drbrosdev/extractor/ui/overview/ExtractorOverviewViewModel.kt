@@ -17,6 +17,7 @@ import com.drbrosdev.extractor.ui.components.statuspill.StatusPillComponent
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchComponent
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchNavTarget
+import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.launch
 
@@ -74,5 +75,9 @@ class ExtractorOverviewViewModel(
             SnackbarResult.ActionPerformed ->
                 navigators.navController.navigate(ExtractorHomeNavTarget)
         }
+    }
+
+    fun onSearchClick() {
+        navigators.navController.navigate(ExtractorSearchNavTarget())
     }
 }

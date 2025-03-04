@@ -24,7 +24,7 @@ fun createTransitionSpec(density: Density) = NavTransitionSpec<NavTarget?> { act
         // handle transitions for GetMore Screen
         handleGetMore(from, to) -> fadeThrough
 
-        else -> default
+        else -> fadeThrough
     }
 }
 
@@ -49,7 +49,6 @@ private fun createDefaultTransition(
         else -> SharedXAxisEnterTransition(density) togetherWith SharedXAxisExitTransition(density)
     }
 }
-
 
 private fun goingFromImageViewer(from: NavTarget?, to: NavTarget?): Boolean {
     val goingFrom = from is ExtractorImageViewerNavTarget

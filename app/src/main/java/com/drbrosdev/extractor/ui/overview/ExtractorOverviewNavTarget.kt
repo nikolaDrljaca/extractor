@@ -60,6 +60,7 @@ data object ExtractorOverviewNavTarget : NavTarget {
         ExtractorOverviewScreen(
             onHomeClick = viewModel::onHomeClick,
             onHubClick = viewModel::onHubClick,
+            onSearchClick = viewModel::onSearchClick,
             onMultiselectAction = viewModel.recommendedSearchesComponent::multiselectBarEventHandler,
             snackbarState = viewModel.snackbarHostState,
             statusPillState = statusPillState,
@@ -78,6 +79,7 @@ private fun CurrentPreview() {
             ExtractorOverviewScreen(
                 onHomeClick = {},
                 onHubClick = {},
+                onSearchClick = {},
                 onMultiselectAction = {},
                 overviewState = OverviewGridState(),
                 statusPillState = ExtractorStatusPillState.OutOfSync,
