@@ -24,7 +24,6 @@ fun ExtractorSearchSheet(
     modifier: Modifier = Modifier,
     component: ExtractorSearchSheetComponent,
 ) {
-
     Surface(
         modifier = Modifier
             .then(modifier),

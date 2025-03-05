@@ -21,8 +21,6 @@ import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetCom
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetEvent
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -47,15 +45,12 @@ class ExtractorSearchViewModel(
         eventHandler = ::searchSheetEventHandler
     )
 
+    val searchResultComponent = SearchResultComponent(
+        coroutineScope = viewModelScope,
+        searchImages = imageSearch
+    )
+
     val snackbarHostState = SnackbarHostState()
-
-    private val _searchTrigger = MutableSharedFlow<SearchTrigger>()
-    private val _searchTriggerResult = _searchTrigger
-        // suppress emission of SearchTrigger.Params values that are the same
-        .distinctUntilChanged { old, new -> distinctSearchTrigger(old, new) }
-        // map into appropriate calls -> loading -> search or generateSuggestions
-//        .flatMapLatest { searchTriggerProcessFlow(it) }
-
 
     private val _events = Channel<ExtractorSearchScreenEvents>()
     val events = _events.receiveAsFlow()
@@ -85,72 +80,26 @@ class ExtractorSearchViewModel(
             is ExtractorSearchSheetEvent.OnChange -> {
                 // don't perform search if the query is blank
                 if (event.params.query.isBlank()) return
-                viewModelScope.launch {
-                    _searchTrigger.emit(SearchTrigger.Search(event.params))
-                }
+                searchResultComponent.executeSearch(event.params)
             }
 
             is ExtractorSearchSheetEvent.OnDateChange -> {
-                if (event.params.dateRange == null) return
-                viewModelScope.launch {
-                    _searchTrigger.emit(SearchTrigger.Search(event.params))
+                if (event.params.dateRange == null) {
+                    // reset result state
+                    searchResultComponent.executeSearch(null)
+                    return
                 }
+                searchResultComponent.executeSearch(event.params)
             }
 
             is ExtractorSearchSheetEvent.OnSearch -> {
                 // don't perform search if the query is blank
                 if (event.params.query.isBlank()) return
-
-                viewModelScope.launch {
-                    _events.send(ExtractorSearchScreenEvents.HideKeyboard)
-                }
-
-                viewModelScope.launch {
-                    _searchTrigger.emit(SearchTrigger.Search(event.params))
-                }
+                // TODO state class to control keyboard -> hide
+                // https://developer.android.com/reference/kotlin/androidx/compose/ui/platform/SoftwareKeyboardController
+                searchResultComponent.executeSearch(event.params)
             }
         }
-    }
-
-    private fun distinctSearchTrigger(old: SearchTrigger, new: SearchTrigger): Boolean {
-        // return true if equal
-        return when (old) {
-            SearchTrigger.GenerateSuggestions -> false
-            SearchTrigger.Noop -> false
-            is SearchTrigger.Search -> {
-                when (new) {
-                    SearchTrigger.GenerateSuggestions -> false
-                    SearchTrigger.Noop -> false
-                    is SearchTrigger.Search -> old.imageSearchParams == new.imageSearchParams
-                }
-            }
-        }
-    }
-
-    private suspend fun runImageSearch(
-        searchImageSearchParams: ImageSearchParams
-    ): ExtractorSearchContainerState {
-        return imageSearch.execute(searchImageSearchParams).fold(
-            ifLeft = {
-                ExtractorSearchContainerState.NoSearchesLeft(
-                    onGetMore = {}
-                )
-            },
-            ifRight = {
-                when {
-                    it.isEmpty() -> ExtractorSearchContainerState.Empty(
-                        onReset = {
-
-                        }
-                    )
-
-                    else -> ExtractorSearchContainerState.Content(
-                        images = it,
-                        eventSink = {}
-                    )
-                }
-            }
-        )
     }
 
     private suspend fun compileUserAlbum(input: List<Extraction>) {

@@ -3,7 +3,9 @@ package com.drbrosdev.extractor.ui.search
 import android.os.Parcelable
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
@@ -24,8 +26,12 @@ data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : Nav
     override fun Content(navigators: Navigators) {
         val viewModel: ExtractorSearchViewModel = koinViewModel()
 
+        val searchResultState by viewModel.searchResultComponent.state
+            .collectAsStateWithLifecycle()
+
         ExtractorSearchScreen(
-            searchSheetComponent = viewModel.searchSheetState
+            searchSheetComponent = viewModel.searchSheetState,
+            searchResultState = searchResultState
         )
     }
 }
@@ -69,7 +75,8 @@ private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         Surface {
             ExtractorSearchScreen(
-                searchSheetComponent = ExtractorSearchSheetComponent({}, SavedStateHandle())
+                searchSheetComponent = ExtractorSearchSheetComponent({}, SavedStateHandle()),
+                searchResultState = SearchResultState.Idle
             )
         }
     }

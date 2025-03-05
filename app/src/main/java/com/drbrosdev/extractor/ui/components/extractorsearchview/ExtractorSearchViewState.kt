@@ -21,6 +21,7 @@ class ExtractorSearchViewState(
     initialSearchType: SearchType = SearchType.PARTIAL,
     initialIsDisabled: Boolean = false,
 ) {
+    // https://developer.android.com/develop/ui/compose/touch-input/focus/change-focus-behavior
     var query by mutableStateOf(initialQuery)
         private set
 
