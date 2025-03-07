@@ -6,6 +6,7 @@ import arrow.core.right
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
+import com.drbrosdev.extractor.domain.model.isBlank
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRange
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.framework.logger.logEvent
@@ -30,6 +31,9 @@ class SearchImages(
         }
 
     private suspend fun executeSearch(imageSearchParams: ImageSearchParams): List<Extraction> = when {
+        // no search is done for blank query and blank dateRange
+        imageSearchParams.isBlank() -> emptyList()
+
         shouldUseDateRangeSearch(imageSearchParams) -> {
             // NOTE: Should never be empty based on the above check
             val dateRange = requireNotNull(imageSearchParams.dateRange) {

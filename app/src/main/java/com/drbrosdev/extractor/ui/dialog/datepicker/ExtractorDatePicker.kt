@@ -2,20 +2,28 @@ package com.drbrosdev.extractor.ui.dialog.datepicker
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.ui.components.searchsheet.isRangeSelected
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
@@ -23,16 +31,23 @@ import com.drbrosdev.extractor.util.CombinedPreview
 @Composable
 fun ExtractorDatePicker(
     onDismiss: () -> Unit,
-    onConfirm: (Long?) -> Unit,
+    onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
-    state: DatePickerState = rememberDatePickerState()
+    state: DateRangePickerState = rememberDateRangePickerState()
 ) {
-
+    val isConfirmEnabled by remember {
+        derivedStateOf {
+            state.isRangeSelected()
+        }
+    }
     DatePickerDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
         confirmButton = {
-            DialogButton(onClick = { onConfirm(state.selectedDateMillis) }) {
+            DialogButton(
+                enabled = isConfirmEnabled,
+                onClick = onConfirm
+            ) {
                 Text(text = stringResource(R.string.datepicker_select))
             }
         },
@@ -43,9 +58,13 @@ fun ExtractorDatePicker(
         },
         colors = DatePickerDefaults.colors()
     ) {
-        DatePicker(
+        DateRangePicker(
             state = state,
-            showModeToggle = false
+            showModeToggle = false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp)
+                .padding(16.dp)
         )
     }
 }
@@ -54,6 +73,7 @@ fun ExtractorDatePicker(
 private fun DialogButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit
 ) {
     TextButton(
@@ -61,7 +81,8 @@ private fun DialogButton(
         modifier = Modifier.then(modifier),
         colors = ButtonDefaults.textButtonColors(
             contentColor = MaterialTheme.colorScheme.onSurface
-        )
+        ),
+        enabled = enabled
     ) {
         content(this)
     }

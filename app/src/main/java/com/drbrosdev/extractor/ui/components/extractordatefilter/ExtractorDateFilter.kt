@@ -14,102 +14,71 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import arrow.core.None
-import arrow.core.Some
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.dialog.datepicker.ExtractorDatePicker
+import com.drbrosdev.extractor.ui.components.searchsheet.dateRange
+import com.drbrosdev.extractor.ui.components.searchsheet.isRangeSelected
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
-
+import com.drbrosdev.extractor.util.asDisplayString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorDateFilter(
     modifier: Modifier = Modifier,
-    onDateChanged: () -> Unit,
-    state: ExtractorDateFilterState = rememberExtractorDateFilterState()
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+    onReset: () -> Unit,
+    state: DateRangePickerState,
 ) {
-    when (state.selection) {
-        ExtractorDateFilterSelection.START ->
-            ExtractorDatePicker(
-                onDismiss = state::clearSelection,
-                onConfirm = {
-                    state.updateStartDate(it)
-                    onDateChanged()
-                }
-            )
-
-
-        ExtractorDateFilterSelection.END ->
-            ExtractorDatePicker(
-                onDismiss = state::clearSelection,
-                onConfirm = {
-                    state.updateEndDate(it)
-                    onDateChanged()
-                }
-            )
-
-        ExtractorDateFilterSelection.NONE -> Unit
+    val dateRangeSelected by remember {
+        derivedStateOf {
+            state.isRangeSelected()
+        }
+    }
+    val dateRange by remember {
+        derivedStateOf {
+            state.dateRange()
+        }
     }
 
-    val startContentColor by animateColorAsState(
-        targetValue = when (state.startDate) {
-            None -> MaterialTheme.colorScheme.onSurface
-            is Some -> MaterialTheme.colorScheme.onPrimary
+    val contentColor by animateColorAsState(
+        targetValue = when {
+            dateRangeSelected -> MaterialTheme.colorScheme.onPrimary
+            else -> MaterialTheme.colorScheme.onSurface
+        },
+        label = ""
+    )
+    
+    val cardColor by animateColorAsState(
+        targetValue = when {
+            dateRangeSelected -> MaterialTheme.colorScheme.primary
+            else -> Color.Transparent
         },
         label = ""
     )
 
-    val endContentColor by animateColorAsState(
-        targetValue = when (state.endDate) {
-            None -> MaterialTheme.colorScheme.onSurface
-            is Some -> MaterialTheme.colorScheme.onPrimary
-        },
-        label = ""
-    )
-
-    val startCardColor by animateColorAsState(
-        targetValue = when (state.startDate) {
-            None -> Color.Transparent
-            is Some -> MaterialTheme.colorScheme.primary
-        },
-        label = ""
-    )
-
-    val startCardBorderColor by animateColorAsState(
-        targetValue = when (state.startDate) {
-            None -> MaterialTheme.colorScheme.onSurface
-            is Some -> MaterialTheme.colorScheme.primary
-        },
-        label = ""
-    )
-
-    val endCardColor by animateColorAsState(
-        targetValue = when (state.endDate) {
-            None -> Color.Transparent
-            is Some -> MaterialTheme.colorScheme.primary
-        },
-        label = ""
-    )
-
-    val endCardBorderColor by animateColorAsState(
-        targetValue = when (state.endDate) {
-            None -> MaterialTheme.colorScheme.onSurface
-            is Some -> MaterialTheme.colorScheme.primary
+    val cardBorderColor by animateColorAsState(
+        targetValue = when {
+            dateRangeSelected -> MaterialTheme.colorScheme.primary
+            else -> MaterialTheme.colorScheme.onSurface
         },
         label = ""
     )
@@ -130,41 +99,38 @@ fun ExtractorDateFilter(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ExtractorDateFilterCard(
-                onClick = state::showStartSelection,
+                onClick = onClick,
                 header = stringResource(R.string.start_date),
                 modifier = Modifier.weight(1f),
                 side = ExtractorDateFilterCardSide.LEFT,
-                dateAsString = state.startDate.getAsString(stringResource(id = R.string.start_date)),
-                containerColor = startCardColor,
-                borderColor = startCardBorderColor,
-                contentColor = startContentColor,
-                enabled = !state.disabled
+                dateAsString = dateRange?.start.asDisplayString(stringResource(id = R.string.start_date)),
+                containerColor = cardColor,
+                borderColor = cardBorderColor,
+                contentColor = contentColor,
+                enabled = enabled
             )
 
             ExtractorDateFilterCard(
-                onClick = state::showEndSelection,
+                onClick = onClick,
                 header = stringResource(R.string.end_date),
                 modifier = Modifier.weight(1f),
                 side = ExtractorDateFilterCardSide.RIGHT,
-                dateAsString = state.endDate.getAsString(stringResource(id = R.string.end_date)),
-                containerColor = endCardColor,
-                borderColor = endCardBorderColor,
-                contentColor = endContentColor,
-                enabled = !state.disabled
+                dateAsString = dateRange?.end.asDisplayString(stringResource(id = R.string.end_date)),
+                containerColor = cardColor,
+                borderColor = cardBorderColor,
+                contentColor = contentColor,
+                enabled = enabled
             )
 
             Spacer(modifier = Modifier.width(4.dp))
 
             Surface(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
-                onClick = {
-                    state.clearDates()
-                    onDateChanged()
-                },
+                onClick = onReset,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
                     .width(IntrinsicSize.Max),
-                enabled = !state.disabled
+                enabled = enabled
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Refresh,
@@ -238,6 +204,7 @@ private fun ExtractorDateFilterCard(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @CombinedPreview
 @Composable
 private fun CurrentPreview() {
@@ -245,10 +212,18 @@ private fun CurrentPreview() {
         Surface {
             Column {
                 ExtractorDateFilter(
-                    state = ExtractorDateFilterState(
-                        initStart = Some(1L)
-                    ),
-                    onDateChanged = {},
+                    onClick = {},
+                    onReset = {},
+                    state = rememberDateRangePickerState(
+                        initialSelectedStartDateMillis = System.currentTimeMillis(),
+                        initialSelectedEndDateMillis = System.currentTimeMillis(),
+                    )
+                )
+                Spacer(Modifier.height(12.dp))
+                ExtractorDateFilter(
+                    onClick = {},
+                    onReset = {},
+                    state = rememberDateRangePickerState()
                 )
             }
         }

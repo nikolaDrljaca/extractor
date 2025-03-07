@@ -1,94 +1,89 @@
 package com.drbrosdev.extractor.ui.components.searchsheet
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.DateRangePickerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.saveable
+import arrow.core.raise.nullable
+import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
-import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilterState
-import com.drbrosdev.extractor.ui.components.extractordatefilter.dateRange
-import com.drbrosdev.extractor.ui.components.extractordatefilter.isEmpty
-import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchViewState
+import com.drbrosdev.extractor.domain.model.KeywordType
+import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.util.EpochMillis
+import com.drbrosdev.extractor.util.toLocalDateTime
+import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Stable
 class ExtractorSearchSheetComponent(
-    private val eventHandler: (ExtractorSearchSheetEvent) -> Unit,
+    private val onSearchEvent: (ImageSearchParams) -> Unit,
     private val stateHandle: SavedStateHandle
 ) {
-    val searchViewState = stateHandle.saveable(
-        key = "search_view_state",
-        saver = ExtractorSearchViewState.Saver
-    ) {
-        ExtractorSearchViewState()
+    val query = stateHandle.saveable(key = "search_view_query") {
+        TextFieldState()
+    }
+    var keywordType by stateHandle.saveable {
+        mutableStateOf(KeywordType.ALL)
+    }
+    var searchType by stateHandle.saveable {
+        mutableStateOf(SearchType.PARTIAL)
     }
 
-    val dateFilterState = stateHandle.saveable(
-        key = "date_filter_state",
-        saver = ExtractorDateFilterState.Saver()
-    ) {
-        ExtractorDateFilterState()
+    val dateRangePickerState = stateHandle.saveable(key = "search_view_date_range") {
+        DateRangePickerState(Locale.getDefault())
+    }
+    var shouldShowDateRangePicker by mutableStateOf(false)
+
+    fun onSearch() = onSearchEvent(getSearchParamSnapshot())
+
+    fun showDateRangePicker() {
+        shouldShowDateRangePicker = true
     }
 
-    fun onSearch() {
-        eventHandler(
-            ExtractorSearchSheetEvent.OnSearch(
-                params = ImageSearchParams(
-                    dateRange = null,
-                    query = searchViewState.query,
-                    keywordType = searchViewState.keywordType,
-                    searchType = searchViewState.searchType
-                )
-            )
-        )
+    fun hideDateRangePicker() {
+        dateRangePickerState.setSelection(null, null)
+        shouldShowDateRangePicker = false
     }
 
-    fun onDateChange() {
-        if (dateFilterState.isEmpty()) {
-            eventHandler(
-                ExtractorSearchSheetEvent.OnDateChange(
-                    params = ImageSearchParams(
-                        dateRange = null,
-                        query = searchViewState.query,
-                        keywordType = searchViewState.keywordType,
-                        searchType = searchViewState.searchType
-                    )
-                )
-            )
-            return
-        }
-        dateFilterState.dateRange()?.let {
-            eventHandler(
-                ExtractorSearchSheetEvent.OnDateChange(
-                    params = ImageSearchParams(
-                        dateRange = it,
-                        query = searchViewState.query,
-                        keywordType = searchViewState.keywordType,
-                        searchType = searchViewState.searchType
-                    )
-                )
-            )
-        }
+    fun onKeywordTypeChange(value: KeywordType) {
+        keywordType = value
+        onSearchEvent(getSearchParamSnapshot())
     }
 
-    fun onChange() {
-        eventHandler(
-            ExtractorSearchSheetEvent.OnChange(
-                params = ImageSearchParams(
-                    dateRange = dateFilterState.dateRange(),
-                    query = searchViewState.query,
-                    keywordType = searchViewState.keywordType,
-                    searchType = searchViewState.searchType
-                )
-            )
-        )
+    fun onSearchTypeChange(value: SearchType) {
+        searchType = value
+        onSearchEvent(getSearchParamSnapshot())
     }
 
-    fun enable() {
-        searchViewState.enable()
-        dateFilterState.enable()
+    fun onDateRangeConfirm() {
+        shouldShowDateRangePicker = false
+        onSearchEvent(getSearchParamSnapshot())
     }
 
-    fun disable() {
-        searchViewState.disable()
-        dateFilterState.disable()
-    }
+    fun getSearchParamSnapshot() = ImageSearchParams(
+        dateRange = dateRangePickerState.dateRange(),
+        query = query.text.toString(),
+        keywordType = keywordType,
+        searchType = searchType
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+fun DateRangePickerState.isRangeSelected(): Boolean {
+    return (selectedStartDateMillis != null) and (selectedEndDateMillis != null)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+fun DateRangePickerState.dateRange() = nullable {
+    val startRange = EpochMillis(selectedStartDateMillis.bind())
+    val endRange = EpochMillis(selectedEndDateMillis.bind())
+    DateRange(
+        startRange.toLocalDateTime(),
+        endRange.toLocalDateTime()
+    )
 }

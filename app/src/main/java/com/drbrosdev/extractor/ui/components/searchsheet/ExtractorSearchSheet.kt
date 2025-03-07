@@ -2,28 +2,44 @@ package com.drbrosdev.extractor.ui.components.searchsheet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import com.drbrosdev.extractor.ui.components.extractordatefilter.ExtractorDateFilter
-import com.drbrosdev.extractor.ui.components.extractorsearchview.ExtractorSearchView
+import com.drbrosdev.extractor.ui.components.extractorlabelfilter.KeywordTypeChips
+import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toChipDataIndex
+import com.drbrosdev.extractor.ui.components.extractorlabelfilter.toKeywordType
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTextField
+import com.drbrosdev.extractor.ui.components.shared.SearchTypeSwitch
+import com.drbrosdev.extractor.ui.dialog.datepicker.ExtractorDatePicker
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchSheet(
     modifier: Modifier = Modifier,
     component: ExtractorSearchSheetComponent,
 ) {
+    val focusRequester = remember { FocusRequester() }
+
+    SideEffect {
+        focusRequester.requestFocus()
+    }
+
     Surface(
         modifier = Modifier
             .then(modifier),
@@ -39,19 +55,48 @@ fun ExtractorSearchSheet(
                 .then(modifier),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            ExtractorSearchView(
-                state = component.searchViewState,
-                contentPadding = PaddingValues(),
-                onDone = component::onSearch,
-                onKeywordTypeChange = component::onChange,
-                onSearchTypeChange = component::onChange
+            ExtractorSearchTextField(
+                textFieldState = component.query,
+                onDoneSubmit = component::onSearch,
+                textColor = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .focusRequester(focusRequester)
+                    .fillMaxWidth(),
+//                enabled = !state.disabled,
+            )
+
+            KeywordTypeChips(
+                onFilterChanged = {
+                    val keywordType = it.toKeywordType()
+                    component.onKeywordTypeChange(keywordType)
+                },
+                selection = component.keywordType.toChipDataIndex(),
+//                enabled = !state.disabled
+            )
+
+            SearchTypeSwitch(
+                selection = component.searchType,
+                onSelectionChanged = component::onSearchTypeChange,
+//                enabled = !state.disabled
             )
 
             ExtractorDateFilter(
                 modifier = Modifier,
-                state = component.dateFilterState,
-                onDateChanged = component::onDateChange
+                onClick = component::showDateRangePicker,
+                onReset = { component.dateRangePickerState.setSelection(null, null) },
+//                dateRange = component.dateRange
+                state = component.dateRangePickerState
             )
+
+            if (component.shouldShowDateRangePicker) {
+                ExtractorDatePicker(
+                    onDismiss = component::hideDateRangePicker,
+                    onConfirm = component::onDateRangeConfirm, //
+                    modifier = Modifier,
+                    state = component.dateRangePickerState
+                )
+            }
 
             Spacer(modifier = Modifier.height(4.dp))
         }
@@ -65,7 +110,7 @@ private fun SheetPreview() {
     ExtractorTheme(dynamicColor = true) {
         ExtractorSearchSheet(
             component = ExtractorSearchSheetComponent(
-                eventHandler = {},
+                onSearchEvent = {},
                 stateHandle = SavedStateHandle()
             )
         )

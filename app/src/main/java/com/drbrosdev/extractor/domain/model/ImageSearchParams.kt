@@ -6,3 +6,7 @@ data class ImageSearchParams(
     val dateRange: DateRange?,
     val searchType: SearchType
 )
+
+fun ImageSearchParams.isBlank(): Boolean {
+    return query.isBlank() && dateRange == null
+}
