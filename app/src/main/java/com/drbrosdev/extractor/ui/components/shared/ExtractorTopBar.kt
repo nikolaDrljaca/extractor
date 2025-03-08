@@ -41,6 +41,7 @@ enum class ExtractorTopBarState {
 fun ExtractorTopBar(
     modifier: Modifier = Modifier,
     state: ExtractorTopBarState = ExtractorTopBarState.NORMAL,
+    paddingValues: PaddingValues? = null,
     leadingSlot: (@Composable RowScope.() -> Unit)? = null,
     trailingSlot: (@Composable RowScope.() -> Unit)? = null,
     centerSlot: (@Composable RowScope.() -> Unit)? = null,
@@ -67,6 +68,12 @@ fun ExtractorTopBar(
             ExtractorTopBarState.ELEVATED -> 14.dp
         }
     }
+    val innerPadding = paddingValues ?: PaddingValues(
+        start = 8.dp,
+        end = 8.dp,
+        top = spacerHeight + topPadding,
+        bottom = 4.dp
+    )
 
     Surface(
         modifier = Modifier
@@ -77,14 +84,7 @@ fun ExtractorTopBar(
     ) {
         Column(
             modifier = Modifier
-                .padding(
-                    PaddingValues(
-                        start = 8.dp,
-                        end = 8.dp,
-                        top = spacerHeight + topPadding,
-                        bottom = 4.dp
-                    )
-                )
+                .padding(innerPadding)
         ) {
             Row(
                 modifier = Modifier

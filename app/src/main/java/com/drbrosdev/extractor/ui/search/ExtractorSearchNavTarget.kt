@@ -1,73 +1,74 @@
 package com.drbrosdev.extractor.ui.search
 
-import android.os.Parcelable
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.domain.model.DateRange
-import com.drbrosdev.extractor.domain.model.ImageSearchParams
-import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.SearchType
+import arrow.core.left
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
+import com.drbrosdev.extractor.ui.components.searchresult.SearchResultComponent
+import com.drbrosdev.extractor.ui.components.searchresult.SearchResultComponentEvents
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetComponent
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CollectFlow
 import com.drbrosdev.extractor.util.ScreenPreview
+import com.drbrosdev.extractor.util.launchShareIntent
+import dev.olshevski.navigation.reimagined.navController
+import dev.olshevski.navigation.reimagined.pop
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
-import java.time.LocalDateTime
+import org.koin.core.parameter.parametersOf
 
 @Parcelize
 data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : NavTarget {
 
     @Composable
     override fun Content(navigators: Navigators) {
-        val viewModel: ExtractorSearchViewModel = koinViewModel()
+        val viewModel: ExtractorSearchViewModel = koinViewModel {
+            parametersOf(navigators)
+        }
 
-        val searchResultState by viewModel.searchResultComponent.state
-            .collectAsStateWithLifecycle()
+        val keyboardController = LocalSoftwareKeyboardController.current
+        val context = LocalContext.current
+
+        SideEffect {
+            viewModel.performSearchUsingArgs(args?.toSearchParams())
+        }
+
+        CollectFlow(viewModel.searchResultComponent.event) {
+            when (it) {
+                SearchResultComponentEvents.ScrollToTop -> {
+                    viewModel.searchResultComponent
+                        .gridState
+                        .lazyGridState
+                        .animateScrollToItem(0)
+                    viewModel.searchResultComponent
+                        .focusRequester
+                        .requestFocus()
+                    keyboardController?.show()
+                }
+
+                SearchResultComponentEvents.SearchComplete ->
+                    keyboardController?.hide()
+
+                is SearchResultComponentEvents.Share -> context.launchShareIntent(it.images)
+            }
+        }
 
         ExtractorSearchScreen(
-            searchSheetComponent = viewModel.searchSheetState,
-            searchResultState = searchResultState
+            sheetComponent = viewModel.searchSheetState,
+            resultComponent = viewModel.searchResultComponent,
+            snackbarHostState = viewModel.snackbarHostState,
+            onBack = { navigators.navController.pop() }
         )
     }
 }
-
-@Parcelize
-data class SearchNavTargetArgs(
-    val query: String,
-    val keywordType: KeywordType,
-    val startRange: String?,
-    val endRange: String?,
-    val searchType: SearchType
-) : Parcelable
-
-fun SearchNavTargetArgs.toSearchParams(): ImageSearchParams {
-    val dateRange = when {
-        startRange != null && endRange != null -> DateRange(
-            start = LocalDateTime.parse(startRange),
-            end = LocalDateTime.parse(endRange)
-        )
-        else -> null
-    }
-    return ImageSearchParams(
-        query = query,
-        keywordType = keywordType,
-        searchType = searchType,
-        dateRange = dateRange
-    )
-}
-
-fun ImageSearchParams.asSearchNavTargetArgs() = SearchNavTargetArgs(
-    query = query,
-    keywordType = keywordType,
-    searchType = searchType,
-    startRange = dateRange?.start?.toString(),
-    endRange = dateRange?.end?.toString()
-)
 
 @ScreenPreview
 @Composable
@@ -75,8 +76,19 @@ private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         Surface {
             ExtractorSearchScreen(
-                searchSheetComponent = ExtractorSearchSheetComponent({}, SavedStateHandle()),
-                searchResultState = SearchResultState.Idle
+                sheetComponent = ExtractorSearchSheetComponent({}, SavedStateHandle()),
+                resultComponent = SearchResultComponent(
+                    coroutineScope = CoroutineScope(Dispatchers.Default),
+                    searchImages = { Unit.left() },
+                    createAlbum = {},
+                    navigators = Navigators(
+                        navController(emptyList()),
+                        navController(emptyList()),
+                        navController(emptyList()),
+                    )
+                ),
+                snackbarHostState = SnackbarHostState(),
+                onBack = {}
             )
         }
     }

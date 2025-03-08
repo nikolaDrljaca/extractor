@@ -90,7 +90,8 @@ val viewModelModule = module {
             spawnExtractorWork = get(),
             datastore = get(),
             searchCountPositiveDelta = get(),
-            stringProvider = get()
+            stringProvider = get(),
+            navigators = it.get()
         )
     }
 

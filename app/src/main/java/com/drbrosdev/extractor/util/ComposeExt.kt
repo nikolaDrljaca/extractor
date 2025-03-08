@@ -46,7 +46,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.md_theme_light_secondary
 import com.drbrosdev.extractor.ui.theme.md_theme_light_tertiary
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -188,6 +191,16 @@ fun <T> CollectFlow(
             flow.collect(action)
         }
     }
+}
+
+fun <T> StateFlow<T>.asState(scope: CoroutineScope): State<T> {
+    val internalState = mutableStateOf(value)
+    scope.launch {
+        this@asState.collect {
+            internalState.value = it
+        }
+    }
+    return internalState
 }
 
 fun LazyGridScope.maxLineSpanItem(

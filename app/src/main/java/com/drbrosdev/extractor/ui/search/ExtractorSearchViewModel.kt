@@ -1,24 +1,34 @@
 package com.drbrosdev.extractor.ui.search
 
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
+import com.drbrosdev.extractor.domain.model.asAlbumName
+import com.drbrosdev.extractor.domain.model.isBlank
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
+import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.image.SearchCountPositiveDelta
 import com.drbrosdev.extractor.domain.usecase.image.SearchImages
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.framework.StringResourceProvider
+import com.drbrosdev.extractor.framework.logger.logEvent
+import com.drbrosdev.extractor.framework.navigation.Navigators
+import com.drbrosdev.extractor.ui.components.searchresult.SearchResultComponent
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetComponent
-import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
-
+import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
+import dev.olshevski.navigation.reimagined.navigate
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 class ExtractorSearchViewModel(
     private val stateHandle: SavedStateHandle,
@@ -29,70 +39,66 @@ class ExtractorSearchViewModel(
     private val spawnExtractorWork: SpawnExtractorWork,
     private val searchCountPositiveDelta: SearchCountPositiveDelta,
     private val datastore: ExtractorDataStore,
+    private val navigators: Navigators,
     private val stringProvider: StringResourceProvider
 ) : ViewModel() {
 
     val searchResultComponent = SearchResultComponent(
         coroutineScope = viewModelScope,
-        searchImages = imageSearch
+        navigators = navigators,
+        searchImages = imageSearch::execute,
+        createAlbum = ::compileUserAlbum
     )
 
     val searchSheetState = ExtractorSearchSheetComponent(
         stateHandle = stateHandle,
-        onSearchEvent = { searchResultComponent.executeSearch(it) }
+        onSearchEvent = ::performSearch
     )
 
     val snackbarHostState = SnackbarHostState()
 
-    private val _events = Channel<ExtractorSearchScreenEvents>()
-    val events = _events.receiveAsFlow()
-
-    fun multiselectEventHandler(event: MultiselectAction) {
-        when (event) {
-            MultiselectAction.Delete -> Unit // Unsupported for this grid
-            MultiselectAction.Cancel -> Unit
-            MultiselectAction.CreateAlbum -> Unit
-            MultiselectAction.Share -> Unit
-        }
+    fun performSearchUsingArgs(params: ImageSearchParams?) = params?.let {
+        searchSheetState.query.setTextAndPlaceCursorAtEnd(it.query)
+        searchSheetState.keywordType = it.keywordType
+        searchSheetState.searchType = it.searchType
+        searchResultComponent.executeSearch(it)
     }
 
-    private suspend fun compileUserAlbum(input: List<Extraction>) {
-        // decide album name based on query type -> Text or Date
-        val albumName = with(searchSheetState) {
-//            val dateRange = dateFilterState.dateRange()
-
-//            when {
-//                searchViewState.query.isNotBlank() -> searchViewState.query
-//                dateRange != null -> dateRange.asAlbumName()
-//                else -> ""
-//            }
-        }
-
-//        val newAlbum = NewAlbum(
-//            name = albumName,
-//            keyword = searchSheetState.searchViewState.query.text.toString(),
-//            searchType = searchSheetState.searchViewState.searchType,
-//            keywordType = searchSheetState.searchViewState.keywordType,
-//            origin = NewAlbum.Origin.USER_GENERATED,
-//            entries = input.map {
-//                NewAlbum.Entry(
-//                    uri = it.uri,
-//                    id = it.mediaImageId
-//                )
-//            }
-//        )
-//        albumRepository.createAlbum(newAlbum)
+    private fun performSearch(params: ImageSearchParams) {
+        searchResultComponent.executeSearch(params)
     }
-}
 
-
-private sealed interface SearchTrigger {
-
-    data object Noop : SearchTrigger
-
-    data object GenerateSuggestions : SearchTrigger
-
-    data class Search(
-        val imageSearchParams: ImageSearchParams
-    ) : SearchTrigger
+    private fun compileUserAlbum(input: List<Extraction>) {
+        viewModelScope.launch {
+            val searchData = searchSheetState.getSearchParamSnapshot()
+            val name = when {
+                searchData.isBlank().not() -> searchData.query
+                searchData.dateRange != null -> searchData.dateRange.asAlbumName()
+                else -> {
+                    logEvent("ExtractorSearchViewModel.compileUserAlbum: Attempting to save an album with no name. Using timestamp.")
+                    DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+                }
+            }
+            val albumEntries = input.map { NewAlbum.Entry(it.uri, it.mediaImageId) }
+            val album = NewAlbum(
+                name = name,
+                keyword = searchData.query,
+                searchType = searchData.searchType,
+                keywordType = searchData.keywordType,
+                origin = NewAlbum.Origin.USER_GENERATED,
+                entries = albumEntries
+            )
+            albumRepository.createAlbum(album)
+            val result = snackbarHostState.showSnackbar(
+                message = stringProvider.get(R.string.album_created),
+                actionLabel = stringProvider.get(R.string.snack_view)
+            )
+            when (result) {
+                SnackbarResult.Dismissed -> Unit
+                SnackbarResult.ActionPerformed -> navigators.navController.navigate(
+                    ExtractorHomeNavTarget
+                )
+            }
+        }
+    }
 }

@@ -11,7 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -32,11 +32,10 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @Composable
 fun ExtractorSearchSheet(
     modifier: Modifier = Modifier,
+    focusRequester: FocusRequester = remember { FocusRequester() },
     component: ExtractorSearchSheetComponent,
 ) {
-    val focusRequester = remember { FocusRequester() }
-
-    SideEffect {
+    LaunchedEffect(component) {
         focusRequester.requestFocus()
     }
 
