@@ -36,6 +36,7 @@ fun ExtractorSearchSheet(
     component: ExtractorSearchSheetComponent,
 ) {
     LaunchedEffect(component) {
+        // Bad idea -- focuses the text field each time the component comes into composition!
         focusRequester.requestFocus()
     }
 

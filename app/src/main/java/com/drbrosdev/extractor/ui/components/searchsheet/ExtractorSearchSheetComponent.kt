@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.saveable
@@ -24,7 +25,10 @@ class ExtractorSearchSheetComponent(
     private val onSearchEvent: (ImageSearchParams) -> Unit,
     private val stateHandle: SavedStateHandle
 ) {
-    val query = stateHandle.saveable(key = "search_view_query") {
+    val query = stateHandle.saveable(
+        key = "search_view_query",
+        saver = TextFieldState.Saver
+    ) {
         TextFieldState()
     }
     var keywordType by stateHandle.saveable {
@@ -34,7 +38,19 @@ class ExtractorSearchSheetComponent(
         mutableStateOf(SearchType.PARTIAL)
     }
 
-    val dateRangePickerState = stateHandle.saveable(key = "search_view_date_range") {
+    val dateRangePickerState = stateHandle.saveable(
+        key = "search_view_date_range",
+        saver = listSaver(
+            save = { listOf(it.selectedStartDateMillis, it.selectedEndDateMillis) },
+            restore = {
+                DateRangePickerState(
+                    locale = Locale.getDefault(),
+                    initialSelectedStartDateMillis = it.getOrNull(0),
+                    initialSelectedEndDateMillis = it.getOrNull(1),
+                )
+            }
+        )
+    ) {
         DateRangePickerState(Locale.getDefault())
     }
     var shouldShowDateRangePicker by mutableStateOf(false)

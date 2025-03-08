@@ -38,6 +38,8 @@ data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : Nav
         val context = LocalContext.current
 
         SideEffect {
+            // not a good way to handle this!!
+            // runs every time in composition!!
             viewModel.performSearchUsingArgs(args?.toSearchParams())
         }
 

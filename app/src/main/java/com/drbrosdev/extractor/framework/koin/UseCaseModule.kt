@@ -2,13 +2,12 @@ package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
 import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
-import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
+import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
 import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
 import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.album.BuildNewAlbumPayload
 import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
@@ -122,8 +121,6 @@ val useCaseModule = module {
 
     factory { GenerateMostCommonTokens() }
 
-    factory { BuildNewAlbumPayload() }
-
     factory {
         CompileVisualAlbum(
             repo = get(),
@@ -131,7 +128,6 @@ val useCaseModule = module {
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
             generateMostCommonTokens = get(),
-            buildNewAlbumPayload = get()
         )
     }
 
@@ -166,7 +162,6 @@ val useCaseModule = module {
             albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
             generateMostCommonTokens = get(),
-            buildNewAlbumPayload = get()
         )
     }
 

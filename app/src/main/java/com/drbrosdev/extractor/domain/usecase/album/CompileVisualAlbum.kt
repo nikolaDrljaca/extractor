@@ -1,10 +1,12 @@
 package com.drbrosdev.extractor.domain.usecase.album
 
+import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
+import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
@@ -17,7 +19,6 @@ class CompileVisualAlbum(
     private val tokenizeText: TokenizeText,
     private val generateMostCommonTokens: GenerateMostCommonTokens,
     private val searchImageByQuery: SearchImageByQuery,
-    private val buildNewAlbumPayload: BuildNewAlbumPayload,
     private val albumRepository: AlbumRepository,
 ) {
     suspend operator fun invoke() {
@@ -42,5 +43,25 @@ class CompileVisualAlbum(
             }
             .filter { (embeds, _) -> embeds.isNotEmpty() }
             .forEach { albumRepository.createAlbum(it) }
+    }
+
+    private fun buildNewAlbumPayload(
+        extractions: List<Extraction>,
+        searchTerm: String
+    ): NewAlbum {
+        val entries = extractions.map {
+            NewAlbum.Entry(
+                uri = it.uri,
+                id = it.mediaImageId
+            )
+        }
+        return NewAlbum(
+            keyword = searchTerm,
+            name = searchTerm,
+            searchType = SearchType.PARTIAL,
+            keywordType = KeywordType.IMAGE,
+            entries = entries,
+            origin = NewAlbum.Origin.VISUAL_COMPUTED
+        )
     }
 }
