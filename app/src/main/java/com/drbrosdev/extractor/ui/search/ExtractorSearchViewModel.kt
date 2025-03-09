@@ -25,7 +25,9 @@ import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.searchresult.SearchResultComponent
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetComponent
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
+import com.drbrosdev.extractor.util.memo
 import dev.olshevski.navigation.reimagined.navigate
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -50,18 +52,37 @@ class ExtractorSearchViewModel(
         createAlbum = ::compileUserAlbum
     )
 
-    val searchSheetState = ExtractorSearchSheetComponent(
+    val searchSheetComponent = ExtractorSearchSheetComponent(
         stateHandle = stateHandle,
         onSearchEvent = ::performSearch
     )
 
     val snackbarHostState = SnackbarHostState()
 
-    fun performSearchUsingArgs(params: ImageSearchParams?) = params?.let {
-        searchSheetState.query.setTextAndPlaceCursorAtEnd(it.query)
-        searchSheetState.keywordType = it.keywordType
-        searchSheetState.searchType = it.searchType
+    // memoize to run only once for one ImageSearchParams
+    private val searchUsingArgs: (ImageSearchParams) -> Unit = memo {
+        searchSheetComponent.query.setTextAndPlaceCursorAtEnd(it.query)
+        searchSheetComponent.keywordType = it.keywordType
+        searchSheetComponent.searchType = it.searchType
         searchResultComponent.executeSearch(it)
+    }
+
+    // memoize to run only once for a certain tag
+    private val requestSearchFieldFocus = memo("requestFocus") {
+        searchSheetComponent.requestFocus()
+    }
+
+    // Safe to call from side-effects -- memoized
+    fun onInitWithSearchArgs(params: ImageSearchParams?) {
+        if (params != null) {
+            searchUsingArgs(params)
+        } else {
+            // Pretty bad -- should take a better approach
+            viewModelScope.launch {
+                delay(500L)
+                requestSearchFieldFocus()
+            }
+        }
     }
 
     private fun performSearch(params: ImageSearchParams) {
@@ -70,7 +91,7 @@ class ExtractorSearchViewModel(
 
     private fun compileUserAlbum(input: List<Extraction>) {
         viewModelScope.launch {
-            val searchData = searchSheetState.getSearchParamSnapshot()
+            val searchData = searchSheetComponent.getSearchParamSnapshot()
             val name = when {
                 searchData.isBlank().not() -> searchData.query
                 searchData.dateRange != null -> searchData.dateRange.asAlbumName()

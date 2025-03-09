@@ -60,7 +60,8 @@ fun ExtractorSearchScreen(
         constraintSet = searchResultScreenConstraintSet()
     ) {
         LazyVerticalGrid(
-            modifier = Modifier.layoutId(ViewIds.MAIN_CONTENT),
+            modifier = Modifier
+                .layoutId(ViewIds.MAIN_CONTENT),
             columns = GridCells.Adaptive(minSize = imageSize.dp),
             verticalArrangement = Arrangement.spacedBy(1.dp),
             horizontalArrangement = Arrangement.spacedBy(1.dp),
@@ -88,7 +89,6 @@ fun ExtractorSearchScreen(
                     modifier = Modifier
                         .padding(horizontal = 4.dp),
                     component = sheetComponent,
-                    focusRequester = resultComponent.focusRequester
                 )
             }
             maxLineSpanItem(key = "result_marker") {

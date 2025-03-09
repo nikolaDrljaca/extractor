@@ -11,10 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,14 +29,8 @@ import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 @Composable
 fun ExtractorSearchSheet(
     modifier: Modifier = Modifier,
-    focusRequester: FocusRequester = remember { FocusRequester() },
     component: ExtractorSearchSheetComponent,
 ) {
-    LaunchedEffect(component) {
-        // Bad idea -- focuses the text field each time the component comes into composition!
-        focusRequester.requestFocus()
-    }
-
     Surface(
         modifier = Modifier
             .then(modifier),
@@ -61,9 +52,8 @@ fun ExtractorSearchSheet(
                 textColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .padding(vertical = 8.dp)
-                    .focusRequester(focusRequester)
+                    .focusRequester(component.focusRequester)
                     .fillMaxWidth(),
-//                enabled = !state.disabled,
             )
 
             KeywordTypeChips(
@@ -72,20 +62,17 @@ fun ExtractorSearchSheet(
                     component.onKeywordTypeChange(keywordType)
                 },
                 selection = component.keywordType.toChipDataIndex(),
-//                enabled = !state.disabled
             )
 
             SearchTypeSwitch(
                 selection = component.searchType,
                 onSelectionChanged = component::onSearchTypeChange,
-//                enabled = !state.disabled
             )
 
             ExtractorDateFilter(
                 modifier = Modifier,
                 onClick = component::showDateRangePicker,
                 onReset = { component.dateRangePickerState.setSelection(null, null) },
-//                dateRange = component.dateRange
                 state = component.dateRangePickerState
             )
 

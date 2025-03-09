@@ -32,12 +32,11 @@ fun SyncInProgressDisplay(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Recommendations are available after sync is complete.",
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.Gray,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 12.dp)
+        HeaderText(
+            text = "Indexing is in progress.",
+        )
+        HeaderText(
+            text = "Search and recommendations will be available after its done.",
         )
         Spacer(Modifier.height(24.dp))
         Box(modifier = Modifier, contentAlignment = Alignment.Center) {
@@ -56,6 +55,20 @@ fun SyncInProgressDisplay(
             )
         }
     }
+}
+
+@Composable
+fun HeaderText(
+    modifier: Modifier = Modifier,
+    text: String
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        color = Color.Gray,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.padding(horizontal = 12.dp)
+    )
 }
 
 @Preview

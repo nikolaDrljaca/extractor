@@ -38,9 +38,7 @@ data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : Nav
         val context = LocalContext.current
 
         SideEffect {
-            // not a good way to handle this!!
-            // runs every time in composition!!
-            viewModel.performSearchUsingArgs(args?.toSearchParams())
+            viewModel.onInitWithSearchArgs(args?.toSearchParams())
         }
 
         CollectFlow(viewModel.searchResultComponent.event) {
@@ -50,8 +48,7 @@ data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : Nav
                         .gridState
                         .lazyGridState
                         .animateScrollToItem(0)
-                    viewModel.searchResultComponent
-                        .focusRequester
+                    viewModel.searchSheetComponent
                         .requestFocus()
                     keyboardController?.show()
                 }
@@ -64,7 +61,7 @@ data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : Nav
         }
 
         ExtractorSearchScreen(
-            sheetComponent = viewModel.searchSheetState,
+            sheetComponent = viewModel.searchSheetComponent,
             resultComponent = viewModel.searchResultComponent,
             snackbarHostState = viewModel.snackbarHostState,
             onBack = { navigators.navController.pop() }

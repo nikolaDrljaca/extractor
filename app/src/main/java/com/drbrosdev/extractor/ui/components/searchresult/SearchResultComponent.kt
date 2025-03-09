@@ -3,11 +3,11 @@ package com.drbrosdev.extractor.ui.components.searchresult
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.focus.FocusRequester
 import arrow.core.Either
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.MediaImageId
+import com.drbrosdev.extractor.domain.model.isNotBlank
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState2
@@ -21,6 +21,7 @@ import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -49,9 +50,8 @@ class SearchResultComponent(
         gridState.lazyGridState.firstVisibleItemIndex > 0
     }
 
-    val focusRequester = FocusRequester()
-
     val state = _searchTrigger
+        .filter { it?.isNotBlank() ?: true }
         .map { runImageSearch(it) }
         .onEach {
             if (it is SearchResultState.Content) {

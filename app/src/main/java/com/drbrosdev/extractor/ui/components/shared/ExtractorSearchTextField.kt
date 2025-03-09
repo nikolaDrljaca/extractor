@@ -85,14 +85,21 @@ fun ExtractorSearchTextField(
 @Composable
 fun ExtractorSearchPill(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val textStyle = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Light)
+
+    val text = when {
+        enabled -> stringResource(R.string.search_here)
+        else -> stringResource(R.string.disabled)
+    }
 
     Surface(
         onClick = onClick,
         modifier = Modifier
             .then(modifier),
+        enabled = enabled,
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceVariant,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -111,7 +118,7 @@ fun ExtractorSearchPill(
             )
 
             Text(
-                text = stringResource(id = R.string.search_here),
+                text = text,
                 style = textStyle,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

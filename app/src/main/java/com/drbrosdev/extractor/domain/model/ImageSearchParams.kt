@@ -10,3 +10,5 @@ data class ImageSearchParams(
 fun ImageSearchParams.isBlank(): Boolean {
     return query.isBlank() && dateRange == null
 }
+
+fun ImageSearchParams.isNotBlank(): Boolean = isBlank().not()

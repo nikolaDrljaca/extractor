@@ -8,6 +8,7 @@ import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
 import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchNavTarget
+import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageNavTarget
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
@@ -21,10 +22,13 @@ fun createTransitionSpec(density: Density) = NavTransitionSpec<NavTarget?> { act
         goingToImageViewer(from, to) -> fade
         goingFromImageViewer(from, to) -> fade
 
+        // handle search transitions
+        handleSearch(from, to) -> fadeThrough
+
         // handle transitions for GetMore Screen
         handleGetMore(from, to) -> fadeThrough
 
-        else -> fadeThrough
+        else -> default
     }
 }
 
@@ -53,7 +57,10 @@ private fun createDefaultTransition(
 private fun goingFromImageViewer(from: NavTarget?, to: NavTarget?): Boolean {
     val goingFrom = from is ExtractorImageViewerNavTarget
     val goingTo =
-        (to is ExtractorAlbumViewerNavTarget) or (to is ExtractorOverviewNavTarget) or (to is ExtractorUserCollageNavTarget)
+        (to is ExtractorAlbumViewerNavTarget)
+                || (to is ExtractorOverviewNavTarget)
+                || (to is ExtractorUserCollageNavTarget)
+                || (to is ExtractorSearchNavTarget)
 
     return goingFrom and goingTo
 }
@@ -75,12 +82,27 @@ private fun handleGetMore(
     return goingFrom and goingTo
 }
 
+private fun handleSearch(from: NavTarget?, to: NavTarget?): Boolean {
+    val goingFrom = when (from) {
+        is ExtractorOverviewNavTarget -> true
+        else -> false
+    }
+    val goingTo = when (to) {
+        is ExtractorSearchNavTarget -> true
+        else -> false
+    }
+    return goingFrom and goingTo
+}
+
 private fun goingToImageViewer(
     from: NavTarget?,
     to: NavTarget?
 ): Boolean {
     val goingFrom =
-        (from is ExtractorOverviewNavTarget) or (from is ExtractorAlbumViewerNavTarget) or (from is ExtractorUserCollageNavTarget)
+        (from is ExtractorOverviewNavTarget)
+                || (from is ExtractorAlbumViewerNavTarget)
+                || (from is ExtractorUserCollageNavTarget)
+                || (from is ExtractorSearchNavTarget)
     val goingTo = to is ExtractorImageViewerNavTarget
 
     return goingFrom and goingTo

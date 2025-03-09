@@ -90,6 +90,8 @@ fun ExtractorOverviewScreen(
                 Column {
                     ExtractorSearchPill(
                         onClick = onSearchClick,
+                        // TODO: Recompositions?
+                        enabled = suggestedSearchUiModel !is SuggestedSearchUiModel.Empty,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)

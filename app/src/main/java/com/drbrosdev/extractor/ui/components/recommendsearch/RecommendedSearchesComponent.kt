@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.ui.components.recommendsearch
 
 import androidx.compose.runtime.Stable
 import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.ExtractionCollage
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
@@ -13,7 +14,6 @@ import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeys
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
-import com.drbrosdev.extractor.domain.model.ExtractionCollage
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.overview.OverviewGridState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
@@ -22,7 +22,9 @@ import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -41,7 +43,7 @@ class RecommendedSearchesComponent(
     private val createAlbum: suspend (NewAlbum) -> Unit,
     private val navigators: Navigators
 ) {
-    private val recommendation = flowOf(compileTextAlbums)
+    private val recommendationFlow = flowOf(compileTextAlbums)
         .map { it.invoke(5) }
         .map {
             val userCollages = generateUserCollage.invoke()
@@ -49,18 +51,14 @@ class RecommendedSearchesComponent(
                 .toList()
             userCollages.plus(it)
         }
-    private val progress = trackExtractionProgress.invoke()
 
     private val eventBus = Channel<RecommendedSearchesEvents>()
     val events = eventBus.receiveAsFlow()
 
     val overviewGridState = OverviewGridState()
 
-    val state = combine(
-        recommendation,
-        progress,
-        transform = { content, progress -> transformState(content, progress) }
-    )
+    val state: StateFlow<RecommendedSearchesState> = trackExtractionProgress.invoke()
+        .flatMapLatest { transformState(it) }
         .stateIn(
             coroutineScope,
             WhileUiSubscribed,
@@ -100,19 +98,20 @@ class RecommendedSearchesComponent(
         }
     }
 
-    private fun transformState(
-        content: List<ExtractionCollage>,
-        progress: ExtractionStatus
-    ): RecommendedSearchesState {
-        return when (progress) {
-            is ExtractionStatus.Running -> RecommendedSearchesState.SyncInProgress(progress = progress.percentage)
-            is ExtractionStatus.Done -> when {
-                content.isNotEmpty() -> RecommendedSearchesState.Content(
-                    items = content,
-                    onImageClick = ::handleImageClickEvent
-                )
+    private fun transformState(status: ExtractionStatus): Flow<RecommendedSearchesState> {
+        return when (status) {
+            is ExtractionStatus.Running ->
+                flowOf(RecommendedSearchesState.SyncInProgress(status.percentage))
 
-                else -> RecommendedSearchesState.Empty
+            is ExtractionStatus.Done -> recommendationFlow.map { content ->
+                when {
+                    content.isNotEmpty() -> RecommendedSearchesState.Content(
+                        items = content,
+                        onImageClick = ::handleImageClickEvent
+                    )
+
+                    else -> RecommendedSearchesState.Empty
+                }
             }
         }
     }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusRequester
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.saveable
 import arrow.core.raise.nullable
@@ -55,7 +56,11 @@ class ExtractorSearchSheetComponent(
     }
     var shouldShowDateRangePicker by mutableStateOf(false)
 
+    val focusRequester = FocusRequester()
+
     fun onSearch() = onSearchEvent(getSearchParamSnapshot())
+
+    fun requestFocus() = focusRequester.requestFocus()
 
     fun showDateRangePicker() {
         shouldShowDateRangePicker = true
