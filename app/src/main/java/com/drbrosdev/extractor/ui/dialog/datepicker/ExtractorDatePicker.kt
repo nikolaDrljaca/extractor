@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
@@ -64,7 +63,6 @@ fun ExtractorDatePicker(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(500.dp)
-                .padding(16.dp)
         )
     }
 }

@@ -2,7 +2,6 @@ package com.drbrosdev.extractor.ui.components.recommendsearch
 
 import androidx.compose.runtime.Stable
 import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ExtractionCollage
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
@@ -25,11 +24,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -43,15 +41,6 @@ class RecommendedSearchesComponent(
     private val createAlbum: suspend (NewAlbum) -> Unit,
     private val navigators: Navigators
 ) {
-    private val recommendationFlow = flowOf(compileTextAlbums)
-        .map { it.invoke(5) }
-        .map {
-            val userCollages = generateUserCollage.invoke()
-                .map { user -> ExtractionCollage(user.userEmbed, user.extractions) }
-                .toList()
-            userCollages.plus(it)
-        }
-
     private val eventBus = Channel<RecommendedSearchesEvents>()
     val events = eventBus.receiveAsFlow()
 
@@ -103,15 +92,19 @@ class RecommendedSearchesComponent(
             is ExtractionStatus.Running ->
                 flowOf(RecommendedSearchesState.SyncInProgress(status.percentage))
 
-            is ExtractionStatus.Done -> recommendationFlow.map { content ->
-                when {
-                    content.isNotEmpty() -> RecommendedSearchesState.Content(
-                        items = content,
-                        onImageClick = ::handleImageClickEvent
-                    )
+            is ExtractionStatus.Done -> flow {
+                val content = compileTextAlbums.invoke(7)
+                emit(
+                    when {
+                        content.isNotEmpty() ->
+                            RecommendedSearchesState.Content(
+                                items = content,
+                                onImageClick = ::handleImageClickEvent
+                            )
 
-                    else -> RecommendedSearchesState.Empty
-                }
+                        else -> RecommendedSearchesState.Empty
+                    }
+                )
             }
         }
     }

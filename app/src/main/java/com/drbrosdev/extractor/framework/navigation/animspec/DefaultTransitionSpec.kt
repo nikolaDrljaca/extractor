@@ -85,9 +85,11 @@ private fun handleGetMore(
 private fun handleSearch(from: NavTarget?, to: NavTarget?): Boolean {
     val goingFrom = when (from) {
         is ExtractorOverviewNavTarget -> true
+        is ExtractorSearchNavTarget -> true
         else -> false
     }
     val goingTo = when (to) {
+        is ExtractorOverviewNavTarget -> true
         is ExtractorSearchNavTarget -> true
         else -> false
     }

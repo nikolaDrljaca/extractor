@@ -72,7 +72,7 @@ fun ExtractorSearchSheet(
             ExtractorDateFilter(
                 modifier = Modifier,
                 onClick = component::showDateRangePicker,
-                onReset = { component.dateRangePickerState.setSelection(null, null) },
+                onReset = component::onResetDateSelection,
                 state = component.dateRangePickerState
             )
 

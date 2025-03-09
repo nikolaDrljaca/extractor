@@ -66,8 +66,12 @@ class ExtractorSearchSheetComponent(
         shouldShowDateRangePicker = true
     }
 
-    fun hideDateRangePicker() {
+    fun onResetDateSelection() {
         dateRangePickerState.setSelection(null, null)
+        onSearchEvent(getSearchParamSnapshot())
+    }
+
+    fun hideDateRangePicker() {
         shouldShowDateRangePicker = false
     }
 
