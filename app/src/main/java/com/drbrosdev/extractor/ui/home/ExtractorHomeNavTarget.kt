@@ -10,7 +10,6 @@ import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettin
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
-import com.drbrosdev.extractor.ui.myalbum.ExtractorMyAlbumsNavTarget
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsNavTarget
@@ -60,9 +59,6 @@ object ExtractorHomeNavTarget : NavTarget {
             onSettingsClick = {
                 navController.navigate(ExtractorSettingsNavTarget)
             },
-            onViewAllUserAlbums = {
-                navController.navigate(ExtractorMyAlbumsNavTarget)
-            },
             onCollageClicked = {
                 navController.navigate(ExtractorUserCollageNavTarget)
             }
@@ -88,7 +84,6 @@ private fun SearchScreenPreview() {
                 onInitVisualPreview = {},
                 onAlbumPreviewClick = {},
                 onSettingsClick = {},
-                onViewAllUserAlbums = {},
                 onCollageClicked = {}
             )
         }

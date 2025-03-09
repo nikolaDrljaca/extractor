@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -24,6 +23,8 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -53,25 +54,23 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.AlbumPreview
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toUri
-import com.drbrosdev.extractor.ui.components.shared.ExtractorTextButton
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
+import com.drbrosdev.extractor.util.maxLineSpanItem
 
 private const val IMAGE_SIZE = 130
 
 @Composable
 fun ExtractorCategoryView(
     modifier: Modifier = Modifier,
-    onViewAllClicked: () -> Unit,
     onAlbumPreviewClick: (Long) -> Unit,
     onInitClick: () -> Unit,
     contentPadding: PaddingValues = PaddingValues(),
-    category: ExtractorAlbumsViewDefaults.Category,
+    albumType: ExtractorAlbumsViewDefaults.AlbumType,
     state: ExtractorCategoryViewState,
 ) {
     Column(
         modifier = Modifier
-            .padding(vertical = 6.dp)
             .then(modifier)
     ) {
         Row(
@@ -84,17 +83,10 @@ fun ExtractorCategoryView(
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(id = category.stringRes),
+                text = stringResource(id = albumType.stringRes),
                 style = MaterialTheme.typography.titleLarge
             )
-
             when {
-                state is ExtractorCategoryViewState.Content && category == ExtractorAlbumsViewDefaults.Category.USER -> {
-                    ExtractorTextButton(onClick = onViewAllClicked) {
-                        Text(text = stringResource(R.string.album_view_all))
-                    }
-                }
-
                 state.isLoading -> {
                     Box(modifier = Modifier.padding(12.dp)) {
                         CircularProgressIndicator(
@@ -135,7 +127,7 @@ fun ExtractorCategoryView(
                 is ExtractorCategoryViewState.Initial -> ExtractorCategoryInitialView(
                     modifier = Modifier.padding(contentPadding),
                     onInitClick = onInitClick,
-                    category = category
+                    albumType = albumType
                 )
 
                 is ExtractorCategoryViewState.StillIndexing -> ExtractorCategoryStillIndexingView(
@@ -146,10 +138,83 @@ fun ExtractorCategoryView(
     }
 }
 
+fun LazyGridScope.ExtractorUserCategoryView(
+    modifier: Modifier = Modifier,
+    onAlbumPreviewClick: (Long) -> Unit,
+    onInitClick: () -> Unit,
+    contentPadding: PaddingValues = PaddingValues(),
+    albumType: ExtractorAlbumsViewDefaults.AlbumType,
+    state: ExtractorCategoryViewState,
+) {
+    maxLineSpanItem {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(bottom = 6.dp)
+                .padding(contentPadding)
+                .height(IntrinsicSize.Max)
+                .fillMaxWidth()
+                .then(modifier)
+        ) {
+            Text(
+                text = stringResource(id = albumType.stringRes),
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            when {
+                state.isLoading -> {
+                    Box(modifier = Modifier.padding(12.dp)) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(26.dp),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            strokeCap = StrokeCap.Round,
+                            trackColor = Color.Transparent
+                        )
+                    }
+                }
+
+                else -> {
+                    Spacer(modifier = Modifier.height(48.dp))
+                }
+            }
+        }
+    }
+
+    when (state) {
+        is ExtractorCategoryViewState.Content -> items(
+            items = state.albums,
+            key = { it.id }
+        ) {
+            UserAlbumThumbnailView(
+                modifier = Modifier.animateItem(),
+                onClick = { onAlbumPreviewClick(it.id) },
+                imageUri = it.thumbnail.toUri(),
+                albumName = it.name
+            )
+        }
+
+        is ExtractorCategoryViewState.Initial -> maxLineSpanItem {
+            ExtractorCategoryInitialView(
+                modifier = Modifier.padding(contentPadding),
+                onInitClick = onInitClick,
+                albumType = albumType
+            )
+        }
+
+        is ExtractorCategoryViewState.StillIndexing -> maxLineSpanItem {
+            ExtractorCategoryStillIndexingView(
+                modifier = Modifier.padding(contentPadding)
+            )
+        }
+    }
+}
+
 
 object ExtractorAlbumsViewDefaults {
 
-    enum class Category(val stringRes: Int) {
+    enum class AlbumType(val stringRes: Int) {
         VISUAL(R.string.visual_albums),
         TEXT(R.string.text_albums),
         USER(R.string.my_albums)
@@ -183,7 +248,7 @@ private fun ExtractorCategoryStillIndexingView(
 private fun ExtractorCategoryInitialView(
     modifier: Modifier = Modifier,
     onInitClick: () -> Unit,
-    category: ExtractorAlbumsViewDefaults.Category,
+    albumType: ExtractorAlbumsViewDefaults.AlbumType,
 ) {
     Column(
         modifier = Modifier
@@ -196,8 +261,8 @@ private fun ExtractorCategoryInitialView(
         ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        when (category) {
-            ExtractorAlbumsViewDefaults.Category.USER -> {
+        when (albumType) {
+            ExtractorAlbumsViewDefaults.AlbumType.USER -> {
                 TextButton(onClick = onInitClick) {
                     Icon(
                         painterResource(id = R.drawable.round_image_search_24),
@@ -242,7 +307,7 @@ private fun ExtractorCategoryContentView(
         modifier = Modifier
             .requiredHeight(IMAGE_SIZE.dp)
             .then(modifier),
-        contentPadding = PaddingValues(horizontal = 8.dp),
+        contentPadding = PaddingValues(horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
     ) {
         items(
@@ -260,7 +325,6 @@ private fun ExtractorCategoryContentView(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AlbumThumbnailView(
     modifier: Modifier = Modifier,
@@ -310,7 +374,60 @@ private fun AlbumThumbnailView(
             overflow = TextOverflow.Ellipsis
         )
     }
+}
 
+@Composable
+private fun UserAlbumThumbnailView(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    imageUri: Uri,
+    size: Int? = null,
+    albumName: String
+) {
+    val scaleSize = when {
+        size != null -> size * 2
+        else -> 192
+    }
+
+    val shape = RoundedCornerShape(12.dp)
+    Box(
+        modifier = Modifier
+            .clip(shape)
+            .height(scaleSize.dp)
+            .then(modifier)
+    ) {
+        AsyncImage(
+            modifier = Modifier
+                .clip(shape)
+                .clickable { onClick() }
+                .matchParentSize(),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imageUri)
+                .size(scaleSize, scaleSize)
+                .crossfade(true)
+                .build(),
+            contentDescription = "Loaded image",
+            contentScale = ContentScale.Crop,
+            placeholder = painterResource(id = R.drawable.baseline_image_24)
+        )
+
+        Box(
+            modifier = Modifier
+                .background(color = Color.Black.copy(alpha = 0.25f))
+                .matchParentSize()
+        )
+
+        Text(
+            text = albumName,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .basicMarquee()
+                .padding(bottom = 4.dp, start = 2.dp, end = 2.dp),
+            style = MaterialTheme.typography.titleMedium.copy(color = Color.White),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 }
 
 @CombinedPreview
@@ -329,26 +446,23 @@ private fun CurrentPreview() {
                 verticalArrangement = Arrangement.spacedBy(space = 20.dp)
             ) {
                 ExtractorCategoryView(
-                    onViewAllClicked = { },
                     state = ExtractorCategoryViewState.Content(albums = items, isLoading = false),
                     onAlbumPreviewClick = {},
-                    category = ExtractorAlbumsViewDefaults.Category.TEXT,
+                    albumType = ExtractorAlbumsViewDefaults.AlbumType.TEXT,
                     onInitClick = {}
                 )
 
                 ExtractorCategoryView(
-                    onViewAllClicked = { },
                     onAlbumPreviewClick = {},
                     state = ExtractorCategoryViewState.Initial(isLoading = true),
-                    category = ExtractorAlbumsViewDefaults.Category.USER,
+                    albumType = ExtractorAlbumsViewDefaults.AlbumType.USER,
                     onInitClick = {}
                 )
 
                 ExtractorCategoryView(
-                    onViewAllClicked = { },
                     onAlbumPreviewClick = {},
                     state = ExtractorCategoryViewState.StillIndexing(),
-                    category = ExtractorAlbumsViewDefaults.Category.TEXT,
+                    albumType = ExtractorAlbumsViewDefaults.AlbumType.TEXT,
                     onInitClick = {}
                 )
             }
