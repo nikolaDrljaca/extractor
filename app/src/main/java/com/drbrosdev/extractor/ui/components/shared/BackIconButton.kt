@@ -13,7 +13,6 @@ fun BackIconButton(
     onBack: () -> Unit,
     enabled: Boolean = true
 ) {
-
     IconButton(
         modifier = Modifier.then(modifier),
         onClick = onBack,

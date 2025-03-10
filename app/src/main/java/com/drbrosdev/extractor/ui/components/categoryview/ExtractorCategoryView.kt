@@ -211,7 +211,6 @@ fun LazyGridScope.ExtractorUserCategoryView(
     }
 }
 
-
 object ExtractorAlbumsViewDefaults {
 
     enum class AlbumType(val stringRes: Int) {
@@ -296,7 +295,6 @@ private fun ExtractorCategoryInitialView(
     }
 }
 
-
 @Composable
 private fun ExtractorCategoryContentView(
     modifier: Modifier = Modifier,
@@ -323,7 +321,6 @@ private fun ExtractorCategoryContentView(
         }
     }
 }
-
 
 @Composable
 private fun AlbumThumbnailView(

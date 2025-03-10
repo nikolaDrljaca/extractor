@@ -9,8 +9,8 @@ import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndices
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedIndicesAsFlow
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeys
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeysAsFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,9 +43,9 @@ class ExtractorAlbumViewerViewModel(
         .filterNotNull()
         .flowOn(Dispatchers.Default)
 
-    val gridState = ExtractorGridState()
+    val gridState = ExtractorGridState<Int>()
 
-    private val shouldShowSelectAction = gridState.checkedIndicesAsFlow()
+    private val shouldShowSelectAction = gridState.checkedKeysAsFlow()
         .map { it.isNotEmpty() }
 
     val state = combine(
@@ -105,7 +105,7 @@ class ExtractorAlbumViewerViewModel(
     fun getSelectedUris(): List<Uri> {
         val entries = state.value.albumEntries()
             .map { it.uri.toUri() }
-        return gridState.checkedIndices().map { entries[it] }
+        return gridState.checkedKeys().map { entries[it] }
     }
 
     fun onSelectionCreate() {
@@ -117,7 +117,7 @@ class ExtractorAlbumViewerViewModel(
                 keywordType = album.keywordType,
                 searchType = album.searchType,
                 origin = NewAlbum.Origin.USER_GENERATED,
-                entries = gridState.checkedIndices().map { album.entries[it] }.map {
+                entries = gridState.checkedKeys().map { album.entries[it] }.map {
                     NewAlbum.Entry(
                         uri = it.uri,
                         id = it.id
@@ -142,10 +142,10 @@ class ExtractorAlbumViewerViewModel(
     fun onDeleteSelection() {
         viewModelScope.launch {
             val album = state.value.album()
-            val ids = gridState.checkedIndices().map { album.entries[it].id.id }
+            val ids = gridState.checkedKeys().map { album.entries[it].id.id }
 
             val albumCount = album.entries.count()
-            val selectedCount = gridState.checkedIndices().count()
+            val selectedCount = gridState.checkedKeys().count()
 
             if (albumCount == selectedCount) {
                 albumRepository.deleteAlbumById(albumId)

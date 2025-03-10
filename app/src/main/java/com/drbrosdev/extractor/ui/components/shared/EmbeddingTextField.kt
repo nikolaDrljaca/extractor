@@ -44,7 +44,6 @@ fun EmbeddingTextField(
     )
 }
 
-
 @Composable
 fun EmbeddingTextField(
     value: String,
@@ -54,7 +53,6 @@ fun EmbeddingTextField(
     label: (@Composable () -> Unit)? = null,
     placeholder: (@Composable () -> Unit)? = null,
 ) {
-
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()

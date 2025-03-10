@@ -1,9 +1,8 @@
-package com.drbrosdev.extractor.ui.purchase
+package com.drbrosdev.extractor.ui.shop
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,10 +37,8 @@ import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorShopPlaceholder
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
 
-
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ExtractorPurchaseSearchScreen(
+fun ExtractorShopScreen(
     onBack: () -> Unit,
     onSettingsClick: () -> Unit,
     onPurchaseItemClick: () -> Unit,
@@ -61,7 +58,7 @@ fun ExtractorPurchaseSearchScreen(
                 .systemBarsPadding()
                 .fillMaxSize()
                 .verticalScroll(scrollState),
-            constraintSet = getMoreScreenConstraintSet()
+            constraintSet = shopScreenConstraintSet()
         ) {
             Row(
                 modifier = Modifier
@@ -150,7 +147,7 @@ fun ExtractorPurchaseSearchScreen(
     }
 }
 
-private fun getMoreScreenConstraintSet() = ConstraintSet {
+private fun shopScreenConstraintSet() = ConstraintSet {
     val buyView = createRefFor(ViewIds.BUY_VIEW)
     val header = createRefFor(ViewIds.HEADER)
     val alternative = createRefFor(ViewIds.ALTERNATIVE)

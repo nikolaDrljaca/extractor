@@ -3,11 +3,11 @@ package com.drbrosdev.extractor.ui.overview
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import com.drbrosdev.extractor.domain.model.MediaImageId
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState2
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeys
 
 class OverviewGridState {
-    val gridState: ExtractorGridState2<MediaImageId> = ExtractorGridState2()
+    val gridState: ExtractorGridState<MediaImageId> = ExtractorGridState()
 
     val multiselectState by derivedStateOf {
         gridState.checkedKeys().isNotEmpty()

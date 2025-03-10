@@ -111,6 +111,7 @@ fun ExtractorSettingsScreen(
                         }
 
                         SettingsTabItem.About -> ExtractorAbout()
+
                         SettingsTabItem.Licenses -> ExtractorLicenses(onClick = onLicenseClick)
                     }
                 }

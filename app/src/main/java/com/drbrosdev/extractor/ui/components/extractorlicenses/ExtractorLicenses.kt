@@ -19,7 +19,6 @@ import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettings
 import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettingsItemPosition
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtractorLicenses(
     modifier: Modifier = Modifier,

@@ -7,13 +7,8 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -37,7 +32,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -50,7 +44,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun applicationIconResource(): Painter {
@@ -167,11 +160,6 @@ fun rememberKeyboardState(): State<KeyboardState> {
     return rememberUpdatedState(isImeVisible)
 }
 
-fun Modifier.outlined(): Modifier {
-    return this
-        .border(width = 2.dp, color = Color.Red)
-}
-
 fun Modifier.thenIf(condition: Boolean, modifier: Modifier.() -> Modifier): Modifier {
     return if (condition) {
         then(modifier(Modifier))
@@ -226,12 +214,4 @@ fun LazyGridState.isScrollingUp(): Boolean {
             }
         }
     }.value
-}
-
-fun LazyListScope.verticalSpace(space: Dp) = item {
-    Spacer(Modifier.height(space))
-}
-
-fun LazyListScope.horizontalSpace(space: Dp) = item {
-    Spacer(Modifier.width(space))
 }

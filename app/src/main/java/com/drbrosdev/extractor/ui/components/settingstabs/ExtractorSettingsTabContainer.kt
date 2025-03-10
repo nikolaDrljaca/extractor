@@ -77,7 +77,6 @@ fun ExtractorSettingsTabContainer(
     }
 }
 
-
 @Composable
 private fun ExtractorTabIndicator(
     modifier: Modifier = Modifier,

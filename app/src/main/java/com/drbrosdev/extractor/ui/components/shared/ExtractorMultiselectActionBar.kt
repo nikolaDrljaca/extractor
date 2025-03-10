@@ -96,13 +96,14 @@ fun ExtractorMultiselectActionBar(
         modifier = Modifier.then(modifier)
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
             items.forEach {
                 MultiselectActionBarItem(
+                    modifier = Modifier.weight(1f),
                     onClick = { onAction(it.action) },
                     painter = painterResource(id = it.resourceId),
                     text = stringResource(id = it.stringId)
@@ -144,7 +145,7 @@ private fun MultiselectActionBarItem(
 
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelMedium.copy(
+                style = MaterialTheme.typography.labelSmall.copy(
                     color = contentColor
                 )
             )

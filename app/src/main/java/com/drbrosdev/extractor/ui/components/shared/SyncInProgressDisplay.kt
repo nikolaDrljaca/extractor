@@ -58,7 +58,7 @@ fun SyncInProgressDisplay(
 }
 
 @Composable
-fun HeaderText(
+private fun HeaderText(
     modifier: Modifier = Modifier,
     text: String
 ) {

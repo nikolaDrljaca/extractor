@@ -78,7 +78,7 @@ class CompileTextAlbums(
             searchType = SearchType.PARTIAL,
             keywordType = KeywordType.TEXT,
             entries = entries,
-            origin = NewAlbum.Origin.VISUAL_COMPUTED
+            origin = NewAlbum.Origin.TEXT_COMPUTED
         )
     }
 }

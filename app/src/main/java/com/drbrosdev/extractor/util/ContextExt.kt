@@ -9,11 +9,11 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.MediaStoreImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 
 suspend fun Context.launchShareIntent(media: MediaStoreImage) =
     withContext(Dispatchers.Default) {
@@ -52,23 +52,23 @@ fun Context.launchShareAppIntent() {
 fun Context.launchPlayStorePage() {
     val intent = Intent(
         Intent.ACTION_VIEW,
-        Uri.parse(getString(R.string.app_store_link))
+        getString(R.string.app_store_link).toUri()
     )
     startActivity(intent)
 }
 
 fun Context.launchViewIntent(link: String) {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+    val intent = Intent(Intent.ACTION_VIEW, link.toUri())
     startActivity(intent)
 }
 
 fun Context.launchWebpageIntent() {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.webage)))
+    val intent = Intent(Intent.ACTION_VIEW, getString(R.string.webage).toUri())
     startActivity(intent)
 }
 
 fun Context.launchPrivacyPolicyIntent() {
-    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.webpage_privacy)))
+    val intent = Intent(Intent.ACTION_VIEW, getString(R.string.webpage_privacy).toUri())
     startActivity(intent)
 }
 
@@ -97,7 +97,7 @@ suspend fun Context.launchUseAsIntent(media: MediaStoreImage) =
 
 fun Context.launchEmailIntent(content: String) {
     val intent = Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:") // Only email apps handle this.
+        data = "mailto:".toUri() // Only email apps handle this.
         putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
         putExtra(Intent.EXTRA_SUBJECT, "Extractor Feedback Submission")
         putExtra(Intent.EXTRA_TEXT, content)

@@ -10,11 +10,11 @@ import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.isNotBlank
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.framework.navigation.Navigators
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState2
+import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeys
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
-import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchNavTarget
+import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import com.drbrosdev.extractor.util.asState
 import dev.olshevski.navigation.reimagined.navigate
@@ -40,7 +40,7 @@ class SearchResultComponent(
 
     private val _searchTrigger = MutableSharedFlow<ImageSearchParams?>()
 
-    val gridState = ExtractorGridState2<MediaImageId>()
+    val gridState = ExtractorGridState<MediaImageId>()
 
     val multiselectActionBarVisible by derivedStateOf {
         gridState.checkedKeys().isNotEmpty()
@@ -119,7 +119,7 @@ class SearchResultComponent(
                     SearchResultState.NoSearchesLeft(
                         onGetMore = {
                             navigators.navController.navigate(
-                                ExtractorPurchaseSearchNavTarget
+                                ExtractorShopNavTarget
                             )
                         }
                     )

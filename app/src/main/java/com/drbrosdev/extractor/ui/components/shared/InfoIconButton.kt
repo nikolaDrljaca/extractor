@@ -13,7 +13,6 @@ fun InfoIconButton(
     onClick: () -> Unit,
     enabled: Boolean = true
 ) {
-
     IconButton(
         modifier = Modifier.then(modifier),
         onClick = onClick,

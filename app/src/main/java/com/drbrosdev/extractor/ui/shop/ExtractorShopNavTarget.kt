@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.purchase
+package com.drbrosdev.extractor.ui.shop
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -17,17 +17,17 @@ import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
 @Parcelize
-object ExtractorPurchaseSearchNavTarget : NavTarget {
+object ExtractorShopNavTarget : NavTarget {
 
     @Composable
     override fun Content(navigators: Navigators) {
-        val viewModel: ExtractorPurchaseSearchViewModel = koinViewModel()
+        val viewModel: ExtractorShopSearchViewModel = koinViewModel()
 
         val navController = navigators.navController
         val activity = LocalContext.current.findActivity()
         val context = LocalContext.current
 
-        ExtractorPurchaseSearchScreen(
+        ExtractorShopScreen(
             snackbarState = viewModel.snackbarHostState,
             onBack = { navController.pop() },
             onSettingsClick = {
@@ -47,7 +47,7 @@ private fun CurrentPreview() {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            ExtractorPurchaseSearchScreen(
+            ExtractorShopScreen(
                 snackbarState = SnackbarHostState(),
                 onBack = {},
                 onSettingsClick = {},

@@ -39,7 +39,7 @@ fun ExtractorImageBottomBar(
             .fillMaxWidth()
             .background(background)
             .zIndex(1f)
-            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .padding(horizontal = 12.dp, vertical = 12.dp)
             .then(modifier),
     ) {
         ExtractorBottomBarItem.entries.forEachIndexed { _, barItem ->
@@ -52,6 +52,7 @@ fun ExtractorImageBottomBar(
                 modifier = Modifier
                     .clip(RoundedCornerShape(14.dp))
                     .clickable { onClick(barItem) }
+                    .weight(1f)
                     .padding(12.dp)
             ) {
                 Icon(

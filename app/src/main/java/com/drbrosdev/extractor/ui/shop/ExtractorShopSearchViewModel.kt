@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.purchase
+package com.drbrosdev.extractor.ui.shop
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -8,7 +8,7 @@ import com.drbrosdev.extractor.data.ExtractorDataStore
 import kotlinx.coroutines.launch
 
 // TODO: wip
-class ExtractorPurchaseSearchViewModel(
+class ExtractorShopSearchViewModel(
     private val datastore: ExtractorDataStore
 ) : ViewModel() {
 

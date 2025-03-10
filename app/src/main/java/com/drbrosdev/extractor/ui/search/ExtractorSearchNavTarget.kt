@@ -64,7 +64,10 @@ data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : Nav
             sheetComponent = viewModel.searchSheetComponent,
             resultComponent = viewModel.searchResultComponent,
             snackbarHostState = viewModel.snackbarHostState,
-            onBack = { navigators.navController.pop() }
+            onBack = {
+                keyboardController?.hide()
+                navigators.navController.pop()
+            }
         )
     }
 }

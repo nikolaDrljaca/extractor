@@ -62,7 +62,7 @@ fun ExtractorAlbumViewerScreen(
     onMultiselectAction: (MultiselectAction) -> Unit,
     snackbarHostState: SnackbarHostState,
     state: ExtractorAlbumViewerScreenState,
-    imageGridState: ExtractorGridState
+    imageGridState: ExtractorGridState<Int>
 ) {
     val extractorTopBarState = remember {
         derivedStateOf {

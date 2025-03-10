@@ -28,7 +28,6 @@ fun SearchTypeSwitch(
     onSelectionChanged: (SearchType) -> Unit,
     enabled: Boolean = true,
 ) {
-
     Column {
         Text(
             text = stringResource(id = R.string.match_keyword),

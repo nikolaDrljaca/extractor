@@ -13,7 +13,7 @@ import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.myalbum.ExtractorMyAlbumsViewModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
 import com.drbrosdev.extractor.ui.overview.ExtractorOverviewViewModel
-import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchViewModel
+import com.drbrosdev.extractor.ui.shop.ExtractorShopSearchViewModel
 import com.drbrosdev.extractor.ui.root.RootViewModel
 import com.drbrosdev.extractor.ui.search.ExtractorSearchViewModel
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsViewModel
@@ -61,7 +61,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        ExtractorPurchaseSearchViewModel(
+        ExtractorShopSearchViewModel(
             datastore = get()
         )
     }

@@ -8,17 +8,17 @@ import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorListIte
 import kotlinx.coroutines.flow.map
 
 @Stable
-class ExtractorGridState(
+class ExtractorGridState<T>(
     val lazyGridState: LazyGridState = LazyGridState(),
 ) {
-    val checkedItems = mutableStateMapOf<Int, ExtractorListItemCheckedState>()
+    val checkedItems = mutableStateMapOf<T, ExtractorListItemCheckedState>()
 
-    operator fun get(index: Int): ExtractorListItemCheckedState {
-        return checkedItems.getOrDefault(index, ExtractorListItemCheckedState.UNCHECKED)
+    operator fun get(key: T): ExtractorListItemCheckedState {
+        return checkedItems.getOrDefault(key, ExtractorListItemCheckedState.UNCHECKED)
     }
 
-    fun onItemLongClick(index: Int) {
-        transitionItemState(index)
+    fun onItemLongClick(key: T) {
+        transitionItemState(key)
     }
 
     /**
@@ -27,7 +27,7 @@ class ExtractorGridState(
      *
      * @return If the state transition for the item at index was handled.
      */
-    fun onItemClick(index: Int): Boolean {
+    fun onItemClick(key: T): Boolean {
         val areAllUnchecked = checkedItems.values
             .all { it == ExtractorListItemCheckedState.UNCHECKED }
 
@@ -35,28 +35,28 @@ class ExtractorGridState(
             return false
         }
 
-        transitionItemState(index)
+        transitionItemState(key)
         return true
     }
 
     fun clearSelection() {
-        checkedItems.keys.forEach { index ->
-            checkedItems[index] = ExtractorListItemCheckedState.UNCHECKED
+        checkedItems.keys.forEach { key ->
+            checkedItems[key] = ExtractorListItemCheckedState.UNCHECKED
         }
     }
 
-    private fun transitionItemState(index: Int) {
-        val currentState = checkedItems.getOrDefault(index, ExtractorListItemCheckedState.UNCHECKED)
+    private fun transitionItemState(key: T) {
+        val currentState = checkedItems.getOrDefault(key, ExtractorListItemCheckedState.UNCHECKED)
         val updatedState = when (currentState) {
             ExtractorListItemCheckedState.CHECKED -> ExtractorListItemCheckedState.UNCHECKED
             ExtractorListItemCheckedState.UNCHECKED -> ExtractorListItemCheckedState.CHECKED
         }
-        checkedItems[index] = updatedState
+        checkedItems[key] = updatedState
     }
 }
 
-fun ExtractorGridState.checkedIndicesAsFlow() = snapshotFlow { checkedItems.toMap() }
+fun <T> ExtractorGridState<T>.checkedKeysAsFlow() = snapshotFlow { checkedItems.toMap() }
     .map { it.keys.filter { index -> checkedItems[index] == ExtractorListItemCheckedState.CHECKED } }
 
-fun ExtractorGridState.checkedIndices() = checkedItems.toMap().keys
+fun <T> ExtractorGridState<T>.checkedKeys() = checkedItems.toMap().keys
     .filter { index -> checkedItems[index] == ExtractorListItemCheckedState.CHECKED }
