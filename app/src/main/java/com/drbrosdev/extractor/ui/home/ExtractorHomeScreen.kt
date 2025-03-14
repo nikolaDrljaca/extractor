@@ -146,6 +146,10 @@ fun ExtractorHomeScreen(
                     modifier = Modifier
                 )
             }
+
+            maxLineSpanItem {
+                Spacer(modifier = Modifier.height(72.dp))
+            }
         }
 
         ExtractorTopBar(

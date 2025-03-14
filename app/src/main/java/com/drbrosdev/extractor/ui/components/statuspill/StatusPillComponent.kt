@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.ui.components.statuspill
 
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
-import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.combine

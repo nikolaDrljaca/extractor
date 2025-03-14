@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
-import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
-import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.worker.ExtractorWorkerService
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.map
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class ExtractorResetIndexViewModel(
     private val extractorRepository: ExtractorRepository,
     private val extractionProgress: TrackExtractionProgress,
-    private val spawnExtractorWork: SpawnExtractorWork
+    private val workerService: ExtractorWorkerService
 ) : ViewModel() {
 
     val loading = extractionProgress.invoke()
@@ -37,9 +37,9 @@ class ExtractorResetIndexViewModel(
         if (loading.value) return
 
         viewModelScope.launch {
-
             extractorRepository.deleteExtractionDataAndSearchIndex()
-            spawnExtractorWork.invoke()
+
+            workerService.startExtractorWorker()
 
             _events.send(ExtractorResetIndexEvents.WorkerStarted)
         }

@@ -14,8 +14,7 @@ import com.drbrosdev.extractor.domain.model.asAlbumName
 import com.drbrosdev.extractor.domain.model.isBlank
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
-import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.image.SearchCountPositiveDelta
 import com.drbrosdev.extractor.domain.usecase.image.SearchImages
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
@@ -38,7 +37,6 @@ class ExtractorSearchViewModel(
     private val imageSearch: SearchImages,
     private val trackExtractionProgress: TrackExtractionProgress,
     private val generateSuggestedKeywords: GenerateSuggestedKeywords,
-    private val spawnExtractorWork: SpawnExtractorWork,
     private val searchCountPositiveDelta: SearchCountPositiveDelta,
     private val datastore: ExtractorDataStore,
     private val navigators: Navigators,

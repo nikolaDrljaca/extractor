@@ -3,8 +3,8 @@ package com.drbrosdev.extractor.ui.dialog.status
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
-import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
-import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.worker.ExtractorWorkerService
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.map
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ExtractorStatusDialogViewModel(
-    private val spawnExtractorWork: SpawnExtractorWork,
+    private val workerService: ExtractorWorkerService,
     private val trackExtractionProgress: TrackExtractionProgress
 ) : ViewModel() {
 
@@ -57,7 +57,7 @@ class ExtractorStatusDialogViewModel(
         )
 
     private fun startExtraction() {
-        spawnExtractorWork.invoke()
+        workerService.startExtractorWorker()
     }
 
     private fun closeDialog() {

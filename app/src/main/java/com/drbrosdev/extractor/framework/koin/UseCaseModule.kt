@@ -5,14 +5,14 @@ import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
-import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
-import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
-import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
 import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
 import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbum
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
+import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.extractor.text.ExtractTextEmbed
 import com.drbrosdev.extractor.domain.usecase.extractor.text.MlKitExtractTextEmbed
 import com.drbrosdev.extractor.domain.usecase.extractor.visual.ExtractVisualEmbeds
@@ -166,8 +166,17 @@ val useCaseModule = module {
     }
 
     factory {
-        SpawnExtractorWork(
-            workManager = get()
+        CleanupAlbum(
+            mediaStoreImageRepository = get(),
+            albumRepository = get()
+        )
+    }
+
+    factory {
+        StartExtraction(
+            extractor = get(),
+            mediaImageRepository = get(),
+            extractionRepository = get()
         )
     }
 
@@ -200,7 +209,7 @@ val useCaseModule = module {
         CompleteOnboarding(
             dispatcher = get(named(CoroutineModuleName.Default)),
             dataStore = get(),
-            spawnExtractorWork = get()
+            workerService = get()
         )
     }
 
@@ -219,12 +228,6 @@ val useCaseModule = module {
             extractionDao = get()
         )
     } bind SearchImageByDateRange::class
-
-    factory {
-        SpawnAlbumCleanupWork(
-            workManager = get()
-        )
-    }
 
     // Keep this single due to the ImageClassifier instance created inside
     // NOTE: Maybe move this into a provider use case?

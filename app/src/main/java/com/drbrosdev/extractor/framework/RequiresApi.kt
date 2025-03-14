@@ -29,7 +29,7 @@ fun requiresApi(
 
 fun <T> requiresApi(
     versionCode: Int,
-    fallback: (() -> T),
+    fallback: () -> T,
     block: () -> T,
 ): T {
     return if (Build.VERSION.SDK_INT >= versionCode) {

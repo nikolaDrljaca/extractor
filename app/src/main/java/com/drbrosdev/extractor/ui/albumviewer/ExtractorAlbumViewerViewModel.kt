@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
+import com.drbrosdev.extractor.domain.worker.ExtractorWorkerService
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeys
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeysAsFlow
@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 
 class ExtractorAlbumViewerViewModel(
     private val stateHandle: SavedStateHandle,
-    private val spawnAlbumCleanupWork: SpawnAlbumCleanupWork,
+    private val workerService: ExtractorWorkerService,
     private val albumRepository: AlbumRepository,
     private val albumId: Long
 ) : ViewModel() {
@@ -39,7 +39,7 @@ class ExtractorAlbumViewerViewModel(
     val events = _events.receiveAsFlow()
 
     private val albumFlow = albumRepository.findAlbumByIdAsFlow(albumId)
-        .onStart { spawnAlbumCleanupWork.invoke(albumId) }
+        .onStart { workerService.startAlbumCleanupWorker(albumId) }
         .filterNotNull()
         .flowOn(Dispatchers.Default)
 
