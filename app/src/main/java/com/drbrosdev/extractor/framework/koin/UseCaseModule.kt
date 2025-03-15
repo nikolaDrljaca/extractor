@@ -7,7 +7,8 @@ import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
 import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
-import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbum
+import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbums
+import com.drbrosdev.extractor.domain.usecase.album.StoreAlbums
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
@@ -122,10 +123,9 @@ val useCaseModule = module {
     factory { GenerateMostCommonTokens() }
 
     factory {
-        CompileVisualAlbum(
+        CompileVisualAlbums(
             repo = get(),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
-            albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
             generateMostCommonTokens = get(),
         )
@@ -159,9 +159,14 @@ val useCaseModule = module {
         CompileTextAlbums(
             repo = get(),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
-            albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
             generateMostCommonTokens = get(),
+        )
+    }
+
+    factory {
+        StoreAlbums(
+            albumRepository = get<DefaultAlbumRepository>()
         )
     }
 

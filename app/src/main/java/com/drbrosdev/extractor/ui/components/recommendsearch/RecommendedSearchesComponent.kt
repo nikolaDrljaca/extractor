@@ -93,7 +93,7 @@ class RecommendedSearchesComponent(
                 flowOf(RecommendedSearchesState.SyncInProgress(status.percentage))
 
             is ExtractionStatus.Done -> flow {
-                val content = compileTextAlbums.invoke(7)
+                val content = compileTextAlbums.execute(7)
                 emit(
                     when {
                         content.isNotEmpty() ->

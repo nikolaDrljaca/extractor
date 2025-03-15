@@ -1,12 +1,11 @@
 package com.drbrosdev.extractor.domain.usecase.album
 
 import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.ExtractionCollage
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
-import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
-import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
@@ -14,22 +13,30 @@ import com.drbrosdev.extractor.domain.usecase.token.isValidSearchToken
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.toList
 
-class CompileVisualAlbum(
+class CompileVisualAlbums(
     private val repo: ExtractorRepository,
     private val tokenizeText: TokenizeText,
     private val generateMostCommonTokens: GenerateMostCommonTokens,
     private val searchImageByQuery: SearchImageByQuery,
-    private val albumRepository: AlbumRepository,
 ) {
-    suspend operator fun invoke() {
-        val allVisuals = repo.getAllVisualEmbedValuesAsCsv() ?: return
+    suspend fun execute(amount: Int): List<ExtractionCollage> {
+        return compile(amount)
+            .map { (topWord, extractions) ->
+                ExtractionCollage(
+                    keyword = topWord,
+                    extractions = extractions
+                )
+            }
+    }
 
+    private suspend fun compile(amount: Int = 7): List<Pair<String, List<Extraction>>> {
+        val allVisuals = repo.getAllVisualEmbedValuesAsCsv() ?: return emptyList()
         val clean = allVisuals.replace(",", " ")
         val tokens = tokenizeText.invoke(clean)
             .filter { it.isValidSearchToken() }
             .toList()
 
-        generateMostCommonTokens.invoke(tokens)
+        return generateMostCommonTokens.invoke(tokens, amount)
             .map {
                 val topWord = it.text
                 val imageSearchParams = ImageSearchParams(
@@ -38,30 +45,8 @@ class CompileVisualAlbum(
                     searchType = SearchType.PARTIAL,
                     dateRange = null
                 )
-                val result = searchImageByQuery.execute(imageSearchParams)
-                buildNewAlbumPayload(result, topWord)
+                topWord to searchImageByQuery.execute(imageSearchParams)
             }
             .filter { (embeds, _) -> embeds.isNotEmpty() }
-            .forEach { albumRepository.createAlbum(it) }
-    }
-
-    private fun buildNewAlbumPayload(
-        extractions: List<Extraction>,
-        searchTerm: String
-    ): NewAlbum {
-        val entries = extractions.map {
-            NewAlbum.Entry(
-                uri = it.uri,
-                id = it.mediaImageId
-            )
-        }
-        return NewAlbum(
-            keyword = searchTerm,
-            name = searchTerm,
-            searchType = SearchType.PARTIAL,
-            keywordType = KeywordType.IMAGE,
-            entries = entries,
-            origin = NewAlbum.Origin.VISUAL_COMPUTED
-        )
     }
 }

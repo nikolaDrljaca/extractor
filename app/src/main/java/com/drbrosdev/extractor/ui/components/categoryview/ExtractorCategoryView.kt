@@ -77,7 +77,6 @@ fun ExtractorCategoryView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(bottom = 6.dp)
                 .padding(contentPadding)
                 .height(IntrinsicSize.Max)
                 .fillMaxWidth()
@@ -383,7 +382,7 @@ private fun UserAlbumThumbnailView(
 ) {
     val scaleSize = when {
         size != null -> size * 2
-        else -> 192
+        else -> 172
     }
 
     val shape = RoundedCornerShape(12.dp)

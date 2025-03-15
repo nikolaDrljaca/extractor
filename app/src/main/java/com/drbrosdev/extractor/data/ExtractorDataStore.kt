@@ -13,6 +13,28 @@ import kotlinx.coroutines.flow.map
 
 val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = "extractor_prefs")
 
+interface ExtractorDataStoreService {
+    data class ExtractorPreferences(
+        val isOnboardingFinished: Boolean,
+        val searchCount: Int,
+        val showYourKeywordsBanner: Boolean
+    )
+
+    fun getPreferences(): Flow<ExtractorPreferences>
+
+    suspend fun finishOnboarding()
+
+    suspend fun hasSeenSearchSheet()
+
+    suspend fun incrementSearchCountBy(amount: Int = 1)
+
+    suspend fun decrementSearchCount()
+
+    suspend fun getSearchCount(): Int
+
+    suspend fun hasSeenYourKeywordsBanner()
+
+}
 
 class ExtractorDataStore(
     private val datastore: DataStore<Preferences>

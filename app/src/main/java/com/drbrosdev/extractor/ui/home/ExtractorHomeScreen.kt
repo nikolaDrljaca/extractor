@@ -27,9 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorAlbumsViewDefaults
-import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryView
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorUserCategoryView
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
@@ -46,15 +44,10 @@ fun ExtractorHomeScreen(
     onBack: () -> Unit,
     onSettingsClick: () -> Unit,
     onInitUserPreviews: () -> Unit,
-    onInitVisualPreview: () -> Unit,
-    onInitTextPreview: () -> Unit,
     onAlbumPreviewClick: (albumId: Long) -> Unit,
     onCollageClicked: () -> Unit,
     collageThumbnail: ExtractorUserCollageThumbnailUiState,
-    visualAlbums: ExtractorCategoryViewState,
     userAlbums: ExtractorCategoryViewState,
-    textAlbums: ExtractorCategoryViewState,
-    settings: ExtractorHomeScreenSettings
 ) {
     val lazyGridState = rememberLazyGridState()
     val extractorTopBarState = remember {
@@ -124,28 +117,9 @@ fun ExtractorHomeScreen(
                 onInitClick = onInitUserPreviews,
                 albumType = ExtractorAlbumsViewDefaults.AlbumType.USER,
                 state = userAlbums,
-                modifier = Modifier
+                modifier = Modifier,
+                contentPadding = PaddingValues(top = 6.dp)
             )
-
-            if (settings.shouldShowVisualAlbums) maxLineSpanItem {
-                ExtractorCategoryView(
-                    onAlbumPreviewClick = onAlbumPreviewClick,
-                    onInitClick = onInitVisualPreview,
-                    albumType = ExtractorAlbumsViewDefaults.AlbumType.VISUAL,
-                    state = visualAlbums,
-                    modifier = Modifier
-                )
-            }
-
-            if (settings.shouldShowTextAlbums) maxLineSpanItem {
-                ExtractorCategoryView(
-                    onAlbumPreviewClick = onAlbumPreviewClick,
-                    onInitClick = onInitTextPreview,
-                    albumType = ExtractorAlbumsViewDefaults.AlbumType.TEXT,
-                    state = textAlbums,
-                    modifier = Modifier
-                )
-            }
 
             maxLineSpanItem {
                 Spacer(modifier = Modifier.height(72.dp))

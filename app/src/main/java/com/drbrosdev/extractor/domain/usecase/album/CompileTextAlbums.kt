@@ -5,9 +5,7 @@ import com.drbrosdev.extractor.domain.model.ExtractionCollage
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
-import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
-import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
@@ -20,19 +18,9 @@ class CompileTextAlbums(
     private val tokenizeText: TokenizeText,
     private val generateMostCommonTokens: GenerateMostCommonTokens,
     private val searchImageByQuery: SearchImageByQuery,
-    private val albumRepository: AlbumRepository,
 ) {
-    suspend operator fun invoke() {
-        execute(amount = 7)
-            .map { (topWord, extractions) ->
-                buildNewAlbumPayload(extractions, topWord)
-                    .copy(keywordType = KeywordType.TEXT)
-            }
-            .forEach { albumRepository.createAlbum(it) }
-    }
-
-    suspend operator fun invoke(amount: Int): List<ExtractionCollage> {
-        return execute(amount)
+    suspend fun execute(amount: Int): List<ExtractionCollage> {
+        return compile(amount)
             .map { (topWord, extractions) ->
                 ExtractionCollage(
                     keyword = topWord,
@@ -41,7 +29,7 @@ class CompileTextAlbums(
             }
     }
 
-    private suspend fun execute(amount: Int = 7): List<Pair<String, List<Extraction>>> {
+    private suspend fun compile(amount: Int = 7): List<Pair<String, List<Extraction>>> {
         val allText = repo.getAllTextEmbedValuesAsCsv() ?: return emptyList()
 
         val tokens = tokenizeText.invoke(allText)
@@ -60,25 +48,5 @@ class CompileTextAlbums(
                 topWord to searchImageByQuery.execute(imageSearchParams)
             }
             .filter { (embeddings, _) -> embeddings.isNotEmpty() }
-    }
-
-    private fun buildNewAlbumPayload(
-        extractions: List<Extraction>,
-        searchTerm: String
-    ): NewAlbum {
-        val entries = extractions.map {
-            NewAlbum.Entry(
-                uri = it.uri,
-                id = it.mediaImageId
-            )
-        }
-        return NewAlbum(
-            keyword = searchTerm,
-            name = searchTerm,
-            searchType = SearchType.PARTIAL,
-            keywordType = KeywordType.TEXT,
-            entries = entries,
-            origin = NewAlbum.Origin.TEXT_COMPUTED
-        )
     }
 }
