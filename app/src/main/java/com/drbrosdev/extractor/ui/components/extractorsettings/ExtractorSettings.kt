@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,30 +41,8 @@ fun ExtractorSettings(
             itemPosition = ExtractorSettingsItemPosition.FIRST,
             trailingSlot = {
                 Switch(
-                    checked = state.enabledVisualAlbums,
-                    onCheckedChange = state::updateEnabledVisualAlbums,
-                )
-            }
-        ) {
-            Text(text = stringResource(R.string.enable_visual_albums))
-        }
-
-        ExtractorSettingsItem(
-            trailingSlot = {
-                Switch(
-                    checked = state.enabledTextAlbums,
-                    onCheckedChange = state::updateEnabledTextAlbums,
-                )
-            }
-        ) {
-            Text(text = stringResource(R.string.enable_text_albums))
-        }
-
-        ExtractorSettingsItem(
-            trailingSlot = {
-                Switch(
-                    checked = state.enableDynamicColor,
-                    onCheckedChange = state::updateEnableDynamicColor,
+                    checked = state.isDynamicColorEnabled,
+                    onCheckedChange = { state.onDynamicColorChanged(it) }
                 )
             }
         ) {
@@ -76,7 +55,8 @@ fun ExtractorSettings(
             trailingSlot = {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                    contentDescription = stringResource(R.string.periodic_sync)
+                    contentDescription = stringResource(R.string.periodic_sync),
+                    modifier = Modifier.minimumInteractiveComponentSize()
                 )
             }
         ) {
@@ -193,9 +173,8 @@ private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         ExtractorSettings(
             state = ExtractorSettingsState(
-                initialEnabledVisual = false,
-                initialEnabledText = true,
-                initialEnableDynamicColor = true
+                isDynamicColorEnabled = false,
+                onDynamicColorChanged = {}
             ),
             onPeriodicSyncClick = {}
         )

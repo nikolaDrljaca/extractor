@@ -112,7 +112,6 @@ val viewModelModule = module {
         ExtractorHomeViewModel(
             savedStateHandle = get(),
             albumRepository = get<DefaultAlbumRepository>(),
-            homeScreenSettingsProvider = get(),
             generateUserCollage = get(),
         )
     }

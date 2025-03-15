@@ -4,13 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.settings.ExtractorSettingsDatastore
 import com.drbrosdev.extractor.ui.components.extractorsettings.ExtractorSettingsState
-import com.drbrosdev.extractor.ui.components.extractorsettings.enableDynamicColorAsFlow
-import com.drbrosdev.extractor.ui.components.extractorsettings.textEnabledAsFlow
-import com.drbrosdev.extractor.ui.components.extractorsettings.visualEnabledAsFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import com.drbrosdev.extractor.util.WhileUiSubscribed
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 /*
 NOTE: This is an exceptional case where the ViewModel reaches into the data layer directly,
@@ -20,34 +17,25 @@ and another layer of abstraction here would prove unnecessary.
 class ExtractorSettingsViewModel(
     private val settingsDatastore: ExtractorSettingsDatastore
 ) : ViewModel() {
-
-    val settingsState = ExtractorSettingsState(
-        initialEnabledVisual = false,
-        initialEnabledText = false,
-        initialEnableDynamicColor = false
-    )
-
-    private val datastoreJob = settingsDatastore.extractorSettings
-        .distinctUntilChanged()
-        .onEach {
-            settingsState.updateEnabledTextAlbums(it.shouldShowTextAlbums)
-            settingsState.updateEnabledVisualAlbums(it.shouldShowVisualAlbums)
-            settingsState.updateEnableDynamicColor(it.enableDynamicColors)
+    val state = settingsDatastore.extractorSettings
+        .map {
+            ExtractorSettingsState(
+                isDynamicColorEnabled = it.enableDynamicColors,
+                onDynamicColorChanged = ::handleDynamicColorChange
+            )
         }
-        .launchIn(viewModelScope)
+        .stateIn(
+            viewModelScope,
+            WhileUiSubscribed,
+            ExtractorSettingsState(
+                isDynamicColorEnabled = false,
+                onDynamicColorChanged = {}
+            )
+        )
 
-    private val updateVisualJob = settingsState.visualEnabledAsFlow()
-        .drop(1) // drop the first emission, which is the initial value from above
-        .onEach { settingsDatastore.setShowVisualAlbums(it) }
-        .launchIn(viewModelScope)
-
-    private val updateTextJob = settingsState.textEnabledAsFlow()
-        .drop(1) // drop the first emission, which is the initial value from above
-        .onEach { settingsDatastore.setShowTextAlbums(it) }
-        .launchIn(viewModelScope)
-
-    private val updateDynamicColor = settingsState.enableDynamicColorAsFlow()
-        .drop(1) // drop the first emission, which is the initial value from above
-        .onEach { settingsDatastore.setDynamicColor(it) }
-        .launchIn(viewModelScope)
+    private fun handleDynamicColorChange(value: Boolean) {
+        viewModelScope.launch {
+            settingsDatastore.setDynamicColor(value)
+        }
+    }
 }

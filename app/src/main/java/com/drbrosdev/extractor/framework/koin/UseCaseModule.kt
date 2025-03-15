@@ -28,7 +28,6 @@ import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByD
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRange
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
-import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
@@ -182,13 +181,6 @@ val useCaseModule = module {
             extractor = get(),
             mediaImageRepository = get(),
             extractionRepository = get()
-        )
-    }
-
-    factory {
-        ProvideHomeScreenSettings(
-            dispatcher = get(named(CoroutineModuleName.Default)),
-            settingsDatastore = get()
         )
     }
 

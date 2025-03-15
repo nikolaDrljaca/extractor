@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.ui.settings
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.actionchips.AboutLink
@@ -33,6 +34,8 @@ object ExtractorSettingsNavTarget : NavTarget {
         val context = LocalContext.current
         val navController = navigators.navController
 
+        val settingsState = viewModel.state.collectAsStateWithLifecycle()
+
         ExtractorSettingsScreen(
             onBack = { navController.pop() },
             onLicenseClick = {
@@ -56,7 +59,7 @@ object ExtractorSettingsNavTarget : NavTarget {
             onResetIndex = {
                 navController.navigate(ExtractorResetIndexNavTarget)
             },
-            settingsState = viewModel.settingsState
+            settingsState = settingsState.value
         )
     }
 }
@@ -74,9 +77,8 @@ private fun CurrentPreview() {
                 onAboutLink = {},
                 onClearEventLogs = {},
                 settingsState = ExtractorSettingsState(
-                    initialEnabledVisual = false,
-                    initialEnabledText = true,
-                    initialEnableDynamicColor = false
+                    isDynamicColorEnabled = false,
+                    onDynamicColorChanged = {}
                 )
             )
         }

@@ -10,8 +10,6 @@ import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toPreview
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
-import com.drbrosdev.extractor.domain.usecase.settings.ExtractorHomeScreenSettings
-import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.Dispatchers
@@ -35,15 +33,7 @@ class ExtractorHomeViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val albumRepository: AlbumRepository,
     private val generateUserCollage: GenerateUserCollage,
-    private val homeScreenSettingsProvider: ProvideHomeScreenSettings,
 ) : ViewModel() {
-
-    val settings = homeScreenSettingsProvider.invoke()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            ExtractorHomeScreenSettings()
-        )
 
     val collage = flow {
         emit(generateUserCollage.invoke().firstOrNull())
