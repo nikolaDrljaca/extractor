@@ -86,7 +86,7 @@ fun ExtractorOverviewScreen(
             maxLineSpanItem { Spacer(Modifier.padding(top = 54.dp)) }
             maxLineSpanItem { Spacer(Modifier.padding(top = 26.dp)) }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
+            item(span = { GridItemSpan(maxLineSpan) }, key = "search_pill") {
                 Column {
                     ExtractorSearchPill(
                         onClick = onSearchClick,
@@ -108,7 +108,9 @@ fun ExtractorOverviewScreen(
             when (collageRecommendationState) {
                 is RecommendedSearchesState.Content -> {
                     collageRecommendationState.items.forEach {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
+                        item(
+                            span = { GridItemSpan(maxLineSpan) },
+                        ) {
                             Text(
                                 text = "# ${it.keyword}",
                                 style = MaterialTheme.typography.titleLarge,
@@ -120,7 +122,10 @@ fun ExtractorOverviewScreen(
                             )
                         }
 
-                        itemsIndexed(it.extractions) { index, entry ->
+                        itemsIndexed(
+                            items = it.extractions,
+                            key = { _, entry -> it.keyword + entry.mediaImageId.id }
+                        ) { index, entry ->
                             ExtractorImageItem(
                                 modifier = Modifier.animateItem(),
                                 imageUri = entry.uri.toUri(),
@@ -139,7 +144,7 @@ fun ExtractorOverviewScreen(
                     }
                 }
 
-                is RecommendedSearchesState.Empty -> maxLineSpanItem {
+                is RecommendedSearchesState.Empty -> maxLineSpanItem(key = "empty") {
                     Box(
                         modifier = Modifier.height(350.dp),
                         contentAlignment = Alignment.Center
@@ -170,7 +175,7 @@ fun ExtractorOverviewScreen(
                     }
                 }
 
-                is RecommendedSearchesState.Loading -> maxLineSpanItem {
+                is RecommendedSearchesState.Loading -> maxLineSpanItem(key = "loading") {
                     Box(
                         modifier = Modifier.height(250.dp),
                         contentAlignment = Alignment.Center
@@ -181,7 +186,7 @@ fun ExtractorOverviewScreen(
                     }
                 }
 
-                is RecommendedSearchesState.SyncInProgress -> maxLineSpanItem {
+                is RecommendedSearchesState.SyncInProgress -> maxLineSpanItem(key = "syncInProgress") {
                     SyncInProgressDisplay(
                         modifier = Modifier.size(350.dp),
                         progress = { collageRecommendationState.asFloat },

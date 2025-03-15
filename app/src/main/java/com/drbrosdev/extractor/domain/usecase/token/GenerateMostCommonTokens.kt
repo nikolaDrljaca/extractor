@@ -3,7 +3,7 @@ package com.drbrosdev.extractor.domain.usecase.token
 import com.drbrosdev.extractor.domain.model.Token
 
 class GenerateMostCommonTokens {
-    operator fun invoke(tokens: Collection<Token>, amount: Int = 7) =
+    fun execute(tokens: Collection<Token>, amount: Int = 7) =
         tokens.groupingBy { it.text.lowercase() }
             .eachCount()
             .entries

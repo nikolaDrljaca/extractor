@@ -47,7 +47,7 @@ data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : Nav
                     viewModel.searchResultComponent
                         .gridState
                         .lazyGridState
-                        .animateScrollToItem(0)
+                        .animateScrollToItem(0, scrollOffset = -1000)
                     viewModel.searchSheetComponent
                         .requestFocus()
                     keyboardController?.show()

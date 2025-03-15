@@ -36,7 +36,7 @@ class CompileVisualAlbums(
             .filter { it.isValidSearchToken() }
             .toList()
 
-        return generateMostCommonTokens.invoke(tokens, amount)
+        return generateMostCommonTokens.execute(tokens, amount)
             .map {
                 val topWord = it.text
                 val imageSearchParams = ImageSearchParams(

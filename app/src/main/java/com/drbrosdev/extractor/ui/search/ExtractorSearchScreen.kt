@@ -67,8 +67,9 @@ fun ExtractorSearchScreen(
             horizontalArrangement = Arrangement.spacedBy(1.dp),
             state = resultComponent.gridState.lazyGridState
         ) {
+            maxLineSpanItem(key = "scroll_marker") { Spacer(Modifier.height(1.dp)) }
             // Top Bar
-            maxLineSpanItem {
+            maxLineSpanItem(key = "top_bar") {
                 ExtractorTopBar(
                     paddingValues = PaddingValues(),
                     leadingSlot = {
@@ -84,7 +85,7 @@ fun ExtractorSearchScreen(
                 )
             }
             // search sheet
-            maxLineSpanItem {
+            maxLineSpanItem(key = "search_sheet") {
                 ExtractorSearchSheet(
                     modifier = Modifier
                         .padding(horizontal = 4.dp),
@@ -98,7 +99,7 @@ fun ExtractorSearchScreen(
             when (resultState) {
                 SearchResultState.Idle -> Unit
 
-                SearchResultState.Empty -> maxLineSpanItem {
+                SearchResultState.Empty -> maxLineSpanItem(key = "empty") {
                     ExtractorEmptySearch(
                         modifier = Modifier
                             .padding(top = 32.dp)
@@ -106,7 +107,7 @@ fun ExtractorSearchScreen(
                     )
                 }
 
-                is SearchResultState.NoSearchesLeft -> maxLineSpanItem {
+                is SearchResultState.NoSearchesLeft -> maxLineSpanItem(key = "noSearchesLeft") {
                     ExtractorGetMoreSearches(
                         onClick = resultState.onGetMore,
                         modifier = Modifier.animateItem()
@@ -114,7 +115,10 @@ fun ExtractorSearchScreen(
                 }
 
                 is SearchResultState.Content -> {
-                    items(resultState.images) {
+                    items(
+                        items = resultState.images,
+                        key = { it.mediaImageId.id }
+                    ) {
                         ExtractorImageItem(
                             imageUri = it.uri.toUri(),
                             modifier = Modifier
@@ -134,7 +138,7 @@ fun ExtractorSearchScreen(
                         )
                     }
                     // TODO Modify value based on screen size
-                    maxLineSpanItem { Spacer(Modifier.height(100.dp)) }
+                    maxLineSpanItem(key = "bottom_spacer") { Spacer(Modifier.height(100.dp)) }
                 }
             }
         }
