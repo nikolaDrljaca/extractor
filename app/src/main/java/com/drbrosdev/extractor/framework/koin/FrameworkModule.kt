@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.framework.koin
 
 import androidx.work.WorkManager
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
+import com.drbrosdev.extractor.domain.worker.ExtractorWorkerService
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.framework.logger.EventLogDatabase
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
@@ -45,7 +46,7 @@ val frameworkModule = module {
         DefaultExtractorWorkerService(
             workManager = get()
         )
-    }
+    } bind ExtractorWorkerService::class
 
     //Using named() as sometimes koin can fail to instantiate the workerParameters
     //leading to runtime exceptions
