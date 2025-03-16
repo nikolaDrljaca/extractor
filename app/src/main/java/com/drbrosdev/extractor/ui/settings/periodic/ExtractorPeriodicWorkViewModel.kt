@@ -7,7 +7,7 @@ import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.drbrosdev.extractor.domain.worker.ExtractorWorker
+import com.drbrosdev.extractor.framework.workmanager.ExtractorWorker
 import com.drbrosdev.extractor.domain.worker.WorkNames
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map

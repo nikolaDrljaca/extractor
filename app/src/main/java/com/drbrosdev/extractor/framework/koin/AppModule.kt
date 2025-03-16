@@ -4,7 +4,6 @@ val allKoinModules = listOf(
     dataModule,
     frameworkModule,
     coroutineModule,
-    workerModule,
     viewModelModule,
     useCaseModule,
     domainModule

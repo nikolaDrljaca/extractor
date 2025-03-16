@@ -24,7 +24,6 @@ import androidx.compose.ui.window.Dialog
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
-
 @Composable
 fun ExtractorDialog(
     onAction: () -> Unit,

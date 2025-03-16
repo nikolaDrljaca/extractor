@@ -11,6 +11,10 @@ import androidx.compose.runtime.setValue
 /*
 TODO: Migrate to TextFieldState(2) when it goes stable, or at least gets Material TextField support.
  */
+@Deprecated(
+    message = "Migrate to TextFieldState",
+    replaceWith = ReplaceWith("TextFieldState", imports = ["androidx.compose.foundation.text.input"])
+)
 @Stable
 class ExtractorTextFieldState(
     initialText: String = "",

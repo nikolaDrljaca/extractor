@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
-import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
+import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.findActivity
@@ -30,7 +30,7 @@ object ExtractorPermissionRequestNavTarget : NavTarget {
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
                 if (isGranted) {
-                    navController.replaceAll(ExtractorSearchNavTarget)
+                    navController.replaceAll(ExtractorOverviewNavTarget)
                 }
             }
         )

@@ -5,8 +5,9 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.ui.unit.Density
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
-import com.drbrosdev.extractor.ui.purchase.ExtractorPurchaseSearchNavTarget
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
+import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
+import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageNavTarget
 import dev.olshevski.navigation.reimagined.NavAction
@@ -20,6 +21,9 @@ fun createTransitionSpec(density: Density) = NavTransitionSpec<NavTarget?> { act
     when {
         goingToImageViewer(from, to) -> fade
         goingFromImageViewer(from, to) -> fade
+
+        // handle search transitions
+        handleSearch(from, to) -> fadeThrough
 
         // handle transitions for GetMore Screen
         handleGetMore(from, to) -> fadeThrough
@@ -50,11 +54,13 @@ private fun createDefaultTransition(
     }
 }
 
-
 private fun goingFromImageViewer(from: NavTarget?, to: NavTarget?): Boolean {
     val goingFrom = from is ExtractorImageViewerNavTarget
     val goingTo =
-        (to is ExtractorAlbumViewerNavTarget) or (to is ExtractorSearchNavTarget) or (to is ExtractorUserCollageNavTarget)
+        (to is ExtractorAlbumViewerNavTarget)
+                || (to is ExtractorOverviewNavTarget)
+                || (to is ExtractorUserCollageNavTarget)
+                || (to is ExtractorSearchNavTarget)
 
     return goingFrom and goingTo
 }
@@ -64,13 +70,27 @@ private fun handleGetMore(
     to: NavTarget?
 ): Boolean {
     val goingFrom = when (from) {
-        is ExtractorSearchNavTarget -> true
-        is ExtractorPurchaseSearchNavTarget -> true
+        is ExtractorOverviewNavTarget -> true
+        is ExtractorShopNavTarget -> true
         else -> false
     }
     val goingTo = when (to) {
+        is ExtractorOverviewNavTarget -> true
+        is ExtractorShopNavTarget -> true
+        else -> false
+    }
+    return goingFrom and goingTo
+}
+
+private fun handleSearch(from: NavTarget?, to: NavTarget?): Boolean {
+    val goingFrom = when (from) {
+        is ExtractorOverviewNavTarget -> true
         is ExtractorSearchNavTarget -> true
-        is ExtractorPurchaseSearchNavTarget -> true
+        else -> false
+    }
+    val goingTo = when (to) {
+        is ExtractorOverviewNavTarget -> true
+        is ExtractorSearchNavTarget -> true
         else -> false
     }
     return goingFrom and goingTo
@@ -81,7 +101,10 @@ private fun goingToImageViewer(
     to: NavTarget?
 ): Boolean {
     val goingFrom =
-        (from is ExtractorSearchNavTarget) or (from is ExtractorAlbumViewerNavTarget) or (from is ExtractorUserCollageNavTarget)
+        (from is ExtractorOverviewNavTarget)
+                || (from is ExtractorAlbumViewerNavTarget)
+                || (from is ExtractorUserCollageNavTarget)
+                || (from is ExtractorSearchNavTarget)
     val goingTo = to is ExtractorImageViewerNavTarget
 
     return goingFrom and goingTo

@@ -2,18 +2,18 @@ package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
 import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
-import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
 import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
-import com.drbrosdev.extractor.domain.usecase.SpawnAlbumCleanupWork
-import com.drbrosdev.extractor.domain.usecase.SpawnExtractorWork
-import com.drbrosdev.extractor.domain.usecase.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.album.BuildNewAlbumPayload
+import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
+import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
 import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
-import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbum
+import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbums
+import com.drbrosdev.extractor.domain.usecase.album.StoreAlbums
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
+import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.extractor.text.ExtractTextEmbed
 import com.drbrosdev.extractor.domain.usecase.extractor.text.MlKitExtractTextEmbed
 import com.drbrosdev.extractor.domain.usecase.extractor.visual.ExtractVisualEmbeds
@@ -28,7 +28,6 @@ import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByD
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRange
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
-import com.drbrosdev.extractor.domain.usecase.settings.ProvideHomeScreenSettings
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
@@ -53,7 +52,7 @@ val useCaseModule = module {
     }
 
     factory {
-        BuildUserCollage(
+        GenerateUserCollage(
             dispatcher = get(named(CoroutineModuleName.Default)),
             userEmbeddingDao = get(),
             userExtractionDao = get()
@@ -122,16 +121,12 @@ val useCaseModule = module {
 
     factory { GenerateMostCommonTokens() }
 
-    factory { BuildNewAlbumPayload() }
-
     factory {
-        CompileVisualAlbum(
+        CompileVisualAlbums(
             repo = get(),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
-            albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
             generateMostCommonTokens = get(),
-            buildNewAlbumPayload = get()
         )
     }
 
@@ -163,23 +158,29 @@ val useCaseModule = module {
         CompileTextAlbums(
             repo = get(),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
-            albumRepository = get<DefaultAlbumRepository>(),
             tokenizeText = get(),
             generateMostCommonTokens = get(),
-            buildNewAlbumPayload = get()
         )
     }
 
     factory {
-        SpawnExtractorWork(
-            workManager = get()
+        StoreAlbums(
+            albumRepository = get<DefaultAlbumRepository>()
         )
     }
 
     factory {
-        ProvideHomeScreenSettings(
-            dispatcher = get(named(CoroutineModuleName.Default)),
-            settingsDatastore = get()
+        CleanupAlbum(
+            mediaStoreImageRepository = get(),
+            albumRepository = get()
+        )
+    }
+
+    factory {
+        StartExtraction(
+            extractor = get(),
+            mediaImageRepository = get(),
+            extractionRepository = get()
         )
     }
 
@@ -205,7 +206,7 @@ val useCaseModule = module {
         CompleteOnboarding(
             dispatcher = get(named(CoroutineModuleName.Default)),
             dataStore = get(),
-            spawnExtractorWork = get()
+            workerService = get()
         )
     }
 
@@ -224,12 +225,6 @@ val useCaseModule = module {
             extractionDao = get()
         )
     } bind SearchImageByDateRange::class
-
-    factory {
-        SpawnAlbumCleanupWork(
-            workManager = get()
-        )
-    }
 
     // Keep this single due to the ImageClassifier instance created inside
     // NOTE: Maybe move this into a provider use case?

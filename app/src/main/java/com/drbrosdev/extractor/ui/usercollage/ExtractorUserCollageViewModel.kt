@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.toUri
-import com.drbrosdev.extractor.domain.usecase.BuildUserCollage
+import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 class ExtractorUserCollageViewModel(
     private val stateHandle: SavedStateHandle,
     private val datastore: ExtractorDataStore,
-    private val buildUserCollage: BuildUserCollage
+    private val generateUserCollage: GenerateUserCollage
 ) : ViewModel() {
 
     private val _events = Channel<ExtractorUserCollageEvents>()
@@ -38,7 +38,7 @@ class ExtractorUserCollageViewModel(
 
         emit(
             ExtractorUserCollageUiState.Content(
-                collages = buildUserCollage.invoke().toList(),
+                collages = generateUserCollage.invoke().toList(),
                 onItemClicked = { keyword, index ->
                     onImageItemClicked(keyword, index)
                 },

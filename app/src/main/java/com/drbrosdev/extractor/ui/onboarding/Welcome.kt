@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.ExtractorDialog
 import com.drbrosdev.extractor.ui.components.shared.InfoIconButton
-import com.drbrosdev.extractor.ui.components.shared.OnboardingCard
+import com.drbrosdev.extractor.ui.components.shared.OnboardingContent
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 
@@ -50,7 +50,7 @@ fun WelcomeCard(
         }
     }
 
-    OnboardingCard(
+    OnboardingContent(
         modifier = modifier,
         painter = {
             Image(

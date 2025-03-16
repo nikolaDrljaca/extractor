@@ -56,7 +56,7 @@
     <string name="create_own_album">Create your own albums from the search screen!</string>
     <string name="go_to_search">Go To Search</string>
     <string name="oops_no_albums_found">Oops! No albums found.</string>
-    <string name="create_album">Create Album</string>
+    <string name="create_album">New Album</string>
     <string name="action_create_album">Create\nAlbum</string>
     <string name="album_created">Album Created!</string>
     <string name="dropdown_delete">Delete Album</string>
@@ -142,9 +142,8 @@
     <!-- Support emails, webpage URLs, privacy policy -->
     <string name="play_store_link" translatable="false">https://play.google.com/store/apps/details?id=com.drbrosdev.extractor</string>
     <string name="support_email" translatable="false">drljacandev@gmail.com</string>
-    <string name="webage" translatable="false">https://lupa-hazel.vercel.app/</string>
-    <string name="webpage_privacy" translatable="false">https://lupa-hazel.vercel.app/privacy</string>
-    <string name="app_store_link" translatable="false">https://play.google.com/store/apps/details?id=com.drbrosdev.extractor</string>
+    <string name="webage" translatable="false">https://lupa.drbros.dev/</string>
+    <string name="webpage_privacy" translatable="false">https://lupa.drbros.dev/#privacy</string>
     <string name="disabled">Disabled.</string>
     <string name="reset_index">Reset Index</string>
     <string name="clear_event_logs">Clear Event Logs</string>

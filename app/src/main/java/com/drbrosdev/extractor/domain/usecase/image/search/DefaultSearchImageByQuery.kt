@@ -5,6 +5,7 @@ import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.extraction.record.toExtraction
 import com.drbrosdev.extractor.domain.model.DateRange
 import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.contains
 import com.drbrosdev.extractor.domain.usecase.image.BuildFtsQuery
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
@@ -19,15 +20,15 @@ class DefaultSearchImageByQuery(
     private val buildFtsQuery: BuildFtsQuery
 ) : SearchImageByQuery {
 
-    override suspend fun execute(params: SearchImageByQuery.Params): List<Extraction> =
+    override suspend fun execute(imageSearchParams: ImageSearchParams): List<Extraction> =
         withContext(dispatcher) {
-            val cleanQuery = tokenizeText.invoke(params.query)
+            val cleanQuery = tokenizeText.invoke(imageSearchParams.query)
                 .toList()
 
             val buildFtsQueryParams = BuildFtsQuery.Params(
                 tokens = cleanQuery,
-                searchType = params.type,
-                keywordType = params.keywordType
+                searchType = imageSearchParams.searchType,
+                keywordType = imageSearchParams.keywordType
             )
 
             val adaptedQuery = buildFtsQuery.invoke(buildFtsQueryParams)
@@ -35,7 +36,7 @@ class DefaultSearchImageByQuery(
             val imageEntitySequence = imageEmbedDao.findByKeyword(adaptedQuery.value)
                 .map { it.imageEntity.toExtraction() }
 
-            params.dateRange.toOption()
+            imageSearchParams.dateRange.toOption()
                 .fold(
                     ifSome = { dateRange -> imageEntitySequence.filter { it.byDateRange(dateRange) } },
                     ifEmpty = { imageEntitySequence }

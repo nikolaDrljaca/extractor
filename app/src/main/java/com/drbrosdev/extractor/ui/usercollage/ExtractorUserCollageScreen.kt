@@ -35,7 +35,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
-import com.drbrosdev.extractor.ui.components.usercollage.ExtractorUserCollageItem
+import com.drbrosdev.extractor.ui.components.usercollage.ExtractorCollageItem
 
 @Composable
 fun ExtractorUserCollageScreen(
@@ -103,9 +103,8 @@ fun ExtractorUserCollageScreen(
                 }
 
                 items(state.collages) { collage ->
-                    ExtractorUserCollageItem(
+                    ExtractorCollageItem(
                         onItemClick = { state.onItemClicked(collage.userEmbed, it) },
-                        onShareClick = { state.onShare(collage.userEmbed) },
                         keyword = collage.userEmbed,
                         extractions = collage.extractions
                     )

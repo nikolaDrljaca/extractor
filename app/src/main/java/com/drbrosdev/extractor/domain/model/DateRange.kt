@@ -12,10 +12,6 @@ operator fun DateRange.contains(localDateTime: LocalDateTime): Boolean {
     return localDateTime.isAfter(start) && localDateTime.isBefore(end)
 }
 
-infix fun LocalDateTime.isIn(range: DateRange): Boolean {
-    return this.isAfter(range.start) && this.isBefore(range.end)
-}
-
 fun DateRange.asAlbumName(): String {
     // Format: Feb '24 - Jul '24
     // '' -> the first ' escapes the second

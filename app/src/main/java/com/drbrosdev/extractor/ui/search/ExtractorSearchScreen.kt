@@ -1,236 +1,184 @@
 package com.drbrosdev.extractor.ui.search
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.compose.layoutId
-import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageGrid
-import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButton
-import com.drbrosdev.extractor.ui.components.extractorstatusbutton.ExtractorStatusButtonState
+import com.drbrosdev.extractor.domain.model.toUri
+import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
+import com.drbrosdev.extractor.ui.components.searchresult.SearchResultComponent
+import com.drbrosdev.extractor.ui.components.searchresult.SearchResultContentEvents
+import com.drbrosdev.extractor.ui.components.searchresult.SearchResultState
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheet
-import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetState
-import com.drbrosdev.extractor.ui.components.searchsheet.SheetContent
-import com.drbrosdev.extractor.ui.components.searchsheet.rememberExtractorSearchBottomSheetState
-import com.drbrosdev.extractor.ui.components.shared.DragHandle
+import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetComponent
+import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorGetMoreSearches
-import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
-import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchFabStack
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
-import com.drbrosdev.extractor.ui.components.shared.ExtractorStillIndexing
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
-import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
-import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
-import com.drbrosdev.extractor.ui.components.suggestsearch.ExtractorSuggestedSearch
+import com.drbrosdev.extractor.util.maxLineSpanItem
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExtractorSearchScreen(
-    onExtractorHomeClicked: () -> Unit,
-    onStatusButtonClick: () -> Unit,
-    onMultiselectAction: (MultiselectAction) -> Unit,
-    onHeaderClick: () -> Unit,
-    scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberExtractorSearchBottomSheetState()
-    ),
-    state: ExtractorSearchContainerState,
-    searchCount: Int,
-    extractorStatusButtonState: ExtractorStatusButtonState,
+    onBack: () -> Unit,
+    sheetComponent: ExtractorSearchSheetComponent,
+    resultComponent: SearchResultComponent,
     snackbarHostState: SnackbarHostState,
-    searchSheetState: ExtractorSearchSheetState,
 ) {
-    val extractorTopBarState =
-        when (state) {
-            is ExtractorSearchContainerState.Content -> state.topAppBarState.value
-            else -> ExtractorTopBarState.NORMAL
-        }
+    val resultState = resultComponent.state.value
+    val imageSize = 96
 
-    val sheetContent =
-        when (state) {
-            is ExtractorSearchContainerState.Content -> state.sheetContent.value
-            else -> SheetContent.SearchView
-        }
+    ConstraintLayout(
+        modifier = Modifier
+            .systemBarsPadding()
+            .fillMaxSize(),
+        constraintSet = searchResultScreenConstraintSet()
+    ) {
+        LazyVerticalGrid(
+            modifier = Modifier
+                .layoutId(ViewIds.MAIN_CONTENT),
+            columns = GridCells.Adaptive(minSize = imageSize.dp),
+            verticalArrangement = Arrangement.spacedBy(1.dp),
+            horizontalArrangement = Arrangement.spacedBy(1.dp),
+            state = resultComponent.gridState.lazyGridState
+        ) {
+            maxLineSpanItem(key = "scroll_marker") { Spacer(Modifier.height(1.dp)) }
+            // Top Bar
+            maxLineSpanItem(key = "top_bar") {
+                ExtractorTopBar(
+                    paddingValues = PaddingValues(),
+                    leadingSlot = {
+                        BackIconButton(onBack = onBack)
+                    },
+                    trailingSlot = {
+                        if (resultComponent.canCreateAlbum) {
+                            TextButton(onClick = resultComponent::saveAsAlbum) {
+                                Text(text = "Save as album")
+                            }
+                        }
+                    }
+                )
+            }
+            // search sheet
+            maxLineSpanItem(key = "search_sheet") {
+                ExtractorSearchSheet(
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp),
+                    component = sheetComponent,
+                )
+            }
+            maxLineSpanItem(key = "result_marker") {
+                Spacer(Modifier.height(8.dp))
+            }
+            // search results -- content
+            when (resultState) {
+                SearchResultState.Idle -> Unit
 
-    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
-    BottomSheetScaffold(
-        sheetContent = {
-            AnimatedContent(targetState = sheetContent, label = "") {
-                when (it) {
-                    SheetContent.MultiselectBar -> ExtractorMultiselectActionBar(
-                        onAction = onMultiselectAction,
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            bottom = bottomPadding + 4.dp
-                        )
-                    )
-
-                    SheetContent.SearchView -> ExtractorSearchSheet(
-                        state = searchSheetState,
-                        modifier = Modifier.padding(
-                            bottom = bottomPadding + 4.dp
-                        ),
-                        isHidden = scaffoldState.bottomSheetState.targetValue == SheetValue.PartiallyExpanded
+                SearchResultState.Empty -> maxLineSpanItem(key = "empty") {
+                    ExtractorEmptySearch(
+                        modifier = Modifier
+                            .padding(top = 32.dp)
+                            .animateItem()
                     )
                 }
-            }
-        },
-        sheetShape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp),
-        sheetContainerColor = MaterialTheme.colorScheme.primary,
-        sheetDragHandle = { DragHandle(color = MaterialTheme.colorScheme.onPrimary) },
-        sheetContentColor = MaterialTheme.colorScheme.onPrimary,
-        sheetPeekHeight = 96.dp + bottomPadding,
-        scaffoldState = scaffoldState
-    ) {
-        ConstraintLayout(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .fillMaxSize(),
-            constraintSet = searchResultScreenConstraintSet()
-        ) {
-            AnimatedContent(
-                targetState = state,
-                label = "",
-                modifier = Modifier
-                    .layoutId(ViewIds.MAIN_CONTENT)
-            ) {
-                when (it) {
-                    ExtractorSearchContainerState.Loading -> Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        LinearProgressIndicator(
-                            modifier = Modifier.fillMaxWidth(),
-                            trackColor = Color.Transparent,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            strokeCap = StrokeCap.Round
-                        )
-                    }
 
-                    is ExtractorSearchContainerState.StillIndexing -> ExtractorStillIndexing(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 12.dp),
+                is SearchResultState.NoSearchesLeft -> maxLineSpanItem(key = "noSearchesLeft") {
+                    ExtractorGetMoreSearches(
+                        onClick = resultState.onGetMore,
+                        modifier = Modifier.animateItem()
                     )
+                }
 
-                    is ExtractorSearchContainerState.Empty -> ExtractorEmptySearch(
-                        onReset = { it.onReset() }
-                    )
-
-                    is ExtractorSearchContainerState.Content -> Box(
-                        modifier = Modifier.fillMaxSize(),
+                is SearchResultState.Content -> {
+                    items(
+                        items = resultState.images,
+                        key = { it.mediaImageId.id }
                     ) {
-                        ExtractorImageGrid(
-                            modifier = Modifier.fillMaxSize(),
-                            images = it.images,
-                            onClick = { index ->
-                                it.eventSink(
-                                    ExtractorSearchContainerEvents.OnImageClick(
-                                        index
+                        ExtractorImageItem(
+                            imageUri = it.uri.toUri(),
+                            modifier = Modifier
+                                .animateItem(),
+                            size = imageSize,
+                            onClick = {
+                                resultState.eventSink(SearchResultContentEvents.OnImageClick(it))
+                            },
+                            onLongClick = {
+                                resultState.eventSink(
+                                    SearchResultContentEvents.OnLongImageTap(
+                                        it
                                     )
                                 )
                             },
-                            gridState = it.gridState,
-                            contentPadding = PaddingValues(0.dp)
-                        )
-                        ExtractorSearchFabStack(
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(end = 16.dp, bottom = 32.dp),
-                            onAddClick = { it.eventSink(ExtractorSearchContainerEvents.OnCreateAlbumClick(it.images)) },
-                            onResetClick = { it.eventSink(ExtractorSearchContainerEvents.OnReset) }
+                            checkedState = resultComponent.gridState[it.mediaImageId]
                         )
                     }
-
-                    is ExtractorSearchContainerState.ShowSuggestions -> Box(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.BottomCenter
-                    ) {
-                        ExtractorSuggestedSearch(
-                            modifier = Modifier.padding(horizontal = 12.dp),
-                            state = it.suggestedSearchState
-                        )
-                    }
-
-                    is ExtractorSearchContainerState.NoSearchesLeft ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            ExtractorGetMoreSearches(onClick = { it.onGetMore() })
-                        }
+                    // TODO Modify value based on screen size
+                    maxLineSpanItem(key = "bottom_spacer") { Spacer(Modifier.height(100.dp)) }
                 }
             }
+        }
 
-            ExtractorTopBar(
+        AnimatedVisibility(
+            visible = resultComponent.isScrollToTopVisible,
+            modifier = Modifier
+                .layoutId(ViewIds.FAB),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            FloatingActionButton(
+                onClick = resultComponent::focusSearchField,
                 modifier = Modifier
-                    .layoutId(ViewIds.TOP_BAR),
-                state = extractorTopBarState,
-                leadingSlot = {
-                    ExtractorStatusButton(
-                        onClick = onStatusButtonClick,
-                        state = extractorStatusButtonState
-                    )
-                },
-                centerSlot = {
-                    ExtractorHeader(
-                        bottomText = stringResource(R.string.searches_left, searchCount),
-                        onClick = onHeaderClick
-                    )
-                },
-                trailingSlot = {
-                    IconButton(onClick = onExtractorHomeClicked) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.extractor_icon),
-                            contentDescription = "Go Home",
-                            modifier = Modifier.size(32.dp),
-                        )
-                    }
-                }
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.KeyboardArrowUp,
+                    contentDescription = "Back to top"
+                )
+            }
+        }
 
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.layoutId(ViewIds.SNACKBAR),
-                snackbar = { ExtractorSnackbar(snackbarData = it) }
+        AnimatedVisibility(
+            visible = resultComponent.multiselectActionBarVisible,
+            modifier = Modifier
+                .layoutId(ViewIds.ACTION_BAR),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            ExtractorMultiselectActionBar(
+                onAction = resultComponent::multiselectEventHandler
             )
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .layoutId(ViewIds.SNACKBAR)
+        ) {
+            ExtractorSnackbar(it)
         }
     }
 }
@@ -239,16 +187,16 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
     val topBar = createRefFor(ViewIds.TOP_BAR)
     val mainContent = createRefFor(ViewIds.MAIN_CONTENT)
     val snackbar = createRefFor(ViewIds.SNACKBAR)
+    val actionBar = createRefFor(ViewIds.ACTION_BAR)
+    val fab = createRefFor(ViewIds.FAB)
 
     val bottomSheetGuideline = createGuidelineFromBottom(offset = 88.dp)
 
     constrain(mainContent) {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        top.linkTo(topBar.bottom)
-        bottom.linkTo(bottomSheetGuideline)
+        top.linkTo(parent.top)
         width = Dimension.fillToConstraints
-        height = Dimension.fillToConstraints
     }
 
     constrain(topBar) {
@@ -264,10 +212,24 @@ private fun searchResultScreenConstraintSet() = ConstraintSet {
         bottom.linkTo(bottomSheetGuideline, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
+
+    constrain(actionBar) {
+        start.linkTo(parent.start, margin = 16.dp)
+        end.linkTo(parent.end, margin = 16.dp)
+        bottom.linkTo(parent.bottom, margin = 16.dp)
+        width = Dimension.fillToConstraints
+    }
+
+    constrain(fab) {
+        end.linkTo(parent.end, margin = 32.dp)
+        bottom.linkTo(parent.bottom, margin = 32.dp)
+    }
 }
 
 private object ViewIds {
     const val MAIN_CONTENT = "content"
     const val TOP_BAR = "topBar"
     const val SNACKBAR = "snack_bar"
+    const val ACTION_BAR = "search_multi_bar"
+    const val FAB = "fab_view"
 }

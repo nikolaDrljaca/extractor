@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
     showBackground = true,
     showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
-    device = Devices.FOLDABLE
+    device = "spec:width=673dp,height=841dp"
 )
 annotation class ScreenPreview
 

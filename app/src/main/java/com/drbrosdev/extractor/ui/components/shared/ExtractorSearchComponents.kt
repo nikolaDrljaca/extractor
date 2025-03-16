@@ -55,7 +55,6 @@ fun ExtractorStillIndexing(
 
 @Composable
 fun ExtractorEmptySearch(
-    onReset: () -> Unit,
     modifier: Modifier = Modifier,
     contentColor: Color = Color.Gray
 ) {
@@ -81,8 +80,6 @@ fun ExtractorEmptySearch(
                 modifier = Modifier.width(IntrinsicSize.Max),
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(24.dp))
-            ExtractorResetSearch(onClick = onReset)
         }
     }
 }
@@ -187,7 +184,7 @@ private fun CurrentPreview() {
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 ExtractorStillIndexing()
-                ExtractorEmptySearch(onReset = { })
+                ExtractorEmptySearch()
                 ExtractorResetSearch(onClick = { })
                 ExtractorGetMoreSearches(onClick = { })
                 ExtractorSearchFabStack(

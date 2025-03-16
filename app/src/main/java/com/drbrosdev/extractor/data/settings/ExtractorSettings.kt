@@ -2,8 +2,6 @@ package com.drbrosdev.extractor.data.settings
 
 
 data class ExtractorSettings(
-    val shouldShowVisualAlbums: Boolean,
-    val shouldShowTextAlbums: Boolean,
     val enableDynamicColors: Boolean
 )
 

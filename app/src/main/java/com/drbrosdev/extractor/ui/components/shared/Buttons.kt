@@ -52,7 +52,6 @@ fun ExtractorActionButton(
     }
 }
 
-
 @Composable
 fun ExtractorButton(
     onClick: () -> Unit,
@@ -78,7 +77,6 @@ fun ExtractorButton(
         content()
     }
 }
-
 
 @Composable
 fun OutlinedExtractorActionButton(
@@ -154,7 +152,6 @@ fun BottomSheetButton(
 
 
 object ExtractorButtonDefaults {
-
     private val leftContentPadding = ButtonDefaults.ContentPadding.calculateLeftPadding(
         LayoutDirection.Ltr
     )

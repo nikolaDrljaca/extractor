@@ -7,13 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun ExtractorSnackbar(
     snackbarData: SnackbarData,
     modifier: Modifier = Modifier,
 ) {
-
     Snackbar(
         snackbarData = snackbarData,
         modifier = Modifier.then(modifier),

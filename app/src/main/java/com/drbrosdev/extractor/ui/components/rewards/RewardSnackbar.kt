@@ -21,7 +21,6 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
-
 @Composable
 fun RewardSnackbar(
     modifier: Modifier = Modifier,

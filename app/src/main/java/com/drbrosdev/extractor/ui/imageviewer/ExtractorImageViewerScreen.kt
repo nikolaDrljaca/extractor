@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,7 +38,6 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorImageTopBar
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtractorImageViewerScreen(
     onBottomBarClick: (ExtractorBottomBarItem) -> Unit,
