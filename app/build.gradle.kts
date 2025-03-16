@@ -39,7 +39,7 @@ android {
         applicationId = "com.drbrosdev.extractor"
         minSdk = 24
         targetSdk = 35
-        versionCode = 21
+        versionCode = 23
         versionName = "25.03"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

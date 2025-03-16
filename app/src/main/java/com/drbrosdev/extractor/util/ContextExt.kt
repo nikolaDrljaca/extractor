@@ -52,7 +52,7 @@ fun Context.launchShareAppIntent() {
 fun Context.launchPlayStorePage() {
     val intent = Intent(
         Intent.ACTION_VIEW,
-        getString(R.string.app_store_link).toUri()
+        getString(R.string.play_store_link).toUri()
     )
     startActivity(intent)
 }
