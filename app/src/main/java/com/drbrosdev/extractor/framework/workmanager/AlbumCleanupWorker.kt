@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
-import com.drbrosdev.extractor.domain.worker.WorkerDataKeys
+import com.drbrosdev.extractor.domain.service.WorkerDataKeys
 
 class AlbumCleanupWorker(
     context: Context,

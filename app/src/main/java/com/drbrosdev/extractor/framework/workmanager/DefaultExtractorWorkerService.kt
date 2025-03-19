@@ -6,9 +6,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.drbrosdev.extractor.domain.worker.ExtractorWorkerService
-import com.drbrosdev.extractor.domain.worker.WorkNames
-import com.drbrosdev.extractor.domain.worker.WorkerDataKeys
+import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
+import com.drbrosdev.extractor.domain.service.WorkNames
+import com.drbrosdev.extractor.domain.service.WorkerDataKeys
 import com.drbrosdev.extractor.framework.requiresApi
 
 class DefaultExtractorWorkerService(

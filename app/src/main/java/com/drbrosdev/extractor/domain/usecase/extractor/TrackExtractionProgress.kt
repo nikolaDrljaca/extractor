@@ -5,7 +5,7 @@ import androidx.work.WorkManager
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
-import com.drbrosdev.extractor.domain.worker.WorkNames
+import com.drbrosdev.extractor.domain.service.WorkNames
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

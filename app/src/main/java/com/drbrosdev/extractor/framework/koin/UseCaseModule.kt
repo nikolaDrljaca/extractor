@@ -21,6 +21,7 @@ import com.drbrosdev.extractor.domain.usecase.extractor.visual.MLKitExtractVisua
 import com.drbrosdev.extractor.domain.usecase.extractor.visual.MediaPipeExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.image.BuildFtsQuery
 import com.drbrosdev.extractor.domain.usecase.image.SearchCountPositiveDelta
+import com.drbrosdev.extractor.domain.usecase.image.SearchImageSideEffects
 import com.drbrosdev.extractor.domain.usecase.image.SearchImages
 import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
 import com.drbrosdev.extractor.domain.usecase.image.create.DefaultCreateInputImage
@@ -34,6 +35,7 @@ import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywor
 import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
 import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
+import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
@@ -215,7 +217,16 @@ val useCaseModule = module {
             dispatcher = get(named(CoroutineModuleName.Default)),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
             searchImageByDateRange = get<DefaultSearchImageByDateRange>(),
+            sideEffects = get(),
             dataStore = get(),
+        )
+    }
+
+    factory {
+        SearchImageSideEffects(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            datastore = get(),
+            appReviewService = get<PlayAppReviewService>()
         )
     }
 

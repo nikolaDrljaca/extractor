@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.worker.ExtractorWorkerService
+import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeys
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeysAsFlow

@@ -65,5 +65,5 @@ class GenerateFeedbackEmailContent(
         append(eventText)
     }
 
-    private fun parseEvent(event: EventRecord) = "${event.timestamp}|${event.tag}|${event.message}"
+    private fun parseEvent(event: EventRecord) = "${event.timestamp.toLocalDate()} | ${event.tag} | ${event.message}"
 }

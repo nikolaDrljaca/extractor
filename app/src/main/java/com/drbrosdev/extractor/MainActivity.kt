@@ -13,16 +13,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
+import com.drbrosdev.extractor.framework.ActivityProvider
 import com.drbrosdev.extractor.ui.root.Root
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.setupInitialThemeLoad
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModel()
+    private val activityProvider: ActivityProvider by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -44,6 +47,11 @@ class MainActivity : ComponentActivity() {
                     }
                 }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        activityProvider.setActivity(this)
     }
 
     override fun onDestroy() {

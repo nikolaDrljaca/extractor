@@ -17,6 +17,7 @@ class SearchImages(
     private val dispatcher: CoroutineDispatcher,
     private val searchImageByQuery: SearchImageByQuery,
     private val searchImageByDateRange: SearchImageByDateRange,
+    private val sideEffects: SearchImageSideEffects,
     private val dataStore: ExtractorDataStore
 ) {
     suspend fun execute(imageSearchParams: ImageSearchParams): Either<Unit, List<Extraction>> =
@@ -25,7 +26,7 @@ class SearchImages(
                 dataStore.getSearchCount() == 0 -> Unit.left()
 
                 else -> executeSearch(imageSearchParams).right().also {
-                    dataStore.decrementSearchCount()
+                    sideEffects.execute()
                 }
             }
         }

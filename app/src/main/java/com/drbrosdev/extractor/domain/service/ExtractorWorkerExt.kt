@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain.worker
+package com.drbrosdev.extractor.domain.service
 
 object WorkNames {
     const val EXTRACTOR_WORK = "extractor_work"

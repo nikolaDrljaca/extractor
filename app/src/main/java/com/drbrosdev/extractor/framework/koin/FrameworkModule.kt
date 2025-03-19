@@ -2,7 +2,10 @@ package com.drbrosdev.extractor.framework.koin
 
 import androidx.work.WorkManager
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
-import com.drbrosdev.extractor.domain.worker.ExtractorWorkerService
+import com.drbrosdev.extractor.domain.service.AppReviewService
+import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
+import com.drbrosdev.extractor.framework.ActivityProvider
+import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.framework.logger.EventLogDatabase
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
@@ -11,6 +14,7 @@ import com.drbrosdev.extractor.framework.permission.PermissionService
 import com.drbrosdev.extractor.framework.workmanager.AlbumCleanupWorker
 import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
 import com.drbrosdev.extractor.framework.workmanager.ExtractorWorker
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.qualifier.named
@@ -41,6 +45,15 @@ val frameworkModule = module {
     single {
         PermissionService(androidContext())
     }
+
+    single {
+        PlayAppReviewService(
+            context = androidApplication(),
+            activityProvider = get()
+        )
+    } bind AppReviewService::class
+
+    single { ActivityProvider() }
 
     single {
         DefaultExtractorWorkerService(

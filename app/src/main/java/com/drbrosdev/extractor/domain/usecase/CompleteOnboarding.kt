@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.domain.usecase
 
 import com.drbrosdev.extractor.data.ExtractorDataStore
-import com.drbrosdev.extractor.domain.worker.ExtractorWorkerService
+import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 

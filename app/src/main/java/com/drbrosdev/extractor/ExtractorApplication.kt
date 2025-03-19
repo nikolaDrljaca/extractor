@@ -23,6 +23,7 @@ class ExtractorApplication : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
+        // start koin for DI
         startKoin {
             requireDebug {
                 androidLogger()
@@ -31,7 +32,7 @@ class ExtractorApplication : Application(), ImageLoaderFactory {
             workManagerFactory()
             modules(allKoinModules)
         }
-
+        // Plant database backed logger tree
         requireDebug(
             fallback = { Timber.plant(databaseLogger) }
         ) {
@@ -42,6 +43,7 @@ class ExtractorApplication : Application(), ImageLoaderFactory {
         }
     }
 
+    // configure Coil image loader
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
             .memoryCache {

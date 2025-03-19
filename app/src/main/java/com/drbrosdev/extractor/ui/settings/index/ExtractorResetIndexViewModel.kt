@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.worker.ExtractorWorkerService
+import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.map
