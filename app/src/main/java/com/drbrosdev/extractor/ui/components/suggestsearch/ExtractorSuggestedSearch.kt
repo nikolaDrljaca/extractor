@@ -32,7 +32,7 @@ import com.drbrosdev.extractor.util.shimmer
 @Composable
 fun SuggestedSearches(
     modifier: Modifier = Modifier,
-    suggestionUiModel: SuggestedSearchUiModel
+    suggestionUiModel: SuggestedSearchState
 ) {
     AnimatedContent(
         targetState = suggestionUiModel,
@@ -41,7 +41,7 @@ fun SuggestedSearches(
             .then(modifier)
     ) { content ->
         when (content) {
-            SuggestedSearchUiModel.Loading ->
+            SuggestedSearchState.Loading ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -52,7 +52,7 @@ fun SuggestedSearches(
                         .shimmer()
                 )
 
-            is SuggestedSearchUiModel.Content ->
+            is SuggestedSearchState.Content ->
                 LazyRow(
                     modifier = Modifier,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -67,7 +67,7 @@ fun SuggestedSearches(
                     }
                 }
 
-            SuggestedSearchUiModel.Empty -> Unit
+            SuggestedSearchState.Empty -> Unit
         }
     }
 }
@@ -107,7 +107,7 @@ private fun CurrentPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             SuggestedSearches(
-                suggestionUiModel = SuggestedSearchUiModel.Content(
+                suggestionUiModel = SuggestedSearchState.Content(
                     onSuggestionClick = {},
                     list
                 )

@@ -31,9 +31,9 @@ val viewModelModule = module {
         ExtractorOverviewViewModel(
             trackExtractionProgress = get(),
             compileSearchSuggestions = get(),
-            compileTextAlbums = get(),
+            compileMostCommonTextEmbeds = get(),
+            compileMostCommonVisualEmbeds = get(),
             dataStore = get(),
-            generateUserCollage = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             navigators = it.get()
         )

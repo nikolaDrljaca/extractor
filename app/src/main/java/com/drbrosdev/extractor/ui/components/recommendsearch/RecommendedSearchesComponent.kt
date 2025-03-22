@@ -2,30 +2,28 @@ package com.drbrosdev.extractor.ui.components.recommendsearch
 
 import androidx.compose.runtime.Stable
 import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.KeywordType
+import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
-import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
+import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbeds
+import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonVisualEmbeds
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeys
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.overview.OverviewGridState
-import com.drbrosdev.extractor.util.WhileUiSubscribed
 import com.drbrosdev.extractor.util.asAlbumName
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -35,9 +33,8 @@ import java.time.LocalDateTime
 @Stable
 class RecommendedSearchesComponent(
     private val coroutineScope: CoroutineScope,
-    private val trackExtractionProgress: TrackExtractionProgress,
-    private val generateUserCollage: GenerateUserCollage,
-    private val compileTextAlbums: CompileTextAlbums,
+    private val compileMostCommonTextEmbeds: CompileMostCommonTextEmbeds,
+    private val compileMostCommonVisualEmbeds: CompileMostCommonVisualEmbeds,
     private val createAlbum: suspend (NewAlbum) -> Unit,
     private val navigators: Navigators
 ) {
@@ -46,13 +43,31 @@ class RecommendedSearchesComponent(
 
     val overviewGridState = OverviewGridState()
 
-    val state: StateFlow<RecommendedSearchesState> = trackExtractionProgress.invoke()
-        .flatMapLatest { transformState(it) }
+    val state: StateFlow<RecommendedSearchesState> = transformState()
         .stateIn(
             coroutineScope,
-            WhileUiSubscribed,
+            SharingStarted.Lazily,
             RecommendedSearchesState.Loading
         )
+
+    private fun processedImages() = flow {
+        val items = setOf(
+            "content://media/external/images/media/39",
+            "content://media/external/images/media/40",
+            "content://media/external/images/media/41",
+            "content://media/external/images/media/42",
+            "content://media/external/images/media/43",
+            "content://media/external/images/media/44",
+            "content://media/external/images/media/45",
+            "content://media/external/images/media/46",
+            "content://media/external/images/media/47",
+            "content://media/external/images/media/48",
+        )
+        items.forEach {
+            emit(MediaImageUri(it))
+            kotlinx.coroutines.delay(3_500)
+        }
+    }
 
     fun multiselectBarEventHandler(event: MultiselectAction) {
         when (event) {
@@ -87,26 +102,27 @@ class RecommendedSearchesComponent(
         }
     }
 
-    private fun transformState(status: ExtractionStatus): Flow<RecommendedSearchesState> {
-        return when (status) {
-            is ExtractionStatus.Running ->
-                flowOf(RecommendedSearchesState.SyncInProgress(status.percentage))
+    private suspend fun getCommonEmbeds() = coroutineScope {
+        val textContent = async { compileMostCommonTextEmbeds.execute(4) }
+        val visualContent = async { compileMostCommonVisualEmbeds.execute(4) }
+        textContent.await()
+            .plus(visualContent.await())
+            .shuffled()
+    }
 
-            is ExtractionStatus.Done -> flow {
-                val content = compileTextAlbums.execute(7)
-                emit(
-                    when {
-                        content.isNotEmpty() ->
-                            RecommendedSearchesState.Content(
-                                items = content,
-                                onImageClick = ::handleImageClickEvent
-                            )
+    private fun transformState() = flow {
+        val content = getCommonEmbeds()
+        emit(
+            when {
+                content.isNotEmpty() ->
+                    RecommendedSearchesState.Content(
+                        items = content,
+                        onImageClick = ::handleImageClickEvent
+                    )
 
-                        else -> RecommendedSearchesState.Empty
-                    }
-                )
+                else -> RecommendedSearchesState.Empty
             }
-        }
+        )
     }
 
     private fun handleImageClickEvent(keyword: String, index: Int) =

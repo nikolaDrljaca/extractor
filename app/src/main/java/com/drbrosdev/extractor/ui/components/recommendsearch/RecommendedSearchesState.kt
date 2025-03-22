@@ -4,10 +4,8 @@ import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ExtractionCollage
 import com.drbrosdev.extractor.domain.model.MediaImageId
-import com.drbrosdev.extractor.ui.dialog.status.safeDiv
 import com.drbrosdev.extractor.util.panic
 
-// loading and content
 sealed class RecommendedSearchesState {
     data object Loading : RecommendedSearchesState()
 
@@ -18,13 +16,6 @@ sealed class RecommendedSearchesState {
         val items: List<ExtractionCollage>,
         val onImageClick: (keyword: String, index: Int) -> Unit
     ) : RecommendedSearchesState()
-
-    @Immutable
-    data class SyncInProgress(
-        val progress: Int
-    ) : RecommendedSearchesState() {
-        val asFloat: Float = progress safeDiv 100
-    }
 }
 
 fun RecommendedSearchesState.findCollageByKeyword(keyword: String) = when (this) {

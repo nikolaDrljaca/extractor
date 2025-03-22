@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain.usecase
+package com.drbrosdev.extractor.domain.usecase.generate
 
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao

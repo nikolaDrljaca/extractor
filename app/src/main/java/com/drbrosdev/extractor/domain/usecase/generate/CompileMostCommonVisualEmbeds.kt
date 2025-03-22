@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain.usecase.album
+package com.drbrosdev.extractor.domain.usecase.generate
 
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ExtractionCollage
@@ -13,7 +13,7 @@ import com.drbrosdev.extractor.domain.usecase.token.isValidSearchToken
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.toList
 
-class CompileVisualAlbums(
+class CompileMostCommonVisualEmbeds(
     private val repo: ExtractorRepository,
     private val tokenizeText: TokenizeText,
     private val generateMostCommonTokens: GenerateMostCommonTokens,

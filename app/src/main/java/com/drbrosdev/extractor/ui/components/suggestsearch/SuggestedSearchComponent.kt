@@ -28,9 +28,9 @@ class SuggestedSearchComponent(
     val state = trackExtractionProgress.invoke()
         .map {
             when (it) {
-                is ExtractionStatus.Running -> SuggestedSearchUiModel.Empty
+                is ExtractionStatus.Running -> SuggestedSearchState.Empty
 
-                is ExtractionStatus.Done -> SuggestedSearchUiModel.Content(
+                is ExtractionStatus.Done -> SuggestedSearchState.Content(
                     onSuggestionClick = { o -> onSearch(o) },
                     suggestions = compileSearchSuggestions.invoke(suggestedSearchScope)
                 )
@@ -39,7 +39,7 @@ class SuggestedSearchComponent(
         .stateIn(
             coroutineScope,
             WhileUiSubscribed,
-            SuggestedSearchUiModel.Loading
+            SuggestedSearchState.Loading
         )
 
     private fun onSearch(suggestedSearch: SuggestedSearch) {

@@ -7,26 +7,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
-import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
+import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbeds
+import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesComponent
 import com.drbrosdev.extractor.ui.components.statuspill.StatusPillComponent
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchComponent
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
-import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
+import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.launch
 
 class ExtractorOverviewViewModel(
     private val trackExtractionProgress: TrackExtractionProgress,
     private val compileSearchSuggestions: CompileSearchSuggestions,
-    private val compileTextAlbums: CompileTextAlbums,
+    private val compileMostCommonTextEmbeds: CompileMostCommonTextEmbeds,
+    private val compileMostCommonVisualEmbeds: CompileMostCommonVisualEmbeds,
     private val dataStore: ExtractorDataStore,
-    private val generateUserCollage: GenerateUserCollage,
     private val albumRepository: AlbumRepository,
     private val navigators: Navigators
 ) : ViewModel() {
@@ -46,9 +46,8 @@ class ExtractorOverviewViewModel(
 
     val recommendedSearchesComponent = RecommendedSearchesComponent(
         coroutineScope = viewModelScope,
-        generateUserCollage = generateUserCollage,
-        compileTextAlbums = compileTextAlbums,
-        trackExtractionProgress = trackExtractionProgress,
+        compileMostCommonTextEmbeds = compileMostCommonTextEmbeds,
+        compileMostCommonVisualEmbeds = compileMostCommonVisualEmbeds,
         createAlbum = albumRepository::createAlbum,
         navigators = navigators
     )
