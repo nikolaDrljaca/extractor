@@ -5,8 +5,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import arrow.core.toOption
 import com.drbrosdev.extractor.data.ExtractorDataStore
+import com.drbrosdev.extractor.domain.model.ExtractionData
+import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
+import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbeds
 import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonVisualEmbeds
@@ -19,7 +23,20 @@ import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
 import dev.olshevski.navigation.reimagined.navigate
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+
+sealed interface OverviewContentState {
+    data object Done : OverviewContentState
+
+    data object Idle : OverviewContentState
+
+    data class SyncInProgress(
+        val mostRecentExtraction: ExtractionData
+    ) : OverviewContentState
+}
 
 class ExtractorOverviewViewModel(
     private val trackExtractionProgress: TrackExtractionProgress,
@@ -28,8 +45,28 @@ class ExtractorOverviewViewModel(
     private val compileMostCommonVisualEmbeds: CompileMostCommonVisualEmbeds,
     private val dataStore: ExtractorDataStore,
     private val albumRepository: AlbumRepository,
+    private val extractorRepository: ExtractorRepository,
     private val navigators: Navigators
 ) : ViewModel() {
+
+    val overviewContentState = trackExtractionProgress.invoke()
+        .map {
+            when (it) {
+                is ExtractionStatus.Done -> OverviewContentState.Done
+                is ExtractionStatus.Running -> extractorRepository.getLatestExtraction()
+                    .toOption()
+                    .fold(
+                        ifEmpty = { OverviewContentState.Idle },
+                        ifSome = { data -> OverviewContentState.SyncInProgress(data) }
+                    )
+            }
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            OverviewContentState.Idle
+        )
+
 
     val statusPillComponent = StatusPillComponent(
         coroutineScope = viewModelScope,

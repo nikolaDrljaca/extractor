@@ -3,7 +3,6 @@ package com.drbrosdev.extractor.ui.components.recommendsearch
 import androidx.compose.runtime.Stable
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
@@ -50,24 +49,6 @@ class RecommendedSearchesComponent(
             RecommendedSearchesState.Loading
         )
 
-    private fun processedImages() = flow {
-        val items = setOf(
-            "content://media/external/images/media/39",
-            "content://media/external/images/media/40",
-            "content://media/external/images/media/41",
-            "content://media/external/images/media/42",
-            "content://media/external/images/media/43",
-            "content://media/external/images/media/44",
-            "content://media/external/images/media/45",
-            "content://media/external/images/media/46",
-            "content://media/external/images/media/47",
-            "content://media/external/images/media/48",
-        )
-        items.forEach {
-            emit(MediaImageUri(it))
-            kotlinx.coroutines.delay(3_500)
-        }
-    }
 
     fun multiselectBarEventHandler(event: MultiselectAction) {
         when (event) {

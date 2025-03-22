@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.data.extraction
 
 import com.drbrosdev.extractor.data.TransactionProvider
 import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
+import com.drbrosdev.extractor.data.extraction.dao.ExtractionDataDao
 import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
@@ -10,9 +11,12 @@ import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
+import com.drbrosdev.extractor.data.extraction.record.toEmbed
+import com.drbrosdev.extractor.data.extraction.record.toExtraction
 import com.drbrosdev.extractor.data.extraction.relation.toImageEmbeds
 import com.drbrosdev.extractor.data.search.SearchIndexDao
 import com.drbrosdev.extractor.data.search.SearchIndexRecord
+import com.drbrosdev.extractor.domain.model.ExtractionData
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
@@ -32,6 +36,7 @@ class DefaultExtractorRepository(
     private val userEmbeddingDao: UserEmbeddingDao,
     private val imageEmbeddingsDao: ImageEmbeddingsDao,
     private val searchIndexDao: SearchIndexDao,
+    private val extractionDataDao: ExtractionDataDao,
     private val txRunner: TransactionProvider
 ) : ExtractorRepository {
 
@@ -78,6 +83,16 @@ class DefaultExtractorRepository(
         return extractionDao.getCountAsFlow()
     }
 
+    override suspend fun getLatestExtraction(): ExtractionData? {
+        return extractionDataDao.findMostRecent()?.let {
+            ExtractionData(
+                extraction = it.extractionRecord.toExtraction(),
+                textEmbed = it.textEmbeddingRecord.toEmbed(),
+                visualEmbeds = it.visualEmbeddingRecord.toEmbed()
+            )
+        }
+    }
+
     override suspend fun deleteUserEmbed(mediaImageId: MediaImageId, value: String) {
         userEmbeddingDao.findByMediaId(mediaImageId.id)?.let { userEmbed ->
             val updated = withContext(dispatcher) {
@@ -85,7 +100,7 @@ class DefaultExtractorRepository(
                     .split(",")
                     .map { it.trim() }
                     .filter { it.lowercase() != value.lowercase() }
-                    .joinToString(separator = ",") { it }
+                    .joinToString(separator = VisualEmbeddingRecord.SEPARATOR) { it }
             }
 
             userEmbeddingDao.update(userEmbed.copy(value = updated))
@@ -124,7 +139,7 @@ class DefaultExtractorRepository(
                     .split(",")
                     .map { it.trim() }
                     .filter { it.lowercase() != value.lowercase() }
-                    .joinToString(separator = ",") { it }
+                    .joinToString(separator = VisualEmbeddingRecord.SEPARATOR) { it }
             }
 
             visualEmbeddingDao.update(visualEmbed.copy(value = updated))
@@ -150,7 +165,7 @@ class DefaultExtractorRepository(
         val visuals = visualEmbeds
             .filter { it.value.isNotBlank() }
             .map { it.value.lowercase() }
-            .joinToString(separator = ",") { it }
+            .joinToString(separator = VisualEmbeddingRecord.SEPARATOR) { it }
 
         val visualEntity = VisualEmbeddingRecord(
             extractionId = mediaImageId.id,

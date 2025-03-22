@@ -16,9 +16,5 @@ sealed class Embed {
 
     data class Visual(
         override val value: String,
-    ) : Embed() {
-        companion object {
-            val DEFAULT = Visual("")
-        }
-    }
+    ) : Embed()
 }

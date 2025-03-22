@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.data.extraction.record
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.drbrosdev.extractor.domain.model.Embed
 
 
 @Entity(tableName = "text_embedding")
@@ -13,3 +14,5 @@ data class TextEmbeddingRecord(
 
     val value: String
 )
+
+fun TextEmbeddingRecord.toEmbed() = Embed.Text(value = this.value)

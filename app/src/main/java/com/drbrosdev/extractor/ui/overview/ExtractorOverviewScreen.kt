@@ -5,56 +5,34 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.toUri
-import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
+import com.drbrosdev.extractor.domain.model.MediaImageUri
+import com.drbrosdev.extractor.ui.components.ExtractorShowcase
+import com.drbrosdev.extractor.ui.components.processedImages
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesState
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
-import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchState
-import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
 import com.drbrosdev.extractor.util.isScrollingUp
-import com.drbrosdev.extractor.util.maxLineSpanItem
 
 @Composable
 fun ExtractorOverviewScreen(
@@ -68,12 +46,16 @@ fun ExtractorOverviewScreen(
     recommendedSearchesState: RecommendedSearchesState,
     suggestedSearchState: SuggestedSearchState
 ) {
+    val showcaseData =
+        processedImages().collectAsState(MediaImageUri("content://media/external/images/media/39"))
+
     ConstraintLayout(
         modifier = Modifier
             .systemBarsPadding()
             .fillMaxSize(),
         constraintSet = overviewScreenConstraintSet()
     ) {
+        /*
         LazyVerticalGrid(
             modifier = Modifier
                 .layoutId(ViewIds.MAIN_CONTENT),
@@ -189,6 +171,12 @@ fun ExtractorOverviewScreen(
             }
             item { Spacer(Modifier.height(36.dp)) }
         }
+         */
+
+        ExtractorShowcase(
+            modifier = Modifier.layoutId(ViewIds.SHOWCASE),
+            mediaImageUri = showcaseData.value
+        )
 
         AnimatedVisibility(
             modifier = Modifier
@@ -252,6 +240,7 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
     val fab = createRefFor(ViewIds.FAB)
     val actionBar = createRefFor(ViewIds.ACTION_BAR)
     val snackbar = createRefFor(ViewIds.SNACKBAR)
+    val showcase = createRefFor(ViewIds.SHOWCASE)
 
     constrain(topBar) {
         start.linkTo(parent.start)
@@ -284,6 +273,16 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
         bottom.linkTo(parent.bottom, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
+
+    constrain(showcase) {
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+        top.linkTo(parent.top, margin = 72.dp)
+        bottom.linkTo(parent.bottom, margin = 24.dp)
+
+        width = Dimension.fillToConstraints
+        height = Dimension.fillToConstraints
+    }
 }
 
 private object ViewIds {
@@ -292,5 +291,6 @@ private object ViewIds {
     const val MAIN_CONTENT = "main_content_view"
     const val TOP_BAR = "top_bar_view"
     const val ACTION_BAR = "action_bar_view"
+    const val SHOWCASE = "showcase_view"
 }
 

@@ -35,6 +35,7 @@ val viewModelModule = module {
             compileMostCommonVisualEmbeds = get(),
             dataStore = get(),
             albumRepository = get<DefaultAlbumRepository>(),
+            extractorRepository = get<DefaultExtractorRepository>(),
             navigators = it.get()
         )
     }

@@ -12,19 +12,20 @@ import com.drbrosdev.extractor.data.album.dao.AlbumRelationDao
 import com.drbrosdev.extractor.data.album.record.AlbumConfigurationRecord
 import com.drbrosdev.extractor.data.album.record.AlbumEntryRecord
 import com.drbrosdev.extractor.data.album.record.AlbumRecord
-import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
-import com.drbrosdev.extractor.data.search.SearchIndexDao
-import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao
-import com.drbrosdev.extractor.data.search.SearchIndexRecord
-import com.drbrosdev.extractor.data.search.SearchIndexFts
 import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
+import com.drbrosdev.extractor.data.extraction.dao.ExtractionDataDao
+import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao
 import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
+import com.drbrosdev.extractor.data.search.SearchIndexDao
+import com.drbrosdev.extractor.data.search.SearchIndexFts
+import com.drbrosdev.extractor.data.search.SearchIndexRecord
 
 @Database(
     entities = [
@@ -64,6 +65,8 @@ abstract class ExtractorDatabase : RoomDatabase() {
     abstract fun searchIndexDao(): SearchIndexDao
 
     abstract fun userExtractionDao(): UserExtractionDao
+
+    abstract fun extractionDataDao(): ExtractionDataDao
 
     companion object {
         fun createExtractorDatabase(context: Context): ExtractorDatabase {
