@@ -23,9 +23,12 @@ import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
 import dev.olshevski.navigation.reimagined.navigate
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 
 sealed interface OverviewContentState {
@@ -49,7 +52,7 @@ class ExtractorOverviewViewModel(
     private val navigators: Navigators
 ) : ViewModel() {
 
-    val overviewContentState = trackExtractionProgress.invoke()
+    private val upstreamProgress = trackExtractionProgress.invoke()
         .map {
             when (it) {
                 is ExtractionStatus.Done -> OverviewContentState.Done
@@ -57,16 +60,27 @@ class ExtractorOverviewViewModel(
                     .toOption()
                     .fold(
                         ifEmpty = { OverviewContentState.Idle },
-                        ifSome = { data -> OverviewContentState.SyncInProgress(data) }
+                        ifSome = { data ->
+                            println(data.visualEmbeds)
+                            OverviewContentState.SyncInProgress(data)
+                        }
                     )
             }
         }
+    private val ticker = flow {
+        while (true) {
+            emit(Unit)
+            delay(3_500)
+        }
+    }
+
+    // zip with a ticker flow to make emissions from progress tracking flow at a constant rate
+    val overviewContentState = upstreamProgress.zip(ticker) { value, _ -> value }
         .stateIn(
             viewModelScope,
             SharingStarted.Lazily,
             OverviewContentState.Idle
         )
-
 
     val statusPillComponent = StatusPillComponent(
         coroutineScope = viewModelScope,

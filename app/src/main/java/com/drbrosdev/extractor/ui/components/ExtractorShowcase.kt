@@ -1,72 +1,81 @@
 package com.drbrosdev.extractor.ui.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.domain.model.Embed
+import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.ExtractionData
+import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toUri
-import kotlinx.coroutines.flow.flow
-
-fun processedImages() = flow {
-    val items = setOf(
-        "content://media/external/images/media/39",
-        "content://media/external/images/media/40",
-        "content://media/external/images/media/41",
-        "content://media/external/images/media/42",
-        "content://media/external/images/media/43",
-        "content://media/external/images/media/44",
-        "content://media/external/images/media/45",
-        "content://media/external/images/media/46",
-        "content://media/external/images/media/47",
-        "content://media/external/images/media/48",
-    )
-    items.forEach {
-        emit(MediaImageUri(it))
-        kotlinx.coroutines.delay(3_500)
-    }
-}
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import java.time.LocalDateTime
 
 const val CONTENT_ANIMATION_DURATION = 1_000
 
 @Composable
 fun ExtractorShowcase(
     modifier: Modifier = Modifier,
-//    extractionData: ExtractionData
-    mediaImageUri: MediaImageUri
+    extractionData: ExtractionData
 ) {
     Column(
         modifier = Modifier
-            .then(modifier)
+            .then(modifier),
     ) {
-        Text("Indexing is in progress.")
+        Text(
+            text = "# Indexing is in progress.",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        Spacer(Modifier.height(16.dp))
 
         AnimatedContent(
-//            targetState = extractionData,
-            targetState = mediaImageUri,
+            targetState = extractionData,
             modifier = Modifier,
             contentAlignment = Alignment.Center,
             transitionSpec = {
@@ -81,58 +90,135 @@ fun ExtractorShowcase(
                 enter togetherWith exit
             }
         ) {
-//            ShowcaseItem(extractionData = it)
-            ShowcaseItem(mediaImageUri = it)
+            ShowcaseItem(extractionData = it)
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ShowcaseItem(
     modifier: Modifier = Modifier,
-//    extractionData: ExtractionData
-    mediaImageUri: MediaImageUri
+    extractionData: ExtractionData
 ) {
+    val background = Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
+
+    var opacity by remember { mutableFloatStateOf(0f) }
+    var linePosition by remember { mutableFloatStateOf(0f) }
+
+
+    LaunchedEffect(extractionData) {
+        kotlinx.coroutines.delay(500L)
+        // line left to right anim
+        animate(
+            initialValue =  0f,
+            targetValue = 1300f,
+            animationSpec = tween(easing = LinearOutSlowInEasing, durationMillis = 700)
+        ) { value, _ -> linePosition = value }
+        // opacity from 0 to 1
+        animate(
+            initialValue =  0f,
+            targetValue = 1f,
+            animationSpec = tween()
+        ) { value, _ -> opacity = value }
+    }
+
     Box(
         modifier = Modifier
-            .padding(horizontal = 24.dp)
+            .fillMaxHeight(0.67f)
+            .padding(12.dp)
+            .clip(RoundedCornerShape(14.dp))
             .then(modifier)
     ) {
-        Surface(
-            shape = RoundedCornerShape(14.dp),
+        // image
+        AsyncImage(
             modifier = Modifier
-        ) {
-            // image
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxHeight(0.67f),
-                model = ImageRequest.Builder(LocalContext.current)
-//                    .data(extractionData.extraction.uri.toUri())
-                    .data(mediaImageUri.toUri())
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "Image",
-                contentScale = ContentScale.Fit,
-                placeholder = painterResource(id = R.drawable.baseline_image_24),
-            )
-        }
+                .matchParentSize()
+                .align(Alignment.Center),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(extractionData.extraction.uri.toUri())
+                .crossfade(true)
+                .build(),
+            contentDescription = "Image",
+            contentScale = ContentScale.Crop,
+            placeholder = painterResource(id = R.drawable.baseline_image_24),
+        )
 
         // bottom "bar" data
-        val background = Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
-        Box(
+        Column(
             modifier = Modifier
                 .background(background)
                 .padding(12.dp)
                 .fillMaxWidth()
+                .clip(RoundedCornerShape(14.dp))
                 .align(Alignment.BottomCenter)
+                .graphicsLayer {
+                    alpha = opacity
+                }
         ) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                extractionData.visualEmbeds.forEach {
+                    SuggestionChip(
+                        onClick = {},
+                        label = { Text(it.value) },
+                        enabled = false,
+                        shape = CircleShape,
+                        border = SuggestionChipDefaults.suggestionChipBorder(
+                            enabled = true
+                        ),
+                        colors = SuggestionChipDefaults.suggestionChipColors(
+                            disabledLabelColor = Color.White,
+                        )
+                    )
+                }
+            }
+
             Text(
-//                text = extractionData.textEmbed.value,
-                text = "some random text",
+                text = extractionData.textEmbed.value,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier
+                    .padding(start = 4.dp),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    color = Color.Gray
+                )
             )
         }
+
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.primary,
+            thickness = 4.dp,
+            modifier = Modifier.graphicsLayer {
+                translationY = linePosition
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun CurrentPreview() {
+    val data = ExtractionData(
+        extraction = Extraction(
+            mediaImageId = MediaImageId(1L),
+            uri = MediaImageUri(""),
+            path = "",
+            dateAdded = LocalDateTime.now(),
+        ),
+        textEmbed = Embed.Text("sample text here"),
+        visualEmbeds = listOf(
+            Embed.Visual("sample"),
+            Embed.Visual("sample"),
+            Embed.Visual("sample"),
+            Embed.Visual("sample"),
+        )
+    )
+    ExtractorTheme {
+        ShowcaseItem(
+            extractionData = data
+        )
     }
 }

@@ -40,6 +40,8 @@ data object ExtractorOverviewNavTarget : NavTarget {
             .collectAsStateWithLifecycle()
         val suggestedSearchUiModel by viewModel.suggestedSearchComponent.state
             .collectAsStateWithLifecycle()
+        val overviewContentState by viewModel.overviewContentState
+            .collectAsStateWithLifecycle()
 
         val context = LocalContext.current
 
@@ -66,7 +68,8 @@ data object ExtractorOverviewNavTarget : NavTarget {
             statusPillState = statusPillState,
             recommendedSearchesState = collageRecommendationState,
             suggestedSearchState = suggestedSearchUiModel,
-            overviewGridState = viewModel.recommendedSearchesComponent.overviewGridState
+            overviewGridState = viewModel.recommendedSearchesComponent.overviewGridState,
+            overviewContentState = overviewContentState
         )
     }
 }
@@ -85,7 +88,8 @@ private fun CurrentPreview() {
                 statusPillState = ExtractorStatusPillState.OutOfSync,
                 recommendedSearchesState = RecommendedSearchesState.Loading,
                 suggestedSearchState = SuggestedSearchState.Loading,
-                snackbarState = SnackbarHostState()
+                snackbarState = SnackbarHostState(),
+                overviewContentState = OverviewContentState.Done
             )
         }
     }
