@@ -43,7 +43,6 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.toUri
-import com.drbrosdev.extractor.ui.components.ExtractorShowcase
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesState
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
@@ -51,6 +50,8 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
+import com.drbrosdev.extractor.ui.components.showcase.ExtractorShowcase
+import com.drbrosdev.extractor.ui.components.showcase.ShowcaseState
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
@@ -66,7 +67,7 @@ fun ExtractorOverviewScreen(
     snackbarState: SnackbarHostState,
     overviewGridState: OverviewGridState,
     statusPillState: ExtractorStatusPillState,
-    overviewContentState: OverviewContentState,
+    showcaseState: ShowcaseState,
     recommendedSearchesState: RecommendedSearchesState,
     suggestedSearchState: SuggestedSearchState
 ) {
@@ -77,16 +78,16 @@ fun ExtractorOverviewScreen(
             .fillMaxSize(),
         constraintSet = overviewScreenConstraintSet()
     ) {
-        when (overviewContentState) {
-            OverviewContentState.Idle -> Unit
+        when (showcaseState) {
+            ShowcaseState.Idle -> Unit
 
-            is OverviewContentState.SyncInProgress -> ExtractorShowcase(
+            is ShowcaseState.SyncInProgress -> ExtractorShowcase(
                 modifier = Modifier
                     .layoutId(ViewIds.SHOWCASE),
-                extractionData = overviewContentState.mostRecentExtraction
+                extractionData = showcaseState.mostRecentExtraction
             )
 
-            is OverviewContentState.Done -> LazyVerticalGrid(
+            is ShowcaseState.Done -> LazyVerticalGrid(
                 modifier = Modifier
                     .layoutId(ViewIds.MAIN_CONTENT),
                 columns = GridCells.Adaptive(minSize = 96.dp),

@@ -14,6 +14,7 @@ import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesEvents
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesState
+import com.drbrosdev.extractor.ui.components.showcase.ShowcaseState
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -40,7 +41,7 @@ data object ExtractorOverviewNavTarget : NavTarget {
             .collectAsStateWithLifecycle()
         val suggestedSearchUiModel by viewModel.suggestedSearchComponent.state
             .collectAsStateWithLifecycle()
-        val overviewContentState by viewModel.overviewContentState
+        val overviewContentState by viewModel.showcaseComponent.state
             .collectAsStateWithLifecycle()
 
         val context = LocalContext.current
@@ -69,7 +70,7 @@ data object ExtractorOverviewNavTarget : NavTarget {
             recommendedSearchesState = collageRecommendationState,
             suggestedSearchState = suggestedSearchUiModel,
             overviewGridState = viewModel.recommendedSearchesComponent.overviewGridState,
-            overviewContentState = overviewContentState
+            showcaseState = overviewContentState
         )
     }
 }
@@ -89,7 +90,7 @@ private fun CurrentPreview() {
                 recommendedSearchesState = RecommendedSearchesState.Loading,
                 suggestedSearchState = SuggestedSearchState.Loading,
                 snackbarState = SnackbarHostState(),
-                overviewContentState = OverviewContentState.Done
+                showcaseState = ShowcaseState.Done
             )
         }
     }

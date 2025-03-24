@@ -166,4 +166,5 @@
     <string name="keyword_added">Keyword added!</string>
     <string name="alternative">Alternative</string>
     <string name="alternative_expl">If you want to continue using the app for free, you can reset the application data and get a fresh start with a 1000 searches.\n\nNote that this will delete all your data in the application and start the onboarding again. You will have to wait for indexing to complete.</string>
+    <string name="indexing_is_in_progress"># Indexing is in progress.</string>
 </resources>

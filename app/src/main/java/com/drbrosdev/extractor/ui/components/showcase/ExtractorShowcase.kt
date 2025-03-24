@@ -1,7 +1,6 @@
-package com.drbrosdev.extractor.ui.components
+package com.drbrosdev.extractor.ui.components.showcase
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -29,7 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +38,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,9 +52,10 @@ import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import kotlinx.coroutines.delay
 import java.time.LocalDateTime
+import kotlin.time.Duration.Companion.milliseconds
 
-const val CONTENT_ANIMATION_DURATION = 1_000
 
 @Composable
 fun ExtractorShowcase(
@@ -67,7 +67,7 @@ fun ExtractorShowcase(
             .then(modifier),
     ) {
         Text(
-            text = "# Indexing is in progress.",
+            text = stringResource(R.string.indexing_is_in_progress),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
@@ -80,11 +80,13 @@ fun ExtractorShowcase(
             contentAlignment = Alignment.Center,
             transitionSpec = {
                 val enter = slideInHorizontally(
-                    animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                    animationSpec =
+                        tween(ExtractorShowcaseDefaults.IMAGE_TRANSITION_DURATION),
                     initialOffsetX = { fullWidth -> fullWidth }
                 )
                 val exit = slideOutHorizontally(
-                    animationSpec = tween(CONTENT_ANIMATION_DURATION),
+                    animationSpec =
+                        tween(ExtractorShowcaseDefaults.IMAGE_TRANSITION_DURATION),
                     targetOffsetX = { fullWidth -> -fullWidth }
                 )
                 enter togetherWith exit
@@ -101,23 +103,16 @@ private fun ShowcaseItem(
     modifier: Modifier = Modifier,
     extractionData: ExtractionData
 ) {
-    val background = Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
+    val background =
+        Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
 
-    var opacity by remember { mutableFloatStateOf(0f) }
-    var linePosition by remember { mutableFloatStateOf(0f) }
-
+    var opacity by rememberSaveable { mutableFloatStateOf(0f) }
 
     LaunchedEffect(extractionData) {
-        kotlinx.coroutines.delay(500L)
-        // line left to right anim
-        animate(
-            initialValue =  0f,
-            targetValue = 1300f,
-            animationSpec = tween(easing = LinearOutSlowInEasing, durationMillis = 700)
-        ) { value, _ -> linePosition = value }
+        delay(ExtractorShowcaseDefaults.EMBED_ALPHA_DELAY.milliseconds)
         // opacity from 0 to 1
         animate(
-            initialValue =  0f,
+            initialValue = 0f,
             targetValue = 1f,
             animationSpec = tween()
         ) { value, _ -> opacity = value }
@@ -147,14 +142,14 @@ private fun ShowcaseItem(
         // bottom "bar" data
         Column(
             modifier = Modifier
+                .graphicsLayer {
+                    alpha = opacity
+                }
                 .background(background)
                 .padding(12.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(14.dp))
                 .align(Alignment.BottomCenter)
-                .graphicsLayer {
-                    alpha = opacity
-                }
         ) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -187,15 +182,15 @@ private fun ShowcaseItem(
                 )
             )
         }
-
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.primary,
-            thickness = 4.dp,
-            modifier = Modifier.graphicsLayer {
-                translationY = linePosition
-            }
-        )
     }
+}
+
+object ExtractorShowcaseDefaults {
+    const val IMAGE_TRANSITION_DURATION = 1_000
+
+    const val EMBED_ALPHA_DELAY = 500
+
+    const val SHOWCASE_SAMPLE_RATE = 3_500
 }
 
 @Preview
