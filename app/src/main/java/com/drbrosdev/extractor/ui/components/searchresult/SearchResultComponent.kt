@@ -80,7 +80,7 @@ class SearchResultComponent(
 
     fun multiselectEventHandler(event: MultiselectAction) {
         when (event) {
-            MultiselectAction.Delete -> Unit // Unsupported for this grid
+            MultiselectAction.Delete -> Unit // Not supported by this grid
             MultiselectAction.Cancel -> gridState.clearSelection()
 
             MultiselectAction.CreateAlbum -> {
@@ -91,7 +91,8 @@ class SearchResultComponent(
             }
 
             MultiselectAction.Share -> coroutineScope.launch {
-                val uris = state.value.getImages()
+                val uris = gridState.checkedKeys()
+                    .mapNotNull { state.value.getImageLookup()[it] }
                     .map { it.uri.toUri() }
                 _events.send(SearchResultComponentEvents.Share(uris))
                 gridState.clearSelection()
