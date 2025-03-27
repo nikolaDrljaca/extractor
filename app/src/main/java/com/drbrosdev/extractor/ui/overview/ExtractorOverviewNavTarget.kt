@@ -42,7 +42,7 @@ data object ExtractorOverviewNavTarget : NavTarget {
         val suggestedSearchUiModel by viewModel.suggestedSearchComponent.state
             .collectAsStateWithLifecycle()
         val overviewContentState by viewModel.showcaseComponent.state
-            .collectAsStateWithLifecycle()
+            .collectAsStateWithLifecycle(ShowcaseState.Idle)
 
         val context = LocalContext.current
 

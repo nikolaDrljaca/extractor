@@ -190,7 +190,7 @@ object ExtractorShowcaseDefaults {
 
     const val EMBED_ALPHA_DELAY = 500
 
-    const val SHOWCASE_SAMPLE_RATE = 3_500
+    const val SHOWCASE_SAMPLE_RATE = 3_500L
 }
 
 @Preview
