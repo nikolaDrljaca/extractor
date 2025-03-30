@@ -1,7 +1,7 @@
-package com.drbrosdev.extractor.domain.usecase.album
+package com.drbrosdev.extractor.domain.usecase.generate
 
 import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ExtractionCollage
+import com.drbrosdev.extractor.domain.model.ExtractionBundle
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
@@ -13,16 +13,16 @@ import com.drbrosdev.extractor.domain.usecase.token.isValidSearchToken
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.toList
 
-class CompileTextAlbums(
+class CompileMostCommonTextEmbeds(
     private val repo: ExtractorRepository,
     private val tokenizeText: TokenizeText,
     private val generateMostCommonTokens: GenerateMostCommonTokens,
     private val searchImageByQuery: SearchImageByQuery,
 ) {
-    suspend fun execute(amount: Int): List<ExtractionCollage> {
+    suspend fun execute(amount: Int): List<ExtractionBundle> {
         return compile(amount)
             .map { (topWord, extractions) ->
-                ExtractionCollage(
+                ExtractionBundle(
                     keyword = topWord,
                     extractions = extractions
                 )

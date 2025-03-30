@@ -9,7 +9,7 @@ import arrow.core.toOption
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toPreview
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
-import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
+import com.drbrosdev.extractor.domain.usecase.generate.GenerateUserCollage
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.Dispatchers

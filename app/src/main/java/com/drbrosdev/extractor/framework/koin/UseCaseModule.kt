@@ -4,10 +4,7 @@ import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
 import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
-import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
-import com.drbrosdev.extractor.domain.usecase.album.CompileTextAlbums
-import com.drbrosdev.extractor.domain.usecase.album.CompileVisualAlbums
 import com.drbrosdev.extractor.domain.usecase.album.StoreAlbums
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
@@ -19,6 +16,10 @@ import com.drbrosdev.extractor.domain.usecase.extractor.text.MlKitExtractTextEmb
 import com.drbrosdev.extractor.domain.usecase.extractor.visual.ExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.extractor.visual.MLKitExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.extractor.visual.MediaPipeExtractVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbeds
+import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.generate.GenerateMostCommonExtractionBundles
+import com.drbrosdev.extractor.domain.usecase.generate.GenerateUserCollage
 import com.drbrosdev.extractor.domain.usecase.image.BuildFtsQuery
 import com.drbrosdev.extractor.domain.usecase.image.SearchCountPositiveDelta
 import com.drbrosdev.extractor.domain.usecase.image.SearchImageSideEffects
@@ -44,6 +45,13 @@ import org.koin.dsl.module
 
 
 val useCaseModule = module {
+
+    factory {
+        GenerateMostCommonExtractionBundles(
+            compileMostCommonVisualEmbeds = get(),
+            compileMostCommonTextEmbeds = get()
+        )
+    }
 
     factory {
         SuggestUserKeywords(
@@ -124,7 +132,7 @@ val useCaseModule = module {
     factory { GenerateMostCommonTokens() }
 
     factory {
-        CompileVisualAlbums(
+        CompileMostCommonVisualEmbeds(
             repo = get(),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
             tokenizeText = get(),
@@ -157,7 +165,7 @@ val useCaseModule = module {
     }
 
     factory {
-        CompileTextAlbums(
+        CompileMostCommonTextEmbeds(
             repo = get(),
             searchImageByQuery = get<DefaultSearchImageByQuery>(),
             tokenizeText = get(),

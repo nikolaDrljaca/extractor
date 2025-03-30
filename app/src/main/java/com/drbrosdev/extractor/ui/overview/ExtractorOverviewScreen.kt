@@ -7,6 +7,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
@@ -50,9 +51,9 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
-import com.drbrosdev.extractor.ui.components.shared.SyncInProgressDisplay
+import com.drbrosdev.extractor.ui.components.showcase.ExtractorShowcase
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
-import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchUiModel
+import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
 import com.drbrosdev.extractor.util.isScrollingUp
 import com.drbrosdev.extractor.util.maxLineSpanItem
@@ -64,11 +65,12 @@ fun ExtractorOverviewScreen(
     onSearchClick: () -> Unit,
     onMultiselectAction: (MultiselectAction) -> Unit,
     snackbarState: SnackbarHostState,
-    overviewState: OverviewGridState,
+    overviewGridState: OverviewGridState,
     statusPillState: ExtractorStatusPillState,
-    collageRecommendationState: RecommendedSearchesState,
-    suggestedSearchUiModel: SuggestedSearchUiModel
-) {
+    overviewContentState: RecommendedSearchesState,
+    suggestedSearchState: SuggestedSearchState
+) = BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+
     ConstraintLayout(
         modifier = Modifier
             .systemBarsPadding()
@@ -81,33 +83,36 @@ fun ExtractorOverviewScreen(
             columns = GridCells.Adaptive(minSize = 96.dp),
             verticalArrangement = Arrangement.spacedBy(1.dp),
             horizontalArrangement = Arrangement.spacedBy(1.dp),
-            state = overviewState.gridState.lazyGridState
+            state = overviewGridState.gridState.lazyGridState
         ) {
             maxLineSpanItem { Spacer(Modifier.padding(top = 54.dp)) }
             maxLineSpanItem { Spacer(Modifier.padding(top = 26.dp)) }
 
-            item(span = { GridItemSpan(maxLineSpan) }, key = "search_pill") {
+            item(
+                span = { GridItemSpan(maxLineSpan) },
+                key = "search_pill"
+            ) {
                 Column {
                     ExtractorSearchPill(
                         onClick = onSearchClick,
                         // TODO: Recompositions?
-                        enabled = suggestedSearchUiModel !is SuggestedSearchUiModel.Empty,
+                        enabled = suggestedSearchState !is SuggestedSearchState.Empty,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                     )
 
                     SuggestedSearches(
-                        suggestionUiModel = suggestedSearchUiModel
+                        suggestionUiModel = suggestedSearchState
                     )
                 }
             }
 
             item { Spacer(Modifier.height(12.dp)) }
 
-            when (collageRecommendationState) {
+            when (overviewContentState) {
                 is RecommendedSearchesState.Content -> {
-                    collageRecommendationState.items.forEach {
+                    overviewContentState.items.forEach {
                         item(
                             span = { GridItemSpan(maxLineSpan) },
                         ) {
@@ -131,13 +136,19 @@ fun ExtractorOverviewScreen(
                                 imageUri = entry.uri.toUri(),
                                 size = 96,
                                 onClick = {
-                                    if (overviewState.onToggleCheckedItem(entry.mediaImageId)) {
-                                        collageRecommendationState.onImageClick(it.keyword, index)
+                                    if (overviewGridState.onToggleCheckedItem(
+                                            entry.mediaImageId
+                                        )
+                                    ) {
+                                        overviewContentState.onImageClick(
+                                            it.keyword,
+                                            index
+                                        )
                                     }
                                 },
-                                checkedState = overviewState.gridState[entry.mediaImageId],
+                                checkedState = overviewGridState.gridState[entry.mediaImageId],
                                 onLongClick = {
-                                    overviewState.onLongTap(entry.mediaImageId)
+                                    overviewGridState.onLongTap(entry.mediaImageId)
                                 }
                             )
                         }
@@ -177,7 +188,9 @@ fun ExtractorOverviewScreen(
 
                 is RecommendedSearchesState.Loading -> maxLineSpanItem(key = "loading") {
                     Box(
-                        modifier = Modifier.height(250.dp),
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(250.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
@@ -186,23 +199,27 @@ fun ExtractorOverviewScreen(
                     }
                 }
 
-                is RecommendedSearchesState.SyncInProgress -> maxLineSpanItem(key = "syncInProgress") {
-                    SyncInProgressDisplay(
-                        modifier = Modifier.size(350.dp),
-                        progress = { collageRecommendationState.asFloat },
-                        progressCount = { collageRecommendationState.progress }
+                is RecommendedSearchesState.SyncInProgress -> maxLineSpanItem(
+                    key = "showcase"
+                ) {
+                    ExtractorShowcase(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(maxHeight.times(0.67f)),
+                        extractionData = overviewContentState.mostRecentExtraction
                     )
                 }
             }
+            //
             item { Spacer(Modifier.height(36.dp)) }
         }
 
         AnimatedVisibility(
             modifier = Modifier
                 .layoutId(ViewIds.TOP_BAR),
-            visible = overviewState.gridState.lazyGridState.isScrollingUp(),
-            enter = slideInVertically(initialOffsetY = { -(1.4 * it).toInt() }),
-            exit = slideOutVertically(targetOffsetY = { -(1.4 * it).toInt() })
+            visible = overviewGridState.gridState.lazyGridState.isScrollingUp(),
+            enter = slideInVertically(initialOffsetY = { -(1.5 * it).toInt() }),
+            exit = slideOutVertically(targetOffsetY = { -(1.5 * it).toInt() })
         ) {
             ExtractorTopBar(
                 modifier = Modifier
@@ -214,7 +231,7 @@ fun ExtractorOverviewScreen(
         }
 
         AnimatedVisibility(
-            visible = overviewState.showSearchFab,
+            visible = overviewGridState.showSearchFab,
             modifier = Modifier
                 .layoutId(ViewIds.FAB),
             enter = fadeIn(),
@@ -232,7 +249,7 @@ fun ExtractorOverviewScreen(
         }
 
         AnimatedVisibility(
-            visible = overviewState.multiselectState,
+            visible = overviewGridState.multiselectState,
             modifier = Modifier
                 .layoutId(ViewIds.ACTION_BAR),
             enter = fadeIn(),
@@ -291,6 +308,7 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
         bottom.linkTo(parent.bottom, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
+
 }
 
 private object ViewIds {

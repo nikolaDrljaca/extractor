@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.domain.repository
 
+import com.drbrosdev.extractor.domain.model.ExtractionData
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
@@ -31,4 +32,6 @@ interface ExtractorRepository {
     suspend fun getAllTextEmbedValuesAsCsv(): String?
 
     fun getExtractionCountAsFlow(): Flow<Int>
+
+    suspend fun getLatestExtraction(): ExtractionData?
 }

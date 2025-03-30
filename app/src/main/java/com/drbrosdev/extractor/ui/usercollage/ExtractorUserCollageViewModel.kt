@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.toUri
-import com.drbrosdev.extractor.domain.usecase.GenerateUserCollage
+import com.drbrosdev.extractor.domain.usecase.generate.GenerateUserCollage
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

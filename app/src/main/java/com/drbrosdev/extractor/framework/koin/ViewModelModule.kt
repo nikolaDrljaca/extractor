@@ -31,10 +31,10 @@ val viewModelModule = module {
         ExtractorOverviewViewModel(
             trackExtractionProgress = get(),
             compileSearchSuggestions = get(),
-            compileTextAlbums = get(),
+            generateMostCommonExtractionBundles = get(),
             dataStore = get(),
-            generateUserCollage = get(),
             albumRepository = get<DefaultAlbumRepository>(),
+            extractorRepository = get<DefaultExtractorRepository>(),
             navigators = it.get()
         )
     }

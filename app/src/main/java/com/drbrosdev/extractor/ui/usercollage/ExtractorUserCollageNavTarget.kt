@@ -9,7 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.UserCollage
+import com.drbrosdev.extractor.domain.model.UserExtractionBundle
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
@@ -95,7 +95,7 @@ private fun CurrentPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ExtractorUserCollageScreen(
                 state = ExtractorUserCollageUiState.Content(
-                    collages = listOf(UserCollage("sample", extractions)),
+                    collages = listOf(UserExtractionBundle("sample", extractions)),
                     onShare = {},
                     onItemClicked = { _, _ -> }
                 ),
