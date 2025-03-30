@@ -120,7 +120,7 @@ private fun ShowcaseItem(
 
     Box(
         modifier = Modifier
-            .fillMaxHeight(0.67f)
+            .fillMaxHeight()
             .padding(12.dp)
             .clip(RoundedCornerShape(14.dp))
             .then(modifier)

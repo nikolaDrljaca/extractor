@@ -9,55 +9,56 @@ import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbeds
-import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonVisualEmbeds
+import com.drbrosdev.extractor.domain.usecase.generate.GenerateMostCommonExtractionBundles
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesComponent
-import com.drbrosdev.extractor.ui.components.showcase.ShowcaseComponent
 import com.drbrosdev.extractor.ui.components.statuspill.StatusPillComponent
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchComponent
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
 import dev.olshevski.navigation.reimagined.navigate
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 class ExtractorOverviewViewModel(
     private val trackExtractionProgress: TrackExtractionProgress,
     private val compileSearchSuggestions: CompileSearchSuggestions,
-    private val compileMostCommonTextEmbeds: CompileMostCommonTextEmbeds,
-    private val compileMostCommonVisualEmbeds: CompileMostCommonVisualEmbeds,
+    private val generateMostCommonExtractionBundles: GenerateMostCommonExtractionBundles,
     private val dataStore: ExtractorDataStore,
     private val albumRepository: AlbumRepository,
     private val extractorRepository: ExtractorRepository,
     private val navigators: Navigators
 ) : ViewModel() {
 
-    val showcaseComponent = ShowcaseComponent(
-        coroutineScope = viewModelScope,
-        trackExtractionProgress = trackExtractionProgress,
-        getMostRecentExtraction = extractorRepository::getLatestExtraction
-    )
+    // collect extraction progress as sharedFlow to multicast
+    private val extractionStatus = trackExtractionProgress.invoke()
+        .shareIn(
+            viewModelScope,
+            SharingStarted.Lazily
+        )
 
     val statusPillComponent = StatusPillComponent(
         coroutineScope = viewModelScope,
-        trackProgress = trackExtractionProgress,
+        extractionStatus = extractionStatus,
         dataStore = dataStore
     )
 
     val suggestedSearchComponent = SuggestedSearchComponent(
         coroutineScope = viewModelScope,
         compileSearchSuggestions = compileSearchSuggestions,
-        trackExtractionProgress = trackExtractionProgress,
+        extractionStatus = extractionStatus,
         navigators = navigators
     )
 
     val recommendedSearchesComponent = RecommendedSearchesComponent(
         coroutineScope = viewModelScope,
-        compileMostCommonTextEmbeds = compileMostCommonTextEmbeds,
-        compileMostCommonVisualEmbeds = compileMostCommonVisualEmbeds,
+        extractionStatus = extractionStatus,
+        generateBundles = generateMostCommonExtractionBundles,
         createAlbum = albumRepository::createAlbum,
+        getMostRecentExtraction = extractorRepository::getLatestExtraction,
         navigators = navigators
     )
 

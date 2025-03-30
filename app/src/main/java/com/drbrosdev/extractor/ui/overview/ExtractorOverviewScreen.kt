@@ -7,6 +7,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
@@ -51,7 +52,6 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.components.showcase.ExtractorShowcase
-import com.drbrosdev.extractor.ui.components.showcase.ShowcaseState
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
@@ -67,10 +67,9 @@ fun ExtractorOverviewScreen(
     snackbarState: SnackbarHostState,
     overviewGridState: OverviewGridState,
     statusPillState: ExtractorStatusPillState,
-    showcaseState: ShowcaseState,
-    recommendedSearchesState: RecommendedSearchesState,
+    overviewContentState: RecommendedSearchesState,
     suggestedSearchState: SuggestedSearchState
-) {
+) = BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
 
     ConstraintLayout(
         modifier = Modifier
@@ -78,130 +77,141 @@ fun ExtractorOverviewScreen(
             .fillMaxSize(),
         constraintSet = overviewScreenConstraintSet()
     ) {
-        when (showcaseState) {
-            ShowcaseState.Idle -> Unit
+        LazyVerticalGrid(
+            modifier = Modifier
+                .layoutId(ViewIds.MAIN_CONTENT),
+            columns = GridCells.Adaptive(minSize = 96.dp),
+            verticalArrangement = Arrangement.spacedBy(1.dp),
+            horizontalArrangement = Arrangement.spacedBy(1.dp),
+            state = overviewGridState.gridState.lazyGridState
+        ) {
+            maxLineSpanItem { Spacer(Modifier.padding(top = 54.dp)) }
+            maxLineSpanItem { Spacer(Modifier.padding(top = 26.dp)) }
 
-            is ShowcaseState.SyncInProgress -> ExtractorShowcase(
-                modifier = Modifier
-                    .layoutId(ViewIds.SHOWCASE),
-                extractionData = showcaseState.mostRecentExtraction
-            )
-
-            is ShowcaseState.Done -> LazyVerticalGrid(
-                modifier = Modifier
-                    .layoutId(ViewIds.MAIN_CONTENT),
-                columns = GridCells.Adaptive(minSize = 96.dp),
-                verticalArrangement = Arrangement.spacedBy(1.dp),
-                horizontalArrangement = Arrangement.spacedBy(1.dp),
-                state = overviewGridState.gridState.lazyGridState
+            item(
+                span = { GridItemSpan(maxLineSpan) },
+                key = "search_pill"
             ) {
-                maxLineSpanItem { Spacer(Modifier.padding(top = 54.dp)) }
-                maxLineSpanItem { Spacer(Modifier.padding(top = 26.dp)) }
+                Column {
+                    ExtractorSearchPill(
+                        onClick = onSearchClick,
+                        // TODO: Recompositions?
+                        enabled = suggestedSearchState !is SuggestedSearchState.Empty,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
 
-                item(span = { GridItemSpan(maxLineSpan) }, key = "search_pill") {
-                    Column {
-                        ExtractorSearchPill(
-                            onClick = onSearchClick,
-                            // TODO: Recompositions?
-                            enabled = suggestedSearchState !is SuggestedSearchState.Empty,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                        )
-
-                        SuggestedSearches(
-                            suggestionUiModel = suggestedSearchState
-                        )
-                    }
+                    SuggestedSearches(
+                        suggestionUiModel = suggestedSearchState
+                    )
                 }
+            }
 
-                item { Spacer(Modifier.height(12.dp)) }
+            item { Spacer(Modifier.height(12.dp)) }
 
-                when (recommendedSearchesState) {
-                    is RecommendedSearchesState.Content -> {
-                        recommendedSearchesState.items.forEach {
-                            item(
-                                span = { GridItemSpan(maxLineSpan) },
-                            ) {
-                                Text(
-                                    text = "# ${it.keyword}",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    modifier = Modifier.padding(
-                                        start = 8.dp,
-                                        bottom = 4.dp,
-                                        top = 12.dp
-                                    )
+            when (overviewContentState) {
+                is RecommendedSearchesState.Content -> {
+                    overviewContentState.items.forEach {
+                        item(
+                            span = { GridItemSpan(maxLineSpan) },
+                        ) {
+                            Text(
+                                text = "# ${it.keyword}",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(
+                                    start = 8.dp,
+                                    bottom = 4.dp,
+                                    top = 12.dp
                                 )
-                            }
+                            )
+                        }
 
-                            itemsIndexed(
-                                items = it.extractions,
-                                key = { _, entry -> it.keyword + entry.mediaImageId.id }
-                            ) { index, entry ->
-                                ExtractorImageItem(
-                                    modifier = Modifier.animateItem(),
-                                    imageUri = entry.uri.toUri(),
-                                    size = 96,
-                                    onClick = {
-                                        if (overviewGridState.onToggleCheckedItem(entry.mediaImageId)) {
-                                            recommendedSearchesState.onImageClick(it.keyword, index)
-                                        }
-                                    },
-                                    checkedState = overviewGridState.gridState[entry.mediaImageId],
-                                    onLongClick = {
-                                        overviewGridState.onLongTap(entry.mediaImageId)
+                        itemsIndexed(
+                            items = it.extractions,
+                            key = { _, entry -> it.keyword + entry.mediaImageId.id }
+                        ) { index, entry ->
+                            ExtractorImageItem(
+                                modifier = Modifier.animateItem(),
+                                imageUri = entry.uri.toUri(),
+                                size = 96,
+                                onClick = {
+                                    if (overviewGridState.onToggleCheckedItem(
+                                            entry.mediaImageId
+                                        )
+                                    ) {
+                                        overviewContentState.onImageClick(
+                                            it.keyword,
+                                            index
+                                        )
                                     }
-                                )
-                            }
-                        }
-                    }
-
-                    is RecommendedSearchesState.Empty -> maxLineSpanItem(key = "empty") {
-                        Box(
-                            modifier = Modifier.height(350.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(
-                                    space = 12.dp,
-                                    alignment = Alignment.CenterVertically
-                                ),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.outline_hide_image_24),
-                                    contentDescription = "No result",
-                                    tint = Color.Gray,
-                                    modifier = Modifier
-                                        .size(64.dp)
-                                )
-                                Text(
-                                    text = "Could not generate recommendations.",
-                                    color = Color.Gray,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    modifier = Modifier.width(IntrinsicSize.Max),
-                                    textAlign = TextAlign.Center
-                                )
-                                Spacer(modifier = Modifier.height(24.dp))
-                            }
-                        }
-                    }
-
-                    is RecommendedSearchesState.Loading -> maxLineSpanItem(key = "loading") {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(0.7f)
-                                .height(250.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                trackColor = Color.Transparent
+                                },
+                                checkedState = overviewGridState.gridState[entry.mediaImageId],
+                                onLongClick = {
+                                    overviewGridState.onLongTap(entry.mediaImageId)
+                                }
                             )
                         }
                     }
                 }
-                item { Spacer(Modifier.height(36.dp)) }
+
+                is RecommendedSearchesState.Empty -> maxLineSpanItem(key = "empty") {
+                    Box(
+                        modifier = Modifier.height(350.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(
+                                space = 12.dp,
+                                alignment = Alignment.CenterVertically
+                            ),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.outline_hide_image_24),
+                                contentDescription = "No result",
+                                tint = Color.Gray,
+                                modifier = Modifier
+                                    .size(64.dp)
+                            )
+                            Text(
+                                text = "Could not generate recommendations.",
+                                color = Color.Gray,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.width(IntrinsicSize.Max),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(24.dp))
+                        }
+                    }
+                }
+
+                is RecommendedSearchesState.Loading -> maxLineSpanItem(key = "loading") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(250.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            trackColor = Color.Transparent
+                        )
+                    }
+                }
+
+                is RecommendedSearchesState.SyncInProgress -> maxLineSpanItem(
+                    key = "showcase"
+                ) {
+                    ExtractorShowcase(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(maxHeight.times(0.67f)),
+                        extractionData = overviewContentState.mostRecentExtraction
+                    )
+                }
             }
+            //
+            item { Spacer(Modifier.height(36.dp)) }
         }
 
         AnimatedVisibility(
@@ -266,7 +276,6 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
     val fab = createRefFor(ViewIds.FAB)
     val actionBar = createRefFor(ViewIds.ACTION_BAR)
     val snackbar = createRefFor(ViewIds.SNACKBAR)
-    val showcase = createRefFor(ViewIds.SHOWCASE)
 
     constrain(topBar) {
         start.linkTo(parent.start)
@@ -300,15 +309,6 @@ private fun overviewScreenConstraintSet() = ConstraintSet {
         width = Dimension.fillToConstraints
     }
 
-    constrain(showcase) {
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-        top.linkTo(parent.top)
-        bottom.linkTo(parent.bottom)
-
-        width = Dimension.fillToConstraints
-        height = Dimension.wrapContent
-    }
 }
 
 private object ViewIds {
@@ -317,6 +317,5 @@ private object ViewIds {
     const val MAIN_CONTENT = "main_content_view"
     const val TOP_BAR = "top_bar_view"
     const val ACTION_BAR = "action_bar_view"
-    const val SHOWCASE = "showcase_view"
 }
 

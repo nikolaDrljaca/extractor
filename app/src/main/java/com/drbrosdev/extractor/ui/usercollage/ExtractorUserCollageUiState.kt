@@ -1,13 +1,13 @@
 package com.drbrosdev.extractor.ui.usercollage
 
 import androidx.compose.runtime.Immutable
-import com.drbrosdev.extractor.domain.model.UserCollage
+import com.drbrosdev.extractor.domain.model.UserExtractionBundle
 
 sealed interface ExtractorUserCollageUiState {
 
     @Immutable
     data class Content(
-        val collages: List<UserCollage>,
+        val collages: List<UserExtractionBundle>,
         val onItemClicked: (keyword: String, index: Int) -> Unit,
         val onShare: (keyword: String) -> Unit
     ) : ExtractorUserCollageUiState

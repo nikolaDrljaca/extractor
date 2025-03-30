@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.domain.usecase.generate
 
 import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ExtractionCollage
+import com.drbrosdev.extractor.domain.model.ExtractionBundle
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
@@ -19,10 +19,10 @@ class CompileMostCommonVisualEmbeds(
     private val generateMostCommonTokens: GenerateMostCommonTokens,
     private val searchImageByQuery: SearchImageByQuery,
 ) {
-    suspend fun execute(amount: Int): List<ExtractionCollage> {
+    suspend fun execute(amount: Int): List<ExtractionBundle> {
         return compile(amount)
             .map { (topWord, extractions) ->
-                ExtractionCollage(
+                ExtractionBundle(
                     keyword = topWord,
                     extractions = extractions
                 )

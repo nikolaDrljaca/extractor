@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.domain.usecase.album
 
 import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ExtractionCollage
+import com.drbrosdev.extractor.domain.model.ExtractionBundle
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
@@ -11,7 +11,7 @@ class StoreAlbums(
     private val albumRepository: AlbumRepository
 ) {
     suspend fun execute(
-        collages: List<ExtractionCollage>,
+        collages: List<ExtractionBundle>,
         origin: NewAlbum.Origin
     ) {
         val keywordType = when (origin) {

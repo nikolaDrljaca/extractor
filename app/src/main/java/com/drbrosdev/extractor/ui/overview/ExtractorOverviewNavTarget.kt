@@ -14,7 +14,6 @@ import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesEvents
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesState
-import com.drbrosdev.extractor.ui.components.showcase.ShowcaseState
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -37,12 +36,10 @@ data object ExtractorOverviewNavTarget : NavTarget {
 
         val statusPillState by viewModel.statusPillComponent.state
             .collectAsStateWithLifecycle()
-        val collageRecommendationState by viewModel.recommendedSearchesComponent.state
+        val overviewContentState by viewModel.recommendedSearchesComponent.state
             .collectAsStateWithLifecycle()
         val suggestedSearchUiModel by viewModel.suggestedSearchComponent.state
             .collectAsStateWithLifecycle()
-        val overviewContentState by viewModel.showcaseComponent.state
-            .collectAsStateWithLifecycle(ShowcaseState.Idle)
 
         val context = LocalContext.current
 
@@ -67,10 +64,9 @@ data object ExtractorOverviewNavTarget : NavTarget {
             onMultiselectAction = viewModel.recommendedSearchesComponent::multiselectBarEventHandler,
             snackbarState = viewModel.snackbarHostState,
             statusPillState = statusPillState,
-            recommendedSearchesState = collageRecommendationState,
+            overviewContentState = overviewContentState,
             suggestedSearchState = suggestedSearchUiModel,
             overviewGridState = viewModel.recommendedSearchesComponent.overviewGridState,
-            showcaseState = overviewContentState
         )
     }
 }
@@ -87,10 +83,9 @@ private fun CurrentPreview() {
                 onMultiselectAction = {},
                 overviewGridState = OverviewGridState(),
                 statusPillState = ExtractorStatusPillState.OutOfSync,
-                recommendedSearchesState = RecommendedSearchesState.Loading,
+                overviewContentState = RecommendedSearchesState.Loading,
                 suggestedSearchState = SuggestedSearchState.Loading,
                 snackbarState = SnackbarHostState(),
-                showcaseState = ShowcaseState.Done
             )
         }
     }
