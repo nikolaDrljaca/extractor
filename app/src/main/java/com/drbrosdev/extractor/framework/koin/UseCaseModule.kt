@@ -38,6 +38,7 @@ import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
+import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -125,7 +126,7 @@ val useCaseModule = module {
             dispatcher = get(named(CoroutineModuleName.Default)),
             repo = get(),
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
-            workManager = get()
+            workerService = get<DefaultExtractorWorkerService>()
         )
     }
 

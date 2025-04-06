@@ -1,19 +1,20 @@
 package com.drbrosdev.extractor.framework.workmanager
 
+import androidx.lifecycle.asFlow
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
-import com.drbrosdev.extractor.domain.service.WorkNames
-import com.drbrosdev.extractor.domain.service.WorkerDataKeys
 import com.drbrosdev.extractor.framework.requiresApi
+import kotlinx.coroutines.flow.Flow
 
 class DefaultExtractorWorkerService(
     private val workManager: WorkManager
-): ExtractorWorkerService {
+) : ExtractorWorkerService {
     override fun startExtractorWorker() {
         val workRequest: OneTimeWorkRequest = requiresApi(
             versionCode = 31,
@@ -25,14 +26,15 @@ class DefaultExtractorWorkerService(
             }
         )
         workManager.enqueueUniqueWork(
-            WorkNames.EXTRACTOR_WORK,
+            ExtractorWorkerService.EXTRACTOR_WORK,
             ExistingWorkPolicy.KEEP,
             workRequest
         )
     }
 
     override fun startAlbumCleanupWorker(albumId: Long) {
-        val workData = workDataOf(WorkerDataKeys.ALBUM_ID to albumId)
+        val workData =
+            workDataOf(ExtractorWorkerService.DATA_ALBUM_ID to albumId)
         val workRequest: OneTimeWorkRequest = requiresApi(
             versionCode = 31,
             fallback = {
@@ -48,9 +50,14 @@ class DefaultExtractorWorkerService(
             }
         )
         workManager.enqueueUniqueWork(
-            WorkNames.ALBUM_CLEANUP,
+            ExtractorWorkerService.ALBUM_CLEANUP,
             ExistingWorkPolicy.APPEND,
             workRequest
         )
+    }
+
+    override fun workInfoAsFlow(workName: String): Flow<List<WorkInfo>> {
+        return workManager.getWorkInfosForUniqueWorkLiveData(workName)
+            .asFlow()
     }
 }
