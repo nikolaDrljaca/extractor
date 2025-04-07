@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.first
 interface ImageEmbeddingsDao {
 
     /**
-     * Will match against ALL columns in [com.drbrosdev.extractor.data.entity.SearchIndexEntity].
+     * Will match against ALL columns in [com.drbrosdev.extractor.data.search.SearchIndexRecord].
      *
      * ftsQuery can be constructed to match against certain tables of the index using:
      *
@@ -38,7 +38,7 @@ interface ImageEmbeddingsDao {
     fun findByKeywordAsFlow(ftsQuery: String): Flow<List<ImageEmbeddingsRelation>>
 
     /**
-     * Will match against ALL columns in [com.drbrosdev.extractor.data.entity.SearchIndexEntity].
+     * Will match against ALL columns in [com.drbrosdev.extractor.data.search.SearchIndexRecord].
      *
      * ftsQuery can be constructed to match against certain tables of the index using:
      *

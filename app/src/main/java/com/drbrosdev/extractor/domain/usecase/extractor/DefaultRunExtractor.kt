@@ -1,67 +1,38 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
-import arrow.core.Either
 import com.drbrosdev.extractor.domain.model.ImageEmbeds
-import com.drbrosdev.extractor.domain.model.InputImageType
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.toUri
-import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
-import com.drbrosdev.extractor.domain.usecase.extractor.visual.ExtractVisualEmbeds
-import com.drbrosdev.extractor.domain.usecase.extractor.text.ExtractTextEmbed
-import com.drbrosdev.extractor.framework.logger.logErrorEvent
-import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
 class DefaultRunExtractor(
     private val dispatcher: CoroutineDispatcher,
-    private val createInputImage: CreateInputImage,
-    private val extractTextEmbed: ExtractTextEmbed<InputImage>,
-    private val extractVisualEmbeds: ExtractVisualEmbeds<InputImage>,
-    private val mediaPipeExtractVisualEmbeds: ExtractVisualEmbeds<InputImage>,
+    private val extractTextEmbed: ExtractTextEmbed,
+    private val extractVisualEmbeds: ExtractVisualEmbeds,
 ) : RunExtractor {
-    override suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds? {
+
+    override suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds {
         return withContext(dispatcher) {
-            val inputImage =
-                createInputImage.execute(InputImageType.UriInputImage(mediaImageUri.toUri()))
-
-            inputImage.onLeft {
-                logErrorEvent("Failed to create InputImage.")
+            val text = async {
+                extractTextEmbed.execute(mediaImageUri)
             }
 
-            when (inputImage) {
-                is Either.Left -> null
-                is Either.Right -> extractFrom(inputImage.value)
+            val visuals = async {
+                extractVisualEmbeds.execute(mediaImageUri)
             }
+
+            val outText = text.await()
+
+            val outVisualEmbeds = visuals.await()
+                .distinctBy { it.value.lowercase() }
+                .toList()
+
+            ImageEmbeds(
+                textEmbed = outText,
+                visualEmbeds = outVisualEmbeds,
+                userEmbeds = emptyList()
+            )
         }
-    }
-
-    private suspend fun extractFrom(inputImage: InputImage): ImageEmbeds = coroutineScope {
-        val text = async {
-            extractTextEmbed.execute(inputImage)
-        }
-
-        val visuals = async {
-            extractVisualEmbeds.execute(inputImage)
-        }
-
-        val mediaPipeVisuals = async {
-            mediaPipeExtractVisualEmbeds.execute(inputImage)
-        }
-
-        val outText = text.await()
-
-        val outVisualEmbeds = visuals.await()
-            .plus(mediaPipeVisuals.await())
-            .distinctBy { it.value.lowercase() }
-            .toList()
-
-        ImageEmbeds(
-            textEmbed = outText,
-            visualEmbeds = outVisualEmbeds,
-            userEmbeds = emptyList()
-        )
     }
 }

@@ -4,7 +4,9 @@ import androidx.work.WorkManager
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.service.AppReviewService
 import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
+import com.drbrosdev.extractor.domain.service.InferenceService
 import com.drbrosdev.extractor.framework.ActivityProvider
+import com.drbrosdev.extractor.framework.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.framework.logger.EventLogDatabase
@@ -60,6 +62,13 @@ val frameworkModule = module {
             workManager = get()
         )
     } bind ExtractorWorkerService::class
+
+    single {
+        MlKitMediaPipeInferenceService(
+            dispatcher = get(named(CoroutineModuleName.Default)),
+            context = androidContext()
+        )
+    } bind InferenceService::class
 
     //Using named() as sometimes koin can fail to instantiate the workerParameters
     //leading to runtime exceptions

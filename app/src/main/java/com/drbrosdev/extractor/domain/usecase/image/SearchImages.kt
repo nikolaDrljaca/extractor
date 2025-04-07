@@ -31,20 +31,21 @@ class SearchImages(
             }
         }
 
-    private suspend fun executeSearch(imageSearchParams: ImageSearchParams): List<Extraction> = when {
-        // no search is done for blank query and blank dateRange
-        imageSearchParams.isBlank() -> emptyList()
+    private suspend fun executeSearch(imageSearchParams: ImageSearchParams): List<Extraction> =
+        when {
+            // no search is done for blank query and blank dateRange
+            imageSearchParams.isBlank() -> emptyList()
 
-        shouldUseDateRangeSearch(imageSearchParams) -> {
-            // NOTE: Should never be empty based on the above check
-            val dateRange = requireNotNull(imageSearchParams.dateRange) {
-                logEvent("SearchImages: shouldUseDateRangeSearch is true but dateRange is null!")
+            shouldUseDateRangeSearch(imageSearchParams) -> {
+                // NOTE: Should never be empty based on the above check
+                val dateRange = requireNotNull(imageSearchParams.dateRange) {
+                    logEvent("SearchImages: shouldUseDateRangeSearch is true but dateRange is null!")
+                }
+                searchImageByDateRange.execute(dateRange)
             }
-            searchImageByDateRange.execute(dateRange)
-        }
 
-        else -> searchImageByQuery.execute(imageSearchParams)
-    }
+            else -> searchImageByQuery.execute(imageSearchParams)
+        }
 
     private fun shouldUseDateRangeSearch(imageSearchParams: ImageSearchParams): Boolean {
         return (imageSearchParams.query.isBlank()) and (imageSearchParams.dateRange != null)

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
-import com.drbrosdev.extractor.framework.permission.PermissionService
+import com.drbrosdev.extractor.framework.permission.requestExtractionPermissions
 import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
@@ -29,7 +29,7 @@ object ExtractorOnboardingNavTarget : NavTarget {
         val scope = rememberCoroutineScope()
         val navController = navigators.navController
 
-        val permissionRequest = PermissionService.requestPermissions {
+        val permissionRequest = requestExtractionPermissions {
             if (it) {
                 scope.launch {
                     pagerState.animateScrollToPage(3)

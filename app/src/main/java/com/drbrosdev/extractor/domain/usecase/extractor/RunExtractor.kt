@@ -8,8 +8,8 @@ interface RunExtractor {
     /**
      * Performs extraction/inference on an media item pointed to by [mediaImageUri].
      *
-     * Underlying captured errors are swallowed and null is returned instead.
+     * For any failed extractions, default values are returned.
      */
-    suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds?
+    suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds
 
 }

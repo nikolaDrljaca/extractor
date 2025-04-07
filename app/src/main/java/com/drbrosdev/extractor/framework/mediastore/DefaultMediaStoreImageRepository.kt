@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Size
+import androidx.core.net.toUri
 import com.drbrosdev.extractor.domain.model.MediaStoreImage
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -81,7 +82,7 @@ class DefaultMediaStoreImageRepository(
         val size = 250
         return when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                val uri = Uri.parse(Uri.decode(uri))
+                val uri = Uri.decode(uri).toUri()
                 contentResolver.loadThumbnail(uri, Size(size, size), null)
             }
 

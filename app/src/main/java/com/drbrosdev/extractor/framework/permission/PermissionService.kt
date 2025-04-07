@@ -9,7 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.core.content.ContextCompat
 
-typealias PermissionRequest = () -> Unit
 
 class PermissionService(
     private val context: Context
@@ -45,68 +44,67 @@ class PermissionService(
             else -> ReadPermissionAccess.DENIED
         }
     }
+}
 
-    companion object {
+typealias PermissionRequest = () -> Unit
 
-        /**
-         * Starts a request for the proper permissions to gain access to device images.
-         * Method will determine the appropriate permissions based on device API level.
-         *
-         * Example usage:
-         * ```kotlin
-         * val request = PermissionService.requestPermissions { isGranted ->
-         *      processResult(isGranted)
-         * }
-         *
-         * request.invoke()
-         * ```
-         *
-         * @param [onResult] callback that will provide the result of the request.
-         * @return [PermissionRequest] function to invoke to start the permission request.
-         */
-        @Composable
-        fun requestPermissions(
-            onResult: (isGranted: Boolean) -> Unit
-        ): PermissionRequest {
-            val out =
-                rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                    val isGranted = when {
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
-                            val readMediaImages = it[Manifest.permission.READ_MEDIA_IMAGES] ?: false
-                            val readUserSelectedImages =
-                                it[Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED] ?: false
-                            readMediaImages or readUserSelectedImages
-                        }
-
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                            it[Manifest.permission.READ_MEDIA_IMAGES] ?: false
-                        }
-
-                        else -> {
-                            it[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
-                        }
-                    }
-                    onResult(isGranted)
-                }
-            // Permission request logic
-            val perms = when {
+/**
+ * Starts a request for the proper permissions to gain access to device images.
+ * Method will determine the appropriate permissions based on device API level.
+ *
+ * Example usage:
+ * ```kotlin
+ * val request = PermissionService.requestPermissions { isGranted ->
+ *      processResult(isGranted)
+ * }
+ *
+ * request.invoke()
+ * ```
+ *
+ * @param [onResult] callback that will provide the result of the request.
+ * @return [PermissionRequest] function to invoke to start the permission request.
+ */
+@Composable
+fun requestExtractionPermissions(
+    onResult: (isGranted: Boolean) -> Unit
+): PermissionRequest {
+    val out =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            val isGranted = when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
-                    arrayOf(
-                        Manifest.permission.READ_MEDIA_IMAGES,
-                        Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
-                    )
+                    val readMediaImages = it[Manifest.permission.READ_MEDIA_IMAGES] ?: false
+                    val readUserSelectedImages =
+                        it[Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED] ?: false
+                    readMediaImages or readUserSelectedImages
                 }
 
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                    arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+                    it[Manifest.permission.READ_MEDIA_IMAGES] ?: false
                 }
 
                 else -> {
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    it[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
                 }
             }
+            onResult(isGranted)
+        }
+    // Permission request logic
+    val perms = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+            arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+            )
+        }
 
-            return { out.launch(perms) }
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+            arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+        }
+
+        else -> {
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     }
+
+    return { out.launch(perms) }
 }

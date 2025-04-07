@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
-import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.mediaImageId
 import com.drbrosdev.extractor.domain.model.mediaImageUri
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
@@ -33,14 +32,15 @@ class RunBulkExtractor(
                 logEvent("Processing extraction for ${isOnDevice.size} images from device.")
                 mediaImageRepository.findAllByIdAsFlow(isOnDevice.toList())
                     .map { mediaStoreImage ->
-                        val embeds = runExtractor.execute(mediaStoreImage.mediaImageUri())
+                        val embeds =
+                            runExtractor.execute(mediaStoreImage.mediaImageUri())
                         NewExtraction(
                             mediaImageId = mediaStoreImage.mediaImageId(),
                             extractorImageUri = mediaStoreImage.mediaImageUri(),
                             path = mediaStoreImage.path,
                             dateAdded = mediaStoreImage.dateAdded,
-                            textEmbed = embeds?.textEmbed ?: Embed.Text.DEFAULT,
-                            visualEmbeds = embeds?.visualEmbeds ?: listOf()
+                            textEmbed = embeds.textEmbed,
+                            visualEmbeds = embeds.visualEmbeds
                         )
                     }
                     .flowOn(dispatcher)

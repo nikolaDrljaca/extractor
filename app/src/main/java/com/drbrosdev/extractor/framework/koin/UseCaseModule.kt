@@ -7,15 +7,12 @@ import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
 import com.drbrosdev.extractor.domain.usecase.album.StoreAlbums
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.ExtractTextEmbed
+import com.drbrosdev.extractor.domain.usecase.extractor.ExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.extractor.text.ExtractTextEmbed
-import com.drbrosdev.extractor.domain.usecase.extractor.text.MlKitExtractTextEmbed
-import com.drbrosdev.extractor.domain.usecase.extractor.visual.ExtractVisualEmbeds
-import com.drbrosdev.extractor.domain.usecase.extractor.visual.MLKitExtractVisualEmbeds
-import com.drbrosdev.extractor.domain.usecase.extractor.visual.MediaPipeExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbeds
 import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.generate.GenerateMostCommonExtractionBundles
@@ -36,6 +33,7 @@ import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywor
 import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
 import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
+import com.drbrosdev.extractor.framework.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
@@ -75,24 +73,22 @@ val useCaseModule = module {
     } bind CreateInputImage::class
 
     factory {
-        MLKitExtractVisualEmbeds(
-            dispatcher = get(named(CoroutineModuleName.Default))
+        ExtractVisualEmbeds(
+            inferenceService = get<MlKitMediaPipeInferenceService>()
         )
-    } bind ExtractVisualEmbeds::class
+    }
 
     factory {
-        MlKitExtractTextEmbed(
-            dispatcher = get(named(CoroutineModuleName.Default)),
+        ExtractTextEmbed(
+            inferenceService = get<MlKitMediaPipeInferenceService>(),
             tokenizeText = get()
         )
     } bind ExtractTextEmbed::class
 
     factory {
         DefaultRunExtractor(
-            createInputImage = get(),
-            extractVisualEmbeds = get<MLKitExtractVisualEmbeds>(),
+            extractVisualEmbeds = get(),
             extractTextEmbed = get(),
-            mediaPipeExtractVisualEmbeds = get<MediaPipeExtractVisualEmbeds>(),
             dispatcher = get(named(CoroutineModuleName.Default)),
         )
     } bind RunExtractor::class
@@ -245,13 +241,4 @@ val useCaseModule = module {
             extractionDao = get()
         )
     } bind SearchImageByDateRange::class
-
-    // Keep this single due to the ImageClassifier instance created inside
-    // NOTE: Maybe move this into a provider use case?
-    single {
-        MediaPipeExtractVisualEmbeds(
-            context = androidContext(),
-            dispatcher = get(named(CoroutineModuleName.Default))
-        )
-    } bind ExtractVisualEmbeds::class
 }
