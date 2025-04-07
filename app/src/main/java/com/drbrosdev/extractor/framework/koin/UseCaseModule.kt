@@ -21,8 +21,6 @@ import com.drbrosdev.extractor.domain.usecase.image.BuildFtsQuery
 import com.drbrosdev.extractor.domain.usecase.image.SearchCountPositiveDelta
 import com.drbrosdev.extractor.domain.usecase.image.SearchImageSideEffects
 import com.drbrosdev.extractor.domain.usecase.image.SearchImages
-import com.drbrosdev.extractor.domain.usecase.image.create.CreateInputImage
-import com.drbrosdev.extractor.domain.usecase.image.create.DefaultCreateInputImage
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByDateRange
 import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByQuery
 import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRange
@@ -37,7 +35,6 @@ import com.drbrosdev.extractor.framework.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
-import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -67,10 +64,6 @@ val useCaseModule = module {
             userExtractionDao = get()
         )
     }
-
-    factory {
-        DefaultCreateInputImage(context = androidContext())
-    } bind CreateInputImage::class
 
     factory {
         ExtractVisualEmbeds(
