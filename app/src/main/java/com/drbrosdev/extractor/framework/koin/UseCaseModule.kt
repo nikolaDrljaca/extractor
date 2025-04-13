@@ -6,6 +6,7 @@ import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
 import com.drbrosdev.extractor.domain.usecase.album.StoreAlbums
+import com.drbrosdev.extractor.domain.usecase.extractor.CreateMediaImageData
 import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.ExtractTextEmbed
 import com.drbrosdev.extractor.domain.usecase.extractor.ExtractVisualEmbeds
@@ -31,7 +32,7 @@ import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywor
 import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
 import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
-import com.drbrosdev.extractor.framework.MlKitMediaPipeInferenceService
+import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
@@ -79,7 +80,14 @@ val useCaseModule = module {
     } bind ExtractTextEmbed::class
 
     factory {
+        CreateMediaImageData(
+            inferenceService = get<MlKitMediaPipeInferenceService>(),
+        )
+    }
+
+    factory {
         DefaultRunExtractor(
+            createMediaImageData = get(),
             extractVisualEmbeds = get(),
             extractTextEmbed = get(),
             dispatcher = get(named(CoroutineModuleName.Default)),

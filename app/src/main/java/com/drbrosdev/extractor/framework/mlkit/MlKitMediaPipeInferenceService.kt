@@ -1,7 +1,8 @@
-package com.drbrosdev.extractor.framework
+package com.drbrosdev.extractor.framework.mlkit
 
 import android.content.Context
 import arrow.core.raise.result
+import com.drbrosdev.extractor.domain.model.MediaImageData
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.service.InferenceService
@@ -45,18 +46,31 @@ class MlKitMediaPipeInferenceService(
         imageClassifierOptions
     )
 
-    override suspend fun processText(image: MediaImageUri): Result<String> =
+    override suspend fun processText(image: MediaImageData): Result<String> =
         withContext(dispatcher) {
-            result { createInputImage(image) }
+            // parse inputImage
+            val internal = result {
+                when {
+                    image is MlKitImageData -> image.inputImage
+                    else -> error("MediaImageData implementation does not contain InputImage!")
+                }
+            }
+            // process
+            internal
                 .mapCatching { textRecognizer.process(it).await() }
                 .map { it.text }
         }
 
-    override suspend fun processVisual(image: MediaImageUri): Result<List<String>> =
+    override suspend fun processVisual(image: MediaImageData): Result<List<String>> =
         withContext(dispatcher) {
-            result {
-                // prepare input image
-                val inputImage = createInputImage(image)
+            // parse inputImage
+            val internal = result {
+                when {
+                    image is MlKitImageData -> image.inputImage
+                    else -> error("MediaImageData implementation does not contain InputImage!")
+                }
+            }
+            internal.mapCatching { inputImage ->
                 // prepare mlKit result
                 val mlKitResult = async {
                     labeler.process(inputImage).await().map { it.text }
@@ -69,6 +83,13 @@ class MlKitMediaPipeInferenceService(
             }
         }
 
+    override suspend fun prepareImage(uri: MediaImageUri): Result<MediaImageData> {
+        return result {
+            InputImage.fromFilePath(context, uri.toUri())
+                .toImageData()
+        }
+    }
+
     private fun runMediaPipe(image: InputImage): List<String> {
         val bitmap = image.bitmapInternal ?: return emptyList()
         val result =
@@ -79,11 +100,6 @@ class MlKitMediaPipeInferenceService(
             .flatMap { it.categories() }
             .filter { it.score().times(1_000f) >= THRESHOLD }
             .map { it.categoryName() }
-    }
-
-    // Will throw if uri points to image not on device
-    private fun createInputImage(uri: MediaImageUri): InputImage {
-        return InputImage.fromFilePath(context, uri.toUri())
     }
 
     companion object {

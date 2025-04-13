@@ -55,6 +55,7 @@ import com.drbrosdev.extractor.ui.components.showcase.ExtractorShowcase
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
+import com.drbrosdev.extractor.ui.components.suggestsearch.isNotEmpty
 import com.drbrosdev.extractor.util.isScrollingUp
 import com.drbrosdev.extractor.util.maxLineSpanItem
 
@@ -96,7 +97,7 @@ fun ExtractorOverviewScreen(
                     ExtractorSearchPill(
                         onClick = onSearchClick,
                         // TODO: Recompositions?
-                        enabled = suggestedSearchState !is SuggestedSearchState.Empty,
+                        enabled = suggestedSearchState.isNotEmpty,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)

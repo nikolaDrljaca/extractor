@@ -38,7 +38,7 @@ data object ExtractorOverviewNavTarget : NavTarget {
             .collectAsStateWithLifecycle()
         val overviewContentState by viewModel.recommendedSearchesComponent.state
             .collectAsStateWithLifecycle()
-        val suggestedSearchUiModel by viewModel.suggestedSearchComponent.state
+        val suggestedSearchState by viewModel.suggestedSearchComponent.state
             .collectAsStateWithLifecycle()
 
         val context = LocalContext.current
@@ -65,7 +65,7 @@ data object ExtractorOverviewNavTarget : NavTarget {
             snackbarState = viewModel.snackbarHostState,
             statusPillState = statusPillState,
             overviewContentState = overviewContentState,
-            suggestedSearchState = suggestedSearchUiModel,
+            suggestedSearchState = suggestedSearchState,
             overviewGridState = viewModel.recommendedSearchesComponent.overviewGridState,
         )
     }

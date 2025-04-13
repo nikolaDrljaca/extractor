@@ -1,5 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
+import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.mediaImageId
 import com.drbrosdev.extractor.domain.model.mediaImageUri
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
@@ -39,8 +40,8 @@ class RunBulkExtractor(
                             extractorImageUri = mediaStoreImage.mediaImageUri(),
                             path = mediaStoreImage.path,
                             dateAdded = mediaStoreImage.dateAdded,
-                            textEmbed = embeds.textEmbed,
-                            visualEmbeds = embeds.visualEmbeds
+                            textEmbed = embeds?.textEmbed ?: Embed.Text.DEFAULT,
+                            visualEmbeds = embeds?.visualEmbeds ?: emptyList()
                         )
                     }
                     .flowOn(dispatcher)

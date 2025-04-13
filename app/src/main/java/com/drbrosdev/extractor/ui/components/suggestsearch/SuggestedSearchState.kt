@@ -14,3 +14,10 @@ sealed interface SuggestedSearchState {
         val suggestions: List<SuggestedSearch>
     ): SuggestedSearchState
 }
+
+val SuggestedSearchState.isNotEmpty: Boolean
+    get() = when (this) {
+        SuggestedSearchState.Empty -> false
+        is SuggestedSearchState.Content -> true
+        SuggestedSearchState.Loading -> true
+    }

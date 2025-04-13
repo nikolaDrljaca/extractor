@@ -6,7 +6,7 @@ import com.drbrosdev.extractor.domain.service.AppReviewService
 import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
 import com.drbrosdev.extractor.domain.service.InferenceService
 import com.drbrosdev.extractor.framework.ActivityProvider
-import com.drbrosdev.extractor.framework.MlKitMediaPipeInferenceService
+import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.framework.logger.EventLogDatabase

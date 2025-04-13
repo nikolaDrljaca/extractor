@@ -8,29 +8,27 @@ import kotlinx.coroutines.withContext
 
 class DefaultRunExtractor(
     private val dispatcher: CoroutineDispatcher,
+    private val createMediaImageData: CreateMediaImageData,
     private val extractTextEmbed: ExtractTextEmbed,
     private val extractVisualEmbeds: ExtractVisualEmbeds,
 ) : RunExtractor {
 
-    override suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds {
+    override suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds? {
         return withContext(dispatcher) {
+            // create media image data - prepare for extraction
+            val data = createMediaImageData.execute(mediaImageUri) ?: return@withContext null
+            // extract text data
             val text = async {
-                extractTextEmbed.execute(mediaImageUri)
+                extractTextEmbed.execute(data)
             }
-
+            // extract visual data
             val visuals = async {
-                extractVisualEmbeds.execute(mediaImageUri)
+                extractVisualEmbeds.execute(data)
             }
-
-            val outText = text.await()
-
-            val outVisualEmbeds = visuals.await()
-                .distinctBy { it.value.lowercase() }
-                .toList()
-
+            // return embeds
             ImageEmbeds(
-                textEmbed = outText,
-                visualEmbeds = outVisualEmbeds,
+                textEmbed = text.await(),
+                visualEmbeds = visuals.await(),
                 userEmbeds = emptyList()
             )
         }

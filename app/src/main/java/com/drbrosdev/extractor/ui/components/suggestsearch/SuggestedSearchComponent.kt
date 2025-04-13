@@ -7,10 +7,10 @@ import com.drbrosdev.extractor.domain.usecase.suggestion.buildSuggestionScope
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.search.SearchNavTargetArgs
-import com.drbrosdev.extractor.util.WhileUiSubscribed
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -38,7 +38,7 @@ class SuggestedSearchComponent(
         }
         .stateIn(
             coroutineScope,
-            WhileUiSubscribed,
+            SharingStarted.Lazily,
             SuggestedSearchState.Loading
         )
 
