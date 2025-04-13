@@ -137,10 +137,7 @@ fun ExtractorOverviewScreen(
                                 imageUri = entry.uri.toUri(),
                                 size = 96,
                                 onClick = {
-                                    if (overviewGridState.onToggleCheckedItem(
-                                            entry.mediaImageId
-                                        )
-                                    ) {
+                                    if (overviewGridState.onToggleCheckedItem(entry.mediaImageId)) {
                                         overviewContentState.onImageClick(
                                             it.keyword,
                                             index

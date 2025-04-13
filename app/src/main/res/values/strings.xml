@@ -104,8 +104,8 @@
     <string name="date">Date</string>
     <string name="use_material_you_theme">Use Material You Theme</string>
     <string name="periodic_sync">Periodic Sync</string>
-    <string name="periodic_first_explainer">Enable Periodic Sync to allow the app to scan your media based on a certain period. This will reduce the amount of Out of Sync warnings.</string>
-    <string name="periodic_second_explainer">Sync runs every hour, with a flexible period of 15 minutes. It considers the devices current status.  This takes into account the battery life, processing power available and heaviness of use.</string>
+    <string name="periodic_first_explainer">Enable Periodic Sync to allow the app to scan your media on a periodic schedule. This will reduce the amount of Out of Sync warnings.</string>
+    <string name="periodic_second_explainer">Runs every hour. It considers the devices current status, taking into account battery life, processing power available and heaviness of use.</string>
     <string name="use_periodic_sync">Use Periodic Sync</string>
 
     <string name="onb_what_is">%1$s is an app that helps you find your images more quickly. It does so by using a text query and searching for it in image content. This content can be text, shapes, objects, colors or any other thing that comes to your mind!\n\nThere is always that moment where an images comes to mind that you want to share with a friend, and you know what is on the image, but you simply cannot find it in the vast sea of thousands of small thumbnails in your gallery.\n\nThis is where %1$s can help.</string>

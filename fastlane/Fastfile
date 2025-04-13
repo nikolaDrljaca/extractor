@@ -26,6 +26,15 @@ platform :android do
     upload_to_play_store(track: 'alpha')
   end
 
+  desc "Submit a new Beta build to Open Testing"
+  lane :open do
+      # run tests and create release bundle
+      gradle(task: "test")
+      gradle(task: "clean bundleRelease")
+
+      upload_to_play_store(track: 'beta')
+  end
+
   desc "Display closed testing track information"
   lane :info do
    google_play_track_release_names(track: 'alpha')

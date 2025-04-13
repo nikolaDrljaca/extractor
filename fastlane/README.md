@@ -31,6 +31,14 @@ Runs all the tests
 
 Submit a new Beta Build to Play Store
 
+### android open
+
+```sh
+[bundle exec] fastlane android open
+```
+
+Submit a new Beta build to Open Testing
+
 ### android info
 
 ```sh

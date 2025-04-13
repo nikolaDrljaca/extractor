@@ -7,6 +7,9 @@ import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 
 class TrackExtractionProgress(
@@ -15,25 +18,31 @@ class TrackExtractionProgress(
     private val mediaStoreImageRepository: MediaStoreImageRepository,
     private val workerService: ExtractorWorkerService,
 ) {
-    operator fun invoke(): Flow<ExtractionStatus> =
-        combine(
-            workerService.workInfoAsFlow(ExtractorWorkerService.EXTRACTOR_WORK),
-            repo.getExtractionCountAsFlow(),
-            mediaStoreImageRepository.getCountAsFlow()
-        ) { isWorking, inStorage, onDevice ->
-            when {
-                isWorking.isEmpty() -> ExtractionStatus.Done(
-                    onDevice,
-                    inStorage
-                )
 
-                isWorking.first().state.isFinished -> ExtractionStatus.Done(
-                    onDevice,
-                    inStorage
-                )
+    operator fun invoke(): Flow<ExtractionStatus> {
+        return workerService.workInfoAsFlow(ExtractorWorkerService.EXTRACTOR_WORK)
+            .flatMapLatest { isWorking ->
+                when {
+                    isWorking.isEmpty() -> flowOf(
+                        ExtractionStatus.Done(
+                            onDeviceCount = repo.getExtractionCountAsFlow().first(),
+                            inStorageCount = mediaStoreImageRepository.getCount()
+                        )
+                    )
 
-                else -> ExtractionStatus.Running(onDevice, inStorage)
+                    isWorking.first().state.isFinished -> flowOf(
+                        ExtractionStatus.Done(
+                            onDeviceCount = repo.getExtractionCountAsFlow().first(),
+                            inStorageCount = mediaStoreImageRepository.getCount()
+                        )
+                    )
+
+                    else -> combine(
+                        repo.getExtractionCountAsFlow(),
+                        mediaStoreImageRepository.getCountAsFlow()
+                    ) { inStorage, onDevice -> ExtractionStatus.Running(onDevice, inStorage) }
+                }
             }
-        }
             .flowOn(dispatcher)
+    }
 }

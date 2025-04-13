@@ -1,11 +1,13 @@
 package com.drbrosdev.extractor
 
 import android.app.Application
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.disk.DiskCache
-import coil.memory.MemoryCache
-import coil.util.DebugLogger
+import android.content.Context
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
+import coil3.disk.directory
+import coil3.memory.MemoryCache
+import coil3.util.DebugLogger
 import com.drbrosdev.extractor.framework.koin.allKoinModules
 import com.drbrosdev.extractor.framework.logger.DatabaseEventLogTree
 import com.drbrosdev.extractor.framework.requireDebug
@@ -15,7 +17,7 @@ import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.startKoin
 import timber.log.Timber
 
-class ExtractorApplication : Application(), ImageLoaderFactory {
+class ExtractorApplication : Application(), SingletonImageLoader.Factory {
 
     val databaseLogger by lazy {
         DatabaseEventLogTree()
@@ -44,21 +46,20 @@ class ExtractorApplication : Application(), ImageLoaderFactory {
     }
 
     // configure Coil image loader
-    override fun newImageLoader(): ImageLoader {
+    override fun newImageLoader(context: Context): ImageLoader {
         return ImageLoader.Builder(this)
             .memoryCache {
-                MemoryCache.Builder(this)
-                    .maxSizePercent(0.20)
+                MemoryCache.Builder()
+                    .maxSizePercent(context, 0.25)
                     .build()
             }
             .diskCache {
                 DiskCache.Builder()
                     .directory(cacheDir.resolve("image_cache"))
-                    .maxSizeBytes(5 * 1024 * 1024)
+                    .maxSizePercent(0.02)
                     .build()
             }
             .logger(DebugLogger())
-            .respectCacheHeaders(false)
             .build()
     }
 }
