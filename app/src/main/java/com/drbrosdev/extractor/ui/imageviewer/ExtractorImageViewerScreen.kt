@@ -23,19 +23,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorBottomBarItem
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorImageBottomBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorImageTopBar
+import com.drbrosdev.extractor.util.asImageRequest
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
@@ -79,13 +76,9 @@ fun ExtractorImageViewerScreen(
                         zoomState = zoomState,
                         onTap = { showUi = !showUi }
                     ),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(images[it])
-                    .crossfade(true)
-                    .build(),
+                model = images[it].asImageRequest(LocalContext.current),
                 contentDescription = "Image",
                 contentScale = ContentScale.Fit,
-                placeholder = painterResource(id = R.drawable.baseline_image_24),
                 onSuccess = { state ->
                     zoomState.setContentSize(state.painter.intrinsicSize)
                 }

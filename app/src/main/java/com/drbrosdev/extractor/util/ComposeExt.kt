@@ -1,5 +1,7 @@
 package com.drbrosdev.extractor.util
 
+import android.content.Context
+import android.net.Uri
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -39,7 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.ui.theme.md_theme_light_secondary
 import com.drbrosdev.extractor.ui.theme.md_theme_light_tertiary
 import kotlinx.coroutines.CoroutineScope
@@ -52,39 +57,18 @@ fun applicationIconResource(): Painter {
     return painterResource(id = R.drawable.ic_launcher)
 }
 
-@Composable
-fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush {
-    return if (showShimmer) {
-        val shimmerColors = listOf(
-            Color.LightGray.copy(alpha = 0.6f),
-            Color.LightGray.copy(alpha = 0.2f),
-            Color.LightGray.copy(alpha = 0.6f),
-        )
+fun MediaImageUri.asImageRequest(context: Context) = ImageRequest.Builder(context)
+    .data(uri)
+    .memoryCacheKey(uri)
+    .diskCacheKey(uri)
+    .crossfade(true)
+    .build()
 
-        val transition = rememberInfiniteTransition(label = "")
-        val translateAnimation = transition.animateFloat(
-            initialValue = 0f,
-            targetValue = targetValue,
-            animationSpec = infiniteRepeatable(
-                animation = tween(800), repeatMode = RepeatMode.Reverse
-            ),
-            label = ""
-        )
-
-        Brush.linearGradient(
-            colors = shimmerColors,
-            start = Offset.Zero,
-            end = Offset(x = translateAnimation.value, y = translateAnimation.value)
-        )
-    } else {
-        Brush.linearGradient(
-            colors = listOf(Color.Transparent, Color.Transparent),
-            start = Offset.Zero,
-            end = Offset.Zero
-        )
-    }
-}
-
+fun Uri.asImageRequest(context: Context) = ImageRequest.Builder(context)
+    .data(toString())
+    .memoryCacheKey(toString())
+    .diskCacheKey(toString())
+    .build()
 
 fun Modifier.shimmer(): Modifier = composed {
     var size by remember {

@@ -7,20 +7,20 @@ import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
-import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
+import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageNavTarget
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
 
 fun createTransitionSpec(density: Density) = NavTransitionSpec<NavTarget?> { action, from, to ->
     val fade = FadeEnterTransition togetherWith FadeExitTransition
-    val fadeThrough = createFadeThrough(action)
+    val fadeThrough = createZAxisTransition(action)
     val default = createDefaultTransition(action, density)
 
     when {
-        goingToImageViewer(from, to) -> fade
-        goingFromImageViewer(from, to) -> fade
+        // handle image viewer
+        handleImageViewer(from, to) -> fade
 
         // handle search transitions
         handleSearch(from, to) -> fadeThrough
@@ -32,7 +32,7 @@ fun createTransitionSpec(density: Density) = NavTransitionSpec<NavTarget?> { act
     }
 }
 
-private fun createFadeThrough(
+private fun createZAxisTransition(
     action: NavAction,
 ): ContentTransform {
     return when (action) {
@@ -46,23 +46,11 @@ private fun createDefaultTransition(
     density: Density
 ): ContentTransform {
     return when (action) {
-        is NavAction.Pop, NavAction.Replace -> SharedXAxisPopEnterTransition(density) togetherWith SharedXAxisPopExitTransition(
-            density
-        )
+        is NavAction.Pop, NavAction.Replace ->
+            SharedXAxisPopEnterTransition(density) togetherWith SharedXAxisPopExitTransition(density)
 
         else -> SharedXAxisEnterTransition(density) togetherWith SharedXAxisExitTransition(density)
     }
-}
-
-private fun goingFromImageViewer(from: NavTarget?, to: NavTarget?): Boolean {
-    val goingFrom = from is ExtractorImageViewerNavTarget
-    val goingTo =
-        (to is ExtractorAlbumViewerNavTarget)
-                || (to is ExtractorOverviewNavTarget)
-                || (to is ExtractorUserCollageNavTarget)
-                || (to is ExtractorSearchNavTarget)
-
-    return goingFrom and goingTo
 }
 
 private fun handleGetMore(
@@ -96,16 +84,20 @@ private fun handleSearch(from: NavTarget?, to: NavTarget?): Boolean {
     return goingFrom and goingTo
 }
 
-private fun goingToImageViewer(
-    from: NavTarget?,
-    to: NavTarget?
-): Boolean {
-    val goingFrom =
-        (from is ExtractorOverviewNavTarget)
-                || (from is ExtractorAlbumViewerNavTarget)
-                || (from is ExtractorUserCollageNavTarget)
-                || (from is ExtractorSearchNavTarget)
-    val goingTo = to is ExtractorImageViewerNavTarget
-
+private fun handleImageViewer(from: NavTarget?, to: NavTarget?): Boolean {
+    val goingFrom = when (from) {
+        is ExtractorOverviewNavTarget -> true
+        is ExtractorAlbumViewerNavTarget -> true
+        is ExtractorUserCollageNavTarget -> true
+        is ExtractorImageViewerNavTarget -> true
+        else -> false
+    }
+    val goingTo = when (to) {
+        is ExtractorOverviewNavTarget -> true
+        is ExtractorAlbumViewerNavTarget -> true
+        is ExtractorUserCollageNavTarget -> true
+        is ExtractorImageViewerNavTarget -> true
+        else -> false
+    }
     return goingFrom and goingTo
 }

@@ -42,16 +42,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ExtractionData
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.asImageRequest
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.milliseconds
@@ -130,10 +128,7 @@ private fun ShowcaseItem(
             modifier = Modifier
                 .matchParentSize()
                 .align(Alignment.Center),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(extractionData.extraction.uri.toUri())
-                .crossfade(true)
-                .build(),
+            model = extractionData.extraction.uri.asImageRequest(LocalContext.current),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
         )
