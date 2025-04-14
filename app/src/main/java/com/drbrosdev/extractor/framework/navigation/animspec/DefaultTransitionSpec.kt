@@ -89,6 +89,7 @@ private fun handleImageViewer(from: NavTarget?, to: NavTarget?): Boolean {
         is ExtractorOverviewNavTarget -> true
         is ExtractorAlbumViewerNavTarget -> true
         is ExtractorUserCollageNavTarget -> true
+        is ExtractorSearchNavTarget -> true
         is ExtractorImageViewerNavTarget -> true
         else -> false
     }
@@ -96,6 +97,7 @@ private fun handleImageViewer(from: NavTarget?, to: NavTarget?): Boolean {
         is ExtractorOverviewNavTarget -> true
         is ExtractorAlbumViewerNavTarget -> true
         is ExtractorUserCollageNavTarget -> true
+        is ExtractorSearchNavTarget -> true
         is ExtractorImageViewerNavTarget -> true
         else -> false
     }

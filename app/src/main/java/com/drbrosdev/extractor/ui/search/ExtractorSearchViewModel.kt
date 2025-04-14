@@ -11,7 +11,6 @@ import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.asAlbumName
-import com.drbrosdev.extractor.domain.model.isBlank
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
@@ -91,7 +90,7 @@ class ExtractorSearchViewModel(
         viewModelScope.launch {
             val searchData = searchSheetComponent.getSearchParamSnapshot()
             val name = when {
-                searchData.isBlank().not() -> searchData.query
+                searchData.query.isNotBlank() -> searchData.query
                 searchData.dateRange != null -> searchData.dateRange.asAlbumName()
                 else -> {
                     logEvent("ExtractorSearchViewModel.compileUserAlbum: Attempting to save an album with no name. Using timestamp.")

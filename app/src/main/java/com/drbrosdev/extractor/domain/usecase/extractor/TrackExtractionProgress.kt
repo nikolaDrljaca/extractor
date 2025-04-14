@@ -25,15 +25,15 @@ class TrackExtractionProgress(
                 when {
                     isWorking.isEmpty() -> flowOf(
                         ExtractionStatus.Done(
-                            onDeviceCount = repo.getExtractionCountAsFlow().first(),
-                            inStorageCount = mediaStoreImageRepository.getCount()
+                            inStorageCount = repo.getExtractionCountAsFlow().first(),
+                            onDeviceCount = mediaStoreImageRepository.getCount()
                         )
                     )
 
                     isWorking.first().state.isFinished -> flowOf(
                         ExtractionStatus.Done(
-                            onDeviceCount = repo.getExtractionCountAsFlow().first(),
-                            inStorageCount = mediaStoreImageRepository.getCount()
+                            inStorageCount = repo.getExtractionCountAsFlow().first(),
+                            onDeviceCount = mediaStoreImageRepository.getCount()
                         )
                     )
 
