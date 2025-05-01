@@ -34,4 +34,6 @@ interface ExtractorRepository {
     fun getExtractionCountAsFlow(): Flow<Int>
 
     suspend fun getLatestExtraction(): ExtractionData?
+
+    fun getLatestExtractionAsFlow(): Flow<ExtractionData>
 }

@@ -32,9 +32,9 @@ import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywor
 import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
 import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
-import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
+import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -114,7 +114,9 @@ val useCaseModule = module {
             dispatcher = get(named(CoroutineModuleName.IO)),
             imageEmbedDao = get(),
             tokenizeText = get(),
-            buildFtsQuery = get()
+            buildFtsQuery = get(),
+            mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
+            trackExtractionProgress = get()
         )
     } bind SearchImageByQuery::class
 

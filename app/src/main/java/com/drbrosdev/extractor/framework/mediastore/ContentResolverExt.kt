@@ -7,32 +7,22 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import com.drbrosdev.extractor.domain.model.MediaStoreImage
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-fun ContentResolver.mediaStoreImagesFlow(): Flow<List<MediaStoreImage>> = observe(
-    uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-).map {
-    runMediaStoreImageQuery(
-        dispatcher = Dispatchers.IO,
-        selection = null
-    )
-}
-
+fun ContentResolver.mediaStoreImagesFlow(): Flow<List<MediaStoreImage>> =
+    observe(MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        .map { runMediaStoreImageQuery() }
 
 suspend fun ContentResolver.runMediaStoreImageQuery(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO,
     selection: String? = null
-): List<MediaStoreImage> = withContext(dispatcher) {
+): List<MediaStoreImage> {
     val out = mutableListOf<MediaStoreImage>()
     val projection = arrayOf(
         MediaStore.Images.Media._ID,
@@ -69,7 +59,6 @@ suspend fun ContentResolver.runMediaStoreImageQuery(
             val size = cursor.getLong(sizeColumn)
             val path = cursor.getString(pathColumn)
 
-
             //val exifData = ExifInterface(path)
             //val point = exifData.latLong?.let {
             //        LocationPoint(latitude = it[0], longitude = it[1])
@@ -103,7 +92,7 @@ suspend fun ContentResolver.runMediaStoreImageQuery(
             out.add(mediaStoreImage)
         }
     }
-    out
+    return out
 }
 
 fun ContentResolver.runMediaStoreImageQueryAsFlow(
@@ -180,10 +169,7 @@ fun ContentResolver.runMediaStoreImageQueryAsFlow(
 }
 
 
-suspend fun ContentResolver.findByUri(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    uri: Uri
-): MediaStoreImage? = withContext(dispatcher) {
+suspend fun ContentResolver.findByUri(uri: Uri): MediaStoreImage? {
     val projection = arrayOf(
         MediaStore.Images.Media._ID,
         MediaStore.Images.Media.DISPLAY_NAME,
@@ -202,20 +188,19 @@ suspend fun ContentResolver.findByUri(
         null
     )
 
-    when {
+    return when {
         cursor != null -> cursor.use {
             when {
                 it.moveToFirst() -> it.toMediaStoreImage()
                 else -> null
             }
         }
+
         else -> null
     }
 }
 
-suspend fun ContentResolver.getCount(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO
-): Int = withContext(dispatcher) {
+suspend fun ContentResolver.getCount(): Int {
     val projection = arrayOf(MediaStore.Images.Media._ID)
 
     val cursor = query(
@@ -226,7 +211,7 @@ suspend fun ContentResolver.getCount(
         null
     )
 
-    when {
+    return when {
         cursor != null -> cursor.use { it.count }
         else -> 0
     }

@@ -2,9 +2,10 @@ package com.drbrosdev.extractor.ui.dialog.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.domain.model.ExtractionStatus
-import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
+import com.drbrosdev.extractor.domain.model.ExtractionProgress
+import com.drbrosdev.extractor.domain.model.isDataIncomplete
 import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
+import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.map
@@ -23,9 +24,9 @@ class ExtractorStatusDialogViewModel(
     val state = trackExtractionProgress.invoke()
         .map {
             when (it) {
-                is ExtractionStatus.Done -> {
+                is ExtractionProgress.Done -> {
                     when {
-                        it.isDataIncomplete -> ExtractorStatusDialogUiState.CanStart(
+                        it.isDataIncomplete() -> ExtractorStatusDialogUiState.CanStart(
                             inStorageCount = it.inStorageCount,
                             onDeviceCount = it.onDeviceCount,
                             eventSink = { startExtraction() }
@@ -39,7 +40,7 @@ class ExtractorStatusDialogViewModel(
                     }
                 }
 
-                is ExtractionStatus.Running -> ExtractorStatusDialogUiState.InProgress(
+                is ExtractionProgress.Running -> ExtractorStatusDialogUiState.InProgress(
                     inStorageCount = it.inStorageCount,
                     onDeviceCount = it.onDeviceCount,
                     eventSink = { closeDialog() }

@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.ui.settings.index
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drbrosdev.extractor.domain.model.ExtractionStatus
+import com.drbrosdev.extractor.domain.model.ExtractionProgress
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
@@ -21,7 +21,7 @@ class ExtractorResetIndexViewModel(
 
     val loading = extractionProgress.invoke()
         .map {
-            it is ExtractionStatus.Running
+            it is ExtractionProgress.Running
         }
         .stateIn(
             viewModelScope,

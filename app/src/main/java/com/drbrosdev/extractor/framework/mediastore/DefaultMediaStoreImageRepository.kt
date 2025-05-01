@@ -24,30 +24,38 @@ class DefaultMediaStoreImageRepository(
 ) : MediaStoreImageRepository {
 
     override suspend fun getAll(): List<MediaStoreImage> {
-        return contentResolver.mediaStoreImagesFlow().first()
+        return contentResolver.mediaStoreImagesFlow()
+            .flowOn(dispatcher)
+            .first()
     }
 
     override suspend fun getAllIds(): Set<Long> {
         return contentResolver.mediaStoreImagesFlow()
+            .flowOn(dispatcher)
             .first()
             .map { it.mediaImageId }
             .toSet()
     }
 
     override suspend fun findAllById(ids: List<Long>): List<MediaStoreImage> {
-        return contentResolver.runMediaStoreImageQuery(
-            selection = "${MediaStore.Images.Media._ID} IN (${ids.joinToString(", ")})"
-        )
+        return withContext(dispatcher) {
+            contentResolver.runMediaStoreImageQuery(
+                selection = "${MediaStore.Images.Media._ID} IN (${ids.joinToString(", ")})"
+            )
+        }
     }
 
     override fun findAllByIdAsFlow(ids: List<Long>): Flow<MediaStoreImage> {
         return contentResolver.runMediaStoreImageQueryAsFlow(
             selection = "${MediaStore.Images.Media._ID} IN (${ids.joinToString(", ")})"
         )
+            .flowOn(dispatcher)
     }
 
     override suspend fun getCount(): Int {
-        return contentResolver.getCount()
+        return withContext(dispatcher) {
+            contentResolver.getCount()
+        }
     }
 
     override fun getCountAsFlow(): Flow<Int> {
@@ -57,11 +65,14 @@ class DefaultMediaStoreImageRepository(
     }
 
     override suspend fun findByUri(uri: Uri): MediaStoreImage? {
-        return contentResolver.findByUri(uri = uri)
+        return withContext(dispatcher) {
+            contentResolver.findByUri(uri = uri)
+        }
     }
 
     override suspend fun findById(id: Long): MediaStoreImage? {
         return contentResolver.mediaStoreImagesFlow()
+            .flowOn(dispatcher)
             .first()
             .find { it.mediaImageId == id }
     }

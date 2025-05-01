@@ -11,7 +11,7 @@ interface ExtractionDataDao {
     @Query("""
          SELECT e.*
             FROM extraction AS e
-            ORDER BY e.date_added DESC
+            ORDER BY e.rowid ASC
             LIMIT 1
     """)
     fun findMostRecentAsFlow(): Flow<ExtractionDataRelation?>

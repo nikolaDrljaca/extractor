@@ -25,6 +25,7 @@ import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -91,6 +92,18 @@ class DefaultExtractorRepository(
                 visualEmbeds = it.visualEmbeddingRecord.toEmbed()
             )
         }
+    }
+
+    override fun getLatestExtractionAsFlow(): Flow<ExtractionData> {
+        return extractionDataDao.findMostRecentAsFlow()
+            .filterNotNull()
+            .map {
+                ExtractionData(
+                    extraction = it.extractionRecord.toExtraction(),
+                    textEmbed = it.textEmbeddingRecord.toEmbed(),
+                    visualEmbeds = it.visualEmbeddingRecord.toEmbed()
+                )
+            }
     }
 
     override suspend fun deleteUserEmbed(mediaImageId: MediaImageId, value: String) {

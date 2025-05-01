@@ -216,8 +216,8 @@ fun ExtractorOverviewScreen(
             modifier = Modifier
                 .layoutId(ViewIds.TOP_BAR),
             visible = overviewGridState.gridState.lazyGridState.isScrollingUp(),
-            enter = slideInVertically(initialOffsetY = { -(1.5 * it).toInt() }),
-            exit = slideOutVertically(targetOffsetY = { -(1.5 * it).toInt() })
+            enter = slideInVertically(initialOffsetY = { -(1.55 * it).toInt() }),
+            exit = slideOutVertically(targetOffsetY = { -(1.55 * it).toInt() })
         ) {
             ExtractorTopBar(
                 modifier = Modifier

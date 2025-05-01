@@ -34,7 +34,7 @@ data object ExtractorOverviewNavTarget : NavTarget {
             parameters = { parametersOf(navigators) }
         )
 
-        val statusPillState by viewModel.statusPillComponent.state
+        val statusPillState by viewModel.statusPillState
             .collectAsStateWithLifecycle()
         val overviewContentState by viewModel.recommendedSearchesComponent.state
             .collectAsStateWithLifecycle()

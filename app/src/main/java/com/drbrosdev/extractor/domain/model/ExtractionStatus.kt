@@ -1,23 +1,18 @@
 package com.drbrosdev.extractor.domain.model
 
-import com.drbrosdev.extractor.ui.dialog.status.safeDiv
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
-sealed class ExtractionStatus {
-    abstract val onDeviceCount: Int
-    abstract val inStorageCount: Int
-
-    data class Done(
-        override val onDeviceCount: Int,
-        override val inStorageCount: Int
-    ) : ExtractionStatus() {
-        val isDataIncomplete = onDeviceCount != inStorageCount
-    }
-
-    data class Running(
-        override val onDeviceCount: Int,
-        override val inStorageCount: Int,
-    ) : ExtractionStatus() {
-        val percentageCount = inStorageCount safeDiv onDeviceCount
-        val percentage = (percentageCount * 100).toInt()
-    }
+enum class ExtractionStatus {
+    DONE, RUNNING
 }
+
+fun Flow<ExtractionProgress>.asStatus() =
+    map {
+        when (it) {
+            is ExtractionProgress.Done -> ExtractionStatus.DONE
+            is ExtractionProgress.Running -> ExtractionStatus.RUNNING
+        }
+    }
+        .distinctUntilChanged()

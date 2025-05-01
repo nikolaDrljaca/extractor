@@ -9,7 +9,7 @@ interface ExtractorWorkerService {
 
     fun startAlbumCleanupWorker(albumId: Long)
 
-    fun workInfoAsFlow(workName: String): Flow<List<WorkInfo>>
+    fun workInfoAsFlow(workName: String): Flow<WorkInfo>
 
     companion object {
         const val EXTRACTOR_WORK = "extractor_work"

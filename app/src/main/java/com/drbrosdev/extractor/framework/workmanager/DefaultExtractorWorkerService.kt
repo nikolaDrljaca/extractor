@@ -1,6 +1,5 @@
 package com.drbrosdev.extractor.framework.workmanager
 
-import androidx.lifecycle.asFlow
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
@@ -9,8 +8,12 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
+import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.framework.requiresApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 
 class DefaultExtractorWorkerService(
     private val workManager: WorkManager
@@ -56,8 +59,16 @@ class DefaultExtractorWorkerService(
         )
     }
 
-    override fun workInfoAsFlow(workName: String): Flow<List<WorkInfo>> {
-        return workManager.getWorkInfosForUniqueWorkLiveData(workName)
-            .asFlow()
+    override fun workInfoAsFlow(workName: String): Flow<WorkInfo> {
+        return workManager.getWorkInfosForUniqueWorkFlow(workName)
+            .onEach {
+                when {
+                    it.isEmpty() -> logEvent("WorkerService: workInfo for $workName is empty.")
+                    it.size > 1 ->
+                        logEvent("WorkerService: workInfo for $workName has more than 1 work info.")
+                }
+            }
+            .map { it.firstOrNull() }
+            .filterNotNull()
     }
 }

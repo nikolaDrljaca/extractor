@@ -38,10 +38,7 @@ class ExtractorApplication : Application(), SingletonImageLoader.Factory {
         requireDebug(
             fallback = { Timber.plant(databaseLogger) }
         ) {
-            Timber.plant(
-                Timber.DebugTree(),
-                databaseLogger
-            )
+            Timber.plant(Timber.DebugTree())
         }
     }
 

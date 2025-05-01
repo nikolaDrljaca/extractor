@@ -3,9 +3,11 @@ package com.drbrosdev.extractor.ui.components.recommendsearch
 import androidx.compose.runtime.Stable
 import com.drbrosdev.extractor.domain.model.Extraction
 import com.drbrosdev.extractor.domain.model.ExtractionData
+import com.drbrosdev.extractor.domain.model.ExtractionProgress
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.domain.model.asStatus
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.generate.GenerateMostCommonExtractionBundles
@@ -22,14 +24,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -37,10 +39,10 @@ import java.time.LocalDateTime
 @Stable
 class RecommendedSearchesComponent(
     private val coroutineScope: CoroutineScope,
-    private val extractionStatus: Flow<ExtractionStatus>,
+    private val extractionProgress: Flow<ExtractionProgress>,
     private val generateBundles: GenerateMostCommonExtractionBundles,
     private val createAlbum: suspend (NewAlbum) -> Unit,
-    private val getMostRecentExtraction: suspend () -> ExtractionData?,
+    private val mostRecentExtractionFlow: Flow<ExtractionData>,
     private val navigators: Navigators
 ) {
     private val eventBus = Channel<RecommendedSearchesEvents>()
@@ -48,22 +50,40 @@ class RecommendedSearchesComponent(
 
     val overviewGridState = OverviewGridState()
 
-    private val _state =
-        MutableStateFlow<RecommendedSearchesState>(RecommendedSearchesState.Loading)
-    val state = _state.asStateFlow()
+    val state = extractionProgress
+        .asStatus()
+        .flatMapLatest {
+            when (it) {
+                ExtractionStatus.DONE -> {
+                    flowOf(generateBundles.execute())
+                        .map { bundles ->
+                            when {
+                                bundles.isNotEmpty() ->
+                                    RecommendedSearchesState.Content(
+                                        items = bundles,
+                                        onImageClick = ::handleImageClickEvent
+                                    )
 
-    private val job = extractionStatus
-        .map { transformState(it) }
-        .conflate()
-        .onEach { internal ->
-            // update state
-            _state.update { internal }
-            // delay emission if showcase is active
-            if (internal.isShowcaseActive()) {
-                delay(ExtractorShowcaseDefaults.SHOWCASE_SAMPLE_RATE)
+                                else -> RecommendedSearchesState.Empty
+                            }
+                        }
+                }
+
+                ExtractionStatus.RUNNING -> mostRecentExtractionFlow
+                    .map { internal -> RecommendedSearchesState.SyncInProgress(internal) }
+                    .conflate()
+                    .onEach { internal ->
+                        if (internal.isShowcaseActive()) {
+                            delay(ExtractorShowcaseDefaults.SHOWCASE_SAMPLE_RATE)
+                        }
+                    }
             }
         }
-        .launchIn(coroutineScope)
+        .stateIn(
+            coroutineScope,
+            SharingStarted.Lazily,
+            RecommendedSearchesState.Loading
+        )
 
     fun multiselectBarEventHandler(event: MultiselectAction) {
         when (event) {
@@ -97,31 +117,6 @@ class RecommendedSearchesComponent(
             }
         }
     }
-
-    private suspend fun transformState(status: ExtractionStatus) =
-        when (status) {
-            is ExtractionStatus.Done -> generateBundles.execute()
-                .let { bundles ->
-                    when {
-                        bundles.isNotEmpty() ->
-                            RecommendedSearchesState.Content(
-                                items = bundles,
-                                onImageClick = ::handleImageClickEvent
-                            )
-
-                        else -> RecommendedSearchesState.Empty
-                    }
-                }
-
-            is ExtractionStatus.Running -> when {
-                status.inStorageCount > 1 ->
-                    RecommendedSearchesState.SyncInProgress(
-                        mostRecentExtraction = getMostRecentExtraction()!!
-                    )
-
-                else -> RecommendedSearchesState.Loading
-            }
-        }
 
     private fun handleImageClickEvent(keyword: String, index: Int) {
         state.value.findCollageByKeyword(keyword)?.let { collage ->
