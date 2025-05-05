@@ -48,6 +48,7 @@ class ExtractorDataStore(
         datastore.edit {
             val current = it[SEARCH_COUNTER] ?: 0
             it[SEARCH_COUNTER] = current.minus(1)
+                .coerceAtLeast(0)
         }
     }
 
