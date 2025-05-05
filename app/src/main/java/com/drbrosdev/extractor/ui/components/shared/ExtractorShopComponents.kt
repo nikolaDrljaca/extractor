@@ -29,7 +29,8 @@ fun ExtractorShopItem(
     Surface(
         shape = RoundedCornerShape(size = 12.dp),
         onClick = onClick,
-        color = MaterialTheme.colorScheme.primary,
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
         modifier = Modifier
             .then(modifier)
     ) {
@@ -93,7 +94,7 @@ fun ExtractorShopPlaceholder(
 @Preview
 @Composable
 private fun CurrentPreview() {
-    ExtractorTheme {
+    ExtractorTheme(dynamicColor = false) {
         Column(
             verticalArrangement = Arrangement.spacedBy(space = 30.dp)
         ) {

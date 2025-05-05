@@ -41,7 +41,7 @@ fun ExtractorStatusDialog(
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(vertical = 16.dp)
         ) {
             Row(
                 modifier = Modifier

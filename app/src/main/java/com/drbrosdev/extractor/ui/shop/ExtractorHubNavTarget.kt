@@ -33,10 +33,12 @@ object ExtractorHubNavTarget : NavTarget {
         val context = LocalContext.current
 
         val statusState by statusViewModel.state.collectAsStateWithLifecycle()
+        val searchCount by viewModel.searchCountState.collectAsStateWithLifecycle()
 
         ExtractorHubScreen(
             snackbarState = viewModel.snackbarHostState,
             statusState = statusState,
+            searchCount = searchCount,
             onBack = { navController.pop() },
             onSettingsClick = {
                 activity.openAppSettings()
@@ -57,6 +59,7 @@ private fun CurrentPreview() {
         ) {
             ExtractorHubScreen(
                 snackbarState = SnackbarHostState(),
+                searchCount = 1000,
                 statusState = ExtractorStatusDialogUiState.Done(
                     onDeviceCount = 0,
                     inStorageCount = 0,

@@ -35,7 +35,7 @@
     <string name="datepicker_close">Close</string>
     <string name="status_in_storage">In Storage</string>
     <string name="status_on_device">On Device</string>
-    <string name="status_dialog_status">Status</string>
+    <string name="status_dialog_status">Indexing Status</string>
     <string name="extractor_image_info">Image Info</string>
     <string name="info_screen_image_id" translatable="false"># ID: %1$s</string>
     <string name="info_screen_save">Save</string>
@@ -167,4 +167,6 @@
     <string name="alternative">Alternative</string>
     <string name="alternative_expl">If you want to continue using the app for free, you can reset the application data and get a fresh start with a 1000 searches.\n\nNote that this will delete all your data in the application and start the onboarding again. You will have to wait for indexing to complete.</string>
     <string name="indexing_is_in_progress"># Indexing is in progress.</string>
+    <string name="searches_remaining">Searches Remaining</string>
+    <string name="num_of_searches">Searches</string>
 </resources>

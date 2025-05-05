@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -34,6 +35,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.rewards.RewardSnackbar
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchCountPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorShopPlaceholder
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialog
@@ -45,7 +47,8 @@ fun ExtractorHubScreen(
     onSettingsClick: () -> Unit,
     onPurchaseItemClick: () -> Unit,
     snackbarState: SnackbarHostState,
-    statusState: ExtractorStatusDialogUiState
+    statusState: ExtractorStatusDialogUiState,
+    searchCount: Int
 ) {
     val textStyle = MaterialTheme.typography.bodyMedium.copy(
         fontWeight = FontWeight.Normal
@@ -63,6 +66,7 @@ fun ExtractorHubScreen(
                 .verticalScroll(scrollState),
             constraintSet = shopScreenConstraintSet()
         ) {
+            // header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -75,48 +79,35 @@ fun ExtractorHubScreen(
                 )
             }
 
-            Box(modifier = Modifier.layoutId(ViewIds.STATUS)) {
+            // extraction status
+            Column(modifier = Modifier.layoutId(ViewIds.STATUS)) {
                 ExtractorStatusDialog(
                     modifier = Modifier,
                     state = statusState
                 )
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
             }
 
-            Column(
-                modifier = Modifier.layoutId(ViewIds.ALTERNATIVE),
-                verticalArrangement = Arrangement.spacedBy(space = 8.dp)
-            ) {
+            // search count
+            Column(modifier = Modifier.layoutId(ViewIds.SEARCHES)) {
                 Text(
-                    text = stringResource(R.string.alternative),
+                    text = stringResource(R.string.num_of_searches),
                     style = MaterialTheme.typography.headlineMedium
                 )
-                Text(
-                    text = stringResource(R.string.alternative_expl),
-                    style = textStyle
-                )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                OutlinedExtractorActionButton(
-                    onClick = onSettingsClick,
+                ExtractorSearchCountPill(
+                    searchCount = searchCount,
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(imageVector = Icons.Rounded.Settings, contentDescription = "Settings")
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "Open Settings")
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
+                )
             }
 
+            // get more with purchase
             Column(
                 modifier = Modifier.layoutId(ViewIds.BUY_VIEW),
                 verticalArrangement = Arrangement.spacedBy(space = 8.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.buy_more),
-                    style = MaterialTheme.typography.headlineMedium
-                )
                 Text(
                     text = stringResource(R.string.direct_support),
                     style = textStyle
@@ -148,6 +139,34 @@ fun ExtractorHubScreen(
 //                    style = smallLabel
 //                )
             }
+
+            // reset index to get more
+            Column(
+                modifier = Modifier.layoutId(ViewIds.ALTERNATIVE),
+                verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.alternative),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Text(
+                    text = stringResource(R.string.alternative_expl),
+                    style = textStyle
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                OutlinedExtractorActionButton(
+                    onClick = onSettingsClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(imageVector = Icons.Rounded.Settings, contentDescription = "Settings")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = stringResource(R.string.open_settings))
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
 
         SnackbarHost(
@@ -166,6 +185,7 @@ private fun shopScreenConstraintSet() = ConstraintSet {
     val header = createRefFor(ViewIds.HEADER)
     val alternative = createRefFor(ViewIds.ALTERNATIVE)
     val status = createRefFor(ViewIds.STATUS)
+    val searches = createRefFor(ViewIds.SEARCHES)
 
     constrain(header) {
         start.linkTo(parent.start)
@@ -173,10 +193,17 @@ private fun shopScreenConstraintSet() = ConstraintSet {
     }
 
     constrain(status) {
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
+        start.linkTo(parent.start, margin = 16.dp)
+        end.linkTo(parent.end, margin = 16.dp)
         width = Dimension.fillToConstraints
         top.linkTo(header.bottom, margin = 24.dp)
+    }
+
+    constrain(searches) {
+        start.linkTo(parent.start, margin = 16.dp)
+        end.linkTo(parent.end, margin = 16.dp)
+        width = Dimension.fillToConstraints
+        top.linkTo(status.bottom, margin = 24.dp)
     }
 
     constrain(alternative) {
@@ -189,7 +216,7 @@ private fun shopScreenConstraintSet() = ConstraintSet {
     constrain(buyView) {
         start.linkTo(parent.start, margin = 16.dp)
         end.linkTo(parent.end, margin = 16.dp)
-        top.linkTo(status.bottom, margin = 16.dp)
+        top.linkTo(searches.bottom, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
 }
@@ -199,4 +226,5 @@ private object ViewIds {
     const val ALTERNATIVE = "alternative"
     const val BUY_VIEW = "buy_view"
     const val HEADER = "header_view"
+    const val SEARCHES = "searches_view"
 }
