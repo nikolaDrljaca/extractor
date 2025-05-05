@@ -39,7 +39,7 @@ android {
         applicationId = "com.drbrosdev.extractor"
         minSdk = 24
         targetSdk = 35
-        versionCode = 29
+        versionCode = 30
         versionName = "25.05"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -110,7 +110,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
 
     //Coil
-//    implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
 
     //ML Kit
