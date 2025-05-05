@@ -36,13 +36,16 @@ import com.drbrosdev.extractor.ui.components.rewards.RewardSnackbar
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorShopPlaceholder
 import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialog
+import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogUiState
 
 @Composable
-fun ExtractorShopScreen(
+fun ExtractorHubScreen(
     onBack: () -> Unit,
     onSettingsClick: () -> Unit,
     onPurchaseItemClick: () -> Unit,
     snackbarState: SnackbarHostState,
+    statusState: ExtractorStatusDialogUiState
 ) {
     val textStyle = MaterialTheme.typography.bodyMedium.copy(
         fontWeight = FontWeight.Normal
@@ -72,6 +75,13 @@ fun ExtractorShopScreen(
                 )
             }
 
+            Box(modifier = Modifier.layoutId(ViewIds.STATUS)) {
+                ExtractorStatusDialog(
+                    modifier = Modifier,
+                    state = statusState
+                )
+            }
+
             Column(
                 modifier = Modifier.layoutId(ViewIds.ALTERNATIVE),
                 verticalArrangement = Arrangement.spacedBy(space = 8.dp)
@@ -95,6 +105,8 @@ fun ExtractorShopScreen(
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(text = "Open Settings")
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             Column(
@@ -112,7 +124,9 @@ fun ExtractorShopScreen(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                ExtractorShopPlaceholder()
+                ExtractorShopPlaceholder(
+                    modifier = Modifier.fillMaxWidth()
+                )
 
 //                FlowRow(
 //                    verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -151,10 +165,18 @@ private fun shopScreenConstraintSet() = ConstraintSet {
     val buyView = createRefFor(ViewIds.BUY_VIEW)
     val header = createRefFor(ViewIds.HEADER)
     val alternative = createRefFor(ViewIds.ALTERNATIVE)
+    val status = createRefFor(ViewIds.STATUS)
 
     constrain(header) {
         start.linkTo(parent.start)
         top.linkTo(parent.top, margin = 8.dp)
+    }
+
+    constrain(status) {
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+        width = Dimension.fillToConstraints
+        top.linkTo(header.bottom, margin = 24.dp)
     }
 
     constrain(alternative) {
@@ -167,12 +189,13 @@ private fun shopScreenConstraintSet() = ConstraintSet {
     constrain(buyView) {
         start.linkTo(parent.start, margin = 16.dp)
         end.linkTo(parent.end, margin = 16.dp)
-        top.linkTo(header.bottom, margin = 24.dp)
+        top.linkTo(status.bottom, margin = 16.dp)
         width = Dimension.fillToConstraints
     }
 }
 
 private object ViewIds {
+    const val STATUS = "status_view"
     const val ALTERNATIVE = "alternative"
     const val BUY_VIEW = "buy_view"
     const val HEADER = "header_view"

@@ -19,7 +19,7 @@ import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchComponent
 import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
-import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
+import com.drbrosdev.extractor.ui.shop.ExtractorHubNavTarget
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.flow.combine
@@ -84,7 +84,7 @@ class ExtractorOverviewViewModel(
     }
 
     fun onHubClick() {
-        navigators.navController.navigate(ExtractorShopNavTarget)
+        navigators.navController.navigate(ExtractorHubNavTarget)
     }
 
     fun showAlbumCreatedSnack(message: String, actionLabel: String) =

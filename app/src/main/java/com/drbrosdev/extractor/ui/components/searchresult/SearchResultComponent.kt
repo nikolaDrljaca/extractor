@@ -14,7 +14,7 @@ import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridSta
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.checkedKeys
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
-import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
+import com.drbrosdev.extractor.ui.shop.ExtractorHubNavTarget
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import com.drbrosdev.extractor.util.asState
 import dev.olshevski.navigation.reimagined.navigate
@@ -120,7 +120,7 @@ class SearchResultComponent(
                     SearchResultState.NoSearchesLeft(
                         onGetMore = {
                             navigators.navController.navigate(
-                                ExtractorShopNavTarget
+                                ExtractorHubNavTarget
                             )
                         }
                     )

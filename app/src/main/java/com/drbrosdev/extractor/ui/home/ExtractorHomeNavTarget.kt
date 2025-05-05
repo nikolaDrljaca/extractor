@@ -10,7 +10,6 @@ import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
-import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogNavTarget
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageNavTarget
@@ -33,13 +32,11 @@ object ExtractorHomeNavTarget : NavTarget {
         )
 
         val navController = navigators.navController
-        val dialogNavController = navigators.dialogNavController
 
         val userAlbums by viewModel.userAlbums.collectAsStateWithLifecycle()
         val collage by viewModel.collage.collectAsStateWithLifecycle()
 
         ExtractorHomeScreen(
-            onSyncClick = { dialogNavController.navigate(ExtractorStatusDialogNavTarget) },
             onBack = { navController.pop() },
             userAlbums = userAlbums,
             collageThumbnail = collage,
@@ -63,7 +60,6 @@ private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         Surface {
             ExtractorHomeScreen(
-                onSyncClick = {},
                 onBack = {},
                 userAlbums = ExtractorCategoryViewState.Initial(),
                 collageThumbnail = ExtractorUserCollageThumbnailUiState.Empty,

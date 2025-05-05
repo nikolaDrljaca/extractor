@@ -20,7 +20,7 @@ import com.drbrosdev.extractor.ui.settings.bug.ExtractorFeedbackViewModel
 import com.drbrosdev.extractor.ui.settings.clearevent.ExtractorClearEventsViewModel
 import com.drbrosdev.extractor.ui.settings.index.ExtractorResetIndexViewModel
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkViewModel
-import com.drbrosdev.extractor.ui.shop.ExtractorShopSearchViewModel
+import com.drbrosdev.extractor.ui.shop.ExtractorHubViewModel
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -61,7 +61,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        ExtractorShopSearchViewModel(
+        ExtractorHubViewModel(
             datastore = get()
         )
     }

@@ -8,7 +8,7 @@ import com.drbrosdev.extractor.data.ExtractorDataStore
 import kotlinx.coroutines.launch
 
 // TODO: wip
-class ExtractorShopSearchViewModel(
+class ExtractorHubViewModel(
     private val datastore: ExtractorDataStore
 ) : ViewModel() {
 

@@ -8,7 +8,7 @@ import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
-import com.drbrosdev.extractor.ui.shop.ExtractorShopNavTarget
+import com.drbrosdev.extractor.ui.shop.ExtractorHubNavTarget
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageNavTarget
 import dev.olshevski.navigation.reimagined.NavAction
 import dev.olshevski.navigation.reimagined.NavTransitionSpec
@@ -59,12 +59,12 @@ private fun handleGetMore(
 ): Boolean {
     val goingFrom = when (from) {
         is ExtractorOverviewNavTarget -> true
-        is ExtractorShopNavTarget -> true
+        is ExtractorHubNavTarget -> true
         else -> false
     }
     val goingTo = when (to) {
         is ExtractorOverviewNavTarget -> true
-        is ExtractorShopNavTarget -> true
+        is ExtractorHubNavTarget -> true
         else -> false
     }
     return goingFrom and goingTo

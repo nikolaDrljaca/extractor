@@ -10,18 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,12 +30,9 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
 
 @Composable
 fun ExtractorStatusDialog(
-    onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
     state: ExtractorStatusDialogUiState
 ) {
-    val scrollState = rememberScrollState()
-
     Surface(
         modifier = Modifier
             .then(modifier),
@@ -52,7 +42,6 @@ fun ExtractorStatusDialog(
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .verticalScroll(scrollState),
         ) {
             Row(
                 modifier = Modifier
@@ -63,11 +52,8 @@ fun ExtractorStatusDialog(
             ) {
                 Text(
                     text = stringResource(R.string.status_dialog_status),
-                    style = MaterialTheme.typography.displaySmall
+                    style = MaterialTheme.typography.headlineMedium
                 )
-                IconButton(onClick = onCloseClick) {
-                    Icon(imageVector = Icons.Rounded.Close, contentDescription = "Close")
-                }
             }
 
             Text(
@@ -75,7 +61,7 @@ fun ExtractorStatusDialog(
                 style = MaterialTheme.typography.labelMedium
             )
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+            Spacer(modifier = Modifier.padding(vertical = 12.dp))
 
             ExtractorCountChips(
                 modifier = Modifier.fillMaxWidth(),

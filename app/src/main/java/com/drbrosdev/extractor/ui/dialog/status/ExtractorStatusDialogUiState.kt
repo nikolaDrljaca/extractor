@@ -32,11 +32,6 @@ sealed class ExtractorStatusDialogUiState {
     ) : ExtractorStatusDialogUiState()
 }
 
-sealed interface ExtractorStatusDialogEvents {
-
-    data object CloseDialog : ExtractorStatusDialogEvents
-}
-
 infix fun Int.safeDiv(other: Int): Float {
     if (other == 0) return 0f
     return this.toDouble().div(other.toDouble()).toFloat()

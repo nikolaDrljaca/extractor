@@ -159,7 +159,7 @@ fun LazyGridScope.ExtractorUserCategoryView(
         ) {
             Text(
                 text = stringResource(id = albumType.stringRes),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.headlineMedium
             )
 
             when {
