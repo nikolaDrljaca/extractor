@@ -42,6 +42,12 @@
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 
+        <!--Remove Firebase Logging-->
+        <service
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+            tools:node="remove">
+        </service>
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
