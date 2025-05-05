@@ -11,7 +11,6 @@ import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
 import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.framework.requiresApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 
@@ -59,7 +58,7 @@ class DefaultExtractorWorkerService(
         )
     }
 
-    override fun workInfoAsFlow(workName: String): Flow<WorkInfo> {
+    override fun workInfoAsFlow(workName: String): Flow<WorkInfo?> {
         return workManager.getWorkInfosForUniqueWorkFlow(workName)
             .onEach {
                 when {
@@ -69,6 +68,5 @@ class DefaultExtractorWorkerService(
                 }
             }
             .map { it.firstOrNull() }
-            .filterNotNull()
     }
 }

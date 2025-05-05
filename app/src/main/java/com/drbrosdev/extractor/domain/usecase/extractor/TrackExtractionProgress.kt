@@ -24,6 +24,13 @@ class TrackExtractionProgress(
             workerService.workInfoAsFlow(ExtractorWorkerService.EXTRACTOR_WORK)
         ) { inStorage, onDevice, workStatus ->
             when {
+                // no job is queued
+                workStatus == null -> ExtractionProgress.Done(
+                    inStorageCount = inStorage,
+                    onDeviceCount = onDevice
+                )
+
+                // queued jobs are finished
                 workStatus.state.isFinished -> ExtractionProgress.Done(
                     inStorageCount = inStorage,
                     onDeviceCount = onDevice
