@@ -6,14 +6,18 @@ import androidx.lifecycle.viewModelScope
 import arrow.core.None
 import arrow.core.Some
 import arrow.core.toOption
+import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.toPreview
+import com.drbrosdev.extractor.domain.model.asString
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.usecase.generate.GenerateUserCollage
-import com.drbrosdev.extractor.ui.components.categoryview.ExtractorCategoryViewState
+import com.drbrosdev.extractor.framework.navigation.Navigators
+import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
+import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumOverview
+import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumsUiModel
 import com.drbrosdev.extractor.util.WhileUiSubscribed
+import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -33,6 +37,7 @@ class ExtractorHomeViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val albumRepository: AlbumRepository,
     private val generateUserCollage: GenerateUserCollage,
+    private val navigators: Navigators
 ) : ViewModel() {
 
     val collage = flow {
@@ -60,17 +65,31 @@ class ExtractorHomeViewModel(
         .getAllUserAlbumsAsFlow()
         .map {
             when {
-                it.isEmpty() -> ExtractorCategoryViewState.Initial()
-                else -> ExtractorCategoryViewState.Content(
-                    albums = it.map { album -> album.toPreview() },
-                    isLoading = false
+                it.isEmpty() -> ExtractorAlbumsUiModel.Empty
+                else -> ExtractorAlbumsUiModel.Content(
+                    albums = it.map { album -> toOverview(album) },
+                    onAlbumClick = { id ->
+                        navigators.navController.navigate(ExtractorAlbumViewerNavTarget(id))
+                    }
                 )
             }
         }
         .flowOn(Dispatchers.Default)
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            ExtractorCategoryViewState.Initial()
+            WhileUiSubscribed,
+            ExtractorAlbumsUiModel.Empty
         )
+
+    private fun toOverview(album: Album): ExtractorAlbumOverview {
+        val images = album.entries
+            .take(8)
+            .map { it.uri }
+        return ExtractorAlbumOverview(
+            albumId = album.id,
+            title = album.name,
+            searchType = album.searchType.asString(),
+            images = images
+        )
+    }
 }

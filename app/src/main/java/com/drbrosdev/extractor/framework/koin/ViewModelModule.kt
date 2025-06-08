@@ -108,11 +108,12 @@ val viewModelModule = module {
         )
     }
 
-    viewModel {
+    viewModel { params ->
         ExtractorHomeViewModel(
             savedStateHandle = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             generateUserCollage = get(),
+            navigators = params.get()
         )
     }
 
