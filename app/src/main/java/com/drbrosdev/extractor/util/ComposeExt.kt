@@ -2,8 +2,6 @@ package com.drbrosdev.extractor.util
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -31,13 +29,11 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
@@ -45,8 +41,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.ui.theme.md_theme_light_secondary
-import com.drbrosdev.extractor.ui.theme.md_theme_light_tertiary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -98,37 +92,6 @@ fun Modifier.shimmer(): Modifier = composed {
         .onGloballyPositioned {
             size = it.size
         }
-}
-
-@Composable
-fun createExtractorBrush(): Brush {
-    val animation = rememberInfiniteTransition(label = "brush")
-    val flat = with(LocalDensity.current) { 800.dp.toPx() }
-
-    val offset by animation.animateFloat(
-        initialValue = 0f,
-        targetValue = flat,
-        animationSpec = infiniteRepeatable(
-            tween(
-                durationMillis = 4000,
-                easing = LinearEasing
-            ),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "brush"
-    )
-
-    val brush = Brush.linearGradient(
-        listOf(
-            md_theme_light_tertiary,
-            md_theme_light_secondary,
-        ),
-        start = Offset(offset, offset),
-        end = Offset(offset + flat, offset + flat),
-        tileMode = TileMode.Mirror
-    )
-
-    return brush
 }
 
 enum class KeyboardState {

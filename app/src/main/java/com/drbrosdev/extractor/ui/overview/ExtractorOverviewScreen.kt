@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.CircularProgressIndicator
@@ -43,9 +43,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.toUri
-import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesState
+import com.drbrosdev.extractor.ui.components.shared.ExtractionBentoItem
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
@@ -113,43 +112,22 @@ fun ExtractorOverviewScreen(
 
             when (overviewContentState) {
                 is RecommendedSearchesState.Content -> {
-                    overviewContentState.items.forEach {
-                        item(
-                            span = { GridItemSpan(maxLineSpan) },
-                        ) {
-                            Text(
-                                text = "# ${it.keyword}",
-                                style = MaterialTheme.typography.titleLarge,
-                                modifier = Modifier.padding(
-                                    start = 8.dp,
-                                    bottom = 4.dp,
-                                    top = 12.dp
+                    items(
+                        items = overviewContentState.items,
+                        span = { GridItemSpan(maxLineSpan) }
+                    ) { bundle ->
+                        ExtractionBentoItem(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            bundle = bundle,
+                            overviewGridState = overviewGridState,
+                            onClick = { keyword, index ->
+                                overviewContentState.onImageClick(
+                                    keyword,
+                                    index
                                 )
-                            )
-                        }
-
-                        itemsIndexed(
-                            items = it.extractions,
-                            key = { _, entry -> it.keyword + entry.mediaImageId.id }
-                        ) { index, entry ->
-                            ExtractorImageItem(
-                                modifier = Modifier.animateItem(),
-                                imageUri = entry.uri.toUri(),
-                                size = 96,
-                                onClick = {
-                                    if (overviewGridState.onToggleCheckedItem(entry.mediaImageId)) {
-                                        overviewContentState.onImageClick(
-                                            it.keyword,
-                                            index
-                                        )
-                                    }
-                                },
-                                checkedState = overviewGridState.gridState[entry.mediaImageId],
-                                onLongClick = {
-                                    overviewGridState.onLongTap(entry.mediaImageId)
-                                }
-                            )
-                        }
+                            }
+                        )
                     }
                 }
 

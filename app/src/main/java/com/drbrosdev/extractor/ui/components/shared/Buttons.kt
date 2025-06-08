@@ -21,9 +21,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.ui.theme.ButtonShape
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.ui.theme.md_theme_light_primary
 import com.drbrosdev.extractor.util.CombinedPreview
 
 @Composable
@@ -40,7 +38,7 @@ fun ExtractorActionButton(
             .then(modifier),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
-            contentColor = md_theme_light_primary,
+            contentColor = MaterialTheme.colorScheme.primary,
             disabledContentColor = Color.LightGray,
             disabledContainerColor = Color.Gray
         ),
@@ -144,7 +142,7 @@ fun BottomSheetButton(
             contentColor = Color.Black,
             containerColor = Color.White
         ),
-        shape = ButtonShape
+        shape = RoundedCornerShape(14.dp)
     ) {
         content()
     }
