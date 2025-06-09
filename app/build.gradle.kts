@@ -49,6 +49,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            // flags
+            buildConfigField("Boolean", "SEARCH_COUNT_ENABLED", "true")
+        }
         release {
             isMinifyEnabled = false
             isShrinkResources = false
@@ -57,6 +61,8 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+            // flags
+            buildConfigField("Boolean", "SEARCH_COUNT_ENABLED", "false")
         }
     }
 

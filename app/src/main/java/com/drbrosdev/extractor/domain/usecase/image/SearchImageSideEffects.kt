@@ -2,6 +2,8 @@ package com.drbrosdev.extractor.domain.usecase.image
 
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.service.AppReviewService
+import com.drbrosdev.extractor.framework.FeatureFlags
+import com.drbrosdev.extractor.framework.check
 import com.drbrosdev.extractor.framework.logger.logErrorEvent
 import com.drbrosdev.extractor.framework.logger.logEvent
 import kotlinx.coroutines.CoroutineDispatcher
@@ -12,11 +14,14 @@ class SearchImageSideEffects(
     private val appReviewService: AppReviewService,
     private val datastore: ExtractorDataStore
 ) {
-    private val reviewThreshold = 10
+    private val reviewThreshold = 11
 
     suspend fun execute() = withContext(dispatcher) {
-        // decrease search count
-        datastore.decrementSearchCount()
+        // only if search count is enabled
+        if (FeatureFlags.SEARCH_COUNT_ENABLED.check()) {
+            // decrease search count
+            datastore.decrementSearchCount()
+        }
         // get current count
         val currentCount = datastore.getSearchCount()
         // show in-app review

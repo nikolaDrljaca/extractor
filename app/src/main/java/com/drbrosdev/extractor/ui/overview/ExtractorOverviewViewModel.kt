@@ -13,6 +13,8 @@ import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.generate.GenerateMostCommonExtractionBundles
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
+import com.drbrosdev.extractor.framework.FeatureFlags
+import com.drbrosdev.extractor.framework.check
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesComponent
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
@@ -48,6 +50,9 @@ class ExtractorOverviewViewModel(
             is ExtractionProgress.Done -> {
                 when {
                     progress.isDataIncomplete() -> ExtractorStatusPillState.OutOfSync
+
+                    FeatureFlags.SEARCH_COUNT_ENABLED.check().not() ->
+                        ExtractorStatusPillState.Disabled(progress.inStorageCount)
 
                     else -> ExtractorStatusPillState.Idle(searchesLeft = count)
                 }

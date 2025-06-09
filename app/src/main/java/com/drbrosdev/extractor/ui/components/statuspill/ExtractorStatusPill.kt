@@ -13,7 +13,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
@@ -22,11 +24,12 @@ fun ExtractorStatusPill(
     modifier: Modifier = Modifier,
     state: ExtractorStatusPillState
 ) {
-    val backgroundColor by animateColorAsState(
+    val contentColor by animateColorAsState(
         targetValue = when (state) {
             is ExtractorStatusPillState.Idle -> MaterialTheme.colorScheme.onSurface
             ExtractorStatusPillState.OutOfSync -> MaterialTheme.colorScheme.error
             is ExtractorStatusPillState.SyncInProgress -> MaterialTheme.colorScheme.tertiary
+            is ExtractorStatusPillState.Disabled -> MaterialTheme.colorScheme.onSurface
         },
         label = ""
     )
@@ -34,7 +37,7 @@ fun ExtractorStatusPill(
     Surface(
         modifier = Modifier
             .then(modifier),
-        contentColor = backgroundColor,
+        contentColor = contentColor,
         color = Color.Transparent,
         shape = CircleShape,
     ) {
@@ -42,9 +45,27 @@ fun ExtractorStatusPill(
             LocalTextStyle provides MaterialTheme.typography.labelSmall
         ) {
             when (state) {
-                is ExtractorStatusPillState.Idle -> Text(text = "Searches left: ${state.searchesLeft}")
-                ExtractorStatusPillState.OutOfSync -> Text(text = "Data out of sync.")
-                is ExtractorStatusPillState.SyncInProgress -> Text(text = "Current progress: ${state.progress}%")
+                is ExtractorStatusPillState.Idle -> Text(
+                    text = stringResource(
+                        R.string.searches_left_count,
+                        state.searchesLeft
+                    )
+                )
+
+                ExtractorStatusPillState.OutOfSync -> Text(text = stringResource(R.string.data_out_of_sync))
+                is ExtractorStatusPillState.SyncInProgress -> Text(
+                    text = stringResource(
+                        R.string.current_progress_percent,
+                        state.progress
+                    )
+                )
+
+                is ExtractorStatusPillState.Disabled -> Text(
+                    text = stringResource(
+                        R.string.indexed_images_count,
+                        state.indexCount
+                    )
+                )
             }
         }
     }
@@ -60,6 +81,7 @@ private fun CurrentPreview() {
                 ExtractorStatusPill(state = ExtractorStatusPillState.Idle(232))
                 ExtractorStatusPill(state = ExtractorStatusPillState.OutOfSync)
                 ExtractorStatusPill(state = ExtractorStatusPillState.SyncInProgress(90))
+                ExtractorStatusPill(state = ExtractorStatusPillState.Disabled(522))
             }
         }
     }
