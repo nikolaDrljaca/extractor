@@ -41,6 +41,7 @@ fun ExtractorImageItem(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     size: Int? = null,
+    cornerSize: Dp = 2.dp,
     checkedState: ExtractorListItemCheckedState
 ) {
     val sizeModifier = if (size != null) {
@@ -55,11 +56,11 @@ fun ExtractorImageItem(
 
     val transition = updateTransition(targetState = checkedState, label = "")
 
-    val cornerSize by transition.animateDp(
+    val cornerSizeAnimated by transition.animateDp(
         targetValueByState = {
             when (it) {
                 ExtractorListItemCheckedState.CHECKED -> 14.dp
-                ExtractorListItemCheckedState.UNCHECKED -> 8.dp
+                ExtractorListItemCheckedState.UNCHECKED -> cornerSize
             }
         },
         label = ""
@@ -85,7 +86,7 @@ fun ExtractorImageItem(
         label = ""
     )
 
-    val cornerShape = RoundedCornerShape(cornerSize)
+    val cornerShape = RoundedCornerShape(cornerSizeAnimated)
     
     val haptics = LocalHapticFeedback.current
 

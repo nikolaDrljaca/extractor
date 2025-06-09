@@ -3,8 +3,11 @@ package com.drbrosdev.extractor.ui.root
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.googlefonts.isAvailableOnDevice
 import androidx.compose.ui.window.Dialog
+import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.framework.navigation.BlankNavTarget
 import com.drbrosdev.extractor.framework.navigation.BottomSheetNavTarget
 import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
@@ -13,8 +16,9 @@ import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.framework.navigation.animspec.createTransitionSpec
 import com.drbrosdev.extractor.framework.permission.ReadPermissionAccess
 import com.drbrosdev.extractor.ui.onboarding.ExtractorOnboardingNavTarget
-import com.drbrosdev.extractor.ui.permhandler.ExtractorPermissionRequestNavTarget
 import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
+import com.drbrosdev.extractor.ui.permhandler.ExtractorPermissionRequestNavTarget
+import com.drbrosdev.extractor.ui.theme.provider
 import dev.olshevski.navigation.reimagined.AnimatedNavHost
 import dev.olshevski.navigation.reimagined.DialogNavHost
 import dev.olshevski.navigation.reimagined.NavBackHandler
@@ -42,6 +46,7 @@ fun Root() {
     }
 
     val density = LocalDensity.current
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
         val isOnboardingFinished = viewModel.isOnboardingFinished().first()
@@ -58,6 +63,12 @@ fun Root() {
 
                 else -> Unit
             }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (provider.isAvailableOnDevice(context)) {
+            logEvent("Downloadable fonts are available.")
         }
     }
 

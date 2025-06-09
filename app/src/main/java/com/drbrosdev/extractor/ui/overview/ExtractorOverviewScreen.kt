@@ -44,7 +44,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesState
-import com.drbrosdev.extractor.ui.components.shared.ExtractionBentoItem
+import com.drbrosdev.extractor.ui.components.shared.ExtractorBentoItem
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
@@ -116,7 +116,7 @@ fun ExtractorOverviewScreen(
                         items = overviewContentState.items,
                         span = { GridItemSpan(maxLineSpan) }
                     ) { bundle ->
-                        ExtractionBentoItem(
+                        ExtractorBentoItem(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             bundle = bundle,

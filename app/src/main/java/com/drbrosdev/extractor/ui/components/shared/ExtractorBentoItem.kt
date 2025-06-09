@@ -4,19 +4,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.ExtractionBundle
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.overview.OverviewGridState
+import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CombinedPreview
 
 @Composable
-fun ExtractionBentoItem(
+fun ExtractorBentoItem(
     modifier: Modifier = Modifier,
     bundle: ExtractionBundle,
     overviewGridState: OverviewGridState,
@@ -28,7 +30,7 @@ fun ExtractionBentoItem(
     ) {
         Text(
             text = bundle.keyword,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         BentoGrid(
@@ -42,6 +44,7 @@ fun ExtractionBentoItem(
         ) {
             items(bundle.extractions, style) { index, entry ->
                 ExtractorImageItem(
+                    cornerSize = 8.dp,
                     modifier = Modifier.padding(2.dp),
                     imageUri = entry.uri.toUri(),
                     size = 96,
@@ -59,6 +62,24 @@ fun ExtractionBentoItem(
                     }
                 )
             }
+        }
+    }
+}
+
+@CombinedPreview
+@Composable
+private fun CurrentPreview() {
+    ExtractorTheme {
+        Surface {
+
+            ExtractorBentoItem(
+                bundle = ExtractionBundle(
+                    keyword = "sample",
+                    extractions = emptyList()
+                ),
+                overviewGridState = OverviewGridState(),
+                onClick = { _, _ -> }
+            )
         }
     }
 }

@@ -23,14 +23,12 @@ import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -39,6 +37,7 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.CombinedPreview
 
 private const val IMAGE_SIZE = 130
 
@@ -96,7 +95,7 @@ fun ExtractorAlbumOverviewContent(
     val carouselState = rememberCarouselState { model.photoCount }
     Surface(
         shape = RoundedCornerShape(14.dp),
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        color = MaterialTheme.colorScheme.tertiaryContainer,
         onClick = onClick,
         modifier = modifier
     ) {
@@ -116,7 +115,7 @@ fun ExtractorAlbumOverviewContent(
                 Text(
                     text = model.description,
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.outline
                     )
                 )
             }
@@ -151,7 +150,7 @@ fun ExtractorAlbumOverviewContent(
     }
 }
 
-@Preview
+@CombinedPreview
 @Composable
 private fun CurrentPreview() {
     val model = ExtractorAlbumOverview(

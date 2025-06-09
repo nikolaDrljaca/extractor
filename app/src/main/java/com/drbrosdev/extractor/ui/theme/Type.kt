@@ -2,6 +2,15 @@ package com.drbrosdev.extractor.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight.Companion.W100
+import androidx.compose.ui.text.font.FontWeight.Companion.W200
+import androidx.compose.ui.text.font.FontWeight.Companion.W300
+import androidx.compose.ui.text.font.FontWeight.Companion.W400
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
+import androidx.compose.ui.text.font.FontWeight.Companion.W600
+import androidx.compose.ui.text.font.FontWeight.Companion.W700
+import androidx.compose.ui.text.font.FontWeight.Companion.W800
+import androidx.compose.ui.text.font.FontWeight.Companion.W900
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.drbrosdev.extractor.R
@@ -12,22 +21,30 @@ val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
-val bodyFontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Instrument Sans"),
-        fontProvider = provider,
-    )
+private val weights = listOf(W100, W200, W300, W400, W500, W600, W700, W800, W900)
+
+private val bodyFontFamily = FontFamily(
+    *weights.map {
+        Font(
+            googleFont = GoogleFont("Instrument Sans"),
+            fontProvider = provider,
+            weight = it
+        )
+    }.toTypedArray()
 )
 
-val displayFontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Bricolage Grotesque"),
-        fontProvider = provider,
-    )
+private val displayFontFamily = FontFamily(
+    *weights.map {
+        Font(
+            googleFont = GoogleFont("Bricolage Grotesque"),
+            fontProvider = provider,
+            weight = it
+        )
+    }.toTypedArray()
 )
 
 // Default Material 3 typography values
-val baseline = Typography()
+private val baseline = Typography()
 
 val AppTypography = Typography(
     displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
