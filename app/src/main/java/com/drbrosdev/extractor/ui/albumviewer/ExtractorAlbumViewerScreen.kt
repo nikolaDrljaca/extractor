@@ -29,7 +29,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,8 +44,6 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.AlbumEntry
-import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
@@ -61,31 +58,9 @@ import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
 import com.drbrosdev.extractor.ui.components.shared.albumGridActions
 import com.drbrosdev.extractor.util.maxLineSpanItem
 
-@Stable
-data class ExtractorAlbumViewerState(
-    val id: Long,
-    val hero: AlbumHeroUiModel,
-    val entries: List<AlbumEntry>,
-    val shouldShowSelectBar: Boolean,
-    val eventSink: (AlbumViewerEvents) -> Unit
-)
-
-sealed interface AlbumViewerEvents {
-    data object Delete : AlbumViewerEvents
-
-    data object Share : AlbumViewerEvents
-
-
-    data object GoBack : AlbumViewerEvents
-
-    data class GoToImageViewer(
-        val index: Int
-    ) : AlbumViewerEvents
-}
 
 @Composable
 fun ExtractorAlbumViewerScreen(
-    modifier: Modifier = Modifier,
     state: ExtractorAlbumViewerState,
     dialogSelectionState: ExtractorAlbumDialogSelection,
     imageGridState: ExtractorGridState<Int>,
@@ -180,7 +155,7 @@ fun ExtractorAlbumViewerScreen(
                 key = { _, it -> it.id.id }
             ) { index, entry ->
                 ExtractorImageItem(
-                    modifier = Modifier,
+                    modifier = Modifier.animateItem(),
                     imageUri = entry.uri.toUri(),
                     size = imageSize,
                     onClick = {
@@ -220,15 +195,6 @@ fun ExtractorAlbumViewerScreen(
             snackbar = { ExtractorSnackbar(snackbarData = it) }
         )
     }
-}
-
-@Stable
-data class AlbumHeroUiModel(
-    val name: String,
-    val description: String,
-    val heroImage: MediaImageUri
-) {
-    val displayName = "# $name"
 }
 
 @Composable

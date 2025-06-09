@@ -5,10 +5,6 @@ import android.net.Uri
 
 sealed interface ExtractorAlbumViewerEvents {
 
-    data object SelectionDeleted : ExtractorAlbumViewerEvents
-
-    data object AlbumDeleted : ExtractorAlbumViewerEvents
-
     data class ShareAlbumEntries(
         val uris: List<Uri>
     ) : ExtractorAlbumViewerEvents

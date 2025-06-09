@@ -121,6 +121,7 @@ class ExtractorAlbumViewerViewModel(
         viewModelScope.launch {
             dialogSelection.update { ExtractorAlbumDialogSelection.None }
             albumRepository.deleteAlbumById(albumId)
+            navController.pop()
         }
     }
 
@@ -156,14 +157,15 @@ class ExtractorAlbumViewerViewModel(
             val albumCount = current.entries.count()
             val selectedCount = gridState.checkedKeys().count()
 
+            // all images were selected - delete album and pop out
             if (albumCount == selectedCount) {
                 albumRepository.deleteAlbumById(albumId)
-                _events.send(ExtractorAlbumViewerEvents.AlbumDeleted)
+                navController.pop()
+                return@launch
             }
 
             if (ids.isNotEmpty()) {
                 albumRepository.deleteAlbumEntries(ids)
-                _events.send(ExtractorAlbumViewerEvents.SelectionDeleted)
             }
             gridState.clearSelection()
         }
