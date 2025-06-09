@@ -36,6 +36,4 @@ sealed interface ExtractorAlbumDialogSelection {
     data object ConfirmShare : ExtractorAlbumDialogSelection
 
     data object ConfirmDelete : ExtractorAlbumDialogSelection
-
-    data object BottomSheet : ExtractorAlbumDialogSelection
 }

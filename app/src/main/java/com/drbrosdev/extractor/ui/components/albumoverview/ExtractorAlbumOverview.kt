@@ -45,9 +45,9 @@ data class ExtractorAlbumOverview(
     val albumId: Long,
     val title: String,
     val searchType: String,
-    val images: List<MediaImageUri>
+    val images: List<MediaImageUri>,
+    val photoCount: Int
 ) {
-    val photoCount = images.count()
     val description = "$searchType \u00B7 $photoCount photos"
 }
 
@@ -92,7 +92,7 @@ fun ExtractorAlbumOverviewContent(
     onClick: () -> Unit,
 ) {
     val contentPadding = 8.dp
-    val carouselState = rememberCarouselState { model.photoCount }
+    val carouselState = rememberCarouselState { model.images.count() }
     Surface(
         shape = RoundedCornerShape(14.dp),
         color = MaterialTheme.colorScheme.tertiaryContainer,
@@ -157,7 +157,8 @@ private fun CurrentPreview() {
         albumId = 1L,
         title = "Old friends in Paris",
         searchType = "Full",
-        images = emptyList()
+        images = emptyList(),
+        photoCount = 0
     )
     ExtractorTheme {
         ExtractorAlbumOverviewContent(

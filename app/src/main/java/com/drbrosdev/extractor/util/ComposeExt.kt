@@ -58,6 +58,12 @@ fun MediaImageUri.asImageRequest(context: Context) = ImageRequest.Builder(contex
     .crossfade(true)
     .build()
 
+fun MediaImageUri.buildImageRequest(context: Context) = ImageRequest.Builder(context)
+    .data(uri)
+    .memoryCacheKey(uri)
+    .diskCacheKey(uri)
+    .crossfade(true)
+
 fun Uri.asImageRequest(context: Context) = ImageRequest.Builder(context)
     .data(toString())
     .memoryCacheKey(toString())

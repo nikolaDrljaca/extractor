@@ -89,7 +89,8 @@ class ExtractorHomeViewModel(
             albumId = album.id,
             title = album.name,
             searchType = album.searchType.asString(),
-            images = images
+            images = images,
+            photoCount = album.entries.size
         )
     }
 }

@@ -122,7 +122,8 @@ val viewModelModule = module {
             stateHandle = get(),
             workerService = get<DefaultExtractorWorkerService>(),
             albumRepository = get<DefaultAlbumRepository>(),
-            albumId = params.get()
+            albumId = params.get(),
+            navigators = params.get()
         )
     }
 
