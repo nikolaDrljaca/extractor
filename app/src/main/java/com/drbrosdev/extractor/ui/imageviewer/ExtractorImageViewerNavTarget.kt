@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.ui.imageviewer
 
 import android.net.Uri
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,7 +17,6 @@ import com.drbrosdev.extractor.util.launchEditIntent
 import com.drbrosdev.extractor.util.launchShareIntent
 import com.drbrosdev.extractor.util.launchUseAsIntent
 import dev.olshevski.navigation.reimagined.navigate
-import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 
@@ -36,7 +34,6 @@ data class ExtractorImageViewerNavTarget(
         val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
 
         val context = LocalContext.current
-        val navController = navigators.navController
         val bottomSheetNavigator = navigators.bottomSheetNavController
 
         LaunchedEffect(key1 = Unit) {
@@ -63,20 +60,17 @@ data class ExtractorImageViewerNavTarget(
         ExtractorImageViewerScreen(
             pagerState = pagerState,
             images = images,
-            onBack = { navController.pop() },
             onBottomBarClick = { viewModel.processEvent(it) }
         )
     }
 }
 
 @ScreenPreview
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         ExtractorImageViewerScreen(
             onBottomBarClick = {},
-            onBack = { /*TODO*/ },
             pagerState = rememberPagerState { 0 },
             images = emptyList()
         )
