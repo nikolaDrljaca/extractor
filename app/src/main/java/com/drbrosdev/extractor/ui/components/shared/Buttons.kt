@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -56,18 +57,14 @@ fun ExtractorButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
+    colors: ButtonColors = ExtractorButtonDefaults.colors(),
     content: @Composable (RowScope.() -> Unit)
 ) {
     Button(
         onClick = onClick,
         modifier = Modifier
             .then(modifier),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContentColor = Color.LightGray,
-            disabledContainerColor = Color.Gray
-        ),
+        colors = colors,
         enabled = enabled,
         contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp)
@@ -175,6 +172,14 @@ object ExtractorButtonDefaults {
         end = rightContentPadding,
         top = vertical,
         bottom = vertical
+    )
+
+    @Composable
+    fun colors() = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        disabledContentColor = Color.LightGray,
+        disabledContainerColor = Color.Gray
     )
 }
 
