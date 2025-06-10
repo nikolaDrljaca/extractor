@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.home
+package com.drbrosdev.extractor.ui.yourspace
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,7 +14,7 @@ import com.drbrosdev.extractor.domain.usecase.generate.GenerateUserCollage
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerNavTarget
 import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumOverview
-import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumsUiModel
+import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumsUiState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
+// TODO @drljacan Refactor - rename and move this from here
 sealed interface ExtractorUserCollageThumbnailUiState {
     data object Empty : ExtractorUserCollageThumbnailUiState
 
@@ -33,7 +34,7 @@ sealed interface ExtractorUserCollageThumbnailUiState {
     ) : ExtractorUserCollageThumbnailUiState
 }
 
-class ExtractorHomeViewModel(
+class ExtractorYourSpaceViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val albumRepository: AlbumRepository,
     private val generateUserCollage: GenerateUserCollage,
@@ -65,8 +66,8 @@ class ExtractorHomeViewModel(
         .getAllUserAlbumsAsFlow()
         .map {
             when {
-                it.isEmpty() -> ExtractorAlbumsUiModel.Empty
-                else -> ExtractorAlbumsUiModel.Content(
+                it.isEmpty() -> ExtractorAlbumsUiState.Empty
+                else -> ExtractorAlbumsUiState.Content(
                     albums = it.map { album -> toOverview(album) },
                     onAlbumClick = { id ->
                         navigators.navController.navigate(ExtractorAlbumViewerNavTarget(id))
@@ -78,7 +79,7 @@ class ExtractorHomeViewModel(
         .stateIn(
             viewModelScope,
             WhileUiSubscribed,
-            ExtractorAlbumsUiModel.Empty
+            ExtractorAlbumsUiState.Empty
         )
 
     private fun toOverview(album: Album): ExtractorAlbumOverview {

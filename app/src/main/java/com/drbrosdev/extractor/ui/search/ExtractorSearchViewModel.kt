@@ -22,7 +22,7 @@ import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.searchresult.SearchResultComponent
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetComponent
-import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
+import com.drbrosdev.extractor.ui.yourspace.ExtractorYourSpaceNavTarget
 import com.drbrosdev.extractor.util.memo
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.delay
@@ -114,7 +114,7 @@ class ExtractorSearchViewModel(
             when (result) {
                 SnackbarResult.Dismissed -> Unit
                 SnackbarResult.ActionPerformed -> navigators.navController.navigate(
-                    ExtractorHomeNavTarget
+                    ExtractorYourSpaceNavTarget
                 )
             }
         }

@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.home
+package com.drbrosdev.extractor.ui.yourspace
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
-import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumsUiModel
+import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumsUiState
 import com.drbrosdev.extractor.ui.settings.ExtractorSettingsNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageNavTarget
@@ -19,11 +19,11 @@ import org.koin.core.parameter.parametersOf
 
 
 @Parcelize
-object ExtractorHomeNavTarget : NavTarget {
+object ExtractorYourSpaceNavTarget : NavTarget {
 
     @Composable
     override fun Content(navigators: Navigators) {
-        val viewModel: ExtractorHomeViewModel = koinViewModel {
+        val viewModel: ExtractorYourSpaceViewModel = koinViewModel {
             parametersOf(navigators)
         }
 
@@ -32,7 +32,7 @@ object ExtractorHomeNavTarget : NavTarget {
         val userAlbums by viewModel.userAlbums.collectAsStateWithLifecycle()
         val collage by viewModel.collage.collectAsStateWithLifecycle()
 
-        ExtractorHomeScreen(
+        ExtractorYourSpaceScreen(
             onBack = { navController.pop() },
             userAlbums = userAlbums,
             collageThumbnail = collage,
@@ -52,9 +52,9 @@ object ExtractorHomeNavTarget : NavTarget {
 private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         Surface {
-            ExtractorHomeScreen(
+            ExtractorYourSpaceScreen(
                 onBack = {},
-                userAlbums = ExtractorAlbumsUiModel.Empty,
+                userAlbums = ExtractorAlbumsUiState.Empty,
                 collageThumbnail = ExtractorUserCollageThumbnailUiState.Empty,
                 onEmptyUserAlbums = {},
                 onSettingsClick = {},

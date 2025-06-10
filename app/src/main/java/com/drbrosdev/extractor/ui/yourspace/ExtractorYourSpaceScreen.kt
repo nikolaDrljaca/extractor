@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.ui.home
+package com.drbrosdev.extractor.ui.yourspace
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,21 +25,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumOverviewContent
-import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumsUiModel
+import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorAlbumsUiState
 import com.drbrosdev.extractor.ui.components.albumoverview.ExtractorEmptyAlbumOverview
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorHeader
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBarState
 import com.drbrosdev.extractor.ui.components.usercollage.ExtractorUserCollageThumbnail
 
 @Composable
-fun ExtractorHomeScreen(
+fun ExtractorYourSpaceScreen(
     onBack: () -> Unit,
     onSettingsClick: () -> Unit,
     onEmptyUserAlbums: () -> Unit,
     onCollageClicked: () -> Unit,
     collageThumbnail: ExtractorUserCollageThumbnailUiState,
-    userAlbums: ExtractorAlbumsUiModel,
+    userAlbums: ExtractorAlbumsUiState,
 ) {
     val lazyGridState = rememberLazyListState()
     val extractorTopBarState = remember {
@@ -85,13 +86,13 @@ fun ExtractorHomeScreen(
             item { Spacer(Modifier.height(10.dp)) }
 
             when (userAlbums) {
-                ExtractorAlbumsUiModel.Empty -> item {
+                ExtractorAlbumsUiState.Empty -> item {
                     ExtractorEmptyAlbumOverview(
                         onInitClick = onEmptyUserAlbums
                     )
                 }
 
-                is ExtractorAlbumsUiModel.Content -> items(
+                is ExtractorAlbumsUiState.Content -> items(
                     items = userAlbums.albums,
                     key = { it.albumId }
                 ) {
@@ -116,6 +117,7 @@ fun ExtractorHomeScreen(
             modifier = Modifier,
             leadingSlot = {
                 BackIconButton(onBack = onBack)
+                ExtractorHeader(headerText = stringResource(R.string.your_space))
             },
             trailingSlot = {
                 IconButton(onClick = onSettingsClick) {

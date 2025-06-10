@@ -19,7 +19,7 @@ import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesComponent
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchComponent
-import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
+import com.drbrosdev.extractor.ui.yourspace.ExtractorYourSpaceNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.shop.ExtractorHubNavTarget
 import com.drbrosdev.extractor.util.WhileUiSubscribed
@@ -85,7 +85,7 @@ class ExtractorOverviewViewModel(
     val snackbarHostState = SnackbarHostState()
 
     fun onHomeClick() {
-        navigators.navController.navigate(ExtractorHomeNavTarget)
+        navigators.navController.navigate(ExtractorYourSpaceNavTarget)
     }
 
     fun onHubClick() {
@@ -102,7 +102,7 @@ class ExtractorOverviewViewModel(
             when (result) {
                 SnackbarResult.Dismissed -> Unit
                 SnackbarResult.ActionPerformed ->
-                    navigators.navController.navigate(ExtractorHomeNavTarget)
+                    navigators.navController.navigate(ExtractorYourSpaceNavTarget)
             }
         }
 
