@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,8 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
+import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
-import com.drbrosdev.extractor.ui.components.shared.OutlinedExtractorActionButton
 
 
 @Composable
@@ -89,12 +90,15 @@ fun ExtractorClearEventsScreen(
                 modifier = Modifier.padding(vertical = 8.dp)
             )
 
-            OutlinedExtractorActionButton(
+            ExtractorButton(
                 onClick = onClearLogs,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
-                contentColor = MaterialTheme.colorScheme.error
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                ),
             ) {
                 Text(text = stringResource(R.string.delete_event_logs))
             }

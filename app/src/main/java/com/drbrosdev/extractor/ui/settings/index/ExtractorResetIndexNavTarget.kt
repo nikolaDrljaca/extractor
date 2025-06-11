@@ -46,7 +46,7 @@ data object ExtractorResetIndexNavTarget : NavTarget {
 @ScreenPreview
 @Composable
 private fun CurrentPreview() {
-    ExtractorTheme(dynamicColor = false) {
+    ExtractorTheme(dynamicColor = true) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {

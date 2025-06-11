@@ -5,7 +5,6 @@ import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -35,7 +34,6 @@ import coil3.request.crossfade
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtractorImageItem(
     modifier: Modifier = Modifier,
@@ -43,6 +41,7 @@ fun ExtractorImageItem(
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     size: Int? = null,
+    cornerSize: Dp = 2.dp,
     checkedState: ExtractorListItemCheckedState
 ) {
     val sizeModifier = if (size != null) {
@@ -51,17 +50,17 @@ fun ExtractorImageItem(
         Modifier
     }
     val scaleSize = when {
-        size != null -> size * 2
+        size != null -> size * 4
         else -> 200
     }
 
     val transition = updateTransition(targetState = checkedState, label = "")
 
-    val cornerSize by transition.animateDp(
+    val cornerSizeAnimated by transition.animateDp(
         targetValueByState = {
             when (it) {
-                ExtractorListItemCheckedState.CHECKED -> 12.dp
-                ExtractorListItemCheckedState.UNCHECKED -> 2.dp
+                ExtractorListItemCheckedState.CHECKED -> 14.dp
+                ExtractorListItemCheckedState.UNCHECKED -> cornerSize
             }
         },
         label = ""
@@ -87,7 +86,7 @@ fun ExtractorImageItem(
         label = ""
     )
 
-    val cornerShape = RoundedCornerShape(cornerSize)
+    val cornerShape = RoundedCornerShape(cornerSizeAnimated)
     
     val haptics = LocalHapticFeedback.current
 

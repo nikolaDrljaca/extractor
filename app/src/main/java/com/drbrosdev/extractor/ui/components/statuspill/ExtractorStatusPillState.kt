@@ -10,6 +10,12 @@ sealed interface ExtractorStatusPillState {
         val searchesLeft: Int
     ) : ExtractorStatusPillState
 
+    // search count is disabled - show how many images are indexed
+    @Immutable
+    data class Disabled(
+        val indexCount: Int
+    ): ExtractorStatusPillState
+
     // extraction is running -- report progress
     @Immutable
     data class SyncInProgress(

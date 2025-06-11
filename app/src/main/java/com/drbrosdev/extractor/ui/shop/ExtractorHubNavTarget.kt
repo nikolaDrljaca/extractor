@@ -39,6 +39,7 @@ object ExtractorHubNavTarget : NavTarget {
             snackbarState = viewModel.snackbarHostState,
             statusState = statusState,
             searchCount = searchCount,
+            searchCountEnabled = viewModel.isSearchCountEnabled,
             onBack = { navController.pop() },
             onSettingsClick = {
                 activity.openAppSettings()
@@ -65,6 +66,7 @@ private fun CurrentPreview() {
                     inStorageCount = 0,
                     eventSink = {}
                 ),
+                searchCountEnabled = false,
                 onBack = {},
                 onSettingsClick = {},
                 onPurchaseItemClick = {}

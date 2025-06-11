@@ -13,11 +13,13 @@ import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.generate.GenerateMostCommonExtractionBundles
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
+import com.drbrosdev.extractor.framework.FeatureFlags
+import com.drbrosdev.extractor.framework.check
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesComponent
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchComponent
-import com.drbrosdev.extractor.ui.home.ExtractorHomeNavTarget
+import com.drbrosdev.extractor.ui.yourspace.ExtractorYourSpaceNavTarget
 import com.drbrosdev.extractor.ui.search.ExtractorSearchNavTarget
 import com.drbrosdev.extractor.ui.shop.ExtractorHubNavTarget
 import com.drbrosdev.extractor.util.WhileUiSubscribed
@@ -48,6 +50,9 @@ class ExtractorOverviewViewModel(
             is ExtractionProgress.Done -> {
                 when {
                     progress.isDataIncomplete() -> ExtractorStatusPillState.OutOfSync
+
+                    FeatureFlags.SEARCH_COUNT_ENABLED.check().not() ->
+                        ExtractorStatusPillState.Disabled(progress.inStorageCount)
 
                     else -> ExtractorStatusPillState.Idle(searchesLeft = count)
                 }
@@ -80,7 +85,7 @@ class ExtractorOverviewViewModel(
     val snackbarHostState = SnackbarHostState()
 
     fun onHomeClick() {
-        navigators.navController.navigate(ExtractorHomeNavTarget)
+        navigators.navController.navigate(ExtractorYourSpaceNavTarget)
     }
 
     fun onHubClick() {
@@ -97,7 +102,7 @@ class ExtractorOverviewViewModel(
             when (result) {
                 SnackbarResult.Dismissed -> Unit
                 SnackbarResult.ActionPerformed ->
-                    navigators.navController.navigate(ExtractorHomeNavTarget)
+                    navigators.navController.navigate(ExtractorYourSpaceNavTarget)
             }
         }
 

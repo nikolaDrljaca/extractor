@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -21,9 +22,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.ui.theme.ButtonShape
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-import com.drbrosdev.extractor.ui.theme.md_theme_light_primary
 import com.drbrosdev.extractor.util.CombinedPreview
 
 @Composable
@@ -40,7 +39,7 @@ fun ExtractorActionButton(
             .then(modifier),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
-            contentColor = md_theme_light_primary,
+            contentColor = MaterialTheme.colorScheme.primary,
             disabledContentColor = Color.LightGray,
             disabledContainerColor = Color.Gray
         ),
@@ -58,18 +57,14 @@ fun ExtractorButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     contentPadding: PaddingValues = ExtractorButtonDefaults.paddingValues(),
+    colors: ButtonColors = ExtractorButtonDefaults.colors(),
     content: @Composable (RowScope.() -> Unit)
 ) {
     Button(
         onClick = onClick,
         modifier = Modifier
             .then(modifier),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContentColor = Color.LightGray,
-            disabledContainerColor = Color.Gray
-        ),
+        colors = colors,
         enabled = enabled,
         contentPadding = contentPadding,
         shape = RoundedCornerShape(18.dp)
@@ -144,7 +139,7 @@ fun BottomSheetButton(
             contentColor = Color.Black,
             containerColor = Color.White
         ),
-        shape = ButtonShape
+        shape = RoundedCornerShape(14.dp)
     ) {
         content()
     }
@@ -177,6 +172,14 @@ object ExtractorButtonDefaults {
         end = rightContentPadding,
         top = vertical,
         bottom = vertical
+    )
+
+    @Composable
+    fun colors() = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        disabledContentColor = Color.LightGray,
+        disabledContainerColor = Color.Gray
     )
 }
 

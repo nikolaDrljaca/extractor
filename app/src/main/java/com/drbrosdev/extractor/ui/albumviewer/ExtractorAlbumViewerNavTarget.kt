@@ -1,37 +1,28 @@
 package com.drbrosdev.extractor.ui.albumviewer
 
+import android.net.Uri
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.Album
-import com.drbrosdev.extractor.domain.model.AlbumEntry
-import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.SearchType
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.shared.ConfirmationDialogActions
-import com.drbrosdev.extractor.ui.components.shared.ExtractorAlbumBottomSheetAction
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
-import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CollectFlow
 import com.drbrosdev.extractor.util.ScreenPreview
 import com.drbrosdev.extractor.util.launchShareIntent
-import dev.olshevski.navigation.reimagined.navigate
-import dev.olshevski.navigation.reimagined.pop
-import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -41,113 +32,78 @@ data class ExtractorAlbumViewerNavTarget(
     private val albumId: Long
 ) : NavTarget {
 
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
     override fun Content(navigators: Navigators) {
         val viewModel: ExtractorAlbumViewerViewModel = koinViewModel {
-            parametersOf(albumId)
+            parametersOf(albumId, navigators)
         }
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val dialogSelectionState by viewModel.dialogSelectionState.collectAsStateWithLifecycle()
 
         val snackbarHostState = remember {
             SnackbarHostState()
         }
-
-        val navController = navigators.navController
         val context = LocalContext.current
-        val scope = rememberCoroutineScope()
 
         CollectFlow(viewModel.events) {
             when (it) {
-                ExtractorAlbumViewerEvents.SelectionCreated -> {
-                    scope.launch {
-                        val result = snackbarHostState.showSnackbar(
-                            message = context.getString(R.string.snack_album_created),
-                            actionLabel = context.getString(R.string.snack_view)
-                        )
-                        when (result) {
-                            SnackbarResult.Dismissed -> Unit
-                            SnackbarResult.ActionPerformed -> navController.pop()
-                        }
-                    }
-                }
-
-                ExtractorAlbumViewerEvents.AlbumDeleted -> {
-                    navController.pop()
-                }
-
-                ExtractorAlbumViewerEvents.SelectionDeleted -> {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            message = context.getString(R.string.items_deleted),
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-
-                is ExtractorAlbumViewerEvents.NavigateToImageViewer -> {
-                    val destination = ExtractorImageViewerNavTarget(
-                        images = it.uris,
-                        initialIndex = it.initialIndex
-                    )
-                    navController.navigate(destination)
-                }
-
                 is ExtractorAlbumViewerEvents.ShareAlbumEntries -> {
                     context.launchShareIntent(it.uris)
                 }
             }
         }
 
-        ExtractorAlbumViewerScreen(
-            onImageClick = viewModel::onNavigateToViewer,
-            state = state,
-            imageGridState = viewModel.gridState,
-            snackbarHostState = snackbarHostState,
-            onBack = { navController.pop() },
-            onFabClick = viewModel::onShowBottomSheet,
-            onBottomSheetAction = {
-                when (it) {
-                    ExtractorAlbumBottomSheetAction.Delete -> viewModel.onBottomSheetDelete()
-                    ExtractorAlbumBottomSheetAction.Dismiss -> viewModel.onDismissDialog()
-                    ExtractorAlbumBottomSheetAction.Share -> viewModel.onShareAction()
-                }
-            },
-            onDeleteDialogAction = {
-                when (it) {
-                    ConfirmationDialogActions.Confirm -> {
-                        viewModel.onDeleteAlbum()
-                        navController.pop()
+        when {
+            state != null -> {
+                ExtractorAlbumViewerScreen(
+                    state = state!!,
+                    imageGridState = viewModel.gridState,
+                    snackbarHostState = snackbarHostState,
+                    dialogSelectionState = dialogSelectionState,
+                    onDeleteDialogAction = {
+                        when (it) {
+                            ConfirmationDialogActions.Confirm -> viewModel.onDeleteAlbum()
+                            ConfirmationDialogActions.Deny -> viewModel.onDismissDialog()
+                            ConfirmationDialogActions.Dismiss -> viewModel.onDismissDialog()
+                        }
+                    },
+                    onShareDialogAction = {
+                        when (it) {
+                            ConfirmationDialogActions.Confirm -> {
+                                viewModel.onShareConfirmed()
+                                viewModel.onDismissDialog()
+                            }
+
+                            ConfirmationDialogActions.Deny -> viewModel.onDismissDialog()
+                            ConfirmationDialogActions.Dismiss -> viewModel.onDismissDialog()
+                        }
+                    },
+                    onMultiselectAction = {
+                        when (it) {
+                            MultiselectAction.Cancel -> viewModel.onSelectionClear()
+                            MultiselectAction.CreateAlbum -> viewModel.onSelectionCreate()
+
+                            MultiselectAction.Share -> {
+                                val uris = viewModel.getSelectedUris()
+                                context.launchShareIntent(uris)
+                            }
+
+                            MultiselectAction.Delete -> viewModel.onDeleteSelection()
+                        }
                     }
+                )
+            }
 
-                    ConfirmationDialogActions.Deny -> viewModel.onDismissDialog()
-                    ConfirmationDialogActions.Dismiss -> viewModel.onDismissDialog()
-                }
-            },
-            onShareDialogAction = {
-                when (it) {
-                    ConfirmationDialogActions.Confirm -> {
-                        viewModel.onShareConfirmed()
-                        viewModel.onDismissDialog()
-                    }
-
-                    ConfirmationDialogActions.Deny -> viewModel.onDismissDialog()
-                    ConfirmationDialogActions.Dismiss -> viewModel.onDismissDialog()
-                }
-            },
-            onMultiselectAction = {
-                when (it) {
-                    MultiselectAction.Cancel -> viewModel.onSelectionClear()
-                    MultiselectAction.CreateAlbum -> viewModel.onSelectionCreate()
-
-                    MultiselectAction.Share -> {
-                        val uris = viewModel.getSelectedUris()
-                        context.launchShareIntent(uris)
-                    }
-
-                    MultiselectAction.Delete -> viewModel.onDeleteSelection()
+            else -> {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    LoadingIndicator()
                 }
             }
-        )
+        }
     }
 }
 
@@ -155,36 +111,32 @@ data class ExtractorAlbumViewerNavTarget(
 @Composable
 @ScreenPreview
 private fun CurrentPreview() {
-    val data = ExtractorAlbumViewerScreenState.Content(
-        album = Album(
-            id = 0L,
-            name = "Some album",
-            keyword = "keyword",
-            searchType = SearchType.PARTIAL,
-            keywordType = KeywordType.IMAGE,
-            entries = listOf(
-                AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(11L)),
-                AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(12L)),
-                AlbumEntry(uri = MediaImageUri(""), id = MediaImageId(13L)),
-            )
+    val state = ExtractorAlbumViewerState(
+        id = 1L,
+        hero = AlbumHeroUiModel(
+            name = "Foobar",
+            description = "image * partial * 21",
+            heroImage = MediaImageUri(Uri.EMPTY.toString())
         ),
-        dialogSelection = ExtractorAlbumDialogSelection.None
+        entries = emptyList(),
+        shouldShowSelectBar = false,
+        eventSink = {}
     )
     ExtractorTheme(dynamicColor = false) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
             ExtractorAlbumViewerScreen(
-                state = data,
+                state = state,
                 imageGridState = ExtractorGridState(),
                 snackbarHostState = SnackbarHostState(),
-                onImageClick = {},
-                onBack = {},
-                onDeleteDialogAction = {},
-                onShareDialogAction = {},
-                onMultiselectAction = {},
-                onBottomSheetAction = {},
-                onFabClick = {}
+                dialogSelectionState = ExtractorAlbumDialogSelection.None,
+                onDeleteDialogAction = {
+                },
+                onShareDialogAction = {
+                },
+                onMultiselectAction = {
+                }
             )
         }
     }

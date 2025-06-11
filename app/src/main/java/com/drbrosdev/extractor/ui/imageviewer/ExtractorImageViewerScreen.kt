@@ -2,16 +2,17 @@ package com.drbrosdev.extractor.ui.imageviewer
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,15 +32,14 @@ import androidx.constraintlayout.compose.layoutId
 import coil3.compose.AsyncImage
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorBottomBarItem
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorImageBottomBar
-import com.drbrosdev.extractor.ui.components.shared.ExtractorImageTopBar
 import com.drbrosdev.extractor.util.asImageRequest
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ExtractorImageViewerScreen(
     onBottomBarClick: (ExtractorBottomBarItem) -> Unit,
-    onBack: () -> Unit,
     pagerState: PagerState,
     images: List<Uri>,
 ) {
@@ -87,24 +87,15 @@ fun ExtractorImageViewerScreen(
 
         AnimatedVisibility(
             visible = showUi,
-            modifier = Modifier
-                .layoutId(ViewIds.TOP_BAR),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            ExtractorImageTopBar(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(12.dp),
-                onBackClick = onBack,
-            )
-        }
-
-        AnimatedVisibility(
-            visible = showUi,
             modifier = Modifier.layoutId(ViewIds.BOTTOM_BAR),
-            enter = fadeIn(),
-            exit = fadeOut()
+            enter = slideInVertically(
+                animationSpec = MotionScheme.expressive().slowEffectsSpec(),
+                initialOffsetY = { it }
+            ),
+            exit = slideOutVertically(
+                animationSpec = MotionScheme.expressive().slowEffectsSpec(),
+                targetOffsetY = { it }
+            )
         ) {
             ExtractorImageBottomBar(
                 onClick = onBottomBarClick,
@@ -116,7 +107,6 @@ fun ExtractorImageViewerScreen(
 
 private fun imageDetailScreenConstraintSet() = ConstraintSet {
     val bottomBar = createRefFor(ViewIds.BOTTOM_BAR)
-    val topBar = createRefFor(ViewIds.TOP_BAR)
     val pager = createRefFor(ViewIds.PAGER)
 
     constrain(pager) {
@@ -132,19 +122,10 @@ private fun imageDetailScreenConstraintSet() = ConstraintSet {
         bottom.linkTo(parent.bottom)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(topBar) {
-        top.linkTo(parent.top)
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-        width = Dimension.fillToConstraints
     }
 }
 
 private object ViewIds {
-    const val TOP_BAR = "topBar"
     const val BOTTOM_BAR = "bottomBar"
     const val PAGER = "pager"
 }

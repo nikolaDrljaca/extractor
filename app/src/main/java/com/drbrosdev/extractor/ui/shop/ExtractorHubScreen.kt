@@ -48,7 +48,9 @@ fun ExtractorHubScreen(
     onPurchaseItemClick: () -> Unit,
     snackbarState: SnackbarHostState,
     statusState: ExtractorStatusDialogUiState,
-    searchCount: Int
+    // TODO @drljacan bundle these into a state object
+    searchCount: Int,
+    searchCountEnabled: Boolean
 ) {
     val textStyle = MaterialTheme.typography.bodyMedium.copy(
         fontWeight = FontWeight.Normal
@@ -89,35 +91,36 @@ fun ExtractorHubScreen(
             }
 
             // search count
-            Column(modifier = Modifier.layoutId(ViewIds.SEARCHES)) {
-                Text(
-                    text = stringResource(R.string.num_of_searches),
-                    style = MaterialTheme.typography.headlineMedium
-                )
+            if (searchCountEnabled) {
+                Column(modifier = Modifier.layoutId(ViewIds.SEARCHES)) {
+                    Text(
+                        text = stringResource(R.string.num_of_searches),
+                        style = MaterialTheme.typography.headlineMedium
+                    )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                ExtractorSearchCountPill(
-                    searchCount = searchCount,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+                    ExtractorSearchCountPill(
+                        searchCount = searchCount,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
-            // get more with purchase
-            Column(
-                modifier = Modifier.layoutId(ViewIds.BUY_VIEW),
-                verticalArrangement = Arrangement.spacedBy(space = 8.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.direct_support),
-                    style = textStyle
-                )
+                // get more with purchase
+                Column(
+                    modifier = Modifier.layoutId(ViewIds.BUY_VIEW),
+                    verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.direct_support),
+                        style = textStyle
+                    )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                ExtractorShopPlaceholder(
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    ExtractorShopPlaceholder(
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
 //                FlowRow(
 //                    verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -138,34 +141,35 @@ fun ExtractorHubScreen(
 //                    text = stringResource(R.string.buy_disclaimer),
 //                    style = smallLabel
 //                )
-            }
-
-            // reset index to get more
-            Column(
-                modifier = Modifier.layoutId(ViewIds.ALTERNATIVE),
-                verticalArrangement = Arrangement.spacedBy(space = 8.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.alternative),
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Text(
-                    text = stringResource(R.string.alternative_expl),
-                    style = textStyle
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                OutlinedExtractorActionButton(
-                    onClick = onSettingsClick,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(imageVector = Icons.Rounded.Settings, contentDescription = "Settings")
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = stringResource(R.string.open_settings))
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                // reset index to get more
+                Column(
+                    modifier = Modifier.layoutId(ViewIds.ALTERNATIVE),
+                    verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.alternative),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Text(
+                        text = stringResource(R.string.alternative_expl),
+                        style = textStyle
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    OutlinedExtractorActionButton(
+                        onClick = onSettingsClick,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(imageVector = Icons.Rounded.Settings, contentDescription = "Settings")
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = stringResource(R.string.open_settings))
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
 

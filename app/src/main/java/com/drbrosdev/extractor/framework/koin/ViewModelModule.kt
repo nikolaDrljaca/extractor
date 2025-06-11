@@ -8,7 +8,7 @@ import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerServi
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.dialog.userembed.ExtractorUserEmbedViewModel
-import com.drbrosdev.extractor.ui.home.ExtractorHomeViewModel
+import com.drbrosdev.extractor.ui.yourspace.ExtractorYourSpaceViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
@@ -108,11 +108,12 @@ val viewModelModule = module {
         )
     }
 
-    viewModel {
-        ExtractorHomeViewModel(
+    viewModel { params ->
+        ExtractorYourSpaceViewModel(
             savedStateHandle = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             generateUserCollage = get(),
+            navigators = params.get()
         )
     }
 
@@ -121,7 +122,8 @@ val viewModelModule = module {
             stateHandle = get(),
             workerService = get<DefaultExtractorWorkerService>(),
             albumRepository = get<DefaultAlbumRepository>(),
-            albumId = params.get()
+            albumId = params.get(),
+            navigators = params.get()
         )
     }
 
