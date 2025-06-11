@@ -20,7 +20,7 @@ fun createTransitionSpec(density: Density) = NavTransitionSpec<NavTarget?> { act
 
     when {
         // handle image viewer
-        handleImageViewer(from, to) -> fade
+        handleImageViewer(from, to) -> fadeThrough
 
         // handle search transitions
         handleSearch(from, to) -> fadeThrough
