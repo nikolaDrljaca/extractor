@@ -13,6 +13,8 @@ class DefaultRunExtractor(
     private val extractVisualEmbeds: ExtractVisualEmbeds,
 ) : RunExtractor {
 
+    // TODO: @drljacan replace all extractEmbed* methods (remove them) and depend on the inference service
+    // TODO: Too many layers of indirection - not necessary - they are not common (reused) logic
     override suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds? {
         return withContext(dispatcher) {
             // create media image data - prepare for extraction

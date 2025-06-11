@@ -3,7 +3,7 @@ package com.drbrosdev.extractor.domain.service
 import com.drbrosdev.extractor.domain.model.MediaImageData
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 
-interface InferenceService {
+interface InferenceService: AutoCloseable {
 
     suspend fun processText(image: MediaImageData): Result<String>
 

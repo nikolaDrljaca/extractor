@@ -29,6 +29,8 @@ class ExtractorWorker(
             )
         }
         startExtraction.execute()
+        //TODO @drljacan inferenceService clients should be closed here!
+        // with a finally block!
         return Result.success()
     }
 
