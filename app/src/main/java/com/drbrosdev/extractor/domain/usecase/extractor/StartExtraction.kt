@@ -5,18 +5,29 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
+import com.drbrosdev.extractor.domain.service.InferenceService
 import com.drbrosdev.extractor.framework.logger.logEvent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlin.time.measureTime
 
 object ExtractionNotInSync
 
 class StartExtraction(
-    private val extractor: RunBulkExtractor,
     private val mediaImageRepository: MediaStoreImageRepository,
-    private val extractionRepository: ExtractorRepository
+    private val extractionRepository: ExtractorRepository,
+    private val inferenceService: InferenceService
 ) {
     suspend fun execute(): Either<ExtractionNotInSync, Unit> = either {
+        // create bulk extractor
+        val extractor = RunBulkExtractor(
+            mediaImageRepository = mediaImageRepository,
+            extractorRepository = extractionRepository,
+            runExtractor = DefaultRunExtractor(
+                dispatcher = Dispatchers.Default,
+                inferenceService = inferenceService
+            )
+        )
         // execute bulk extraction and measure time
         val time = measureTime {
             extractor.execute()

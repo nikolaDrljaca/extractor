@@ -9,15 +9,19 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
 import com.drbrosdev.extractor.framework.logger.logErrorEvent
+import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.notification.NotificationService
 import com.drbrosdev.extractor.framework.requiresApi
+import kotlinx.coroutines.Dispatchers
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 
 class ExtractorWorker(
     context: Context,
     workerParameters: WorkerParameters,
-    private val startExtraction: StartExtraction,
     private val notificationService: NotificationService
-) : CoroutineWorker(context, workerParameters) {
+) : CoroutineWorker(context, workerParameters), KoinComponent {
 
     override suspend fun doWork(): Result {
         try {
@@ -28,9 +32,16 @@ class ExtractorWorker(
                 throwable = e
             )
         }
+        // create inference service
+        val inferenceService = MlKitMediaPipeInferenceService(
+            dispatcher = Dispatchers.Default,
+            context = applicationContext
+        )
+        val startExtraction: StartExtraction = get { parametersOf(inferenceService) }
         startExtraction.execute()
         //TODO @drljacan inferenceService clients should be closed here!
         // with a finally block!
+        inferenceService.close() // TODO use arrow.resource so in cases of CancellationExceptions close is still called
         return Result.success()
     }
 

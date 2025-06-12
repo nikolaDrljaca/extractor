@@ -76,7 +76,6 @@ val frameworkModule = module {
         ExtractorWorker(
             context = androidContext(),
             workerParameters = it.get(),
-            startExtraction = get(),
             notificationService = get()
         )
     }

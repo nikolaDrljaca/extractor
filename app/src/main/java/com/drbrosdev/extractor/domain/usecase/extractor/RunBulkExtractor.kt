@@ -7,13 +7,10 @@ import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
 import com.drbrosdev.extractor.framework.logger.logEvent
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 class RunBulkExtractor(
-    private val dispatcher: CoroutineDispatcher,
     private val mediaImageRepository: MediaStoreImageRepository,
     private val runExtractor: RunExtractor,
     private val extractorRepository: ExtractorRepository
@@ -44,7 +41,6 @@ class RunBulkExtractor(
                             visualEmbeds = embeds?.visualEmbeds ?: emptyList()
                         )
                     }
-                    .flowOn(dispatcher)
                     .collect {
                         extractorRepository.createExtractionData(it)
                     }

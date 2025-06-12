@@ -63,6 +63,8 @@ class MlKitMediaPipeInferenceService(
     }
 
     // TODO @drljacan review `result` related code - mapCatching will catch CancellationExceptions!
+    // TODO all exceptions other than CancellationExceptions need to be handled here
+    // TODO Use either Either.catch or effect {} from arrow - they only handle NonFatal Exceptions
 
     override suspend fun processText(image: MediaImageData): Result<String> =
         withContext(dispatcher) {
@@ -108,6 +110,7 @@ class MlKitMediaPipeInferenceService(
         }
     }
 
+    // TODO provide override
     suspend fun isImageDescriptorAvailable() = withContext(dispatcher) {
         imageDescriber.checkFeatureStatus().await() == FeatureStatus.AVAILABLE
     }
@@ -119,6 +122,7 @@ class MlKitMediaPipeInferenceService(
         imageDescriber.close()
     }
 
+    // TODO wire in
     private suspend fun runImageDescriber(image: InputImage): String {
         val featureStatus = imageDescriber.checkFeatureStatus()
             .await()
@@ -140,6 +144,7 @@ class MlKitMediaPipeInferenceService(
         return imageDescription.description
     }
 
+    // TODO Rip this model out completely
     private fun runMediaPipe(image: InputImage): List<String> {
         val bitmap = image.bitmapInternal ?: return emptyList()
         val result =

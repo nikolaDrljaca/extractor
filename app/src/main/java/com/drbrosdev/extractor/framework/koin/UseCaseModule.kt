@@ -7,11 +7,9 @@ import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
 import com.drbrosdev.extractor.domain.usecase.album.StoreAlbums
 import com.drbrosdev.extractor.domain.usecase.extractor.CreateMediaImageData
-import com.drbrosdev.extractor.domain.usecase.extractor.DefaultRunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.ExtractTextEmbed
 import com.drbrosdev.extractor.domain.usecase.extractor.ExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
-import com.drbrosdev.extractor.domain.usecase.extractor.RunExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbeds
@@ -86,17 +84,7 @@ val useCaseModule = module {
     }
 
     factory {
-        DefaultRunExtractor(
-            createMediaImageData = get(),
-            extractVisualEmbeds = get(),
-            extractTextEmbed = get(),
-            dispatcher = get(named(CoroutineModuleName.Default)),
-        )
-    } bind RunExtractor::class
-
-    factory {
         RunBulkExtractor(
-            dispatcher = get(named(CoroutineModuleName.Default)),
             mediaImageRepository = get(),
             extractorRepository = get<DefaultExtractorRepository>(),
             runExtractor = get()
@@ -186,11 +174,11 @@ val useCaseModule = module {
         )
     }
 
-    factory {
+    factory { params ->
         StartExtraction(
-            extractor = get(),
             mediaImageRepository = get(),
-            extractionRepository = get()
+            extractionRepository = get(),
+            inferenceService = params.get()
         )
     }
 
