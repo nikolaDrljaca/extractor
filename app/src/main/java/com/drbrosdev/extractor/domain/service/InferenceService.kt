@@ -11,4 +11,7 @@ interface InferenceService: AutoCloseable {
 
     suspend fun prepareImage(uri: MediaImageUri): Result<MediaImageData>
 
+    suspend fun processDescription(image: MediaImageData): Result<String>
+
+    suspend fun isImageDescriptorAvailable(): Boolean
 }

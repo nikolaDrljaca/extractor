@@ -34,7 +34,7 @@ class ExtractorWorker(
         }
         // create inference service
         val inferenceService = MlKitMediaPipeInferenceService(
-            dispatcher = Dispatchers.Default,
+            dispatcher = Dispatchers.Default, // is the same one CoroutineWorker uses
             context = applicationContext
         )
         val startExtraction: StartExtraction = get { parametersOf(inferenceService) }
