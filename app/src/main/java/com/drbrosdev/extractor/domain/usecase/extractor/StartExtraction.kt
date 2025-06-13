@@ -7,7 +7,6 @@ import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.service.InferenceService
 import com.drbrosdev.extractor.framework.logger.logEvent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlin.time.measureTime
 
@@ -24,7 +23,6 @@ class StartExtraction(
             mediaImageRepository = mediaImageRepository,
             extractorRepository = extractionRepository,
             runExtractor = DefaultRunExtractor(
-                dispatcher = Dispatchers.Default,
                 inferenceService = inferenceService
             )
         )

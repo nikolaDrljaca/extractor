@@ -17,6 +17,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 
+/*
+ExtractorWorker can be a KoinComponent since it is a part of the framework layer.
+ */
 class ExtractorWorker(
     context: Context,
     workerParameters: WorkerParameters,
