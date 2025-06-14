@@ -18,11 +18,17 @@ class StartExtraction(
     private val inferenceService: InferenceService
 ) {
     suspend fun execute(): Either<ExtractionNotInSync, Unit> = either {
+        // check if gemini nano is available
+        if (inferenceService.isImageDescriptorAvailable().not()) {
+            logEvent("GeminiNano is not available on this system.")
+        } else {
+            logEvent("GeminiNano is might be available on this system.")
+        }
         // create bulk extractor
         val extractor = RunBulkExtractor(
             mediaImageRepository = mediaImageRepository,
             extractorRepository = extractionRepository,
-            runExtractor = DefaultRunExtractor(
+            runExtractor = RunExtractor(
                 inferenceService = inferenceService
             )
         )

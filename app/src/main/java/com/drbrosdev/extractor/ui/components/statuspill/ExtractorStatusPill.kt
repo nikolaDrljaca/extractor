@@ -57,7 +57,7 @@ fun ExtractorStatusPill(
                     text = stringResource(
                         R.string.current_progress_percent,
                         state.progress
-                    )
+                    ) + "%"
                 )
 
                 is ExtractorStatusPillState.Disabled -> Text(

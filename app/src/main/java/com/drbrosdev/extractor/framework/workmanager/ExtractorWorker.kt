@@ -7,6 +7,8 @@ import android.os.Build
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import arrow.fx.coroutines.resource
+import arrow.fx.coroutines.resourceScope
 import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
 import com.drbrosdev.extractor.framework.logger.logErrorEvent
 import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
@@ -35,16 +37,21 @@ class ExtractorWorker(
                 throwable = e
             )
         }
-        // create inference service
-        val inferenceService = MlKitMediaPipeInferenceService(
-            dispatcher = Dispatchers.Default, // is the same one CoroutineWorker uses
-            context = applicationContext
-        )
-        val startExtraction: StartExtraction = get { parametersOf(inferenceService) }
-        startExtraction.execute()
-        //TODO @drljacan inferenceService clients should be closed here!
-        // with a finally block!
-        inferenceService.close() // TODO use arrow.resource so in cases of CancellationExceptions close is still called
+        // using resource here will handle CancellationExceptions and other Fatal exceptions properly
+        resourceScope {
+            // create inference service
+            val inferenceService = resource(
+                acquire = {
+                    MlKitMediaPipeInferenceService(
+                        dispatcher = Dispatchers.Default, // is the same one CoroutineWorker uses
+                        context = applicationContext
+                    )
+                },
+                release = { it, _ -> it.close() }
+            ).bind()
+            val startExtraction: StartExtraction = get { parametersOf(inferenceService) }
+            startExtraction.execute()
+        }
         return Result.success()
     }
 
