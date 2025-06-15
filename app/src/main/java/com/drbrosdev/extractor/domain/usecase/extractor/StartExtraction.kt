@@ -5,6 +5,7 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.drbrosdev.extractor.domain.repository.ExtractorRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
+import com.drbrosdev.extractor.domain.service.InferenceService
 import com.drbrosdev.extractor.framework.logger.logEvent
 import kotlinx.coroutines.flow.first
 import kotlin.time.measureTime
@@ -12,11 +13,25 @@ import kotlin.time.measureTime
 object ExtractionNotInSync
 
 class StartExtraction(
-    private val extractor: RunBulkExtractor,
     private val mediaImageRepository: MediaStoreImageRepository,
-    private val extractionRepository: ExtractorRepository
+    private val extractionRepository: ExtractorRepository,
+    private val inferenceService: InferenceService
 ) {
     suspend fun execute(): Either<ExtractionNotInSync, Unit> = either {
+        // check if gemini nano is available
+        if (inferenceService.isImageDescriptorAvailable().not()) {
+            logEvent("GeminiNano is not available on this system.")
+        } else {
+            logEvent("GeminiNano is might be available on this system.")
+        }
+        // create bulk extractor
+        val extractor = RunBulkExtractor(
+            mediaImageRepository = mediaImageRepository,
+            extractorRepository = extractionRepository,
+            runExtractor = RunExtractor(
+                inferenceService = inferenceService
+            )
+        )
         // execute bulk extraction and measure time
         val time = measureTime {
             extractor.execute()

@@ -37,7 +37,7 @@ android {
 
     defaultConfig {
         applicationId = "com.drbrosdev.extractor"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 31
         versionName = "25.05"
@@ -123,7 +123,9 @@ dependencies {
     //ML Kit
     implementation("com.google.mlkit:image-labeling:17.0.9")
     implementation("com.google.mlkit:text-recognition:16.0.1")
+    implementation("com.google.mlkit:genai-image-description:1.0.0-beta1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.10.2")
 
     //Navigation Reimagined
     implementation("dev.olshevski.navigation:reimagined:1.5.0")
@@ -158,9 +160,6 @@ dependencies {
 
     // timber logging
     implementation("com.jakewharton.timber:timber:5.0.1")
-
-    // mediaPipe image classification
-    implementation("com.google.mediapipe:tasks-vision:0.20230731")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 

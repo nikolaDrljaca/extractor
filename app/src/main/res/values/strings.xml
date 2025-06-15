@@ -172,6 +172,6 @@
     <string name="data_out_of_sync">Data out of sync.</string>
     <string name="searches_left_count">Searches left: %1$s</string>
     <string name="indexed_images_count">Indexed %1$s images.</string>
-    <string name="current_progress_percent">Current progress: %1$s%</string>
+    <string name="current_progress_percent">Current progress: %1$s</string>
     <string name="your_space">Your Space</string>
 </resources>

@@ -14,7 +14,5 @@ sealed class Embed {
 
     data class User(override val value: String) : Embed()
 
-    data class Visual(
-        override val value: String,
-    ) : Embed()
+    data class Visual(override val value: String) : Embed()
 }

@@ -6,11 +6,11 @@ import com.drbrosdev.extractor.domain.service.AppReviewService
 import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
 import com.drbrosdev.extractor.domain.service.InferenceService
 import com.drbrosdev.extractor.framework.ActivityProvider
-import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.framework.logger.EventLogDatabase
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
+import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.notification.NotificationService
 import com.drbrosdev.extractor.framework.permission.PermissionService
 import com.drbrosdev.extractor.framework.workmanager.AlbumCleanupWorker
@@ -70,13 +70,12 @@ val frameworkModule = module {
         )
     } bind InferenceService::class
 
-    //Using named() as sometimes koin can fail to instantiate the workerParameters
+    //NOTE: Using named() as sometimes koin can fail to instantiate the workerParameters
     //leading to runtime exceptions
     worker(named<ExtractorWorker>()) {
         ExtractorWorker(
             context = androidContext(),
             workerParameters = it.get(),
-            startExtraction = get(),
             notificationService = get()
         )
     }

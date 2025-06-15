@@ -7,17 +7,26 @@ import android.os.Build
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import arrow.fx.coroutines.resource
+import arrow.fx.coroutines.resourceScope
 import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
 import com.drbrosdev.extractor.framework.logger.logErrorEvent
+import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.notification.NotificationService
 import com.drbrosdev.extractor.framework.requiresApi
+import kotlinx.coroutines.Dispatchers
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.parameter.parametersOf
 
+/*
+ExtractorWorker can be a KoinComponent since it is a part of the framework layer.
+ */
 class ExtractorWorker(
     context: Context,
     workerParameters: WorkerParameters,
-    private val startExtraction: StartExtraction,
     private val notificationService: NotificationService
-) : CoroutineWorker(context, workerParameters) {
+) : CoroutineWorker(context, workerParameters), KoinComponent {
 
     override suspend fun doWork(): Result {
         try {
@@ -28,7 +37,21 @@ class ExtractorWorker(
                 throwable = e
             )
         }
-        startExtraction.execute()
+        // using resource here will handle CancellationExceptions and other Fatal exceptions properly
+        resourceScope {
+            // create inference service
+            val inferenceService = resource(
+                acquire = {
+                    MlKitMediaPipeInferenceService(
+                        dispatcher = Dispatchers.Default, // is the same one CoroutineWorker uses
+                        context = applicationContext
+                    )
+                },
+                release = { it, _ -> it.close() }
+            ).bind()
+            val startExtraction: StartExtraction = get { parametersOf(inferenceService) }
+            startExtraction.execute()
+        }
         return Result.success()
     }
 
