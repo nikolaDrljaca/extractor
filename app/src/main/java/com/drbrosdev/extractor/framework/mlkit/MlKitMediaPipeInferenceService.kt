@@ -90,6 +90,7 @@ class MlKitMediaPipeInferenceService(
 
     private fun extractInputImage(image: MediaImageData) = result {
         ensure(image is MlKitImageData) {
+            logEvent("MediaImageData implementation does not contain an InputImage!")
             error("MediaImageData implementation does not contain InputImage!")
         }
         image.inputImage
