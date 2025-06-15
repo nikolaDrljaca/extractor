@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.domain.model
 
 
+// TODO Excessive - not necessary - rip this out
 sealed class Embed {
     abstract val value: String
 

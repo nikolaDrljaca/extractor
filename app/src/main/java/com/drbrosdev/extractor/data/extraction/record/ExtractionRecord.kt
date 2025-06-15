@@ -9,6 +9,9 @@ import com.drbrosdev.extractor.domain.model.MediaImageUri
 import java.time.LocalDateTime
 
 
+// TODO These relation models need to be adjusted to fit the new Domain
+// and to be mapped accordingly
+// TODO LupaImageRecord
 @Entity(
     tableName = "extraction"
 )

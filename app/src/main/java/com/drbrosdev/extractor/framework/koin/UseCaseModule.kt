@@ -6,9 +6,6 @@ import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
 import com.drbrosdev.extractor.domain.usecase.album.StoreAlbums
-import com.drbrosdev.extractor.domain.usecase.extractor.CreateMediaImageData
-import com.drbrosdev.extractor.domain.usecase.extractor.ExtractTextEmbed
-import com.drbrosdev.extractor.domain.usecase.extractor.ExtractVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
 import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
@@ -32,7 +29,6 @@ import com.drbrosdev.extractor.domain.usecase.token.GenerateMostCommonTokens
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
-import com.drbrosdev.extractor.framework.mlkit.MlKitMediaPipeInferenceService
 import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -61,25 +57,6 @@ val useCaseModule = module {
             dispatcher = get(named(CoroutineModuleName.Default)),
             userEmbeddingDao = get(),
             userExtractionDao = get()
-        )
-    }
-
-    factory {
-        ExtractVisualEmbeds(
-            inferenceService = get<MlKitMediaPipeInferenceService>()
-        )
-    }
-
-    factory {
-        ExtractTextEmbed(
-            inferenceService = get<MlKitMediaPipeInferenceService>(),
-            tokenizeText = get()
-        )
-    } bind ExtractTextEmbed::class
-
-    factory {
-        CreateMediaImageData(
-            inferenceService = get<MlKitMediaPipeInferenceService>(),
         )
     }
 
