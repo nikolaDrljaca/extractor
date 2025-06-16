@@ -11,7 +11,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.toList
 
-class RunExtractor(
+class ExtractLupaAnnotations(
     private val inferenceService: InferenceService,
     private val tokenizeText: TokenizeText = TokenizeText(Dispatchers.Default)
 ) {

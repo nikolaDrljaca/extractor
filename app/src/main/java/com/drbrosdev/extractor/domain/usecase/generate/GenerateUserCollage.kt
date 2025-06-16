@@ -29,7 +29,7 @@ class GenerateUserCollage(
             val userExtractionBundle = UserExtractionBundle(
                 userEmbed = it,
                 extractions = extractions.map { relation ->
-                    relation.extractionRecord.toExtraction()
+                    relation.lupaImageMetadataRecord.toExtraction()
                 }
             )
             emit(userExtractionBundle)

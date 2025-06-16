@@ -7,7 +7,7 @@ import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
-import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
+import com.drbrosdev.extractor.data.extraction.record.LupaImageMetadataRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
@@ -87,7 +87,7 @@ class DefaultExtractorRepository(
     override suspend fun getLatestExtraction(): ExtractionData? {
         return extractionDataDao.findMostRecent()?.let {
             ExtractionData(
-                extraction = it.extractionRecord.toExtraction(),
+                extraction = it.lupaImageMetadataRecord.toExtraction(),
                 textEmbed = it.textEmbeddingRecord.toEmbed(),
                 visualEmbeds = it.visualEmbeddingRecord.toEmbed()
             )
@@ -99,7 +99,7 @@ class DefaultExtractorRepository(
             .filterNotNull()
             .map {
                 ExtractionData(
-                    extraction = it.extractionRecord.toExtraction(),
+                    extraction = it.lupaImageMetadataRecord.toExtraction(),
                     textEmbed = it.textEmbeddingRecord.toEmbed(),
                     visualEmbeds = it.visualEmbeddingRecord.toEmbed()
                 )
@@ -162,7 +162,7 @@ class DefaultExtractorRepository(
     }
 
     override suspend fun createExtractionData(data: NewExtraction) = with(data) {
-        val extractionRecord = ExtractionRecord(
+        val lupaImageMetadataRecord = LupaImageMetadataRecord(
             mediaStoreId = mediaImageId.id,
             uri = extractorImageUri.uri,
             dateAdded = dateAdded,
@@ -199,7 +199,7 @@ class DefaultExtractorRepository(
         )
 
         txRunner.withTransaction {
-            extractionDao.insert(extractionRecord)
+            extractionDao.insert(lupaImageMetadataRecord)
             textEmbeddingDao.insert(textEntity)
             visualEmbeddingDao.insert(visualEntity)
             userEmbeddingDao.insert(userEntity)

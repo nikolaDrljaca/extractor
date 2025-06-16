@@ -10,9 +10,9 @@ import com.drbrosdev.extractor.framework.logger.logEvent
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 
-class RunBulkExtractor(
+class BulkExtractLupaAnnotations(
     private val mediaImageRepository: MediaStoreImageRepository,
-    private val runExtractor: RunExtractor,
+    private val extractLupaAnnotations: ExtractLupaAnnotations,
     private val extractorRepository: ExtractorRepository
 ) {
     suspend fun execute() {
@@ -31,7 +31,7 @@ class RunBulkExtractor(
                 mediaImageRepository.findAllByIdAsFlow(isOnDevice.toList())
                     .map { mediaStoreImage ->
                         val embeds =
-                            runExtractor.execute(mediaStoreImage.mediaImageUri())
+                            extractLupaAnnotations.execute(mediaStoreImage.mediaImageUri())
                         NewExtraction(
                             mediaImageId = mediaStoreImage.mediaImageId(),
                             extractorImageUri = mediaStoreImage.mediaImageUri(),

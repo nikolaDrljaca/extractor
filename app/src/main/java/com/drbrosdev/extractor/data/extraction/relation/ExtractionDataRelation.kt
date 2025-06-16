@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.data.extraction.relation
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
+import com.drbrosdev.extractor.data.extraction.record.LupaImageMetadataRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
 
@@ -12,7 +12,7 @@ import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
  * TODO LupaImageDataRelation
  */
 data class ExtractionDataRelation(
-    @Embedded val extractionRecord: ExtractionRecord,
+    @Embedded val lupaImageMetadataRecord: LupaImageMetadataRecord,
 
 
     @Relation(

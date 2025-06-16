@@ -19,7 +19,7 @@ import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao
 import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
-import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
+import com.drbrosdev.extractor.data.extraction.record.LupaImageMetadataRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
@@ -29,7 +29,7 @@ import com.drbrosdev.extractor.data.search.SearchIndexRecord
 
 @Database(
     entities = [
-        ExtractionRecord::class,
+        LupaImageMetadataRecord::class,
         TextEmbeddingRecord::class,
         VisualEmbeddingRecord::class,
         UserEmbeddingRecord::class,
@@ -39,7 +39,7 @@ import com.drbrosdev.extractor.data.search.SearchIndexRecord
         SearchIndexRecord::class,
         SearchIndexFts::class
     ],
-    version = 16,
+    version = 17,
 )
 @TypeConverters(DatabaseConverters::class)
 abstract class ExtractorDatabase : RoomDatabase() {
@@ -75,7 +75,7 @@ abstract class ExtractorDatabase : RoomDatabase() {
                 ExtractorDatabase::class.java,
                 "extractor_database"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(true)
                 .build()
         }
     }

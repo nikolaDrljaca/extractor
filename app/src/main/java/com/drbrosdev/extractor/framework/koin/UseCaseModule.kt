@@ -6,7 +6,7 @@ import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
 import com.drbrosdev.extractor.domain.usecase.album.StoreAlbums
-import com.drbrosdev.extractor.domain.usecase.extractor.RunBulkExtractor
+import com.drbrosdev.extractor.domain.usecase.extractor.BulkExtractLupaAnnotations
 import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbeds
@@ -61,10 +61,10 @@ val useCaseModule = module {
     }
 
     factory {
-        RunBulkExtractor(
+        BulkExtractLupaAnnotations(
             mediaImageRepository = get(),
             extractorRepository = get<DefaultExtractorRepository>(),
-            runExtractor = get()
+            extractLupaAnnotations = get()
         )
     }
 

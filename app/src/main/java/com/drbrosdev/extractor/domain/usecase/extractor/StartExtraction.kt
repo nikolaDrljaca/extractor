@@ -25,10 +25,10 @@ class StartExtraction(
             logEvent("GeminiNano is might be available on this system.")
         }
         // create bulk extractor
-        val extractor = RunBulkExtractor(
+        val extractor = BulkExtractLupaAnnotations(
             mediaImageRepository = mediaImageRepository,
             extractorRepository = extractionRepository,
-            runExtractor = RunExtractor(
+            extractLupaAnnotations = ExtractLupaAnnotations(
                 inferenceService = inferenceService
             )
         )

@@ -1,5 +1,7 @@
 package com.drbrosdev.extractor.domain.model
 
+import java.time.LocalDateTime
+
 // TODO Rename to LupaAnnotations
 // LupaImage is current extraction and should be extended to contain annotations
 // to properly represent it as a domain model
@@ -34,4 +36,25 @@ data class ImageEmbeds(
     val textEmbed: Embed.Text,
     val visualEmbeds: List<Embed.Visual>,
     val userEmbeds: List<Embed.User>
+)
+
+// Extraction is this
+data class LupaImageMetadata(
+    val mediaImageId: MediaImageId,
+    val uri: MediaImageUri,
+    val path: String,
+    val dateAdded: LocalDateTime,
+)
+
+// ImageEmbeds is this
+data class LupaImageAnnotations(
+    val textEmbed: String,
+    val visualEmbeds: List<String>,
+    val userEmbeds: List<String>
+)
+
+// ExtractionData can be this
+data class LupaImage(
+    val metadata: LupaImageMetadata,
+    val annotations: LupaImageAnnotations
 )

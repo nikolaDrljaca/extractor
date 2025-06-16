@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.data.extraction.relation
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
+import com.drbrosdev.extractor.data.extraction.record.LupaImageMetadataRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
@@ -11,7 +11,7 @@ import com.drbrosdev.extractor.domain.model.ImageEmbeds
 
 
 data class ImageEmbeddingsRelation(
-    @Embedded val imageEntity: ExtractionRecord,
+    @Embedded val imageEntity: LupaImageMetadataRecord,
 
     @Relation(
         parentColumn = "media_store_id",
