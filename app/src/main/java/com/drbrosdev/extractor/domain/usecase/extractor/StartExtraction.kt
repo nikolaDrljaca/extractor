@@ -3,7 +3,7 @@ package com.drbrosdev.extractor.domain.usecase.extractor
 import arrow.core.Either
 import arrow.core.raise.either
 import arrow.core.raise.ensure
-import com.drbrosdev.extractor.domain.repository.ExtractorRepository
+import com.drbrosdev.extractor.domain.repository.LupaImageRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
 import com.drbrosdev.extractor.domain.service.InferenceService
 import com.drbrosdev.extractor.framework.logger.logEvent
@@ -14,7 +14,7 @@ object ExtractionNotInSync
 
 class StartExtraction(
     private val mediaImageRepository: MediaStoreImageRepository,
-    private val extractionRepository: ExtractorRepository,
+    private val lupaImageRepository: LupaImageRepository,
     private val inferenceService: InferenceService
 ) {
     suspend fun execute(): Either<ExtractionNotInSync, Unit> = either {
@@ -25,10 +25,10 @@ class StartExtraction(
             logEvent("GeminiNano is might be available on this system.")
         }
         // create bulk extractor
-        val extractor = RunBulkExtractor(
+        val extractor = BulkExtractLupaAnnotations(
             mediaImageRepository = mediaImageRepository,
-            extractorRepository = extractionRepository,
-            runExtractor = RunExtractor(
+            lupaImageRepository = lupaImageRepository,
+            extractLupaAnnotations = ExtractLupaAnnotations(
                 inferenceService = inferenceService
             )
         )
@@ -38,7 +38,7 @@ class StartExtraction(
         }
         // retrieve counts
         val deviceImageCount = mediaImageRepository.getCount()
-        val localImageCount = extractionRepository.getExtractionCountAsFlow()
+        val localImageCount = lupaImageRepository.getCountAsFlow()
             .first()
         // ensure extraction has indexed every image
         ensure(deviceImageCount == localImageCount) {

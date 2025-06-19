@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
-import com.drbrosdev.extractor.domain.model.Embed
-import com.drbrosdev.extractor.domain.model.ImageEmbeds
+import com.drbrosdev.extractor.domain.model.LupaImageAnnotations
 import com.drbrosdev.extractor.domain.model.MediaImageData
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.service.InferenceService
@@ -11,12 +10,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.toList
 
-class RunExtractor(
+class ExtractLupaAnnotations(
     private val inferenceService: InferenceService,
     private val tokenizeText: TokenizeText = TokenizeText(Dispatchers.Default)
 ) {
-
-    suspend fun execute(mediaImageUri: MediaImageUri): ImageEmbeds? {
+    suspend fun execute(mediaImageUri: MediaImageUri): LupaImageAnnotations? {
         return coroutineScope {
             // NOTE: inferenceService calls are main-safe
             // create media image data - prepare for extraction
@@ -29,7 +27,7 @@ class RunExtractor(
             val visualData = async { extractVisualData(inputImage) }
                 .await()
             // return embeds
-            ImageEmbeds(
+            LupaImageAnnotations(
                 textEmbed = textData,
                 visualEmbeds = visualData,
                 userEmbeds = emptyList()
@@ -37,26 +35,26 @@ class RunExtractor(
         }
     }
 
-    private suspend fun extractTextData(inputImage: MediaImageData): Embed.Text {
+    private suspend fun extractTextData(inputImage: MediaImageData): String {
         return inferenceService.processText(inputImage)
             .fold(
-                onFailure = { Embed.Text.DEFAULT },
+                onFailure = { "" },
                 onSuccess = { result ->
                     val clean = tokenizeText.invoke(result.lowercase())
                         .toList()
                         .joinToString(separator = " ") { token -> token.text }
-                    Embed.Text(clean)
+                    clean
                 }
             )
     }
 
-    private suspend fun extractVisualData(inputImage: MediaImageData): List<Embed.Visual> {
+    private suspend fun extractVisualData(inputImage: MediaImageData): List<String> {
         return inferenceService.processVisual(inputImage)
             .fold(
                 onFailure = { emptyList() },
                 onSuccess = { result ->
                     result.distinct()
-                        .map { label -> Embed.Visual(label) }
+                        .map { label -> label }
                 }
             )
     }

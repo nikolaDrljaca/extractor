@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.MainViewModel
 import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
-import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
+import com.drbrosdev.extractor.data.extraction.DefaultLupaImageRepository
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
@@ -34,14 +34,14 @@ val viewModelModule = module {
             generateMostCommonExtractionBundles = get(),
             dataStore = get(),
             albumRepository = get<DefaultAlbumRepository>(),
-            extractorRepository = get<DefaultExtractorRepository>(),
+            lupaImageRepository = get<DefaultLupaImageRepository>(),
             navigators = it.get()
         )
     }
 
     viewModel {
         ExtractorResetIndexViewModel(
-            extractorRepository = get<DefaultExtractorRepository>(),
+            lupaImageRepository = get<DefaultLupaImageRepository>(),
             workerService = get<DefaultExtractorWorkerService>(),
             extractionProgress = get()
         )
@@ -97,7 +97,7 @@ val viewModelModule = module {
         ExtractorImageInfoViewModel(
             mediaImageId = it.get(),
             stateHandle = get(),
-            extractorDataRepository = get<DefaultExtractorRepository>(),
+            extractorDataRepository = get<DefaultLupaImageRepository>(),
         )
     }
 
@@ -138,7 +138,7 @@ val viewModelModule = module {
             mediaImageId = it.get(),
             stateHandle = get(),
             suggestUserKeywords = get(),
-            extractorRepository = get<DefaultExtractorRepository>()
+            lupaImageRepository = get<DefaultLupaImageRepository>()
         )
     }
 

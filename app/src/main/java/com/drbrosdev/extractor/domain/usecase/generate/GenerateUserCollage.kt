@@ -2,8 +2,8 @@ package com.drbrosdev.extractor.domain.usecase.generate
 
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao
-import com.drbrosdev.extractor.data.extraction.record.toExtraction
-import com.drbrosdev.extractor.domain.model.UserExtractionBundle
+import com.drbrosdev.extractor.data.extraction.record.toMetadata
+import com.drbrosdev.extractor.domain.model.LupaBundle
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,7 +14,7 @@ class GenerateUserCollage(
     private val userExtractionDao: UserExtractionDao,
     private val userEmbeddingDao: UserEmbeddingDao
 ) {
-    fun invoke(): Flow<UserExtractionBundle> = flow {
+    fun invoke(): Flow<LupaBundle> = flow {
         // Get all keywords, each value is CSV (one,two...), parse into unique values
         val keywords = userEmbeddingDao.findAllEmbeddingValues()
             .asSequence()
@@ -23,13 +23,13 @@ class GenerateUserCollage(
             .distinct()
             .toList()
 
-        // Build a collage flow for each unique keyword
+        // Build a bundle flow for each unique keyword
         keywords.forEach {
             val extractions = userExtractionDao.findAllContaining(it)
-            val userExtractionBundle = UserExtractionBundle(
-                userEmbed = it,
-                extractions = extractions.map { relation ->
-                    relation.extractionRecord.toExtraction()
+            val userExtractionBundle = LupaBundle(
+                keyword = it,
+                images = extractions.map { relation ->
+                    relation.lupaImageMetadataRecord.toMetadata()
                 }
             )
             emit(userExtractionBundle)

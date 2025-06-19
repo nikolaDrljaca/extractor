@@ -8,14 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.data.ExtractorDataStore
-import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ImageSearchParams
+import com.drbrosdev.extractor.domain.model.LupaImageMetadata
+import com.drbrosdev.extractor.domain.model.search.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.asAlbumName
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.image.SearchCountPositiveDelta
-import com.drbrosdev.extractor.domain.usecase.image.SearchImages
+import com.drbrosdev.extractor.domain.usecase.search.SearchCountPositiveDelta
+import com.drbrosdev.extractor.domain.usecase.search.SearchImages
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.framework.logger.logEvent
@@ -86,7 +86,7 @@ class ExtractorSearchViewModel(
         searchResultComponent.executeSearch(params)
     }
 
-    private fun compileUserAlbum(input: List<Extraction>) {
+    private fun compileUserAlbum(input: List<LupaImageMetadata>) {
         viewModelScope.launch {
             val searchData = searchSheetComponent.getSearchParamSnapshot()
             val name = when {

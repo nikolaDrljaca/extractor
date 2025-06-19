@@ -5,8 +5,8 @@ import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
 import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.SearchType
-import com.drbrosdev.extractor.domain.model.SuggestedSearch
+import com.drbrosdev.extractor.domain.model.search.SearchType
+import com.drbrosdev.extractor.domain.model.search.SuggestedSearch
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
 import com.drbrosdev.extractor.domain.usecase.token.isValidSearchToken
 import kotlinx.coroutines.CoroutineDispatcher

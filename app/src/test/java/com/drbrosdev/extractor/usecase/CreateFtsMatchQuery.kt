@@ -1,9 +1,9 @@
 package com.drbrosdev.extractor.usecase
 
 import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.domain.model.search.SearchType
 import com.drbrosdev.extractor.domain.model.Token
-import com.drbrosdev.extractor.domain.usecase.image.BuildFtsQuery
+import com.drbrosdev.extractor.domain.usecase.search.BuildFtsQuery
 import org.junit.Test
 
 class CreateFtsMatchQueryTest {

@@ -11,19 +11,15 @@ import com.drbrosdev.extractor.data.album.record.AlbumRecord
 import com.drbrosdev.extractor.data.album.record.toAlbumLabelType
 import com.drbrosdev.extractor.data.album.record.toAlbumOrigin
 import com.drbrosdev.extractor.data.album.record.toAlbumSearchType
+import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.model.Album
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 
 class DefaultAlbumRepository(
-    private val dispatcher: CoroutineDispatcher,
     private val albumEntryDao: AlbumEntryDao,
     private val albumConfigurationDao: AlbumConfigurationDao,
     private val albumDao: AlbumDao,
@@ -81,21 +77,17 @@ class DefaultAlbumRepository(
         return albumRelationDao.findAlbumByIdAsFlow(albumId)
             .distinctUntilChanged()
             .map { it?.toAlbum() }
-            .flowOn(dispatcher)
     }
 
     override fun getCommonTextAlbumsAsFlow(): Flow<List<Album>> {
         return albumRelationDao.findTextualAsFlow()
             .distinctUntilChanged()
             .map { it.map { entity -> entity.toAlbum() } }
-            .flowOn(dispatcher)
     }
 
     override suspend fun getCommonTextAlbums(): List<Album> {
         val albumRelations = albumRelationDao.findTextual()
-        return withContext(dispatcher) {
-            albumRelations.map { it.toAlbum() }
-        }
+        return albumRelations.map { it.toAlbum() }
     }
 
     override suspend fun findAlbumById(albumId: Long): Album? {
@@ -106,21 +98,17 @@ class DefaultAlbumRepository(
         return albumRelationDao.findVisualAsFlow()
             .distinctUntilChanged()
             .map { it.map { entity -> entity.toAlbum() } }
-            .flowOn(dispatcher)
     }
 
     override suspend fun getCommonVisualAlbums(): List<Album> {
         val albumRelations = albumRelationDao.findVisual()
-        return withContext(dispatcher) {
-            albumRelations.map { it.toAlbum() }
-        }
+        return albumRelations.map { it.toAlbum() }
     }
 
     override fun getAllUserAlbumsAsFlow(): Flow<List<Album>> {
         return albumRelationDao.findAllAsFlow()
             .distinctUntilChanged()
             .map { it.map { entity -> entity.toAlbum() } }
-            .flowOn(dispatcher)
     }
 
     override suspend fun getAllUserAlbums(): List<Album> {

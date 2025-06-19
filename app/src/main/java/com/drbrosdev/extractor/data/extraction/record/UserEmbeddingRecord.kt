@@ -10,7 +10,7 @@ data class UserEmbeddingRecord(
 
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 
-    @ColumnInfo(name = "extraction_id") val extractionId: Long,
+    @ColumnInfo(name = "lupa_image_id") val lupaImageId: Long,
 
     val value: String
 )

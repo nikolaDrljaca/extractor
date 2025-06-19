@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.ui.components.suggestsearch
 
 import com.drbrosdev.extractor.domain.model.ExtractionProgress
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
-import com.drbrosdev.extractor.domain.model.SuggestedSearch
+import com.drbrosdev.extractor.domain.model.search.SuggestedSearch
 import com.drbrosdev.extractor.domain.model.asStatus
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.domain.usecase.suggestion.buildSuggestionScope

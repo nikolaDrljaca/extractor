@@ -17,7 +17,7 @@ interface UserEmbeddingDao {
     @Query("SELECT * FROM user_embedding WHERE id=:id")
     suspend fun findById(id: Long): UserEmbeddingRecord?
 
-    @Query("SELECT * FROM user_embedding WHERE extraction_id=:mediaId")
+    @Query("SELECT * FROM user_embedding WHERE lupa_image_id=:mediaId")
     suspend fun findByMediaId(mediaId: Long): UserEmbeddingRecord?
 
     @Insert
@@ -26,12 +26,12 @@ interface UserEmbeddingDao {
     @Update
     suspend fun update(value: UserEmbeddingRecord)
 
-    @Query("UPDATE user_embedding SET value=:value WHERE extraction_id=:imageEntityId")
+    @Query("UPDATE user_embedding SET value=:value WHERE lupa_image_id=:imageEntityId")
     suspend fun update(value: String, imageEntityId: Long)
 
     suspend fun upsert(value: String, extractionEntityId: Long) {
         try {
-            val userEmbedding = UserEmbeddingRecord(value = value, extractionId = extractionEntityId)
+            val userEmbedding = UserEmbeddingRecord(value = value, lupaImageId = extractionEntityId)
             insert(userEmbedding)
         } catch (e: SQLiteConstraintException) {
             update(value, extractionEntityId)
@@ -44,7 +44,7 @@ interface UserEmbeddingDao {
     @Query("DELETE FROM user_embedding")
     suspend fun deleteAll()
 
-    @Query("DELETE FROM user_embedding WHERE extraction_id=:mediaId")
+    @Query("DELETE FROM user_embedding WHERE lupa_image_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
 
     @Query("""

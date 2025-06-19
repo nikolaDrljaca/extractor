@@ -65,7 +65,7 @@ class ExtractorUserCollageViewModel(
             }
 
             collage?.let {
-                val uris = it.extractions.map { extraction -> extraction.uri.toUri() }
+                val uris = it.images.map { o -> o.uri.toUri() }
 
                 _events.send(
                     ExtractorUserCollageEvents.NavToImageViewer(
@@ -84,7 +84,7 @@ class ExtractorUserCollageViewModel(
             }
 
             collage?.let {
-                val uris = it.extractions.map { extraction -> extraction.uri.toUri() }
+                val uris = it.images.map { o -> o.uri.toUri() }
                 _events.send(
                     ExtractorUserCollageEvents.ShareCollage(
                         images = uris

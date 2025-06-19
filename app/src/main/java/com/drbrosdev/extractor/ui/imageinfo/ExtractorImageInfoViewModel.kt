@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
 import com.drbrosdev.extractor.domain.model.MediaImageId
-import com.drbrosdev.extractor.domain.repository.ExtractorRepository
+import com.drbrosdev.extractor.domain.repository.LupaImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class ExtractorImageInfoViewModel(
     private val mediaImageId: Long,
     private val stateHandle: SavedStateHandle,
-    private val extractorDataRepository: ExtractorRepository
+    private val extractorDataRepository: LupaImageRepository
 ) : ViewModel() {
     private val checkedVisualEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
@@ -39,20 +39,20 @@ class ExtractorImageInfoViewModel(
         checkedUserEmbeds
     ) { imageEmbeds, visualChecked, userChecked ->
         // set the text state
-        textEmbedding.updateTextValue(imageEmbeds.textEmbed.value)
+        textEmbedding.updateTextValue(imageEmbeds.textEmbed)
 
         ExtractorImageInfoUiState(
             mediaImageId = MediaImageId(mediaImageId),
             userEmbedding = imageEmbeds.userEmbeds.map {
                 UserEmbedUiModel(
-                    text = it.value,
-                    isChecked = userChecked.getOrDefault(it.value, false)
+                    text = it,
+                    isChecked = userChecked.getOrDefault(it, false)
                 )
             },
             visualEmbedding = imageEmbeds.visualEmbeds.map {
                 VisualEmbedUiModel(
-                    text = it.value,
-                    isChecked = visualChecked.getOrDefault(it.value, false),
+                    text = it,
+                    isChecked = visualChecked.getOrDefault(it, false),
                 )
             }
         )

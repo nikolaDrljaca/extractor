@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.ui.components.suggestsearch
 
 import androidx.compose.runtime.Immutable
-import com.drbrosdev.extractor.domain.model.SuggestedSearch
+import com.drbrosdev.extractor.domain.model.search.SuggestedSearch
 
 sealed interface SuggestedSearchState {
     data object Loading: SuggestedSearchState

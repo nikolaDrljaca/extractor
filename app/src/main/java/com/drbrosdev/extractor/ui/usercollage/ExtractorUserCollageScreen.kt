@@ -104,9 +104,9 @@ fun ExtractorUserCollageScreen(
 
                 items(state.collages) { collage ->
                     ExtractorCollageItem(
-                        onItemClick = { state.onItemClicked(collage.userEmbed, it) },
-                        keyword = collage.userEmbed,
-                        extractions = collage.extractions
+                        onItemClick = { state.onItemClicked(collage.keyword, it) },
+                        keyword = collage.keyword,
+                        lupaImageMetadata = collage.images
                     )
                 }
             }

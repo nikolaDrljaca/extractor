@@ -1,6 +1,6 @@
 package com.drbrosdev.extractor.domain.model
 
-data class ExtractionBundle(
+data class LupaBundle(
     val keyword: String,
-    val extractions: List<Extraction>
+    val images: List<LupaImageMetadata>
 )

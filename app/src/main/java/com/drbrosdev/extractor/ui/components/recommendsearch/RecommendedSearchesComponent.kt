@@ -1,13 +1,12 @@
 package com.drbrosdev.extractor.ui.components.recommendsearch
 
 import androidx.compose.runtime.Stable
-import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ExtractionData
 import com.drbrosdev.extractor.domain.model.ExtractionProgress
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
 import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.domain.model.LupaImageMetadata
 import com.drbrosdev.extractor.domain.model.asStatus
+import com.drbrosdev.extractor.domain.model.search.SearchType
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 import com.drbrosdev.extractor.domain.usecase.generate.GenerateMostCommonExtractionBundles
@@ -42,7 +41,7 @@ class RecommendedSearchesComponent(
     private val extractionProgress: Flow<ExtractionProgress>,
     private val generateBundles: GenerateMostCommonExtractionBundles,
     private val createAlbum: suspend (NewAlbum) -> Unit,
-    private val mostRecentExtractionFlow: Flow<ExtractionData>,
+    private val mostRecentExtractionFlow: Flow<LupaImageHighlight>,
     private val navigators: Navigators
 ) {
     private val eventBus = Channel<RecommendedSearchesEvents>()
@@ -120,7 +119,7 @@ class RecommendedSearchesComponent(
 
     private fun handleImageClickEvent(keyword: String, index: Int) {
         state.value.findCollageByKeyword(keyword)?.let { collage ->
-            val images = collage.extractions.map { it.uri.toUri() }
+            val images = collage.images.map { it.uri.toUri() }
             navigators.navController.navigate(
                 ExtractorImageViewerNavTarget(
                     images = images,
@@ -130,8 +129,8 @@ class RecommendedSearchesComponent(
         }
     }
 
-    private suspend fun createNewAlbum(extractions: List<Extraction>) {
-        if (extractions.isEmpty()) return
+    private suspend fun createNewAlbum(lupaImageMetadata: List<LupaImageMetadata>) {
+        if (lupaImageMetadata.isEmpty()) return
         // create album
         val name = LocalDateTime.now()
             .asAlbumName()
@@ -142,7 +141,7 @@ class RecommendedSearchesComponent(
             searchType = SearchType.PARTIAL,
             keywordType = KeywordType.TEXT,
             origin = NewAlbum.Origin.USER_GENERATED,
-            entries = extractions.map {
+            entries = lupaImageMetadata.map {
                 NewAlbum.Entry(
                     uri = it.uri,
                     id = it.mediaImageId

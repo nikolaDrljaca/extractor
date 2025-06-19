@@ -1,8 +1,8 @@
-package com.drbrosdev.extractor.domain.usecase.image
+package com.drbrosdev.extractor.domain.usecase.search
 
-import com.drbrosdev.extractor.domain.model.FtsQuery
+import com.drbrosdev.extractor.domain.model.search.FtsQuery
 import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.domain.model.search.SearchType
 import com.drbrosdev.extractor.domain.model.Token
 
 // Build an FTS query that the sqlite3 FTS engine can execute

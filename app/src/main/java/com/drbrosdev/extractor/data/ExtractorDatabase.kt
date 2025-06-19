@@ -13,13 +13,12 @@ import com.drbrosdev.extractor.data.album.record.AlbumConfigurationRecord
 import com.drbrosdev.extractor.data.album.record.AlbumEntryRecord
 import com.drbrosdev.extractor.data.album.record.AlbumRecord
 import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
-import com.drbrosdev.extractor.data.extraction.dao.ExtractionDataDao
 import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao
 import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
-import com.drbrosdev.extractor.data.extraction.record.ExtractionRecord
+import com.drbrosdev.extractor.data.extraction.record.LupaImageMetadataRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
@@ -29,7 +28,7 @@ import com.drbrosdev.extractor.data.search.SearchIndexRecord
 
 @Database(
     entities = [
-        ExtractionRecord::class,
+        LupaImageMetadataRecord::class,
         TextEmbeddingRecord::class,
         VisualEmbeddingRecord::class,
         UserEmbeddingRecord::class,
@@ -39,7 +38,7 @@ import com.drbrosdev.extractor.data.search.SearchIndexRecord
         SearchIndexRecord::class,
         SearchIndexFts::class
     ],
-    version = 16,
+    version = 17,
 )
 @TypeConverters(DatabaseConverters::class)
 abstract class ExtractorDatabase : RoomDatabase() {
@@ -66,8 +65,6 @@ abstract class ExtractorDatabase : RoomDatabase() {
 
     abstract fun userExtractionDao(): UserExtractionDao
 
-    abstract fun extractionDataDao(): ExtractionDataDao
-
     companion object {
         fun createExtractorDatabase(context: Context): ExtractorDatabase {
             return Room.databaseBuilder(
@@ -75,7 +72,7 @@ abstract class ExtractorDatabase : RoomDatabase() {
                 ExtractorDatabase::class.java,
                 "extractor_database"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(true)
                 .build()
         }
     }

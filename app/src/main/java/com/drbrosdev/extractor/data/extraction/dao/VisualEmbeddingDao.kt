@@ -16,7 +16,7 @@ interface VisualEmbeddingDao {
     @Query("SELECT * FROM visual_embedding WHERE id=:id")
     suspend fun findById(id: Long): VisualEmbeddingRecord?
 
-    @Query("SELECT * FROM visual_embedding WHERE extraction_id=:mediaId")
+    @Query("SELECT * FROM visual_embedding WHERE lupa_image_id=:mediaId")
     suspend fun findByMediaId(mediaId: Long): VisualEmbeddingRecord?
 
     @Insert
@@ -37,7 +37,7 @@ interface VisualEmbeddingDao {
     @Query("DELETE FROM visual_embedding WHERE id=:id")
     suspend fun deleteById(id: Long)
 
-    @Query("DELETE FROM visual_embedding WHERE extraction_id=:mediaId")
+    @Query("DELETE FROM visual_embedding WHERE lupa_image_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
 
     @Query("DELETE FROM visual_embedding WHERE value=:value")

@@ -12,12 +12,12 @@ interface UserExtractionDao {
     @Query(
         """
         WITH out as (
-            SELECT user.extraction_id
+            SELECT user.lupa_image_id
             FROM user_embedding AS user
             WHERE user.value LIKE '%' || :keyword || '%'
         )
-        SELECT extraction.uri, extraction.media_store_id, extraction.date_added, extraction.path 
-        FROM extraction JOIN out ON out.extraction_id = extraction.media_store_id
+        SELECT lupa_image.uri, lupa_image.media_store_id, lupa_image.date_added, lupa_image.path 
+        FROM lupa_image JOIN out ON out.lupa_image_id = lupa_image.media_store_id
     """
     )
     @Transaction
@@ -26,12 +26,12 @@ interface UserExtractionDao {
     @Query(
         """
         WITH out as (
-            SELECT user.extraction_id
+            SELECT user.lupa_image_id
             FROM user_embedding AS user
             WHERE user.value LIKE '%' || :keyword || '%'
         )
-        SELECT extraction.uri, extraction.media_store_id, extraction.date_added, extraction.path 
-        FROM extraction JOIN out ON out.extraction_id = extraction.media_store_id
+        SELECT lupa_image.uri, lupa_image.media_store_id, lupa_image.date_added, lupa_image.path 
+        FROM lupa_image JOIN out ON out.lupa_image_id = lupa_image.media_store_id
     """
     )
     @Transaction
