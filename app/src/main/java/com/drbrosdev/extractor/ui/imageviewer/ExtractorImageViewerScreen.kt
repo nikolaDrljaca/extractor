@@ -2,10 +2,13 @@ package com.drbrosdev.extractor.ui.imageviewer
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -32,6 +35,7 @@ import androidx.constraintlayout.compose.layoutId
 import coil3.compose.AsyncImage
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorBottomBarItem
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorImageBottomBar
+import com.drbrosdev.extractor.ui.components.shared.AppTooltip
 import com.drbrosdev.extractor.util.asImageRequest
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
@@ -41,7 +45,8 @@ import net.engawapg.lib.zoomable.zoomable
 fun ExtractorImageViewerScreen(
     onBottomBarClick: (ExtractorBottomBarItem) -> Unit,
     pagerState: PagerState,
-    images: List<Uri>,
+    images: List<Uri>, // used as a lookup - only one images is displayed
+    description: String?
 ) {
     var showUi by rememberSaveable {
         mutableStateOf(true)
@@ -87,6 +92,20 @@ fun ExtractorImageViewerScreen(
 
         AnimatedVisibility(
             visible = showUi,
+            modifier = Modifier.layoutId(ViewIds.DESC_TOOLTIP),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            if (description != null) {
+                AppTooltip(
+                    text = description,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = showUi,
             modifier = Modifier.layoutId(ViewIds.BOTTOM_BAR),
             enter = slideInVertically(
                 animationSpec = MotionScheme.expressive().slowEffectsSpec(),
@@ -99,7 +118,9 @@ fun ExtractorImageViewerScreen(
         ) {
             ExtractorImageBottomBar(
                 onClick = onBottomBarClick,
-                modifier = Modifier.padding(bottom = 24.dp)
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = 18.dp)
             )
         }
     }
@@ -107,6 +128,7 @@ fun ExtractorImageViewerScreen(
 
 private fun imageDetailScreenConstraintSet() = ConstraintSet {
     val bottomBar = createRefFor(ViewIds.BOTTOM_BAR)
+    val descriptionTooltip = createRefFor(ViewIds.DESC_TOOLTIP)
     val pager = createRefFor(ViewIds.PAGER)
 
     constrain(pager) {
@@ -123,9 +145,16 @@ private fun imageDetailScreenConstraintSet() = ConstraintSet {
         start.linkTo(parent.start)
         end.linkTo(parent.end)
     }
+
+    constrain(descriptionTooltip) {
+        bottom.linkTo(bottomBar.top, margin = 12.dp)
+        start.linkTo(parent.start, margin = 16.dp)
+        end.linkTo(parent.end, margin = 16.dp)
+    }
 }
 
 private object ViewIds {
     const val BOTTOM_BAR = "bottomBar"
     const val PAGER = "pager"
+    const val DESC_TOOLTIP = "descriptionTooltip"
 }

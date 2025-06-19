@@ -17,6 +17,7 @@ import com.drbrosdev.extractor.data.search.SearchIndexRecord
 import com.drbrosdev.extractor.domain.model.LupaImage
 import com.drbrosdev.extractor.domain.model.LupaImageAnnotations
 import com.drbrosdev.extractor.domain.model.MediaImageId
+import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.repository.LupaImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import com.drbrosdev.extractor.domain.repository.payload.NewLupaImage
@@ -64,6 +65,10 @@ class DefaultLupaImageRepository(
         return imageEmbeddingsDao.findByMediaImageId(mediaImageId.id)
             .distinctUntilChanged()
             .map { it?.toLupaAnnotations() }
+    }
+
+    override suspend fun findImageByUri(uri: MediaImageUri): LupaImage? {
+        return imageEmbeddingsDao.findByUri(uri.uri)?.toLupaImage()
     }
 
     override suspend fun getAllVisualEmbedValuesAsCsv(): String? {

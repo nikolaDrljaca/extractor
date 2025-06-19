@@ -24,9 +24,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -50,7 +51,7 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchPill
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
 import com.drbrosdev.extractor.ui.components.shared.MultiselectAction
-import com.drbrosdev.extractor.ui.components.showcase.ExtractorShowcase
+import com.drbrosdev.extractor.ui.components.showcase.AppShowcaseHighlight
 import com.drbrosdev.extractor.ui.components.statuspill.ExtractorStatusPillState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearchState
 import com.drbrosdev.extractor.ui.components.suggestsearch.SuggestedSearches
@@ -58,6 +59,7 @@ import com.drbrosdev.extractor.ui.components.suggestsearch.isNotEmpty
 import com.drbrosdev.extractor.util.isScrollingUp
 import com.drbrosdev.extractor.util.maxLineSpanItem
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ExtractorOverviewScreen(
     onHomeClick: () -> Unit,
@@ -169,19 +171,17 @@ fun ExtractorOverviewScreen(
                             .height(250.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(
-                            trackColor = Color.Transparent
-                        )
+                        LoadingIndicator()
                     }
                 }
 
                 is RecommendedSearchesState.SyncInProgress -> maxLineSpanItem(
                     key = "showcase"
                 ) {
-                    ExtractorShowcase(
+                    AppShowcaseHighlight(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(maxHeight.times(0.67f)),
+                            .height(maxHeight.times(0.72f)),
                         highlight = overviewContentState.mostRecentLupaImage
                     )
                 }

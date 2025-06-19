@@ -1,6 +1,8 @@
 package com.drbrosdev.extractor.ui.components.showcase
 
+import android.net.Uri
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -21,11 +23,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,7 +42,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -46,6 +50,7 @@ import com.drbrosdev.extractor.domain.model.LupaImageMetadata
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.ui.components.recommendsearch.LupaImageHighlight
+import com.drbrosdev.extractor.ui.components.shared.AppTooltip
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.asImageRequest
 import kotlinx.coroutines.delay
@@ -54,7 +59,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-fun ExtractorShowcase(
+fun AppShowcaseHighlight(
     modifier: Modifier = Modifier,
     highlight: LupaImageHighlight
 ) {
@@ -98,10 +103,13 @@ private fun ShowcaseItem(
     modifier: Modifier = Modifier,
     highlight: LupaImageHighlight
 ) {
-    val background =
-        Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
+    val background = Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
 
     var opacity by rememberSaveable { mutableFloatStateOf(0f) }
+
+    val isNotBlank by remember {
+        derivedStateOf { highlight.textEmbed.isNotBlank() }
+    }
 
     LaunchedEffect(highlight) {
         delay(ExtractorShowcaseDefaults.EMBED_ALPHA_DELAY.milliseconds)
@@ -139,12 +147,21 @@ private fun ShowcaseItem(
                 .background(background)
                 .padding(12.dp)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(14.dp))
-                .align(Alignment.BottomCenter)
+                .align(Alignment.BottomCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            AnimatedVisibility(
+                visible = isNotBlank
+            ) {
+                AppTooltip(
+                    text = highlight.textEmbed
+                )
+            }
+
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(0.dp)
+                verticalArrangement = Arrangement.spacedBy(0.dp),
+                maxLines = 2
             ) {
                 highlight.visualEmbeds.forEach {
                     SuggestionChip(
@@ -161,17 +178,6 @@ private fun ShowcaseItem(
                     )
                 }
             }
-
-            Text(
-                text = highlight.textEmbed,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                modifier = Modifier
-                    .padding(start = 4.dp),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    color = Color.Gray
-                )
-            )
         }
     }
 }
@@ -190,7 +196,7 @@ private fun CurrentPreview() {
     val data = LupaImageHighlight(
         lupaImageMetadata = LupaImageMetadata(
             mediaImageId = MediaImageId(1L),
-            uri = MediaImageUri(""),
+            uri = MediaImageUri(Uri.EMPTY.toString()),
             path = "",
             dateAdded = LocalDateTime.now(),
         ),
@@ -203,8 +209,10 @@ private fun CurrentPreview() {
         )
     )
     ExtractorTheme {
-        ShowcaseItem(
-            highlight = data
-        )
+        Surface {
+            ShowcaseItem(
+                highlight = data
+            )
+        }
     }
 }

@@ -8,7 +8,6 @@ import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerServi
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
 import com.drbrosdev.extractor.ui.dialog.userembed.ExtractorUserEmbedViewModel
-import com.drbrosdev.extractor.ui.yourspace.ExtractorYourSpaceViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
@@ -22,6 +21,7 @@ import com.drbrosdev.extractor.ui.settings.index.ExtractorResetIndexViewModel
 import com.drbrosdev.extractor.ui.settings.periodic.ExtractorPeriodicWorkViewModel
 import com.drbrosdev.extractor.ui.shop.ExtractorHubViewModel
 import com.drbrosdev.extractor.ui.usercollage.ExtractorUserCollageViewModel
+import com.drbrosdev.extractor.ui.yourspace.ExtractorYourSpaceViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -75,7 +75,10 @@ val viewModelModule = module {
 
     viewModel {
         ExtractorImageViewerModel(
-            mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>()
+            mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
+            lupaImageRepository = get<DefaultLupaImageRepository>(),
+            images = it.get(),
+            initialIndex = it.get()
         )
     }
 

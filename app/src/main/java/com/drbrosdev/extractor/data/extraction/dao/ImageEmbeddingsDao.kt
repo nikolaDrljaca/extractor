@@ -84,4 +84,12 @@ interface ImageEmbeddingsDao {
     """)
     @Transaction
     suspend fun findMostRecent(): ImageEmbeddingsRelation?
+
+    @Query("""
+        SELECT li.*
+        FROM lupa_image as li
+        WHERE uri = :uri
+    """)
+    @Transaction
+    suspend fun findByUri(uri: String): ImageEmbeddingsRelation?
 }

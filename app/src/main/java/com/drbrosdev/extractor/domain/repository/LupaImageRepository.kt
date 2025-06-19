@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.domain.repository
 import com.drbrosdev.extractor.domain.model.LupaImage
 import com.drbrosdev.extractor.domain.model.LupaImageAnnotations
 import com.drbrosdev.extractor.domain.model.MediaImageId
+import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import com.drbrosdev.extractor.domain.repository.payload.NewLupaImage
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,8 @@ interface LupaImageRepository {
     suspend fun getAllIds(): Set<Long>
 
     fun findImageDataByMediaId(mediaImageId: MediaImageId): Flow<LupaImageAnnotations?>
+
+    suspend fun findImageByUri(uri: MediaImageUri) : LupaImage?
 
     suspend fun updateTextEmbed(embedUpdate: EmbedUpdate)
 

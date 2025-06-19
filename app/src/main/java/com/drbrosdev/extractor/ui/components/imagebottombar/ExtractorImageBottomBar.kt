@@ -94,7 +94,9 @@ fun ExtractorImageBottomBar(
         expanded = true,
         modifier = Modifier
             .then(modifier),
-        contentPadding = PaddingValues(6.dp)
+        contentPadding = PaddingValues(6.dp),
+        expandedShadowElevation = 2.dp,
+        collapsedShadowElevation = 2.dp
     ) {
         ExtractorBottomBarItem.entries.forEach { barItem ->
             when (barItem) {
