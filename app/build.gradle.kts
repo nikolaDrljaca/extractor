@@ -39,8 +39,8 @@ android {
         applicationId = "com.drbrosdev.extractor"
         minSdk = 26
         targetSdk = 35
-        versionCode = 31
-        versionName = "25.05"
+        versionCode = 32
+        versionName = "25.06"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
