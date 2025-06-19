@@ -4,10 +4,11 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import arrow.core.Either
-import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ImageSearchParams
+import com.drbrosdev.extractor.domain.model.LupaImage
+import com.drbrosdev.extractor.domain.model.LupaImageMetadata
 import com.drbrosdev.extractor.domain.model.MediaImageId
-import com.drbrosdev.extractor.domain.model.isNotBlank
+import com.drbrosdev.extractor.domain.model.search.ImageSearchParams
+import com.drbrosdev.extractor.domain.model.search.isNotBlank
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
@@ -31,8 +32,8 @@ import kotlinx.coroutines.launch
 @Stable
 class SearchResultComponent(
     private val coroutineScope: CoroutineScope,
-    private val searchImages: suspend (ImageSearchParams) -> Either<Unit, List<Extraction>>,
-    private val createAlbum: (List<Extraction>) -> Unit,
+    private val searchImages: suspend (ImageSearchParams) -> Either<Unit, List<LupaImage>>,
+    private val createAlbum: (List<LupaImageMetadata>) -> Unit,
     private val navigators: Navigators
 ) {
     private val _events = Channel<SearchResultComponentEvents>()
@@ -130,7 +131,7 @@ class SearchResultComponent(
                         it.isEmpty() -> SearchResultState.Empty
 
                         else -> SearchResultState.Content(
-                            images = it,
+                            images = it.map { o -> o.metadata },
                             eventSink = ::searchContentStateEventHandler
                         )
                     }

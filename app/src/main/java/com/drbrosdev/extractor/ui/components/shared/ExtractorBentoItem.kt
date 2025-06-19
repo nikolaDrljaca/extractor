@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.domain.model.ExtractionBundle
+import com.drbrosdev.extractor.domain.model.LupaBundle
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.overview.OverviewGridState
@@ -20,7 +20,7 @@ import com.drbrosdev.extractor.util.CombinedPreview
 @Composable
 fun ExtractorBentoItem(
     modifier: Modifier = Modifier,
-    bundle: ExtractionBundle,
+    bundle: LupaBundle,
     overviewGridState: OverviewGridState,
     onClick: (keyword: String, index: Int) -> Unit,
 ) {
@@ -42,7 +42,7 @@ fun ExtractorBentoItem(
                 bottom = 12.dp
             ),
         ) {
-            items(bundle.extractions, style) { index, entry ->
+            items(bundle.images, style) { index, entry ->
                 ExtractorImageItem(
                     cornerSize = 8.dp,
                     modifier = Modifier.padding(2.dp),
@@ -73,9 +73,9 @@ private fun CurrentPreview() {
         Surface {
 
             ExtractorBentoItem(
-                bundle = ExtractionBundle(
+                bundle = LupaBundle(
                     keyword = "sample",
-                    extractions = emptyList()
+                    images = emptyList()
                 ),
                 overviewGridState = OverviewGridState(),
                 onClick = { _, _ -> }

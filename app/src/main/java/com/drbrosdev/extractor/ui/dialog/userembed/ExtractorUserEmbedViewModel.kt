@@ -4,9 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.saveable
-import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.MediaImageId
-import com.drbrosdev.extractor.domain.repository.ExtractorRepository
+import com.drbrosdev.extractor.domain.repository.LupaImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
@@ -28,7 +27,7 @@ import kotlinx.coroutines.launch
 class ExtractorUserEmbedViewModel(
     private val mediaImageId: Long,
     private val stateHandle: SavedStateHandle,
-    private val extractorRepository: ExtractorRepository,
+    private val lupaImageRepository: LupaImageRepository,
     private val suggestUserKeywords: SuggestUserKeywords
 ) : ViewModel() {
 
@@ -52,7 +51,7 @@ class ExtractorUserEmbedViewModel(
                     else -> ExtractorSuggestedEmbedsUiState.Content(
                         suggestions = embeds.map {
                             UserEmbedUiModel(
-                                text = it.value,
+                                text = it,
                                 isChecked = false
                             )
                         }
@@ -71,7 +70,7 @@ class ExtractorUserEmbedViewModel(
         viewModelScope.launch {
             // fetch existing
             val id = MediaImageId(mediaImageId)
-            val existing = extractorRepository.findImageDataByMediaId(id)
+            val existing = lupaImageRepository.findImageDataByMediaId(id)
                 .map { it?.userEmbeds }
                 .first() ?: return@launch
 
@@ -79,14 +78,13 @@ class ExtractorUserEmbedViewModel(
             val newUserEmbed = embedTextFieldState.textValue.split(",")
                 .map { it.trim() }
                 .distinct()
-                .map { Embed.User(it) }
 
             // append to existing
             val updated = (newUserEmbed + existing)
-                .map { EmbedUpdate(id, it.value) }
+                .map { EmbedUpdate(id, it) }
 
             // update
-            extractorRepository.updateUserEmbed(updated)
+            lupaImageRepository.updateUserEmbed(updated)
 
             // clear text field
             embedTextFieldState.updateTextValue("")
@@ -98,21 +96,19 @@ class ExtractorUserEmbedViewModel(
         viewModelScope.launch {
             val id = MediaImageId(mediaImageId)
 
-            val existing = extractorRepository.findImageDataByMediaId(id)
+            val existing = lupaImageRepository.findImageDataByMediaId(id)
                 .filterNotNull()
                 .map { it.userEmbeds }
                 .firstOrNull() ?: return@launch
 
-            val newEmbed = Embed.User(embed)
-
             // if already existing, return out
-            if (newEmbed in existing) return@launch
+            if (embed in existing) return@launch
 
             // otherwise update
-            val updated = (existing + newEmbed)
-                .map { EmbedUpdate(id, it.value) }
+            val updated = (existing + embed)
+                .map { EmbedUpdate(id, it) }
 
-            extractorRepository.updateUserEmbed(updated)
+            lupaImageRepository.updateUserEmbed(updated)
 
             // remove added embed from suggestions
             _suggestedEmbeddings.update {

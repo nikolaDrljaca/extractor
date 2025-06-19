@@ -1,9 +1,9 @@
 package com.drbrosdev.extractor.domain.usecase.album
 
-import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ExtractionBundle
+import com.drbrosdev.extractor.domain.model.LupaImageMetadata
+import com.drbrosdev.extractor.domain.model.LupaBundle
 import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.domain.model.search.SearchType
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
 
@@ -11,7 +11,7 @@ class StoreAlbums(
     private val albumRepository: AlbumRepository
 ) {
     suspend fun execute(
-        collages: List<ExtractionBundle>,
+        collages: List<LupaBundle>,
         origin: NewAlbum.Origin
     ) {
         val keywordType = when (origin) {
@@ -21,17 +21,17 @@ class StoreAlbums(
         }
 
         collages.forEach {
-            val payload = buildNewAlbumPayload(it.extractions, it.keyword)
+            val payload = buildNewAlbumPayload(it.images, it.keyword)
                 .copy(keywordType = keywordType)
             albumRepository.createAlbum(payload)
         }
     }
 
     private fun buildNewAlbumPayload(
-        extractions: List<Extraction>,
+        lupaImageMetadata: List<LupaImageMetadata>,
         searchTerm: String
     ): NewAlbum {
-        val entries = extractions.map {
+        val entries = lupaImageMetadata.map {
             NewAlbum.Entry(
                 uri = it.uri,
                 id = it.mediaImageId

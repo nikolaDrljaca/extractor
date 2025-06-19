@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain.model
+package com.drbrosdev.extractor.domain.model.search
 
 import com.drbrosdev.extractor.R
 

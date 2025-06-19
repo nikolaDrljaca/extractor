@@ -1,4 +1,6 @@
-package com.drbrosdev.extractor.domain.model
+package com.drbrosdev.extractor.domain.model.search
+
+import com.drbrosdev.extractor.domain.model.KeywordType
 
 
 data class SuggestedSearch(

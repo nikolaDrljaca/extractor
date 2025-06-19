@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.LupaImageMetadata
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorImageFlowRow
@@ -26,7 +26,7 @@ fun ExtractorCollageItem(
     modifier: Modifier = Modifier,
     onItemClick: (index: Int) -> Unit,
     keyword: String,
-    extractions: List<Extraction>,
+    lupaImageMetadata: List<LupaImageMetadata>,
 ) {
     Column(
         modifier = Modifier
@@ -48,7 +48,7 @@ fun ExtractorCollageItem(
         ExtractorImageFlowRow(
             modifier = Modifier.fillMaxWidth(),
             onClick = onItemClick,
-            images = extractions,
+            images = lupaImageMetadata,
         )
     }
 }
@@ -62,26 +62,26 @@ private fun CurrentPreview() {
                 ExtractorCollageItem(
                     onItemClick = {},
                     keyword = "sample",
-                    extractions = listOf(
-                        Extraction(
+                    lupaImageMetadata = listOf(
+                        LupaImageMetadata(
                             uri = MediaImageUri(""),
                             mediaImageId = MediaImageId(1L),
                             path = "",
                             dateAdded = LocalDateTime.now()
                         ),
-                        Extraction(
+                        LupaImageMetadata(
                             uri = MediaImageUri(""),
                             mediaImageId = MediaImageId(2L),
                             path = "",
                             dateAdded = LocalDateTime.now()
                         ),
-                        Extraction(
+                        LupaImageMetadata(
                             uri = MediaImageUri(""),
                             mediaImageId = MediaImageId(3L),
                             path = "",
                             dateAdded = LocalDateTime.now()
                         ),
-                        Extraction(
+                        LupaImageMetadata(
                             uri = MediaImageUri(""),
                             mediaImageId = MediaImageId(4L),
                             path = "",

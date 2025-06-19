@@ -17,8 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.SearchType
-import com.drbrosdev.extractor.domain.model.asStringRes
+import com.drbrosdev.extractor.domain.model.search.SearchType
+import com.drbrosdev.extractor.domain.model.search.asStringRes
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable

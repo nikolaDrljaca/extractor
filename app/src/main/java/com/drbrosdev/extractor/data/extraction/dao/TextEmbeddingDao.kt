@@ -17,7 +17,7 @@ interface TextEmbeddingDao {
     @Query("SELECT * FROM text_embedding WHERE id=:id")
     suspend fun findById(id: Long): TextEmbeddingRecord?
 
-    @Query("SELECT * FROM text_embedding WHERE extraction_id=:mediaId")
+    @Query("SELECT * FROM text_embedding WHERE lupa_image_id=:mediaId")
     suspend fun findByMediaId(mediaId: Long): TextEmbeddingRecord?
 
     @Query(
@@ -37,7 +37,7 @@ interface TextEmbeddingDao {
     @Update
     suspend fun update(value: TextEmbeddingRecord)
 
-    @Query("UPDATE text_embedding SET value=:value WHERE extraction_id=:imageEntityId")
+    @Query("UPDATE text_embedding SET value=:value WHERE lupa_image_id=:imageEntityId")
     suspend fun update(value: String, imageEntityId: Long)
 
     @Delete
@@ -46,7 +46,7 @@ interface TextEmbeddingDao {
     @Query("DELETE FROM text_embedding")
     suspend fun deleteAll()
 
-    @Query("DELETE FROM text_embedding WHERE extraction_id=:mediaId")
+    @Query("DELETE FROM text_embedding WHERE lupa_image_id=:mediaId")
     suspend fun deleteByMediaId(mediaId: Long)
 
     @Query("""

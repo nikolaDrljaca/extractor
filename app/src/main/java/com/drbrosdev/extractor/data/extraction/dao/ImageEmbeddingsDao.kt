@@ -28,7 +28,7 @@ interface ImageEmbeddingsDao {
             JOIN search_index_fts AS fts ON fts.rowid = si.id
             WHERE search_index_fts MATCH :ftsQuery)
         SELECT im.media_store_id, im.uri, im.path, im.date_added
-        FROM extraction AS im
+        FROM lupa_image AS im
         JOIN lookup ON lookup.extraction_id = im.media_store_id
         GROUP BY im.media_store_id
         ORDER BY im.date_added DESC
@@ -51,10 +51,37 @@ interface ImageEmbeddingsDao {
     @Query(
         """
         SELECT DISTINCT * 
-        FROM extraction
+        FROM lupa_image
         WHERE media_store_id=:mediaImageId
     """
     )
     @Transaction
     fun findByMediaImageId(mediaImageId: Long): Flow<ImageEmbeddingsRelation?>
+
+    @Query("""
+        SELECT * 
+        FROM lupa_image
+        WHERE date_added BETWEEN :start AND :end
+        ORDER BY date_added DESC
+    """)
+    @Transaction
+    suspend fun findByDateRange(start: String, end: String): List<ImageEmbeddingsRelation>
+
+    @Query("""
+         SELECT e.*
+            FROM lupa_image AS e
+            ORDER BY e.rowid ASC
+            LIMIT 1
+    """)
+    @Transaction
+    fun findMostRecentAsFlow(): Flow<ImageEmbeddingsRelation?>
+
+    @Query("""
+         SELECT e.*
+            FROM lupa_image AS e
+            ORDER BY e.rowid ASC
+            LIMIT 1
+    """)
+    @Transaction
+    suspend fun findMostRecent(): ImageEmbeddingsRelation?
 }

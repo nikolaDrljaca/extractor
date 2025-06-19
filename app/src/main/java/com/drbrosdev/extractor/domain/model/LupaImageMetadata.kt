@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.domain.model
 
 import java.time.LocalDateTime
 
-data class Extraction(
+data class LupaImageMetadata(
     val mediaImageId: MediaImageId,
     val uri: MediaImageUri,
     val path: String,

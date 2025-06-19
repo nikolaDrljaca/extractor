@@ -1,7 +1,7 @@
 package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
-import com.drbrosdev.extractor.data.extraction.DefaultExtractorRepository
+import com.drbrosdev.extractor.data.extraction.DefaultLupaImageRepository
 import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
@@ -13,14 +13,11 @@ import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbe
 import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonVisualEmbeds
 import com.drbrosdev.extractor.domain.usecase.generate.GenerateMostCommonExtractionBundles
 import com.drbrosdev.extractor.domain.usecase.generate.GenerateUserCollage
-import com.drbrosdev.extractor.domain.usecase.image.BuildFtsQuery
-import com.drbrosdev.extractor.domain.usecase.image.SearchCountPositiveDelta
-import com.drbrosdev.extractor.domain.usecase.image.SearchImageSideEffects
-import com.drbrosdev.extractor.domain.usecase.image.SearchImages
-import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByDateRange
-import com.drbrosdev.extractor.domain.usecase.image.search.DefaultSearchImageByQuery
-import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByDateRange
-import com.drbrosdev.extractor.domain.usecase.image.search.SearchImageByQuery
+import com.drbrosdev.extractor.domain.usecase.search.BuildFtsQuery
+import com.drbrosdev.extractor.domain.usecase.search.SearchCountPositiveDelta
+import com.drbrosdev.extractor.domain.usecase.search.SearchImageByQuery
+import com.drbrosdev.extractor.domain.usecase.search.SearchImageSideEffects
+import com.drbrosdev.extractor.domain.usecase.search.SearchImages
 import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
@@ -31,7 +28,6 @@ import com.drbrosdev.extractor.framework.PlayAppReviewService
 import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageRepository
 import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
 import org.koin.core.qualifier.named
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
 
@@ -63,7 +59,7 @@ val useCaseModule = module {
     factory {
         BulkExtractLupaAnnotations(
             mediaImageRepository = get(),
-            extractorRepository = get<DefaultExtractorRepository>(),
+            lupaImageRepository = get<DefaultLupaImageRepository>(),
             extractLupaAnnotations = get()
         )
     }
@@ -75,15 +71,14 @@ val useCaseModule = module {
     }
 
     factory {
-        DefaultSearchImageByQuery(
-            dispatcher = get(named(CoroutineModuleName.IO)),
+        SearchImageByQuery(
             imageEmbedDao = get(),
             tokenizeText = get(),
             buildFtsQuery = get(),
             mediaStoreImageRepository = get<DefaultMediaStoreImageRepository>(),
             trackExtractionProgress = get()
         )
-    } bind SearchImageByQuery::class
+    }
 
     single {
         TrackExtractionProgress(
@@ -99,7 +94,7 @@ val useCaseModule = module {
     factory {
         CompileMostCommonVisualEmbeds(
             repo = get(),
-            searchImageByQuery = get<DefaultSearchImageByQuery>(),
+            searchImageByQuery = get<SearchImageByQuery>(),
             tokenizeText = get(),
             generateMostCommonTokens = get(),
         )
@@ -132,7 +127,7 @@ val useCaseModule = module {
     factory {
         CompileMostCommonTextEmbeds(
             repo = get(),
-            searchImageByQuery = get<DefaultSearchImageByQuery>(),
+            searchImageByQuery = get<SearchImageByQuery>(),
             tokenizeText = get(),
             generateMostCommonTokens = get(),
         )
@@ -154,7 +149,7 @@ val useCaseModule = module {
     factory { params ->
         StartExtraction(
             mediaImageRepository = get(),
-            extractionRepository = get(),
+            lupaImageRepository = get(),
             inferenceService = params.get()
         )
     }
@@ -188,8 +183,7 @@ val useCaseModule = module {
     factory {
         SearchImages(
             dispatcher = get(named(CoroutineModuleName.Default)),
-            searchImageByQuery = get<DefaultSearchImageByQuery>(),
-            searchImageByDateRange = get<DefaultSearchImageByDateRange>(),
+            searchImageByQuery = get(),
             sideEffects = get(),
             dataStore = get(),
         )
@@ -202,11 +196,4 @@ val useCaseModule = module {
             appReviewService = get<PlayAppReviewService>()
         )
     }
-
-    factory {
-        DefaultSearchImageByDateRange(
-            dispatcher = get(named(CoroutineModuleName.Default)),
-            extractionDao = get()
-        )
-    } bind SearchImageByDateRange::class
 }

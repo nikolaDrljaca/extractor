@@ -1,11 +1,10 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
-import com.drbrosdev.extractor.domain.model.Embed
 import com.drbrosdev.extractor.domain.model.mediaImageId
 import com.drbrosdev.extractor.domain.model.mediaImageUri
-import com.drbrosdev.extractor.domain.repository.ExtractorRepository
+import com.drbrosdev.extractor.domain.repository.LupaImageRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
-import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
+import com.drbrosdev.extractor.domain.repository.payload.NewLupaImage
 import com.drbrosdev.extractor.framework.logger.logEvent
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -13,10 +12,10 @@ import kotlinx.coroutines.flow.map
 class BulkExtractLupaAnnotations(
     private val mediaImageRepository: MediaStoreImageRepository,
     private val extractLupaAnnotations: ExtractLupaAnnotations,
-    private val extractorRepository: ExtractorRepository
+    private val lupaImageRepository: LupaImageRepository
 ) {
     suspend fun execute() {
-        val storedIds = extractorRepository.getAllIds()
+        val storedIds = lupaImageRepository.getAllIds()
         val onDeviceIds = mediaImageRepository.getAllIds()
 
         val isOnDevice = onDeviceIds.subtract(storedIds)
@@ -32,17 +31,17 @@ class BulkExtractLupaAnnotations(
                     .map { mediaStoreImage ->
                         val embeds =
                             extractLupaAnnotations.execute(mediaStoreImage.mediaImageUri())
-                        NewExtraction(
+                        NewLupaImage(
                             mediaImageId = mediaStoreImage.mediaImageId(),
                             extractorImageUri = mediaStoreImage.mediaImageUri(),
                             path = mediaStoreImage.path,
                             dateAdded = mediaStoreImage.dateAdded,
-                            textEmbed = embeds?.textEmbed ?: Embed.Text.DEFAULT,
+                            textEmbed = embeds?.textEmbed ?: "",
                             visualEmbeds = embeds?.visualEmbeds ?: emptyList()
                         )
                     }
                     .collect {
-                        extractorRepository.createExtractionData(it)
+                        lupaImageRepository.createLupaImage(it)
                     }
             }
 
@@ -51,7 +50,7 @@ class BulkExtractLupaAnnotations(
                 isInStorage
                     .asFlow()
                     .collect {
-                        extractorRepository.deleteExtractionData(it)
+                        lupaImageRepository.deleteLupaImage(it)
                     }
             }
 

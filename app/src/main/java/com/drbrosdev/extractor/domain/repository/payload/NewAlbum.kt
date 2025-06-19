@@ -3,7 +3,7 @@ package com.drbrosdev.extractor.domain.repository.payload
 import com.drbrosdev.extractor.domain.model.KeywordType
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.domain.model.search.SearchType
 
 data class NewAlbum(
     val keyword: String,

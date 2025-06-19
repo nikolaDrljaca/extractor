@@ -10,7 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -43,11 +42,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.domain.model.Embed
-import com.drbrosdev.extractor.domain.model.Extraction
-import com.drbrosdev.extractor.domain.model.ExtractionData
+import com.drbrosdev.extractor.domain.model.LupaImageMetadata
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
+import com.drbrosdev.extractor.ui.components.recommendsearch.LupaImageHighlight
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.asImageRequest
 import kotlinx.coroutines.delay
@@ -58,7 +56,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun ExtractorShowcase(
     modifier: Modifier = Modifier,
-    extractionData: ExtractionData
+    highlight: LupaImageHighlight
 ) {
     Column(
         modifier = Modifier
@@ -73,7 +71,7 @@ fun ExtractorShowcase(
         Spacer(Modifier.height(16.dp))
 
         AnimatedContent(
-            targetState = extractionData,
+            targetState = highlight,
             modifier = Modifier,
             contentAlignment = Alignment.Center,
             transitionSpec = {
@@ -90,23 +88,22 @@ fun ExtractorShowcase(
                 enter togetherWith exit
             }
         ) {
-            ShowcaseItem(extractionData = it)
+            ShowcaseItem(highlight = it)
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ShowcaseItem(
     modifier: Modifier = Modifier,
-    extractionData: ExtractionData
+    highlight: LupaImageHighlight
 ) {
     val background =
         Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
 
     var opacity by rememberSaveable { mutableFloatStateOf(0f) }
 
-    LaunchedEffect(extractionData) {
+    LaunchedEffect(highlight) {
         delay(ExtractorShowcaseDefaults.EMBED_ALPHA_DELAY.milliseconds)
         // opacity from 0 to 1
         animate(
@@ -128,7 +125,7 @@ private fun ShowcaseItem(
             modifier = Modifier
                 .matchParentSize()
                 .align(Alignment.Center),
-            model = extractionData.extraction.uri.asImageRequest(LocalContext.current),
+            model = highlight.lupaImageMetadata.uri.asImageRequest(LocalContext.current),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
         )
@@ -149,10 +146,10 @@ private fun ShowcaseItem(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
-                extractionData.visualEmbeds.forEach {
+                highlight.visualEmbeds.forEach {
                     SuggestionChip(
                         onClick = {},
-                        label = { Text(it.value) },
+                        label = { Text(it) },
                         enabled = false,
                         shape = CircleShape,
                         border = SuggestionChipDefaults.suggestionChipBorder(
@@ -166,7 +163,7 @@ private fun ShowcaseItem(
             }
 
             Text(
-                text = extractionData.textEmbed.value,
+                text = highlight.textEmbed,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 modifier = Modifier
@@ -190,24 +187,24 @@ object ExtractorShowcaseDefaults {
 @Preview
 @Composable
 private fun CurrentPreview() {
-    val data = ExtractionData(
-        extraction = Extraction(
+    val data = LupaImageHighlight(
+        lupaImageMetadata = LupaImageMetadata(
             mediaImageId = MediaImageId(1L),
             uri = MediaImageUri(""),
             path = "",
             dateAdded = LocalDateTime.now(),
         ),
-        textEmbed = Embed.Text("sample text here"),
+        textEmbed = "sample text here",
         visualEmbeds = listOf(
-            Embed.Visual("sample"),
-            Embed.Visual("sample"),
-            Embed.Visual("sample"),
-            Embed.Visual("sample"),
+            "sample",
+            "sample",
+            "sample",
+            "sample",
         )
     )
     ExtractorTheme {
         ShowcaseItem(
-            extractionData = data
+            highlight = data
         )
     }
 }

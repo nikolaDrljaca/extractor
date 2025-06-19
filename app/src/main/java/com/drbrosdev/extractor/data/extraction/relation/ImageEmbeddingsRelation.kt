@@ -6,8 +6,9 @@ import com.drbrosdev.extractor.data.extraction.record.LupaImageMetadataRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.VisualEmbeddingRecord
-import com.drbrosdev.extractor.domain.model.Embed
-import com.drbrosdev.extractor.domain.model.ImageEmbeds
+import com.drbrosdev.extractor.data.extraction.record.toMetadata
+import com.drbrosdev.extractor.domain.model.LupaImage
+import com.drbrosdev.extractor.domain.model.LupaImageAnnotations
 
 
 data class ImageEmbeddingsRelation(
@@ -15,41 +16,47 @@ data class ImageEmbeddingsRelation(
 
     @Relation(
         parentColumn = "media_store_id",
-        entityColumn = "extraction_id"
+        entityColumn = "lupa_image_id"
     )
     val textEmbeddingRecord: TextEmbeddingRecord,
 
     @Relation(
         parentColumn = "media_store_id",
-        entityColumn = "extraction_id"
+        entityColumn = "lupa_image_id"
     )
     val visualEmbeddingRecord: VisualEmbeddingRecord,
 
     @Relation(
         parentColumn = "media_store_id",
-        entityColumn = "extraction_id"
+        entityColumn = "lupa_image_id"
     )
     val userEmbeddingRecord: UserEmbeddingRecord,
 )
 
-fun ImageEmbeddingsRelation.toImageEmbeds(): ImageEmbeds {
-    val textEmbed = Embed.Text(value = this.textEmbeddingRecord.value)
+fun ImageEmbeddingsRelation.toLupaImage(): LupaImage {
+    return LupaImage(
+        metadata = imageEntity.toMetadata(),
+        annotations = toLupaAnnotations()
+    )
+}
+
+fun ImageEmbeddingsRelation.toLupaAnnotations(): LupaImageAnnotations {
+    val textEmbed = this.textEmbeddingRecord.value
 
     val visualEmbeds = when {
         this.visualEmbeddingRecord.value.isBlank() -> emptyList()
         else -> this.visualEmbeddingRecord.value
             .split(",")
-            .map { Embed.Visual(it) }
+            .map { it }
     }
 
     val userEmbeds = when {
         this.userEmbeddingRecord.value.isBlank() -> emptyList()
         else -> this.userEmbeddingRecord.value
             .split(",")
-            .map { Embed.User(it) }
+            .map { it }
     }
-
-    return ImageEmbeds(
+    return LupaImageAnnotations(
         textEmbed = textEmbed,
         visualEmbeds = visualEmbeds,
         userEmbeds = userEmbeds

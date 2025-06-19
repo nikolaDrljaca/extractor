@@ -13,9 +13,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.saveable
 import arrow.core.raise.nullable
 import com.drbrosdev.extractor.domain.model.DateRange
-import com.drbrosdev.extractor.domain.model.ImageSearchParams
+import com.drbrosdev.extractor.domain.model.search.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.domain.model.search.SearchType
 import com.drbrosdev.extractor.util.EpochMillis
 import com.drbrosdev.extractor.util.toLocalDateTime
 import java.util.Locale

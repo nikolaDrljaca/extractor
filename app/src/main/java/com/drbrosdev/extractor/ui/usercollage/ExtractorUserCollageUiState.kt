@@ -1,13 +1,13 @@
 package com.drbrosdev.extractor.ui.usercollage
 
 import androidx.compose.runtime.Immutable
-import com.drbrosdev.extractor.domain.model.UserExtractionBundle
+import com.drbrosdev.extractor.domain.model.LupaBundle
 
 sealed interface ExtractorUserCollageUiState {
 
     @Immutable
     data class Content(
-        val collages: List<UserExtractionBundle>,
+        val collages: List<LupaBundle>,
         val onItemClicked: (keyword: String, index: Int) -> Unit,
         val onShare: (keyword: String) -> Unit
     ) : ExtractorUserCollageUiState
@@ -17,7 +17,7 @@ sealed interface ExtractorUserCollageUiState {
 
 fun ExtractorUserCollageUiState.findCollageByKeyword(keyword: String) = when (this) {
     is ExtractorUserCollageUiState.Content -> this.collages
-        .find { it.userEmbed.lowercase() == keyword.lowercase() }
+        .find { it.keyword.lowercase() == keyword.lowercase() }
 
     ExtractorUserCollageUiState.Loading -> error("Accessing Collage items outside content state.")
 }

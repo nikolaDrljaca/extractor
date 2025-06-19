@@ -1,21 +1,21 @@
 package com.drbrosdev.extractor.domain.repository
 
-import com.drbrosdev.extractor.domain.model.ExtractionData
-import com.drbrosdev.extractor.domain.model.ImageEmbeds
+import com.drbrosdev.extractor.domain.model.LupaImage
+import com.drbrosdev.extractor.domain.model.LupaImageAnnotations
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
-import com.drbrosdev.extractor.domain.repository.payload.NewExtraction
+import com.drbrosdev.extractor.domain.repository.payload.NewLupaImage
 import kotlinx.coroutines.flow.Flow
 
-interface ExtractorRepository {
+interface LupaImageRepository {
 
-    suspend fun deleteExtractionData(mediaImageId: Long)
+    suspend fun deleteLupaImage(mediaImageId: Long)
 
     suspend fun deleteExtractionDataAndSearchIndex()
 
     suspend fun getAllIds(): Set<Long>
 
-    fun findImageDataByMediaId(mediaImageId: MediaImageId): Flow<ImageEmbeds?>
+    fun findImageDataByMediaId(mediaImageId: MediaImageId): Flow<LupaImageAnnotations?>
 
     suspend fun updateTextEmbed(embedUpdate: EmbedUpdate)
 
@@ -25,15 +25,15 @@ interface ExtractorRepository {
 
     suspend fun deleteUserEmbed(mediaImageId: MediaImageId, value: String)
 
-    suspend fun createExtractionData(data: NewExtraction)
+    suspend fun createLupaImage(data: NewLupaImage)
 
     suspend fun getAllVisualEmbedValuesAsCsv(): String?
 
     suspend fun getAllTextEmbedValuesAsCsv(): String?
 
-    fun getExtractionCountAsFlow(): Flow<Int>
+    fun getCountAsFlow(): Flow<Int>
 
-    suspend fun getLatestExtraction(): ExtractionData?
+    suspend fun getLatestLupaImage(): LupaImage?
 
-    fun getLatestExtractionAsFlow(): Flow<ExtractionData>
+    fun getLatestLupaImageAsFlow(): Flow<LupaImage>
 }

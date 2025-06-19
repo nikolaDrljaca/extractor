@@ -3,14 +3,13 @@ package com.drbrosdev.extractor.data.extraction.record
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.drbrosdev.extractor.domain.model.Embed
 
 @Entity(tableName = "visual_embedding")
 data class VisualEmbeddingRecord(
 
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 
-    @ColumnInfo(name = "extraction_id") val extractionId: Long,
+    @ColumnInfo(name = "lupa_image_id") val lupaImageId: Long,
 
     val value: String
 ) {
@@ -18,8 +17,3 @@ data class VisualEmbeddingRecord(
         const val SEPARATOR = ","
     }
 }
-
-fun VisualEmbeddingRecord.toEmbed() = this.value
-    .split(VisualEmbeddingRecord.SEPARATOR)
-    .map { it.trim() }
-    .map { Embed.Visual(it) }

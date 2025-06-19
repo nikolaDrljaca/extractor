@@ -8,7 +8,7 @@ import arrow.core.Some
 import arrow.core.toOption
 import com.drbrosdev.extractor.domain.model.Album
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.asString
+import com.drbrosdev.extractor.domain.model.search.asString
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.usecase.generate.GenerateUserCollage
 import com.drbrosdev.extractor.framework.navigation.Navigators
@@ -46,12 +46,12 @@ class ExtractorYourSpaceViewModel(
     }
         .map { it.toOption() }
         .map {
-            val out = it.flatMap { collage -> collage.extractions.firstOrNull().toOption() }
+            val out = it.flatMap { bundle -> bundle.images.firstOrNull().toOption() }
             val thumbnail = when (out) {
                 None -> ExtractorUserCollageThumbnailUiState.Empty
                 is Some -> ExtractorUserCollageThumbnailUiState.Content(
                     mediaImageUri = out.value.uri,
-                    keywords = it.getOrNull()?.userEmbed ?: ""
+                    keywords = it.getOrNull()?.keyword ?: ""
                 )
             }
             thumbnail

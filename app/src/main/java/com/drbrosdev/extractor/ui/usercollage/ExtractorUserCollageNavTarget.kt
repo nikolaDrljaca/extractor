@@ -6,10 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.LupaBundle
+import com.drbrosdev.extractor.domain.model.LupaImageMetadata
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
-import com.drbrosdev.extractor.domain.model.UserExtractionBundle
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerNavTarget
@@ -66,26 +66,26 @@ object ExtractorUserCollageNavTarget : NavTarget {
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme {
-        val extractions = listOf(
-            Extraction(
+        val lupaImageMetadata = listOf(
+            LupaImageMetadata(
                 uri = MediaImageUri(""),
                 mediaImageId = MediaImageId(1L),
                 path = "",
                 dateAdded = LocalDateTime.now()
             ),
-            Extraction(
+            LupaImageMetadata(
                 uri = MediaImageUri(""),
                 mediaImageId = MediaImageId(2L),
                 path = "",
                 dateAdded = LocalDateTime.now()
             ),
-            Extraction(
+            LupaImageMetadata(
                 uri = MediaImageUri(""),
                 mediaImageId = MediaImageId(3L),
                 path = "",
                 dateAdded = LocalDateTime.now()
             ),
-            Extraction(
+            LupaImageMetadata(
                 uri = MediaImageUri(""),
                 mediaImageId = MediaImageId(4L),
                 path = "",
@@ -95,7 +95,7 @@ private fun CurrentPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ExtractorUserCollageScreen(
                 state = ExtractorUserCollageUiState.Content(
-                    collages = listOf(UserExtractionBundle("sample", extractions)),
+                    collages = listOf(LupaBundle("sample", lupaImageMetadata)),
                     onShare = {},
                     onItemClicked = { _, _ -> }
                 ),

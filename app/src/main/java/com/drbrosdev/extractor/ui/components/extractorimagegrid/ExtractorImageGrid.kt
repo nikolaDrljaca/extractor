@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.domain.model.AlbumEntry
-import com.drbrosdev.extractor.domain.model.Extraction
+import com.drbrosdev.extractor.domain.model.LupaImageMetadata
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
@@ -27,7 +27,7 @@ fun ExtractorImageGrid(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = ExtractorImageGridDefaults.paddingValues,
     gridState: ExtractorGridState<Int>,
-    images: List<Extraction>,
+    images: List<LupaImageMetadata>,
 ) {
     val imageSize = 96
 
@@ -64,7 +64,7 @@ fun ExtractorImageGrid(
 fun ExtractorImageFlowRow(
     onClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
-    images: List<Extraction>,
+    images: List<LupaImageMetadata>,
 ) {
     val imageSize = 76
 

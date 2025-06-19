@@ -1,4 +1,4 @@
-package com.drbrosdev.extractor.domain.usecase.image
+package com.drbrosdev.extractor.domain.usecase.search
 
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.service.AppReviewService

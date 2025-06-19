@@ -5,7 +5,7 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
-import com.drbrosdev.extractor.domain.model.SuggestedSearch
+import com.drbrosdev.extractor.domain.model.search.SuggestedSearch
 
 class GenerateSuggestedKeywords(
     private val extractionDao: ExtractionDao,

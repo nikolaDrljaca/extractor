@@ -2,9 +2,9 @@ package com.drbrosdev.extractor.ui.search
 
 import android.os.Parcelable
 import com.drbrosdev.extractor.domain.model.DateRange
-import com.drbrosdev.extractor.domain.model.ImageSearchParams
+import com.drbrosdev.extractor.domain.model.search.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
-import com.drbrosdev.extractor.domain.model.SearchType
+import com.drbrosdev.extractor.domain.model.search.SearchType
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 

@@ -182,7 +182,7 @@ fun ExtractorOverviewScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(maxHeight.times(0.67f)),
-                        extractionData = overviewContentState.mostRecentExtraction
+                        highlight = overviewContentState.mostRecentLupaImage
                     )
                 }
             }
