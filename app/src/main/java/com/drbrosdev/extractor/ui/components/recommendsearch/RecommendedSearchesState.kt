@@ -26,13 +26,20 @@ sealed class RecommendedSearchesState {
 @Immutable
 data class LupaImageHighlight(
     val lupaImageMetadata: LupaImageMetadata,
+    val descriptionEmbed: String,
     val textEmbed: String,
     val visualEmbeds: List<String>
-)
+) {
+    val tooltipValue = when {
+        descriptionEmbed.isNotBlank() -> descriptionEmbed
+        else -> textEmbed
+    }
+}
 
 fun LupaImage.asHighlight() = LupaImageHighlight(
     lupaImageMetadata = metadata,
     textEmbed = annotations.textEmbed,
+    descriptionEmbed = annotations.descriptionEmbed,
     visualEmbeds = annotations.visualEmbeds
 )
 

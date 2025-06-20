@@ -15,4 +15,7 @@ data class SearchIndexFts(
 
     @ColumnInfo(name = "user_index")
     val userIndex: String,
+
+    @ColumnInfo(name = "description_index")
+    val descriptionIndex: String
 )

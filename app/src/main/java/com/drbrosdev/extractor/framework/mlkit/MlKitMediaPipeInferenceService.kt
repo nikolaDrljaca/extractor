@@ -79,7 +79,14 @@ class MlKitMediaPipeInferenceService(
     }
 
     override suspend fun isImageDescriptorAvailable() = withContext(dispatcher) {
-        imageDescriber.checkFeatureStatus().await() == FeatureStatus.AVAILABLE
+        val featureStatus = imageDescriber.checkFeatureStatus()
+            .await()
+        when (featureStatus) {
+            FeatureStatus.DOWNLOADING -> logEvent("Gemini Nano model features are downloading.")
+            FeatureStatus.DOWNLOADABLE -> logEvent("Gemini Nano model features are downloadable.")
+            FeatureStatus.UNAVAILABLE -> logEvent("Gemini Nano model is not available for device.")
+        }
+        featureStatus != FeatureStatus.UNAVAILABLE
     }
 
     override fun close() {
@@ -99,11 +106,6 @@ class MlKitMediaPipeInferenceService(
     private suspend fun runImageDescriber(image: InputImage): String {
         val featureStatus = imageDescriber.checkFeatureStatus()
             .await()
-        when (featureStatus) {
-            FeatureStatus.DOWNLOADING -> logEvent("Gemini Nano model features are downloading.")
-            FeatureStatus.DOWNLOADABLE -> logEvent("Gemini Nano model features are downloadable.")
-            FeatureStatus.UNAVAILABLE -> logEvent("Gemini Nano model is not available for device.")
-        }
         if (featureStatus == FeatureStatus.UNAVAILABLE) {
             return ""
         }

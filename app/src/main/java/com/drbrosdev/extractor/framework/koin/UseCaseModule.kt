@@ -1,12 +1,10 @@
 package com.drbrosdev.extractor.framework.koin
 
 import com.drbrosdev.extractor.data.album.DefaultAlbumRepository
-import com.drbrosdev.extractor.data.extraction.DefaultLupaImageRepository
 import com.drbrosdev.extractor.domain.usecase.CompleteOnboarding
 import com.drbrosdev.extractor.domain.usecase.GenerateFeedbackEmailContent
 import com.drbrosdev.extractor.domain.usecase.album.CleanupAlbum
 import com.drbrosdev.extractor.domain.usecase.album.StoreAlbums
-import com.drbrosdev.extractor.domain.usecase.extractor.BulkExtractLupaAnnotations
 import com.drbrosdev.extractor.domain.usecase.extractor.StartExtraction
 import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
 import com.drbrosdev.extractor.domain.usecase.generate.CompileMostCommonTextEmbeds
@@ -53,14 +51,6 @@ val useCaseModule = module {
             dispatcher = get(named(CoroutineModuleName.Default)),
             userEmbeddingDao = get(),
             userExtractionDao = get()
-        )
-    }
-
-    factory {
-        BulkExtractLupaAnnotations(
-            mediaImageRepository = get(),
-            lupaImageRepository = get<DefaultLupaImageRepository>(),
-            extractLupaAnnotations = get()
         )
     }
 

@@ -1,11 +1,13 @@
 package com.drbrosdev.extractor.data.extraction
 
 import com.drbrosdev.extractor.data.TransactionProvider
+import com.drbrosdev.extractor.data.extraction.dao.DescriptionEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
 import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.record.DescriptionEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.LupaImageMetadataRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
@@ -20,7 +22,6 @@ import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.repository.LupaImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
-import com.drbrosdev.extractor.domain.repository.payload.NewLupaImage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
@@ -30,6 +31,7 @@ class DefaultLupaImageRepository(
     private val extractionDao: ExtractionDao,
     private val visualEmbeddingDao: VisualEmbeddingDao,
     private val textEmbeddingDao: TextEmbeddingDao,
+    private val descriptionEmbeddingDao: DescriptionEmbeddingDao,
     private val userEmbeddingDao: UserEmbeddingDao,
     private val imageEmbeddingsDao: ImageEmbeddingsDao,
     private val searchIndexDao: SearchIndexDao,
@@ -43,6 +45,7 @@ class DefaultLupaImageRepository(
         visualEmbeddingDao.deleteByMediaId(mediaImageId)
         textEmbeddingDao.deleteByMediaId(mediaImageId)
         userEmbeddingDao.deleteByMediaId(mediaImageId)
+        descriptionEmbeddingDao.deleteByLupaImageId(mediaImageId)
         // update search index
         searchIndexDao.deleteByMediaId(mediaImageId)
     }
@@ -53,6 +56,7 @@ class DefaultLupaImageRepository(
             userEmbeddingDao.deleteAll()
             visualEmbeddingDao.deleteAll()
             textEmbeddingDao.deleteAll()
+            descriptionEmbeddingDao.deleteAll()
             extractionDao.deleteAll()
         }
     }
@@ -144,31 +148,40 @@ class DefaultLupaImageRepository(
         }
     }
 
-    override suspend fun createLupaImage(data: NewLupaImage) = with(data) {
-        val lupaImageMetadataRecord = LupaImageMetadataRecord(
-            mediaStoreId = mediaImageId.id,
-            uri = extractorImageUri.uri,
-            dateAdded = dateAdded,
-            path = path
-        )
+    override suspend fun createLupaImage(data: LupaImage) = with(data) {
+        // extract data
+        val mediaImageId = metadata.mediaImageId
+        val textEmbed = annotations.textEmbed
+        val visualEmbeds = annotations.visualEmbeds
+        val descriptionEmbed = annotations.descriptionEmbed
 
+        val lupaImageMetadataRecord = LupaImageMetadataRecord(
+            mediaStoreId = metadata.mediaImageId.id,
+            uri = metadata.uri.uri,
+            dateAdded = metadata.dateAdded,
+            path = metadata.path
+        )
+        // handle text embed
         val textEntity = TextEmbeddingRecord(
             lupaImageId = mediaImageId.id,
             value = textEmbed
         )
-
         // handle visual embeds
         val visuals = visualEmbeds
             .filter { it.isNotBlank() }
             .map { it.lowercase() }
             .joinToString(separator = VisualEmbeddingRecord.SEPARATOR) { it }
-
         val visualEntity = VisualEmbeddingRecord(
             lupaImageId = mediaImageId.id,
             value = visuals
         )
+        // handle description embed
+        val descriptionEntity = DescriptionEmbeddingRecord(
+            lupaImageId = mediaImageId.id,
+            value = descriptionEmbed
+        )
 
-        // Create default empty user entity
+        // handle user entity - Create default empty user entity
         val userEntity = UserEmbeddingRecord(
             lupaImageId = mediaImageId.id,
             value = ""
@@ -176,6 +189,7 @@ class DefaultLupaImageRepository(
 
         val searchIndex = SearchIndexRecord(
             textIndex = textEmbed,
+            descriptionIndex = descriptionEmbed,
             visualIndex = visuals,
             userIndex = "", // Empty on first creation
             extractionId = mediaImageId.id
@@ -184,6 +198,7 @@ class DefaultLupaImageRepository(
         txRunner.withTransaction {
             extractionDao.insert(lupaImageMetadataRecord)
             textEmbeddingDao.insert(textEntity)
+            descriptionEmbeddingDao.insert(descriptionEntity)
             visualEmbeddingDao.insert(visualEntity)
             userEmbeddingDao.insert(userEntity)
             // create search index

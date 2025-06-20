@@ -1,10 +1,13 @@
 package com.drbrosdev.extractor.domain.usecase.extractor
 
+import com.drbrosdev.extractor.domain.model.LupaImage
+import com.drbrosdev.extractor.domain.model.LupaImageAnnotations
+import com.drbrosdev.extractor.domain.model.LupaImageMetadata
+import com.drbrosdev.extractor.domain.model.MediaStoreImage
 import com.drbrosdev.extractor.domain.model.mediaImageId
 import com.drbrosdev.extractor.domain.model.mediaImageUri
 import com.drbrosdev.extractor.domain.repository.LupaImageRepository
 import com.drbrosdev.extractor.domain.repository.MediaStoreImageRepository
-import com.drbrosdev.extractor.domain.repository.payload.NewLupaImage
 import com.drbrosdev.extractor.framework.logger.logEvent
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
@@ -31,13 +34,9 @@ class BulkExtractLupaAnnotations(
                     .map { mediaStoreImage ->
                         val embeds =
                             extractLupaAnnotations.execute(mediaStoreImage.mediaImageUri())
-                        NewLupaImage(
-                            mediaImageId = mediaStoreImage.mediaImageId(),
-                            extractorImageUri = mediaStoreImage.mediaImageUri(),
-                            path = mediaStoreImage.path,
-                            dateAdded = mediaStoreImage.dateAdded,
-                            textEmbed = embeds?.textEmbed ?: "",
-                            visualEmbeds = embeds?.visualEmbeds ?: emptyList()
+                        toLupaImage(
+                            mediaStoreImage,
+                            embeds
                         )
                     }
                     .collect {
@@ -57,4 +56,22 @@ class BulkExtractLupaAnnotations(
             else -> Unit
         }
     }
+
+    private fun toLupaImage(
+        mediaStoreImage: MediaStoreImage,
+        annotations: LupaImageAnnotations?
+    ) = LupaImage(
+        metadata = LupaImageMetadata(
+            mediaImageId = mediaStoreImage.mediaImageId(),
+            uri = mediaStoreImage.mediaImageUri(),
+            path = mediaStoreImage.path,
+            dateAdded = mediaStoreImage.dateAdded
+        ),
+        annotations = LupaImageAnnotations(
+            textEmbed = annotations?.textEmbed ?: "",
+            descriptionEmbed = annotations?.descriptionEmbed ?: "",
+            visualEmbeds = annotations?.visualEmbeds ?: emptyList(),
+            userEmbeds = emptyList()
+        )
+    )
 }

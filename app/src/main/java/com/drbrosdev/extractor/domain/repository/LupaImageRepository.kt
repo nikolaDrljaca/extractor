@@ -5,7 +5,6 @@ import com.drbrosdev.extractor.domain.model.LupaImageAnnotations
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
-import com.drbrosdev.extractor.domain.repository.payload.NewLupaImage
 import kotlinx.coroutines.flow.Flow
 
 interface LupaImageRepository {
@@ -28,7 +27,7 @@ interface LupaImageRepository {
 
     suspend fun deleteUserEmbed(mediaImageId: MediaImageId, value: String)
 
-    suspend fun createLupaImage(data: NewLupaImage)
+    suspend fun createLupaImage(data: LupaImage)
 
     suspend fun getAllVisualEmbedValuesAsCsv(): String?
 

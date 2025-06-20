@@ -2,6 +2,7 @@ package com.drbrosdev.extractor.data.extraction.relation
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.drbrosdev.extractor.data.extraction.record.DescriptionEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.LupaImageMetadataRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
@@ -31,6 +32,12 @@ data class ImageEmbeddingsRelation(
         entityColumn = "lupa_image_id"
     )
     val userEmbeddingRecord: UserEmbeddingRecord,
+
+    @Relation(
+        parentColumn = "media_store_id",
+        entityColumn = "lupa_image_id"
+    )
+    val descriptionEmbeddingRecord: DescriptionEmbeddingRecord
 )
 
 fun ImageEmbeddingsRelation.toLupaImage(): LupaImage {
@@ -42,6 +49,7 @@ fun ImageEmbeddingsRelation.toLupaImage(): LupaImage {
 
 fun ImageEmbeddingsRelation.toLupaAnnotations(): LupaImageAnnotations {
     val textEmbed = this.textEmbeddingRecord.value
+    val descriptionEmbed = this.descriptionEmbeddingRecord.value
 
     val visualEmbeds = when {
         this.visualEmbeddingRecord.value.isBlank() -> emptyList()
@@ -59,6 +67,7 @@ fun ImageEmbeddingsRelation.toLupaAnnotations(): LupaImageAnnotations {
     return LupaImageAnnotations(
         textEmbed = textEmbed,
         visualEmbeds = visualEmbeds,
-        userEmbeds = userEmbeds
+        userEmbeds = userEmbeds,
+        descriptionEmbed = descriptionEmbed
     )
 }

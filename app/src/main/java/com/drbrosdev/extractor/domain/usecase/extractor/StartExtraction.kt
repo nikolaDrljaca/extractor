@@ -19,17 +19,14 @@ class StartExtraction(
 ) {
     suspend fun execute(): Either<ExtractionNotInSync, Unit> = either {
         // check if gemini nano is available
-        if (inferenceService.isImageDescriptorAvailable().not()) {
-            logEvent("GeminiNano is not available on this system.")
-        } else {
-            logEvent("GeminiNano is might be available on this system.")
-        }
+        val descriptorAvailable = inferenceService.isImageDescriptorAvailable()
         // create bulk extractor
         val extractor = BulkExtractLupaAnnotations(
             mediaImageRepository = mediaImageRepository,
             lupaImageRepository = lupaImageRepository,
             extractLupaAnnotations = ExtractLupaAnnotations(
-                inferenceService = inferenceService
+                inferenceService = inferenceService,
+                isDescriptorAvailable = descriptorAvailable
             )
         )
         // execute bulk extraction and measure time

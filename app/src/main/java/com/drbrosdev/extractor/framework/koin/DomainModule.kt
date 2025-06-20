@@ -15,6 +15,7 @@ val domainModule = module {
             extractionDao = get(),
             visualEmbeddingDao = get(),
             textEmbeddingDao = get(),
+            descriptionEmbeddingDao = get(),
             userEmbeddingDao = get(),
             imageEmbeddingsDao = get(),
             searchIndexDao = get(),

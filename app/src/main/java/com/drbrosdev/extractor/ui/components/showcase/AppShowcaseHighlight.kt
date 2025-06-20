@@ -125,7 +125,7 @@ private fun ShowcaseItem(
         modifier = Modifier
             .fillMaxHeight()
             .padding(12.dp)
-            .clip(RoundedCornerShape(14.dp))
+            .clip(RoundedCornerShape(28.dp)) // carousel extra large clip shape
             .then(modifier)
     ) {
         // image
@@ -154,7 +154,7 @@ private fun ShowcaseItem(
                 visible = isNotBlank
             ) {
                 AppTooltip(
-                    text = highlight.textEmbed
+                    text = highlight.tooltipValue
                 )
             }
 
@@ -201,6 +201,7 @@ private fun CurrentPreview() {
             dateAdded = LocalDateTime.now(),
         ),
         textEmbed = "sample text here",
+        descriptionEmbed = "foo",
         visualEmbeds = listOf(
             "sample",
             "sample",

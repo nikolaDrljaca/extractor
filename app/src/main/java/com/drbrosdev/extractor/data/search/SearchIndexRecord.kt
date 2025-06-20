@@ -16,6 +16,9 @@ data class SearchIndexRecord(
     @ColumnInfo(name = "user_index")
     val userIndex: String,
 
+    @ColumnInfo(name = "description_index")
+    val descriptionIndex: String,
+
     // relation
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
 

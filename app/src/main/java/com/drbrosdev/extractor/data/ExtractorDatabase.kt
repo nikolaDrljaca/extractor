@@ -12,12 +12,14 @@ import com.drbrosdev.extractor.data.album.dao.AlbumRelationDao
 import com.drbrosdev.extractor.data.album.record.AlbumConfigurationRecord
 import com.drbrosdev.extractor.data.album.record.AlbumEntryRecord
 import com.drbrosdev.extractor.data.album.record.AlbumRecord
+import com.drbrosdev.extractor.data.extraction.dao.DescriptionEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.ExtractionDao
 import com.drbrosdev.extractor.data.extraction.dao.ImageEmbeddingsDao
 import com.drbrosdev.extractor.data.extraction.dao.TextEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserEmbeddingDao
 import com.drbrosdev.extractor.data.extraction.dao.UserExtractionDao
 import com.drbrosdev.extractor.data.extraction.dao.VisualEmbeddingDao
+import com.drbrosdev.extractor.data.extraction.record.DescriptionEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.LupaImageMetadataRecord
 import com.drbrosdev.extractor.data.extraction.record.TextEmbeddingRecord
 import com.drbrosdev.extractor.data.extraction.record.UserEmbeddingRecord
@@ -30,6 +32,7 @@ import com.drbrosdev.extractor.data.search.SearchIndexRecord
     entities = [
         LupaImageMetadataRecord::class,
         TextEmbeddingRecord::class,
+        DescriptionEmbeddingRecord::class,
         VisualEmbeddingRecord::class,
         UserEmbeddingRecord::class,
         AlbumRecord::class,
@@ -38,7 +41,7 @@ import com.drbrosdev.extractor.data.search.SearchIndexRecord
         SearchIndexRecord::class,
         SearchIndexFts::class
     ],
-    version = 17,
+    version = 18,
 )
 @TypeConverters(DatabaseConverters::class)
 abstract class ExtractorDatabase : RoomDatabase() {
@@ -64,6 +67,8 @@ abstract class ExtractorDatabase : RoomDatabase() {
     abstract fun searchIndexDao(): SearchIndexDao
 
     abstract fun userExtractionDao(): UserExtractionDao
+
+    abstract fun descriptionEmbeddingDao(): DescriptionEmbeddingDao
 
     companion object {
         fun createExtractorDatabase(context: Context): ExtractorDatabase {
