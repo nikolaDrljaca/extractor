@@ -2,7 +2,6 @@ package com.drbrosdev.extractor.ui.components.shared
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.size
@@ -24,7 +23,6 @@ import com.drbrosdev.extractor.ui.imageinfo.VisualEmbedUiModel
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorEmbeddingChips(
     modifier: Modifier = Modifier,
@@ -47,7 +45,6 @@ fun ExtractorEmbeddingChips(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorEmbeddingChips(
     modifier: Modifier = Modifier,
@@ -72,7 +69,6 @@ fun ExtractorEmbeddingChips(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorSuggestedEmbeddingChips(
     modifier: Modifier = Modifier,

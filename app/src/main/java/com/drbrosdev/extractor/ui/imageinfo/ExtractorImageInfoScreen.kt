@@ -35,7 +35,6 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorButtonDefaults
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmbeddingChips
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorImageInfoScreen(
     onClearVisual: (String) -> Unit,

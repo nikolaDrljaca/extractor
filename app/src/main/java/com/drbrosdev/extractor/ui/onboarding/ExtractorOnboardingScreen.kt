@@ -29,7 +29,6 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextButton
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtractorOnboardingScreen(
     onClick: () -> Unit,

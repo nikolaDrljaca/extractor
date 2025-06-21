@@ -17,7 +17,6 @@ import com.drbrosdev.extractor.ui.components.shared.ExtractorChipDefaults
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.CombinedPreview
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExtractorActionChips(
     onActionClick: (AboutLink) -> Unit,
