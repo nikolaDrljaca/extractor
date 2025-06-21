@@ -3,6 +3,7 @@ package com.drbrosdev.extractor.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // seed color Color(0xFF0050E1)
+val seedColor = Color(0xFF0050E1)
 
 val primaryLight = Color(0xFF4C5C92)
 val onPrimaryLight = Color(0xFFFFFFFF)
