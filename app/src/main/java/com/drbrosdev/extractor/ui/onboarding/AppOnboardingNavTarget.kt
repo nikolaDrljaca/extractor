@@ -18,7 +18,7 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Parcelize
-object ExtractorOnboardingNavTarget : NavTarget {
+object AppOnboardingNavTarget : NavTarget {
 
     @Composable
     override fun Content(navigators: Navigators) {
@@ -37,7 +37,7 @@ object ExtractorOnboardingNavTarget : NavTarget {
             }
         }
 
-        ExtractorOnboardingScreen(
+        AppOnboardingScreen(
             pagerState = pagerState,
             onClick = {
                 val event = mapEvent(pagerState.currentPage)
@@ -58,11 +58,6 @@ object ExtractorOnboardingNavTarget : NavTarget {
                     }
                 }
             },
-            onBackClick = {
-                scope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                }
-            }
         )
     }
 }
@@ -85,10 +80,9 @@ private fun mapEvent(currentPage: Int): OnboardingEvents = when (currentPage) {
 private fun CurrentPreview() {
     ExtractorTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            ExtractorOnboardingScreen(
+            AppOnboardingScreen(
                 pagerState = rememberPagerState { 0 },
                 onClick = {},
-                onBackClick = {}
             )
         }
     }

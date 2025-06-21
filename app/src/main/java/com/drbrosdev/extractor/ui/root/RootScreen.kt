@@ -15,7 +15,7 @@ import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.framework.navigation.animspec.createTransitionSpec
 import com.drbrosdev.extractor.framework.permission.ReadPermissionAccess
-import com.drbrosdev.extractor.ui.onboarding.ExtractorOnboardingNavTarget
+import com.drbrosdev.extractor.ui.onboarding.AppOnboardingNavTarget
 import com.drbrosdev.extractor.ui.overview.ExtractorOverviewNavTarget
 import com.drbrosdev.extractor.ui.permhandler.ExtractorPermissionRequestNavTarget
 import com.drbrosdev.extractor.ui.theme.provider
@@ -52,7 +52,7 @@ fun Root() {
         val isOnboardingFinished = viewModel.isOnboardingFinished().first()
         if (!isOnboardingFinished) {
             //Onboarding not shown
-            navController.replaceAll(ExtractorOnboardingNavTarget)
+            navController.replaceAll(AppOnboardingNavTarget)
         } else {
             //Has seen onboarding, but permission is denied
             //Probably manually revoked
