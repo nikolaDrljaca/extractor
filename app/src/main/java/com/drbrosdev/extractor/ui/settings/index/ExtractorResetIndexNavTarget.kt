@@ -51,8 +51,8 @@ private fun CurrentPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             ExtractorResetIndexScreen(
-                onBack = { /*TODO*/ },
-                onResetIndex = { /*TODO*/ },
+                onBack = {  },
+                onResetIndex = {  },
                 isLoading = false
             )
         }

@@ -189,19 +189,19 @@ private fun ButtonsPreview() {
     ExtractorTheme(dynamicColor = false) {
         Surface {
             Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                OutlinedExtractorActionButton(onClick = { /*TODO*/ }) {
+                OutlinedExtractorActionButton(onClick = {  }) {
                     Text(text = "Action")
                 }
-                ExtractorActionButton(onClick = { /*TODO*/ }) {
+                ExtractorActionButton(onClick = {  }) {
                     Text(text = "Action")
                 }
-                ExtractorButton(onClick = { /*TODO*/ }) {
+                ExtractorButton(onClick = {  }) {
                     Text(text = "Action")
                 }
-                BottomSheetButton(onClick = { /*TODO*/ }) {
+                BottomSheetButton(onClick = {  }) {
                     Text(text = "Action")
                 }
-                ExtractorTextButton(onClick = { /*TODO*/ }) {
+                ExtractorTextButton(onClick = { }) {
                     Text(text = "Action")
                 }
             }

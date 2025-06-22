@@ -137,7 +137,6 @@ fun ExtractorSearchScreen(
                             checkedState = resultComponent.gridState[it.mediaImageId]
                         )
                     }
-                    // TODO Modify value based on screen size
                     maxLineSpanItem(key = "bottom_spacer") { Spacer(Modifier.height(100.dp)) }
                 }
             }

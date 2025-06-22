@@ -46,8 +46,7 @@ class ExtractorImageViewerModel(
             val uri = MediaImageUri(it.toString())
             val description = lupaImageRepository.findImageByUri(uri)
                 ?.annotations
-                // TODO Replace this with descriptions
-                ?.textEmbed
+                ?.descriptionEmbed
             description?.ifBlank { null }
         }
         .flowOn(Dispatchers.Default)

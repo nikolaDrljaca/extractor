@@ -198,7 +198,7 @@ private fun CurrentPreview() {
 
                     ExtractorImageItem(
                         imageUri = "".toUri(),
-                        onClick = { /*TODO*/ },
+                        onClick = { },
                         onLongClick = {},
                         checkedState = state,
                         size = 200

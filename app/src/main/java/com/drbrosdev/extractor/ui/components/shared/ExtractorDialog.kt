@@ -88,7 +88,7 @@ private fun ExtractorDialogContent(
 @Composable
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
-        ExtractorDialogContent(onAction = { /*TODO*/ }) {
+        ExtractorDialogContent(onAction = {  }) {
             Text("Some Content")
         }
     }

@@ -92,7 +92,7 @@ private fun DialogButton(
 private fun CurrentPreview() {
     ExtractorTheme(dynamicColor = false) {
         Column {
-            ExtractorDatePicker(onDismiss = { /*TODO*/ }, onConfirm = {})
+            ExtractorDatePicker(onDismiss = {  }, onConfirm = {})
         }
     }
 }
