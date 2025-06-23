@@ -6,44 +6,33 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.framework.navigation.BottomSheetNavTarget
-import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
+import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
 import com.drbrosdev.extractor.ui.dialog.userembed.ExtractorUserEmbedDialogNavTarget
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
-import dev.olshevski.navigation.reimagined.NavController
-import dev.olshevski.navigation.reimagined.material.BottomSheetState
 import dev.olshevski.navigation.reimagined.navigate
-import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Parcelize
 data class ExtractorImageInfoNavTarget(
-    val mediaImageId: Long
-) : BottomSheetNavTarget {
+    private val mediaImageId: Long
+) : NavTarget {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun Content(
-        sheetState: BottomSheetState,
-        dialogNavController: NavController<DialogNavTarget>,
-        sheetNavController: NavController<BottomSheetNavTarget>
-    ) {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorImageInfoViewModel = koinViewModel {
             parametersOf(mediaImageId)
         }
         val imageInfoModel by viewModel.imageInfoModel.collectAsStateWithLifecycle()
-
-        LaunchedEffect(key1 = Unit) {
-            sheetState.expand()
-        }
+        val dialogNavController = navigators.dialogNavController
 
         Surface(
             tonalElevation = BottomSheetDefaults.Elevation,
@@ -56,7 +45,6 @@ data class ExtractorImageInfoNavTarget(
                 onClearVisual = viewModel::clearVisualEmbedding,
                 onSaveEmbeddings = {
                     viewModel.saveEmbeddings()
-                    sheetNavController.pop()
                 },
                 onClearUser = viewModel::updateUserEmbedding,
                 onAddNewUser = {

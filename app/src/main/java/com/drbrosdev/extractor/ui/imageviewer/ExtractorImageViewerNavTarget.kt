@@ -36,14 +36,14 @@ data class ExtractorImageViewerNavTarget(
         val annotations by viewModel.annotations.collectAsStateWithLifecycle()
 
         val context = LocalContext.current
-        val bottomSheetNavigator = navigators.bottomSheetNavController
+        val navController = navigators.navController
 
         CollectFlow(viewModel.events) {
             currentImageInfo?.let { imageInfo ->
                 when (it) {
                     ExtractorImageViewerEvents.OnEdit -> context.launchEditIntent(imageInfo)
                     ExtractorImageViewerEvents.OnExtractorInfo ->
-                        bottomSheetNavigator.navigate(ExtractorImageInfoNavTarget(imageInfo.mediaImageId))
+                        navController.navigate(ExtractorImageInfoNavTarget(imageInfo.mediaImageId))
                     ExtractorImageViewerEvents.OnShare -> context.launchShareIntent(imageInfo)
                     ExtractorImageViewerEvents.OnUseAs -> context.launchUseAsIntent(imageInfo)
                 }
