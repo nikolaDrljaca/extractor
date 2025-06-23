@@ -1,3 +1,0 @@
-* albums will self update to exclude deleted images
-* adding your own tags to images now lets you know if it was successful
-* performance improvements

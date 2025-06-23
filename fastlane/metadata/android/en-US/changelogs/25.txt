@@ -1,2 +1,0 @@
-* Introduce in-app review API. You can now provide direct feedback and reviews to the devs without
-leaving the app!

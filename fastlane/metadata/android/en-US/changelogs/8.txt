@@ -1,7 +1,0 @@
-* Introduced new MediaPipe based model for visual inference
-- This will increase the overall time needed for indexing but it should yield
-better search results.
-
-* Fixed a bug causing the app to crash when interacting with the user keywords dialog
-
-* Optimizations and performance improvements

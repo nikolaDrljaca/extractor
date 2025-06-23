@@ -1,3 +1,0 @@
-* Introduce new Material3 Expressive design
-* Tentative integration with Gemini Nano on device models for image descriptions
-* Performance improvements

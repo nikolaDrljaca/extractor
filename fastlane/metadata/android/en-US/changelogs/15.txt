@@ -1,2 +1,0 @@
-* minor UI changes
-* ad placeholders have been removed

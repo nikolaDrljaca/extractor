@@ -1,3 +1,0 @@
-* Testing an application redesign
-* Brand new Home screen is introduced
-* Dedicated Search screen

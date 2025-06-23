@@ -1,4 +1,0 @@
-* General performance improvements.
-* Minor changes and bugfixes.
-* Increasing the search count should now properly generate suggestions.
-* The search count is no longer displayed as 0 when the app is started.
