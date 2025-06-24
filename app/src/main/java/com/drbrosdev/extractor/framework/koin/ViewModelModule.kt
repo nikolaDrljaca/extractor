@@ -100,7 +100,7 @@ val viewModelModule = module {
         ExtractorImageInfoViewModel(
             mediaImageId = it.get(),
             stateHandle = get(),
-            extractorDataRepository = get<DefaultLupaImageRepository>(),
+            lupaImageRepository = get<DefaultLupaImageRepository>(),
         )
     }
 

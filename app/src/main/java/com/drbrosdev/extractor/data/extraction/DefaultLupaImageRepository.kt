@@ -75,6 +75,11 @@ class DefaultLupaImageRepository(
         return imageEmbeddingsDao.findByUri(uri.uri)?.toLupaImage()
     }
 
+    override fun findByIdAsFlow(mediaImageId: MediaImageId): Flow<LupaImage?> {
+        return imageEmbeddingsDao.findByMediaImageId(mediaImageId.id)
+            .map { it?.toLupaImage() }
+    }
+
     override suspend fun getAllVisualEmbedValuesAsCsv(): String? {
         return visualEmbeddingDao.findAllVisualEmbedValues()
     }

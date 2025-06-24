@@ -1,12 +1,15 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,8 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -37,147 +38,73 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.compose.layoutId
+import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.framework.fillMaxWidth
-import com.drbrosdev.extractor.ui.components.shared.EmbeddingTextField
-import com.drbrosdev.extractor.ui.components.shared.ExtractorButton
-import com.drbrosdev.extractor.ui.components.shared.ExtractorButtonDefaults
-import com.drbrosdev.extractor.ui.components.shared.ExtractorEmbeddingChips
-import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
-import com.drbrosdev.extractor.ui.theme.ExtractorTheme
-
-@Composable
-fun ExtractorImageInfoScreen(
-    onClearVisual: (String) -> Unit,
-    onClearUser: (String) -> Unit,
-    onSaveEmbeddings: () -> Unit,
-    onAddNewUser: () -> Unit,
-    modifier: Modifier = Modifier,
-    model: ExtractorImageInfoUiState,
-    textEmbedState: ExtractorTextFieldState
-) {
-    val scrollState = rememberScrollState()
-    val smallLabel = MaterialTheme.typography.labelSmall.copy(
-        color = Color.Gray
-    )
-
-    ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(horizontal = 16.dp)
-            .systemBarsPadding()
-            .then(modifier),
-        constraintSet = imageInfoConstraintSet()
-    ) {
-        Column(
-            modifier = Modifier.layoutId(ViewIds.IMAGE_INFO)
-        ) {
-            Text(
-                text = stringResource(R.string.extractor_image_info),
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(text = stringResource(R.string.info_screen_image_id, model.mediaImageId.id))
-        }
-
-        Column(
-            modifier = Modifier
-                .layoutId(ViewIds.EMBEDDINGS)
-                .then(modifier),
-            verticalArrangement = Arrangement.spacedBy(space = 8.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.visual_embeddings),
-                style = MaterialTheme.typography.titleMedium
-            )
-            ExtractorEmbeddingChips(onClear = onClearVisual, embeddings = model.visualEmbedding)
-
-            Text(
-                text = stringResource(R.string.user_embeddings),
-                style = MaterialTheme.typography.titleMedium
-            )
-            ExtractorEmbeddingChips(
-                onClear = onClearUser,
-                embeddings = model.userEmbedding,
-                trailingSlot = {
-                    AssistChip(
-                        onClick = onAddNewUser,
-                        label = { Text(text = "Add") },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Rounded.Add,
-                                contentDescription = "Add"
-                            )
-                        },
-                        shape = CircleShape
-                    )
-                }
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-            EmbeddingTextField(
-                value = textEmbedState.textValue,
-                onTextChange = textEmbedState::updateTextValue,
-                label = { Text(text = stringResource(R.string.text_embeddings)) }
-            )
-        }
-
-        ExtractorButton(
-            onClick = onSaveEmbeddings,
-            modifier = Modifier.layoutId(ViewIds.SAVE_BUTTON),
-            contentPadding = ExtractorButtonDefaults.paddingValues(vertical = 4.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.round_save_24),
-                contentDescription = "null"
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(text = stringResource(R.string.info_screen_save))
-        }
-
-        Column(
-            modifier = Modifier.layoutId(ViewIds.NOTE)
-        ) {
-            Text(
-                text = stringResource(R.string.extractor_info_about_image),
-                style = smallLabel
-            )
-        }
-    }
-}
 
 @Composable
 fun AppImageDetailScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    model: LupaImageDetailState
 ) {
     val scrollState = rememberScrollState()
 
-    ConstraintLayout(
-        constraintSet = lupaImageDetailsConstraintSet(),
-        modifier = Modifier
+    Column(
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(horizontal = 16.dp)
+            .padding(top = 24.dp)
             .systemBarsPadding()
     ) {
+        AppImageDetailHeading(
+            modifier = Modifier,
+            model = model.heading
+        )
 
+        Box(Modifier) {
+            when {
+                model.hasDescription -> AppImageDetailDescription(
+                    text = model.description!!,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                else -> Spacer(Modifier.height(16.dp))
+            }
+        }
+
+        AppImageDetailEditable(
+            modifier = Modifier
+                .padding(top = 8.dp),
+            model = model.editables
+        )
+
+        /* TODO Move this to new edit info screen
+    Box(Modifier.weight(1f)) {
+        Text(
+            text = stringResource(R.string.extractor_info_about_image),
+            style = MaterialTheme.typography.labelSmall.copy(
+                color = Color.Gray
+            ),
+            modifier = Modifier.align(Alignment.BottomStart)
+        )
+    }
+         */
     }
 }
 
 @Composable
-fun AppImageDetailHeading(
-    modifier: Modifier = Modifier
+private fun AppImageDetailHeading(
+    modifier: Modifier = Modifier,
+    model: LupaImageHeading
 ) {
     Row(
+        modifier = Modifier
+            .then(modifier),
         verticalAlignment = Alignment.Top,
     ) {
         AsyncImage(
@@ -187,14 +114,15 @@ fun AppImageDetailHeading(
                 .height(144.dp)
                 .clip(RoundedCornerShape(28.dp)),
             model = ImageRequest.Builder(LocalContext.current)
-//                .data(item.toUri())
-                .data(Uri.EMPTY)
+                .data(model.uri.toUri())
                 .size(192 * 2)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(R.drawable.baseline_image_24),
             contentScale = ContentScale.Crop
         )
+
+        Spacer(Modifier.width(12.dp))
 
         Column(
             verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -206,10 +134,10 @@ fun AppImageDetailHeading(
                 style = MaterialTheme.typography.headlineMedium
             )
             Text(
-                text = "# ID: 234234"
+                text = "# ID: ${model.mediaImageId}"
             )
             Text(
-                text = "2025-01-01",
+                text = model.dateAdded,
                 color = Color.Gray
             )
         }
@@ -217,7 +145,7 @@ fun AppImageDetailHeading(
 }
 
 @Composable
-fun AppImageDetailDescription(
+private fun AppImageDetailDescription(
     modifier: Modifier = Modifier,
     text: String
 ) {
@@ -243,8 +171,35 @@ fun AppImageDetailDescription(
 }
 
 @Composable
-fun AppImageDetailEditable(
-    modifier: Modifier = Modifier
+private fun ImageAnnotationsFlowRow(
+    modifier: Modifier = Modifier,
+    annotations: Annotations
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(top = 4.dp)
+    ) {
+        annotations.embeds.forEach { embed ->
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.tertiaryContainer
+            ) {
+                Text(
+                    text = embed,
+                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppImageDetailEditable(
+    modifier: Modifier = Modifier,
+    model: LupaImageEditables
 ) {
     val islandSpacer = 8.dp
     Column(
@@ -252,39 +207,46 @@ fun AppImageDetailEditable(
             .then(modifier)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max),
+            verticalAlignment = Alignment.Top,
         ) {
             EditableContentIsland(
                 modifier = Modifier
+                    .fillMaxHeight()
                     .weight(1f),
-                onClick = {},
+                onClick = { model.eventSink(LupaImageEditablesEvents.OnVisualEdit) },
                 title = { Text(stringResource(R.string.visual_embeddings)) }
             ) {
-
+                ImageAnnotationsFlowRow(annotations = model.visualEmbeds)
             }
             Spacer(Modifier.width(islandSpacer))
             EditableContentIsland(
                 modifier = Modifier
+                    .fillMaxHeight()
                     .weight(1f),
-                onClick = {},
+                onClick = { model.eventSink(LupaImageEditablesEvents.OnUserEdit) },
                 title = { Text(stringResource(R.string.user_embeddings)) }
             ) {
-
+                ImageAnnotationsFlowRow(annotations = model.userEmbeds)
             }
         }
         Spacer(Modifier.height(islandSpacer))
         EditableContentIsland(
-            onClick = {},
+            onClick = { model.eventSink(LupaImageEditablesEvents.OnTextEdit) },
             title = { Text(stringResource(R.string.text_embeddings)) }
         ) {
-            Text(stringResource(R.string.lorem))
+            Text(
+                text = model.textEmbed
+            )
         }
+
     }
 }
 
 @Composable
-fun EditableContentIsland(
+private fun EditableContentIsland(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     title: @Composable RowScope.() -> Unit,
@@ -320,91 +282,5 @@ fun EditableContentIsland(
             content()
         }
     }
-}
-
-@Preview
-@Composable
-private fun CurrentPreview() {
-    ExtractorTheme(darkTheme = true) {
-        Surface {
-            Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                AppImageDetailHeading()
-                AppImageDetailDescription(
-                    text = "this is some random text",
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                AppImageDetailEditable()
-            }
-        }
-    }
-}
-
-private fun lupaImageDetailsConstraintSet() = ConstraintSet {
-    val heading = createRefFor("heading")
-    val editableSection = createRefFor("editable_section")
-    val disclaimer = createRefFor("disclaimer")
-
-    constrain(heading) {
-        fillMaxWidth()
-        top.linkTo(parent.top)
-    }
-    constrain(editableSection) {
-        fillMaxWidth()
-        top.linkTo(heading.bottom)
-    }
-    constrain(disclaimer) {
-        fillMaxWidth()
-        bottom.linkTo(parent.bottom)
-    }
-}
-
-
-private fun imageInfoConstraintSet() = ConstraintSet {
-    val saveButton = createRefFor(ViewIds.SAVE_BUTTON)
-    val imageInfo = createRefFor(ViewIds.IMAGE_INFO)
-    val embeddings = createRefFor(ViewIds.EMBEDDINGS)
-    val note = createRefFor(ViewIds.NOTE)
-
-    val guideline = createGuidelineFromStart(0.65f)
-    val topGuideline = createGuidelineFromTop(0.03f)
-    val barGuideline = createGuidelineFromTop(0.09f)
-
-    constrain(note) {
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-        bottom.linkTo(parent.bottom)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(saveButton) {
-        top.linkTo(topGuideline)
-        end.linkTo(parent.end)
-        bottom.linkTo(barGuideline)
-        height = Dimension.fillToConstraints
-    }
-
-    constrain(imageInfo) {
-        top.linkTo(topGuideline)
-        start.linkTo(parent.start)
-        end.linkTo(guideline)
-        bottom.linkTo(barGuideline)
-        width = Dimension.fillToConstraints
-        height = Dimension.fillToConstraints
-    }
-
-    constrain(embeddings) {
-        top.linkTo(barGuideline, margin = 12.dp)
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-        width = Dimension.fillToConstraints
-    }
-}
-
-private object ViewIds {
-    const val SAVE_BUTTON = "save_button"
-    const val IMAGE_INFO = "image_info"
-    const val EMBEDDINGS = "embeddings"
-    const val NOTE = "note"
 }
 

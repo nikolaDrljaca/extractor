@@ -13,6 +13,9 @@ fun LocalDateTime.asAlbumName() = buildString {
     append(this@asAlbumName.format(formatter))
 }
 
+fun LocalDateTime.asFormatDate() = DateTimeFormatter.ofPattern("YYYY-mm-DD")
+    .format(this)
+
 @JvmInline
 value class EpochMillis(val value: Long)
 

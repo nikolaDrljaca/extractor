@@ -9,9 +9,13 @@ import com.drbrosdev.extractor.domain.repository.LupaImageRepository
 import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
 import com.drbrosdev.extractor.util.WhileUiSubscribed
+import com.drbrosdev.extractor.util.asFormatDate
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,11 +23,43 @@ import kotlinx.coroutines.launch
 class ExtractorImageInfoViewModel(
     private val mediaImageId: Long,
     private val stateHandle: SavedStateHandle,
-    private val extractorDataRepository: LupaImageRepository
+    private val lupaImageRepository: LupaImageRepository
 ) : ViewModel() {
     private val checkedVisualEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
 
     private val checkedUserEmbeds = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+
+    val imageDetailState = lupaImageRepository.findByIdAsFlow(MediaImageId(mediaImageId))
+        .filterNotNull()
+        .map { lupaImage ->
+            LupaImageDetailState(
+                heading = LupaImageHeading(
+                    mediaImageId = lupaImage.metadata.mediaImageId.id,
+                    uri = lupaImage.metadata.uri.uri,
+                    dateAdded = lupaImage.metadata.dateAdded.asFormatDate()
+                ),
+                description = when {
+                    lupaImage.annotations.descriptionEmbed.isBlank() -> null
+                    else -> lupaImage.annotations.descriptionEmbed
+                },
+                editables = LupaImageEditables(
+                    textEmbed = lupaImage.annotations.textEmbed,
+                    visualEmbeds = Annotations(lupaImage.annotations.visualEmbeds),
+                    userEmbeds = Annotations(lupaImage.annotations.userEmbeds),
+                    eventSink = ::handleEditablesEvent
+                )
+            )
+        }
+        .flowOn(Dispatchers.Default)
+        .stateIn(
+            viewModelScope,
+            WhileUiSubscribed,
+            null
+        )
+
+    private fun handleEditablesEvent(event: LupaImageEditablesEvents) {
+
+    }
 
     val textEmbedding = stateHandle.saveable(
         key = "text_embedding",
@@ -33,7 +69,7 @@ class ExtractorImageInfoViewModel(
     }
 
     val imageInfoModel = combine(
-        extractorDataRepository.findImageDataByMediaId(mediaImageId = MediaImageId(mediaImageId))
+        lupaImageRepository.findImageDataByMediaId(mediaImageId = MediaImageId(mediaImageId))
             .filterNotNull(),
         checkedVisualEmbeds,
         checkedUserEmbeds
@@ -84,7 +120,7 @@ class ExtractorImageInfoViewModel(
         viewModelScope.launch {
             val id = MediaImageId(mediaImageId)
 
-            extractorDataRepository.updateTextEmbed(
+            lupaImageRepository.updateTextEmbed(
                 EmbedUpdate(
                     value = textEmbedding.textValue.trim(),
                     mediaImageId = id
@@ -93,11 +129,11 @@ class ExtractorImageInfoViewModel(
 
             imageInfoModel.value.userEmbedding
                 .filter { it.isChecked }
-                .forEach { extractorDataRepository.deleteUserEmbed(id, it.text) }
+                .forEach { lupaImageRepository.deleteUserEmbed(id, it.text) }
 
             imageInfoModel.value.visualEmbedding
                 .filter { it.isChecked }
-                .forEach { extractorDataRepository.deleteVisualEmbed(id, it.text) }
+                .forEach { lupaImageRepository.deleteVisualEmbed(id, it.text) }
         }
     }
 }

@@ -19,6 +19,8 @@ interface LupaImageRepository {
 
     suspend fun findImageByUri(uri: MediaImageUri) : LupaImage?
 
+    fun findByIdAsFlow(mediaImageId: MediaImageId) : Flow<LupaImage?>
+
     suspend fun updateTextEmbed(embedUpdate: EmbedUpdate)
 
     suspend fun updateUserEmbed(embedUpdate: List<EmbedUpdate>)
