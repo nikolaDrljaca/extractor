@@ -1,35 +1,12 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
 import androidx.compose.runtime.Immutable
-import com.drbrosdev.extractor.domain.model.MediaImageId
-
 
 @Immutable
-data class ExtractorImageInfoUiState(
-    val mediaImageId: MediaImageId = MediaImageId(0L),
-    val userEmbedding: List<UserEmbedUiModel> = emptyList(),
-    val visualEmbedding: List<VisualEmbedUiModel> = emptyList(),
-)
-
-@Immutable
-data class VisualEmbedUiModel(
-    val text: String,
-    val isChecked: Boolean,
-)
-
-@Immutable
-data class UserEmbedUiModel(
-    val text: String,
-    val isChecked: Boolean
-)
-
-/////
-
-@Immutable
-data class LupaImageDetailState(
-    val heading: LupaImageHeading,
+data class LupaImageInfoState(
+    val heading: LupaImageHeaderState,
     val description: String?,
-    val editables: LupaImageEditables
+    val editables: LupaImageEditablesState
 ) {
     val hasDescription = description != null
 }
@@ -42,15 +19,15 @@ sealed interface LupaImageEditablesEvents {
 }
 
 @Immutable
-data class LupaImageEditables(
+data class LupaImageEditablesState(
     val textEmbed: String,
-    val visualEmbeds: Annotations,
-    val userEmbeds: Annotations,
+    val visualEmbeds: LupaImageAnnotationsState,
+    val userEmbeds: LupaImageAnnotationsState,
     val eventSink: (LupaImageEditablesEvents) -> Unit
 )
 
 @Immutable
-data class Annotations(
+data class LupaImageAnnotationsState(
     val embeds: List<String>
 ) {
     val isEmpty = embeds.isEmpty()
@@ -58,7 +35,7 @@ data class Annotations(
 
 // HEADING
 @Immutable
-data class LupaImageHeading(
+data class LupaImageHeaderState(
     val mediaImageId: Long,
     val uri: String,
     val dateAdded: String,

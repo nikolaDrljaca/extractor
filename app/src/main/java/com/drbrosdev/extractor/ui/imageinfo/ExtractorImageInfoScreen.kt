@@ -32,24 +32,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.ui.components.shared.AppImageInfoHeader
 
 @Composable
-fun AppImageDetailScreen(
+fun AppImageInfoScreen(
     modifier: Modifier = Modifier,
-    model: LupaImageDetailState
+    model: LupaImageInfoState
 ) {
     val scrollState = rememberScrollState()
 
@@ -61,7 +53,7 @@ fun AppImageDetailScreen(
             .padding(top = 24.dp)
             .systemBarsPadding()
     ) {
-        AppImageDetailHeading(
+        AppImageInfoHeader(
             modifier = Modifier,
             model = model.heading
         )
@@ -98,53 +90,6 @@ fun AppImageDetailScreen(
 }
 
 @Composable
-private fun AppImageDetailHeading(
-    modifier: Modifier = Modifier,
-    model: LupaImageHeading
-) {
-    Row(
-        modifier = Modifier
-            .then(modifier),
-        verticalAlignment = Alignment.Top,
-    ) {
-        AsyncImage(
-            contentDescription = "",
-            modifier = Modifier
-                .weight(1f)
-                .height(144.dp)
-                .clip(RoundedCornerShape(28.dp)),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(model.uri.toUri())
-                .size(192 * 2)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(R.drawable.baseline_image_24),
-            contentScale = ContentScale.Crop
-        )
-
-        Spacer(Modifier.width(12.dp))
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier.weight(2f)
-        ) {
-            Text(
-                text = "Image Info",
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Text(
-                text = "# ID: ${model.mediaImageId}"
-            )
-            Text(
-                text = model.dateAdded,
-                color = Color.Gray
-            )
-        }
-    }
-}
-
-@Composable
 private fun AppImageDetailDescription(
     modifier: Modifier = Modifier,
     text: String
@@ -173,14 +118,14 @@ private fun AppImageDetailDescription(
 @Composable
 private fun ImageAnnotationsFlowRow(
     modifier: Modifier = Modifier,
-    annotations: Annotations
+    lupaImageAnnotationsState: LupaImageAnnotationsState
 ) {
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.padding(top = 4.dp)
     ) {
-        annotations.embeds.forEach { embed ->
+        lupaImageAnnotationsState.embeds.forEach { embed ->
             Surface(
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.tertiaryContainer
@@ -199,7 +144,7 @@ private fun ImageAnnotationsFlowRow(
 @Composable
 private fun AppImageDetailEditable(
     modifier: Modifier = Modifier,
-    model: LupaImageEditables
+    model: LupaImageEditablesState
 ) {
     val islandSpacer = 8.dp
     Column(
@@ -219,7 +164,7 @@ private fun AppImageDetailEditable(
                 onClick = { model.eventSink(LupaImageEditablesEvents.OnVisualEdit) },
                 title = { Text(stringResource(R.string.visual_embeddings)) }
             ) {
-                ImageAnnotationsFlowRow(annotations = model.visualEmbeds)
+                ImageAnnotationsFlowRow(lupaImageAnnotationsState = model.visualEmbeds)
             }
             Spacer(Modifier.width(islandSpacer))
             EditableContentIsland(
@@ -229,7 +174,7 @@ private fun AppImageDetailEditable(
                 onClick = { model.eventSink(LupaImageEditablesEvents.OnUserEdit) },
                 title = { Text(stringResource(R.string.user_embeddings)) }
             ) {
-                ImageAnnotationsFlowRow(annotations = model.userEmbeds)
+                ImageAnnotationsFlowRow(lupaImageAnnotationsState = model.userEmbeds)
             }
         }
         Spacer(Modifier.height(islandSpacer))

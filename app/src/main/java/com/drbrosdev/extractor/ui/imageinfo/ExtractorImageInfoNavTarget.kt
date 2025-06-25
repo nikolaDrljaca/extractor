@@ -30,12 +30,12 @@ data class ExtractorImageInfoNavTarget(
     @Composable
     override fun Content(navigators: Navigators) {
         val viewModel: ExtractorImageInfoViewModel = koinViewModel {
-            parametersOf(mediaImageId)
+            parametersOf(mediaImageId, navigators)
         }
         val state by viewModel.imageDetailState.collectAsStateWithLifecycle()
 
         when {
-            state != null -> AppImageDetailScreen(
+            state != null -> AppImageInfoScreen(
                 modifier = Modifier.fillMaxSize(),
                 model = state!!
             )
@@ -53,16 +53,16 @@ data class ExtractorImageInfoNavTarget(
 @ScreenPreview
 @Composable
 private fun CurrentScreenPreview() {
-    val state = LupaImageDetailState(
-        heading = LupaImageHeading(
+    val state = LupaImageInfoState(
+        heading = LupaImageHeaderState(
             mediaImageId = 12123123,
             uri = Uri.EMPTY.toString(),
             dateAdded = "2025-01-01"
         ),
         description = "this is some description bababui",
-        editables = LupaImageEditables(
+        editables = LupaImageEditablesState(
             textEmbed = stringResource(R.string.lorem),
-            visualEmbeds = Annotations(
+            visualEmbeds = LupaImageAnnotationsState(
                 listOf(
                     "fizzbuzzbazzsssssewrwrw4we",
                     "foo",
@@ -71,7 +71,7 @@ private fun CurrentScreenPreview() {
                 )
             ),
             userEmbeds =
-                Annotations(
+                LupaImageAnnotationsState(
                     listOf(
                         "foo",
                         "bar",
@@ -85,7 +85,7 @@ private fun CurrentScreenPreview() {
     )
     ExtractorTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            AppImageDetailScreen(
+            AppImageInfoScreen(
                 modifier = Modifier.fillMaxHeight(),
                 model = state
             )
