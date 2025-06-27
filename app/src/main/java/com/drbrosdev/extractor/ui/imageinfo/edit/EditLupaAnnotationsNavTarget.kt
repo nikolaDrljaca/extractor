@@ -1,49 +1,37 @@
 package com.drbrosdev.extractor.ui.imageinfo.edit
 
-import android.net.Uri
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -53,18 +41,23 @@ import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.AnnotationType
 import com.drbrosdev.extractor.domain.model.MediaImageId
 import com.drbrosdev.extractor.domain.repository.LupaImageRepository
+import com.drbrosdev.extractor.domain.repository.payload.EmbedUpdate
+import com.drbrosdev.extractor.domain.usecase.suggestion.SuggestUserKeywords
 import com.drbrosdev.extractor.framework.navigation.NavTarget
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.shared.AppImageInfoHeader
 import com.drbrosdev.extractor.ui.imageinfo.LupaImageHeaderState
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.WhileUiSubscribed
-import com.drbrosdev.extractor.util.asFormatDate
-import com.drbrosdev.extractor.util.isScrollingUp
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -76,289 +69,322 @@ data class EditLupaAnnotationsNavTarget(
     val type: AnnotationType
 ) : NavTarget {
 
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
     override fun Content(navigators: Navigators) {
         val viewModel: EditLupaAnnotationsViewModel = koinViewModel {
             parametersOf(mediaImageId, type)
         }
 
-        val annotationState by viewModel.annotationsState.collectAsStateWithLifecycle()
-        val headerState by viewModel.headerState.collectAsStateWithLifecycle()
-        val loading by viewModel.loading.collectAsStateWithLifecycle()
+        val header by viewModel.headerState.collectAsStateWithLifecycle()
+        val annotations by viewModel.annotationState.collectAsStateWithLifecycle()
 
-        when {
-            loading.not() -> EditLupaAnnotationsScreen(
-                modifier = Modifier.fillMaxSize(),
-                annotations = annotationState!!,
-                headerState = headerState!!,
-            )
-
-            else -> Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                LoadingIndicator()
-            }
-        }
+        EditLupaAnnotationScreen(
+            header = header,
+            annotations = annotations
+        )
     }
 }
 
 class EditLupaAnnotationsViewModel(
     private val mediaImageId: Long,
     private val annotationType: AnnotationType,
-    private val lupaImageRepository: LupaImageRepository
+    private val lupaImageRepository: LupaImageRepository,
+    private val suggestUserKeywords: SuggestUserKeywords
 ) : ViewModel() {
 
-    val headerState = lupaImageRepository.findByIdAsFlow(MediaImageId(mediaImageId))
-        .filterNotNull()
-        .map { lupaImage ->
-            LupaImageHeaderState(
-                mediaImageId = lupaImage.metadata.mediaImageId.id,
-                uri = lupaImage.metadata.uri.uri,
-                dateAdded = lupaImage.metadata.dateAdded.asFormatDate()
-            )
-        }
+    private val lupaImage = lupaImageRepository.findByIdAsFlow(MediaImageId(mediaImageId))
+        .shareIn(viewModelScope, SharingStarted.Lazily)
+
+    val headerState = lupaImage
+        .map { it?.let { LupaImageHeaderState.fromMetadata(it.metadata) } }
         .stateIn(
             viewModelScope,
             WhileUiSubscribed,
             null
         )
 
-    val annotationsState = lupaImageRepository.findImageDataByMediaId(MediaImageId(mediaImageId))
+    val annotationState = lupaImage
         .filterNotNull()
+        .map { it.annotations }
         .map {
             when (annotationType) {
-                AnnotationType.TEXT, AnnotationType.VISUAL -> it.visualEmbeds
-                AnnotationType.USER -> it.userEmbeds
+                AnnotationType.TEXT -> EditLupaAnnotationState.TextKeywords(it.textEmbed)
+
+                AnnotationType.VISUAL -> EditLupaAnnotationState.VisualKeywords(
+                    keywords = it.visualEmbeds,
+                    onDelete = {}
+                )
+
+                AnnotationType.USER -> EditLupaAnnotationState.MyKeywords(
+                    keywords = it.userEmbeds,
+                    suggestedKeywords = suggestUserKeywords.invoke(),
+                    onDelete = {},
+                    onAddNew = ::createNewUserKeyword
+                )
             }
         }
-        .map { AnnotationListState(it, annotationType, {}) }
         .stateIn(
             viewModelScope,
             WhileUiSubscribed,
-            null
+            EditLupaAnnotationState.Loading
         )
 
-    val loading = combine(headerState, annotationsState) { header, annotations ->
-        header == null && annotations == null
+    private fun createNewUserKeyword(value: String) {
+        // check current state for same values
+        val currentState = annotationState.value.myKeywordsState()
+        if (currentState.keywords.contains(value)) {
+            return
+        }
+        // add new keyword
+        viewModelScope.launch {
+            // fetch existing
+            val id = MediaImageId(mediaImageId)
+            val existing = lupaImageRepository.findImageDataByMediaId(id)
+                .map { it?.userEmbeds }
+                .first() ?: return@launch
+
+            // parse input as CSV and map to new entries
+            val newUserEmbed = value.split(",")
+                .map { it.trim() }
+                .distinct()
+
+            // append to existing
+            val updated = (newUserEmbed + existing)
+                .map { EmbedUpdate(id, it) }
+
+            // update
+            lupaImageRepository.updateUserEmbed(updated)
+
+            // clear text field
+            currentState.textState.clearText()
+        }
     }
-        .stateIn(
-            viewModelScope,
-            WhileUiSubscribed,
-            true
-        )
 }
 
+sealed interface EditLupaAnnotationState {
+    // user
+    @Immutable
+    data class MyKeywords(
+        val keywords: List<String>,
+        val suggestedKeywords: List<String>,
+        val onDelete: (String) -> Unit,
+        val onAddNew: (String) -> Unit
+    ) : EditLupaAnnotationState {
+        val textState = TextFieldState()
 
-@Immutable
-data class AnnotationListState(
-    val items: List<String>,
-    val type: AnnotationType,
-    val onDelete: (annotationValue: String) -> Unit
-)
+        val isSuggested = suggestedKeywords.isNotEmpty()
+        val noUserKeywords = keywords.isEmpty()
+    }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+    // visual
+    @Immutable
+    data class VisualKeywords(
+        val keywords: List<String>,
+        val onDelete: (String) -> Unit
+    ) : EditLupaAnnotationState
+
+    // text
+    data class TextKeywords(
+        private val allText: String
+    ) : EditLupaAnnotationState {
+        val textFieldState = TextFieldState(initialText = allText)
+    }
+
+    data object Loading : EditLupaAnnotationState
+}
+
+fun EditLupaAnnotationState.myKeywordsState(): EditLupaAnnotationState.MyKeywords {
+    return when (this) {
+        is EditLupaAnnotationState.MyKeywords -> this
+        else -> error("Attempting to access MyKeywords state illegally!")
+    }
+}
+
+fun EditLupaAnnotationState.textChangesAsFlow(): Flow<String> {
+    return when (this) {
+        is EditLupaAnnotationState.TextKeywords -> snapshotFlow { textFieldState.text }
+            .map { it.toString() }
+
+        else -> emptyFlow()
+    }
+}
+
 @Composable
-fun EditLupaAnnotationsScreen(
+fun EditLupaAnnotationScreen(
     modifier: Modifier = Modifier,
-    headerState: LupaImageHeaderState,
-    annotations: AnnotationListState
+    header: LupaImageHeaderState?,
+    annotations: EditLupaAnnotationState
 ) {
-    val listState = rememberLazyListState()
-    Box(
+    val scrollState = rememberScrollState()
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .systemBarsPadding()
+            .verticalScroll(scrollState)
+            .padding(horizontal = 16.dp)
+            .padding(top = 24.dp)
+            .systemBarsPadding(),
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
-            state = listState,
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            item(key = "header") {
-                AppImageInfoHeader(
-                    model = headerState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-
-            item {
-                Surface(
-                    shape = MaterialTheme.shapes.largeIncreased,
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
-                    modifier = Modifier.padding(vertical = 16.dp)
-                ) {
-                    val icon = when (annotations.type) {
-                        AnnotationType.TEXT -> R.drawable.round_text_fields_24
-                        AnnotationType.VISUAL -> R.drawable.round_image_search_24
-                        AnnotationType.USER -> R.drawable.baseline_android_24
-                    }
-                    val text = when (annotations.type) {
-                        AnnotationType.TEXT -> "Text keywords"
-                        AnnotationType.VISUAL -> "Visual keywords"
-                        AnnotationType.USER -> "My keywords"
-                    }
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 18.dp, vertical = 12.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(icon),
-                            contentDescription = "resource",
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(Modifier.width(16.dp))
-                        Text(text = text)
-                    }
-                }
-            }
-
-            // for both visual and user annotations
-            itemsIndexed(annotations.items) { index, item ->
-                val position = remember {
-                    when (index) {
-                        0 -> ItemPosition.FIRST
-                        annotations.items.lastIndex -> ItemPosition.LAST
-                        else -> ItemPosition.MIDDLE
-                    }
-                }
-                AnnotationListItem(
-                    value = item,
-                    position = position,
-                    onDelete = annotations.onDelete
-                )
-            }
-        }
-
-        AnimatedVisibility(
-            visible = listState.isScrollingUp(),
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 16.dp),
-            enter = fadeIn(
-                animationSpec = tween(
-                    durationMillis = 15,
-                    delayMillis = 30,
-                    easing = LinearEasing,
-                ),
-            ),
-            exit = fadeOut(
-                animationSpec = tween(
-                    durationMillis = 15,
-                    delayMillis = 150,
-                    easing = LinearEasing,
-                )
+        header?.let {
+            AppImageInfoHeader(
+                model = it
             )
-        ) {
-            ExtendedFloatingActionButton(
-                onClick = {}
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        when (annotations) {
+            EditLupaAnnotationState.Loading -> Unit
+            /*
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Icon(
-                    imageVector = Icons.Rounded.Add,
-                    contentDescription = "add"
-                )
-                Text(
-                    text = "Add"
+                LoadingIndicator(
+                    modifier = Modifier.size(56.dp)
                 )
             }
-        }
-    }
-}
+             */
 
-enum class ItemPosition {
-    FIRST, MIDDLE, LAST
+            is EditLupaAnnotationState.MyKeywords -> UserKeyWordsEditor(
+                state = annotations
+            )
+
+            is EditLupaAnnotationState.VisualKeywords -> VisualKeywordsEditor(
+                state = annotations
+            )
+
+            is EditLupaAnnotationState.TextKeywords -> Unit
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        Text(
+            text = stringResource(R.string.extractor_info_about_image),
+            style = MaterialTheme.typography.labelSmall.copy(
+                color = Color.Gray
+            ),
+        )
+    }
 }
 
 @Composable
-fun AnnotationListItem(
+fun KeywordFlowRow(
     modifier: Modifier = Modifier,
-    value: String,
-    position: ItemPosition,
-    onDelete: (annotationValue: String) -> Unit
+    onClick: (String) -> Unit,
+    values: List<String>,
 ) {
-    // TODO Performance?
-    val shape = remember(position) {
-        when (position) {
-            ItemPosition.FIRST -> RoundedCornerShape(
-                topStart = 12.dp,
-                topEnd = 12.dp,
-                bottomStart = 2.dp,
-                bottomEnd = 2.dp
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
+        values.forEach {
+            InputChip(
+                selected = false,
+                onClick = { onClick(it) },
+                label = { Text(it) },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Clear,
+                        contentDescription = "clear keyword"
+                    )
+                }
             )
-
-            ItemPosition.LAST -> RoundedCornerShape(
-                topStart = 2.dp,
-                topEnd = 2.dp,
-                bottomStart = 12.dp,
-                bottomEnd = 12.dp
-            )
-
-            ItemPosition.MIDDLE -> RoundedCornerShape(2.dp)
         }
     }
-    val swipeToDismissBoxState = rememberSwipeToDismissBoxState(
-        confirmValueChange = {
-            when (it) {
-                SwipeToDismissBoxValue.StartToEnd -> onDelete(value)
-                SwipeToDismissBoxValue.EndToStart -> onDelete(value)
-                SwipeToDismissBoxValue.Settled -> Unit
-            }
-            it != SwipeToDismissBoxValue.StartToEnd
-        }
-    )
-    SwipeToDismissBox(
-        state = swipeToDismissBoxState,
-        modifier = modifier,
-        backgroundContent = {
-            when (swipeToDismissBoxState.dismissDirection) {
-                SwipeToDismissBoxValue.StartToEnd -> {
-                    Icon(
-                        imageVector = Icons.Rounded.Delete,
-                        contentDescription = "delete",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.error)
-                            .wrapContentSize(Alignment.CenterStart)
-                            .padding(12.dp)
-                            .clip(shape),
-                        tint = MaterialTheme.colorScheme.onError
-                    )
-                }
+}
 
-                SwipeToDismissBoxValue.EndToStart -> {
-                    Icon(
-                        imageVector = Icons.Rounded.Delete,
-                        contentDescription = "delete",
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.error)
-                            .wrapContentSize(Alignment.CenterEnd)
-                            .padding(12.dp)
-                            .clip(shape),
-                        tint = MaterialTheme.colorScheme.onError
-                    )
-                }
-
-                SwipeToDismissBoxValue.Settled -> Unit
-            }
-        }
+@Composable
+fun VisualKeywordsEditor(
+    modifier: Modifier = Modifier,
+    state: EditLupaAnnotationState.VisualKeywords
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = value,
-                )
-            },
-            modifier = Modifier
-                .padding(bottom = 2.dp)
-                .clip(shape),
+        Text(
+            text = stringResource(R.string.visual_embeddings),
+            style = MaterialTheme.typography.headlineSmall
         )
+
+        Spacer(Modifier.height(12.dp))
+
+        KeywordFlowRow(
+            values = state.keywords,
+            onClick = { state.onDelete(it) }
+        )
+    }
+}
+
+@Composable
+fun UserKeyWordsEditor(
+    modifier: Modifier = Modifier,
+    state: EditLupaAnnotationState.MyKeywords
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.user_embeddings),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        // text field - for user
+        OutlinedTextField(
+            state = state.textState,
+            onKeyboardAction = { state.onAddNew(state.textState.text.toString()) },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            lineLimits = TextFieldLineLimits.SingleLine,
+            placeholder = { Text(text = stringResource(R.string.custom_keyword)) }
+        )
+
+        // keyword display with delete
+        when {
+            state.noUserKeywords -> Text(
+                text = "Add your own keywords!",
+                modifier = Modifier.padding(top = 24.dp),
+                color = Color.Gray
+            )
+
+            else -> KeywordFlowRow(
+                onClick = { state.onDelete(it) },
+                values = state.keywords,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+
+        // suggested keywords - for user
+        if (state.isSuggested) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.existing_keywords),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = stringResource(R.string.click_one_to_add_to_this_image),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color.Gray
+                    )
+                )
+                Spacer(Modifier.height(12.dp))
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    state.suggestedKeywords.forEach {
+                        SuggestionChip(
+                            onClick = { state.onAddNew(it) },
+                            label = { Text(it) }
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -367,19 +393,9 @@ fun AnnotationListItem(
 private fun CurrentPreview() {
     ExtractorTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            EditLupaAnnotationsScreen(
-                headerState = LupaImageHeaderState(
-                    mediaImageId = 12123123,
-                    uri = Uri.EMPTY.toString(),
-                    dateAdded = "2025-01-01"
-                ),
-                annotations = AnnotationListState(
-                    items = buildList {
-                        repeat(12) { add("Item $it") }
-                    },
-                    onDelete = {},
-                    type = AnnotationType.VISUAL
-                )
+            EditLupaAnnotationScreen(
+                header = null,
+                annotations = EditLupaAnnotationState.Loading
             )
         }
     }

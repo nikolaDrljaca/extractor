@@ -31,7 +31,8 @@ val viewModelModule = module {
         EditLupaAnnotationsViewModel(
             mediaImageId = it.get(),
             annotationType = it.get(),
-            lupaImageRepository = get<DefaultLupaImageRepository>()
+            lupaImageRepository = get<DefaultLupaImageRepository>(),
+            suggestUserKeywords = get()
         )
     }
 

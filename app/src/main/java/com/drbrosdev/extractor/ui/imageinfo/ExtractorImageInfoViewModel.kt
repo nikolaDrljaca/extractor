@@ -8,7 +8,6 @@ import com.drbrosdev.extractor.domain.repository.LupaImageRepository
 import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.imageinfo.edit.EditLupaAnnotationsNavTarget
 import com.drbrosdev.extractor.util.WhileUiSubscribed
-import com.drbrosdev.extractor.util.asFormatDate
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filterNotNull
@@ -19,7 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 class ExtractorImageInfoViewModel(
     private val mediaImageId: Long,
     private val navigators: Navigators,
-    private val lupaImageRepository: LupaImageRepository
+    private val lupaImageRepository: LupaImageRepository,
 ) : ViewModel() {
 
     private val navController = navigators.navController
@@ -28,11 +27,7 @@ class ExtractorImageInfoViewModel(
         .filterNotNull()
         .map { lupaImage ->
             LupaImageInfoState(
-                heading = LupaImageHeaderState(
-                    mediaImageId = lupaImage.metadata.mediaImageId.id,
-                    uri = lupaImage.metadata.uri.uri,
-                    dateAdded = lupaImage.metadata.dateAdded.asFormatDate()
-                ),
+                heading = LupaImageHeaderState.fromMetadata(lupaImage.metadata),
                 description = when {
                     lupaImage.annotations.descriptionEmbed.isBlank() -> null
                     else -> lupaImage.annotations.descriptionEmbed
@@ -53,15 +48,16 @@ class ExtractorImageInfoViewModel(
         )
 
     private fun handleEditablesEvent(event: LupaImageEditablesEvents) {
-        when (event) {
-            LupaImageEditablesEvents.OnTextEdit -> Unit
-            LupaImageEditablesEvents.OnUserEdit -> Unit
-            LupaImageEditablesEvents.OnVisualEdit -> navController.navigate(
-                EditLupaAnnotationsNavTarget(
-                    mediaImageId = mediaImageId,
-                    type = AnnotationType.VISUAL
-                )
-            )
+        val type = when (event) {
+            LupaImageEditablesEvents.OnTextEdit -> AnnotationType.TEXT
+            LupaImageEditablesEvents.OnUserEdit -> AnnotationType.USER
+            LupaImageEditablesEvents.OnVisualEdit -> AnnotationType.VISUAL
         }
+        navController.navigate(
+            EditLupaAnnotationsNavTarget(
+                mediaImageId = mediaImageId,
+                type = type
+            )
+        )
     }
 }

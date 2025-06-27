@@ -75,17 +75,6 @@ fun AppImageInfoScreen(
             model = model.editables
         )
 
-        /* TODO Move this to new edit info screen
-    Box(Modifier.weight(1f)) {
-        Text(
-            text = stringResource(R.string.extractor_info_about_image),
-            style = MaterialTheme.typography.labelSmall.copy(
-                color = Color.Gray
-            ),
-            modifier = Modifier.align(Alignment.BottomStart)
-        )
-    }
-         */
     }
 }
 

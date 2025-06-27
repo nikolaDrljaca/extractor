@@ -158,7 +158,7 @@
     <string name="click_one_to_add_to_this_image">Tap to add to this image.</string>
     <string name="enter_new">Enter New</string>
     <string name="add_multiple_user">To add multiple, separate them with a comma.</string>
-    <string name="custom_keyword">Custom Keyword</string>
+    <string name="custom_keyword">Enter your own here</string>
     <string name="your_keywords"># Your Keywords</string>
     <string name="what_are_these">What are these?</string>
     <string name="your_keywords_expl">A collection of all images where you have left your own tag! They are grouped by keyword for organisation.</string>
