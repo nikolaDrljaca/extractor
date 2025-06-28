@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-interface UserKeywordEditorComponent {
+interface UserAnnotationsEditorComponent {
     val textState: TextFieldState
     val suggestions: StateFlow<List<String>>
     val annotations: StateFlow<List<String>>
@@ -47,7 +47,7 @@ interface UserKeywordEditorComponent {
     fun onAddNew(value: String)
 }
 
-val previewUserEditor = object : UserKeywordEditorComponent {
+val previewUserEditor = object : UserAnnotationsEditorComponent {
     override val textState: TextFieldState
         get() = TextFieldState("")
     override val suggestions: StateFlow<List<String>>
@@ -60,14 +60,14 @@ val previewUserEditor = object : UserKeywordEditorComponent {
     override fun onAddNew(value: String) = Unit
 }
 
-class UserKeywordEditorComponentImpl(
+class UserAnnotationsEditorComponentImpl(
     scope: CoroutineScope,
     stateHandle: SavedStateHandle,
     annotationsFlow: () -> Flow<LupaImage?>,
     private val getSuggestions: suspend () -> List<String>,
     private val createNewKeyword: (value: String) -> Unit,
     private val deleteKeyword: (value: String) -> Unit
-) : UserKeywordEditorComponent {
+) : UserAnnotationsEditorComponent {
     override val textState = stateHandle.saveable(
         key = "user_keyword_text",
         saver = TextFieldState.Saver,
@@ -105,9 +105,9 @@ class UserKeywordEditorComponentImpl(
 }
 
 @Composable
-fun UserKeyWordsEditor(
+fun UserAnnotationsEditor(
     modifier: Modifier = Modifier,
-    component: UserKeywordEditorComponent
+    component: UserAnnotationsEditorComponent
 ) {
     val suggestions by component.suggestions.collectAsStateWithLifecycle()
     val annotations by component.annotations.collectAsStateWithLifecycle()
@@ -139,18 +139,17 @@ fun UserKeyWordsEditor(
             ),
             modifier = Modifier.fillMaxWidth(),
             lineLimits = TextFieldLineLimits.SingleLine,
-            placeholder = { Text(text = stringResource(R.string.custom_keyword)) }
+            placeholder = { Text(text = stringResource(R.string.custom_keyword)) },
+            supportingText = {
+                if (noUserKeywords) {
+                    Text(text = "Add your own keywords!")
+                }
+            }
         )
 
         // keyword display with delete
-        when {
-            noUserKeywords -> Text(
-                text = "Add your own keywords!",
-                modifier = Modifier.padding(top = 24.dp),
-                color = Color.Gray
-            )
-
-            else -> KeywordFlowRow(
+        if (noUserKeywords.not()) {
+            KeywordFlowRow(
                 onClick = { component.onDelete(it) },
                 values = annotations,
                 modifier = Modifier.padding(vertical = 8.dp)
@@ -161,10 +160,11 @@ fun UserKeyWordsEditor(
         if (isSuggested) {
             Column(
                 modifier = Modifier.fillMaxWidth()
+                    .padding(top = 8.dp)
             ) {
                 Text(
                     text = stringResource(R.string.existing_keywords),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
                     text = stringResource(R.string.click_one_to_add_to_this_image),
