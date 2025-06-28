@@ -35,7 +35,7 @@ data class ExtractorImageInfoNavTarget(
         val state by viewModel.imageDetailState.collectAsStateWithLifecycle()
 
         when {
-            state != null -> AppImageInfoScreen(
+            state != null -> LupaImageInfoScreen(
                 modifier = Modifier.fillMaxSize(),
                 model = state!!
             )
@@ -85,7 +85,7 @@ private fun CurrentScreenPreview() {
     )
     ExtractorTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            AppImageInfoScreen(
+            LupaImageInfoScreen(
                 modifier = Modifier.fillMaxHeight(),
                 model = state
             )

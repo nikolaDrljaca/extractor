@@ -2,15 +2,21 @@ package com.drbrosdev.extractor.ui.imageinfo.edit
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -84,7 +90,28 @@ fun EditLupaAnnotationScreen(
             )
         }
 
-        Spacer(Modifier.height(24.dp))
+        Surface(
+            color = MaterialTheme.colorScheme.primaryContainer,
+            shape = MaterialTheme.shapes.large,
+            modifier = Modifier.padding(vertical = 12.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(
+                        horizontal = 12.dp,
+                        vertical = 16.dp
+                    )
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Info,
+                    contentDescription = "you are editing"
+                )
+                Spacer(Modifier.width(8.dp))
+
+                Text(text = "You are editing keywords.")
+            }
+        }
 
         when (annotationType) {
             AnnotationType.USER -> UserAnnotationsEditor(

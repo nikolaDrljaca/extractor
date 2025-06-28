@@ -1,45 +1,57 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
+import android.content.ClipData
+import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.toClipEntry
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.framework.requiresApi
 import com.drbrosdev.extractor.ui.components.shared.AppImageInfoHeader
+import com.drbrosdev.extractor.util.launchShareIntent
+import com.drbrosdev.extractor.util.launchTranslateIntent
+import kotlinx.coroutines.launch
 
 @Composable
-fun AppImageInfoScreen(
+fun LupaImageInfoScreen(
     modifier: Modifier = Modifier,
     model: LupaImageInfoState
 ) {
@@ -74,9 +86,10 @@ fun AppImageInfoScreen(
                 .padding(top = 8.dp),
             model = model.editables
         )
-
     }
 }
+
+// ======
 
 @Composable
 private fun AppImageDetailDescription(
@@ -130,52 +143,108 @@ private fun ImageAnnotationsFlowRow(
     }
 }
 
+// share copy translate
+private enum class SupportBarAction(
+    val label: Int,
+    val drawable: Int
+) {
+    SHARE(R.string.action_share, R.drawable.round_share_24),
+    COPY(R.string.action_copy, R.drawable.rounded_content_copy_24),
+    TRANSLATE(R.string.action_translate, R.drawable.outline_g_translate_24)
+}
+
+private typealias SupportBarHandler = (action: SupportBarAction) -> Unit
+
+@Composable
+private fun rememberSupportActionBarHandler(
+    value: String
+): SupportBarHandler {
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboard.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val handler: SupportBarHandler = { action ->
+        when (action) {
+            SupportBarAction.SHARE -> context.launchShareIntent(value)
+            SupportBarAction.TRANSLATE -> context.launchTranslateIntent(value)
+            SupportBarAction.COPY -> coroutineScope.launch {
+                val entry = ClipData.newPlainText("plain text", value)
+                    .toClipEntry()
+                clipboardManager.setClipEntry(entry)
+                requiresApi(Build.VERSION_CODES.S_V2) {
+                    Toast.makeText(context, "Copied", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+    return remember { handler }
+}
+
+@Composable
+private fun TextAnnotationSupportBar(
+    modifier: Modifier = Modifier,
+    handler: SupportBarHandler
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
+        SupportBarAction.entries.forEach {
+            AssistChip(
+                onClick = { handler(it) },
+                label = { Text(stringResource(it.label)) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(it.drawable),
+                        contentDescription = stringResource(it.label)
+                    )
+                }
+            )
+        }
+    }
+}
+
 @Composable
 private fun AppImageDetailEditable(
     modifier: Modifier = Modifier,
     model: LupaImageEditablesState
 ) {
-    val islandSpacer = 8.dp
+    val islandSpacer = 16.dp
     Column(
         modifier = Modifier
-            .then(modifier)
+            .then(modifier),
+        verticalArrangement = Arrangement.spacedBy(islandSpacer)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Max),
-            verticalAlignment = Alignment.Top,
+        EditableContentIsland(
+            modifier = Modifier,
+            onClick = { model.eventSink(LupaImageEditablesEvents.OnVisualEdit) },
+            title = { Text(stringResource(R.string.visual_embeddings)) }
         ) {
-            EditableContentIsland(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f),
-                onClick = { model.eventSink(LupaImageEditablesEvents.OnVisualEdit) },
-                title = { Text(stringResource(R.string.visual_embeddings)) }
-            ) {
-                ImageAnnotationsFlowRow(lupaImageAnnotationsState = model.visualEmbeds)
-            }
-            Spacer(Modifier.width(islandSpacer))
-            EditableContentIsland(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f),
-                onClick = { model.eventSink(LupaImageEditablesEvents.OnUserEdit) },
-                title = { Text(stringResource(R.string.user_embeddings)) }
-            ) {
-                ImageAnnotationsFlowRow(lupaImageAnnotationsState = model.userEmbeds)
-            }
+            ImageAnnotationsFlowRow(lupaImageAnnotationsState = model.visualEmbeds)
         }
-        Spacer(Modifier.height(islandSpacer))
+
+        EditableContentIsland(
+            modifier = Modifier,
+            onClick = { model.eventSink(LupaImageEditablesEvents.OnUserEdit) },
+            title = { Text(stringResource(R.string.user_embeddings)) }
+        ) {
+            ImageAnnotationsFlowRow(lupaImageAnnotationsState = model.userEmbeds)
+        }
+
         EditableContentIsland(
             onClick = { model.eventSink(LupaImageEditablesEvents.OnTextEdit) },
             title = { Text(stringResource(R.string.text_embeddings)) }
         ) {
+            TextAnnotationSupportBar(
+                modifier = Modifier.fillMaxWidth(),
+                handler = rememberSupportActionBarHandler(model.textEmbed)
+            )
             Text(
-                text = model.textEmbed
+                text = model.textEmbed,
+                modifier = Modifier.padding(top = 8.dp)
             )
         }
-
     }
 }
 
@@ -188,8 +257,7 @@ private fun EditableContentIsland(
 ) {
     Surface(
         shape = RoundedCornerShape(14.dp),
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        onClick = onClick,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = modifier
     ) {
         Column(
@@ -201,18 +269,21 @@ private fun EditableContentIsland(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CompositionLocalProvider(
-                    LocalTextStyle provides MaterialTheme.typography.titleMedium
+                    LocalTextStyle provides MaterialTheme.typography.titleLarge
                 ) {
                     title()
                 }
-                Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = "edit content",
-                    modifier = Modifier
-                        .size(20.dp)
-                )
+                IconButton(
+                    onClick = onClick
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "edit content",
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                }
             }
-            Spacer(Modifier.height(4.dp))
             content()
         }
     }

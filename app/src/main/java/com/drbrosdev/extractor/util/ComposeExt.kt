@@ -156,8 +156,8 @@ fun LazyGridScope.maxLineSpanItem(
 
 @Composable
 fun LazyGridState.isScrollingUp(): Boolean {
-    var previousIndex by rememberSaveable(this) { mutableIntStateOf(firstVisibleItemIndex) }
-    var previousScrollOffset by rememberSaveable(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
+    var previousIndex by rememberSaveable(this) { mutableIntStateOf(0) }
+    var previousScrollOffset by rememberSaveable(this) { mutableIntStateOf(0) }
     return remember(this) {
         derivedStateOf {
             if (previousIndex != firstVisibleItemIndex) {

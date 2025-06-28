@@ -174,4 +174,6 @@
     <string name="indexed_images_count">Indexed %1$s images.</string>
     <string name="current_progress_percent">Current progress: %1$s</string>
     <string name="your_space">Your Space</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_translate">Translate</string>
 </resources>

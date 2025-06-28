@@ -1,6 +1,8 @@
 package com.drbrosdev.extractor.util
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -12,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.MediaStoreImage
+import com.drbrosdev.extractor.framework.logger.logEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -39,6 +42,28 @@ fun Context.launchShareIntent(content: String) {
         putExtra(Intent.EXTRA_TEXT, content)
     }
     startActivity(Intent.createChooser(intent, null))
+}
+
+fun Context.launchTranslateIntent(content: String) {
+    val intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, content)
+        putExtra("key_text_input", content)
+        putExtra("key_text_output", "")
+        putExtra("key_language_from", "en")
+        putExtra("key_language_to", "mal")
+        putExtra("key_suggest_translation", "")
+        putExtra("key_from_floating_window", false)
+        component = ComponentName(
+            "com.google.android.apps.translate",
+            "com.google.android.apps.translate.TranslateActivity"
+        )
+    }
+    try {
+        startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        logEvent("Google translate not found on device. Not possible to launch intent.")
+    }
 }
 
 fun Context.launchShareAppIntent() {
