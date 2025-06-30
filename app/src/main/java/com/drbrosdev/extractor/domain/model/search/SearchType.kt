@@ -14,7 +14,7 @@ fun SearchType.asString(): String {
     }
 }
 
-fun SearchType.asStringRes(): Int = when (this) {
+fun SearchType.stringRes(): Int = when (this) {
     SearchType.FULL -> R.string.search_type_full
     SearchType.PARTIAL -> R.string.search_type_partial
 }
