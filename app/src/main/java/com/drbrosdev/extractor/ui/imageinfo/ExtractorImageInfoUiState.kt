@@ -26,7 +26,9 @@ data class LupaImageEditablesState(
     val visualEmbeds: LupaImageAnnotationsState,
     val userEmbeds: LupaImageAnnotationsState,
     val eventSink: (LupaImageEditablesEvents) -> Unit
-)
+) {
+    val isTextBlank = textEmbed.isBlank()
+}
 
 @Immutable
 data class LupaImageAnnotationsState(

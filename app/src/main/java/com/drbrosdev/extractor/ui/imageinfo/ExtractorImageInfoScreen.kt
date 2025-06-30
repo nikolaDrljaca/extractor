@@ -236,10 +236,12 @@ private fun AppImageDetailEditable(
             onClick = { model.eventSink(LupaImageEditablesEvents.OnTextEdit) },
             title = { Text(stringResource(R.string.text_embeddings)) }
         ) {
-            TextAnnotationSupportBar(
-                modifier = Modifier.fillMaxWidth(),
-                handler = rememberSupportActionBarHandler(model.textEmbed)
-            )
+            if (model.isTextBlank.not()) {
+                TextAnnotationSupportBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    handler = rememberSupportActionBarHandler(model.textEmbed)
+                )
+            }
             Text(
                 text = model.textEmbed,
                 modifier = Modifier.padding(top = 8.dp)
