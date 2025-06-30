@@ -7,8 +7,8 @@ import com.drbrosdev.extractor.framework.mediastore.DefaultMediaStoreImageReposi
 import com.drbrosdev.extractor.framework.workmanager.DefaultExtractorWorkerService
 import com.drbrosdev.extractor.ui.albumviewer.ExtractorAlbumViewerViewModel
 import com.drbrosdev.extractor.ui.dialog.status.ExtractorStatusDialogViewModel
-import com.drbrosdev.extractor.ui.dialog.userembed.ExtractorUserEmbedViewModel
 import com.drbrosdev.extractor.ui.imageinfo.ExtractorImageInfoViewModel
+import com.drbrosdev.extractor.ui.imageinfo.edit.EditLupaAnnotationsViewModel
 import com.drbrosdev.extractor.ui.imageviewer.ExtractorImageViewerModel
 import com.drbrosdev.extractor.ui.onboarding.OnboardingViewModel
 import com.drbrosdev.extractor.ui.overview.ExtractorOverviewViewModel
@@ -26,6 +26,16 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
+
+    viewModel {
+        EditLupaAnnotationsViewModel(
+            mediaImageId = it.get(),
+            annotationType = it.get(),
+            stateHandle = get(),
+            lupaImageRepository = get<DefaultLupaImageRepository>(),
+            suggestUserKeywords = get()
+        )
+    }
 
     viewModel {
         ExtractorOverviewViewModel(
@@ -99,8 +109,8 @@ val viewModelModule = module {
     viewModel {
         ExtractorImageInfoViewModel(
             mediaImageId = it.get(),
-            stateHandle = get(),
-            extractorDataRepository = get<DefaultLupaImageRepository>(),
+            navigators = it.get(),
+            lupaImageRepository = get<DefaultLupaImageRepository>(),
         )
     }
 
@@ -133,15 +143,6 @@ val viewModelModule = module {
     viewModel {
         ExtractorSettingsViewModel(
             settingsDatastore = get()
-        )
-    }
-
-    viewModel {
-        ExtractorUserEmbedViewModel(
-            mediaImageId = it.get(),
-            stateHandle = get(),
-            suggestUserKeywords = get(),
-            lupaImageRepository = get<DefaultLupaImageRepository>()
         )
     }
 

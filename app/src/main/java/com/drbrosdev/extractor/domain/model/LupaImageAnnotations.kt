@@ -6,3 +6,9 @@ data class LupaImageAnnotations(
     val visualEmbeds: List<String>,
     val userEmbeds: List<String>
 )
+
+enum class AnnotationType {
+    TEXT,
+    VISUAL,
+    USER
+}

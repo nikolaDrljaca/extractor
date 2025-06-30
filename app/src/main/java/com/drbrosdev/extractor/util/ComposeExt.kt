@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -155,8 +156,26 @@ fun LazyGridScope.maxLineSpanItem(
 
 @Composable
 fun LazyGridState.isScrollingUp(): Boolean {
-    var previousIndex by rememberSaveable(this) { mutableIntStateOf(firstVisibleItemIndex) }
-    var previousScrollOffset by rememberSaveable(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
+    var previousIndex by rememberSaveable(this) { mutableIntStateOf(0) }
+    var previousScrollOffset by rememberSaveable(this) { mutableIntStateOf(0) }
+    return remember(this) {
+        derivedStateOf {
+            if (previousIndex != firstVisibleItemIndex) {
+                previousIndex > firstVisibleItemIndex
+            } else {
+                previousScrollOffset >= firstVisibleItemScrollOffset
+            }.also {
+                previousIndex = firstVisibleItemIndex
+                previousScrollOffset = firstVisibleItemScrollOffset
+            }
+        }
+    }.value
+}
+
+@Composable
+fun LazyListState.isScrollingUp(): Boolean {
+    var previousIndex by remember(this) { mutableIntStateOf(0) }
+    var previousScrollOffset by remember(this) { mutableIntStateOf(0) }
     return remember(this) {
         derivedStateOf {
             if (previousIndex != firstVisibleItemIndex) {

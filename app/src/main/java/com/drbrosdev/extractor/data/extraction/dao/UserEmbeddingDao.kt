@@ -53,7 +53,7 @@ interface UserEmbeddingDao {
             FROM user_embedding AS ue
             WHERE ue.value IS NOT NULL AND ue.value != ''
             ORDER BY random()
-            LIMIT 10
+            LIMIT 20
         )
         SELECT group_concat(value)
         FROM out

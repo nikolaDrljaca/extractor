@@ -1,84 +1,93 @@
 package com.drbrosdev.extractor.ui.imageinfo
 
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import android.net.Uri
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.drbrosdev.extractor.framework.navigation.BottomSheetNavTarget
-import com.drbrosdev.extractor.framework.navigation.DialogNavTarget
-import com.drbrosdev.extractor.ui.components.shared.ExtractorTextFieldState
-import com.drbrosdev.extractor.ui.dialog.userembed.ExtractorUserEmbedDialogNavTarget
+import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.framework.navigation.NavTarget
+import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 import com.drbrosdev.extractor.util.ScreenPreview
-import dev.olshevski.navigation.reimagined.NavController
-import dev.olshevski.navigation.reimagined.material.BottomSheetState
-import dev.olshevski.navigation.reimagined.navigate
-import dev.olshevski.navigation.reimagined.pop
 import kotlinx.parcelize.Parcelize
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Parcelize
 data class ExtractorImageInfoNavTarget(
-    val mediaImageId: Long
-) : BottomSheetNavTarget {
+    private val mediaImageId: Long
+) : NavTarget {
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
-    override fun Content(
-        sheetState: BottomSheetState,
-        dialogNavController: NavController<DialogNavTarget>,
-        sheetNavController: NavController<BottomSheetNavTarget>
-    ) {
+    override fun Content(navigators: Navigators) {
         val viewModel: ExtractorImageInfoViewModel = koinViewModel {
-            parametersOf(mediaImageId)
+            parametersOf(mediaImageId, navigators)
         }
-        val imageInfoModel by viewModel.imageInfoModel.collectAsStateWithLifecycle()
+        val state by viewModel.imageDetailState.collectAsStateWithLifecycle()
 
-        LaunchedEffect(key1 = Unit) {
-            sheetState.expand()
-        }
-
-        Surface(
-            tonalElevation = BottomSheetDefaults.Elevation,
-            color = MaterialTheme.colorScheme.background,
-            shape = RoundedCornerShape(18.dp)
-        ) {
-            ExtractorImageInfoScreen(
-                model = imageInfoModel,
-                textEmbedState = viewModel.textEmbedding,
-                onClearVisual = viewModel::clearVisualEmbedding,
-                onSaveEmbeddings = {
-                    viewModel.saveEmbeddings()
-                    sheetNavController.pop()
-                },
-                onClearUser = viewModel::updateUserEmbedding,
-                onAddNewUser = {
-                    dialogNavController.navigate(ExtractorUserEmbedDialogNavTarget(mediaImageId))
-                }
+        when {
+            state != null -> LupaImageInfoScreen(
+                modifier = Modifier.fillMaxSize(),
+                model = state!!
             )
+
+            else -> Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                LoadingIndicator()
+            }
         }
     }
 }
 
 @ScreenPreview
 @Composable
-private fun CurrentPreview() {
-    ExtractorTheme(dynamicColor = false) {
+private fun CurrentScreenPreview() {
+    val state = LupaImageInfoState(
+        heading = LupaImageHeaderState(
+            mediaImageId = 12123123,
+            uri = Uri.EMPTY.toString(),
+            dateAdded = "2025-01-01"
+        ),
+        description = "this is some description bababui",
+        editables = LupaImageEditablesState(
+            textEmbed = stringResource(R.string.lorem),
+            visualEmbeds = LupaImageAnnotationsState(
+                listOf(
+                    "fizzbuzzbazzsssssewrwrw4we",
+                    "foo",
+                    "bar",
+                    "baz"
+                )
+            ),
+            userEmbeds =
+                LupaImageAnnotationsState(
+                    listOf(
+                        "foo",
+                        "bar",
+                        "fizzbuzzbazzsssssewrwrw4we",
+                        "fizz",
+                        "buzz"
+                    )
+                ),
+            {}
+        )
+    )
+    ExtractorTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            ExtractorImageInfoScreen(
-                model = ExtractorImageInfoUiState(),
-                textEmbedState = ExtractorTextFieldState(""),
-                onClearVisual = {},
-                onSaveEmbeddings = {},
-                onClearUser = {},
-                onAddNewUser = {}
+            LupaImageInfoScreen(
+                modifier = Modifier.fillMaxHeight(),
+                model = state
             )
         }
     }
