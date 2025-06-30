@@ -10,7 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
@@ -33,6 +32,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.layoutId
 import coil3.compose.AsyncImage
+import com.drbrosdev.extractor.framework.rememberSystemBarsController
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorBottomBarItem
 import com.drbrosdev.extractor.ui.components.imagebottombar.ExtractorImageBottomBar
 import com.drbrosdev.extractor.ui.components.shared.AppTooltip
@@ -51,6 +51,7 @@ fun ExtractorImageViewerScreen(
     var showUi by rememberSaveable {
         mutableStateOf(true)
     }
+    val systemBarsController = rememberSystemBarsController()
 
     ConstraintLayout(
         modifier = Modifier
@@ -73,10 +74,17 @@ fun ExtractorImageViewerScreen(
                 zoomState.reset()
             }
 
+            LaunchedEffect(showUi) {
+                if (showUi) {
+                    systemBarsController.show()
+                } else {
+                    systemBarsController.hide()
+                }
+            }
+
             AsyncImage(
                 modifier = Modifier
                     .fillMaxSize()
-                    .systemBarsPadding()
                     .zoomable(
                         zoomState = zoomState,
                         onTap = { showUi = !showUi }
