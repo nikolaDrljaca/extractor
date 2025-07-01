@@ -149,8 +149,8 @@ fun LupaSearchFloatingBar(
                 Icon(Icons.Filled.Search, "Search")
             }
         },
-        modifier = modifier
-            .offset(x = -ScreenOffset, y = -ScreenOffset),
+        modifier = modifier,
+//            .offset(x = -ScreenOffset, y = -ScreenOffset),
         colors = vibrantColors,
         content = {
             IconButton(onClick = { onEvent(LupaSearchFloatingBarEvent.OnReset) }) {
@@ -345,6 +345,8 @@ private fun CurrentPreview() {
     ExtractorTheme {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
             LupaFilterSheet()
+
+            LupaSearchFloatingBar {  }
         }
     }
 }
