@@ -45,6 +45,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.toUri
+import com.drbrosdev.extractor.framework.ShowSystemBarsEffect
 import com.drbrosdev.extractor.ui.components.extractorimagegrid.ExtractorGridState
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
@@ -70,6 +71,9 @@ fun ExtractorAlbumViewerScreen(
     onMultiselectAction: (MultiselectAction) -> Unit,
 ) {
     val imageSize = 96
+
+    ShowSystemBarsEffect()
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {

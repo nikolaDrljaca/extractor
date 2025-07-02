@@ -4,47 +4,59 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowUp
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.domain.model.toUri
+import com.drbrosdev.extractor.framework.ShowSystemBarsEffect
 import com.drbrosdev.extractor.ui.components.extractorimageitem.ExtractorImageItem
 import com.drbrosdev.extractor.ui.components.searchresult.SearchResultComponent
 import com.drbrosdev.extractor.ui.components.searchresult.SearchResultContentEvents
 import com.drbrosdev.extractor.ui.components.searchresult.SearchResultState
-import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheet
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetComponent
 import com.drbrosdev.extractor.ui.components.shared.BackIconButton
 import com.drbrosdev.extractor.ui.components.shared.ExtractorEmptySearch
 import com.drbrosdev.extractor.ui.components.shared.ExtractorGetMoreSearches
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
+import com.drbrosdev.extractor.ui.components.shared.ExtractorSearchTextField
 import com.drbrosdev.extractor.ui.components.shared.ExtractorSnackbar
 import com.drbrosdev.extractor.ui.components.shared.ExtractorTopBar
+import com.drbrosdev.extractor.util.isScrollingUp
 import com.drbrosdev.extractor.util.maxLineSpanItem
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ExtractorSearchScreen(
+fun LupaSearchScreen(
     onBack: () -> Unit,
     sheetComponent: ExtractorSearchSheetComponent,
     resultComponent: SearchResultComponent,
@@ -53,21 +65,26 @@ fun ExtractorSearchScreen(
     val resultState = resultComponent.state.value
     val imageSize = 96
 
-    ConstraintLayout(
+    // This should be somewhere else
+    val modalSheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember {
+        mutableStateOf(false)
+    }
+
+    ShowSystemBarsEffect()
+
+    Box(
         modifier = Modifier
             .systemBarsPadding()
-            .fillMaxSize(),
-        constraintSet = searchResultScreenConstraintSet()
+            .fillMaxSize()
     ) {
         LazyVerticalGrid(
-            modifier = Modifier
-                .layoutId(ViewIds.MAIN_CONTENT),
             columns = GridCells.Adaptive(minSize = imageSize.dp),
             verticalArrangement = Arrangement.spacedBy(1.dp),
             horizontalArrangement = Arrangement.spacedBy(1.dp),
             state = resultComponent.gridState.lazyGridState
         ) {
-            maxLineSpanItem(key = "scroll_marker") { Spacer(Modifier.height(1.dp)) }
+            maxLineSpanItem(key = "scroll_marker") { Spacer(Modifier.height(16.dp)) }
             // Top Bar
             maxLineSpanItem(key = "top_bar") {
                 ExtractorTopBar(
@@ -75,25 +92,22 @@ fun ExtractorSearchScreen(
                     leadingSlot = {
                         BackIconButton(onBack = onBack)
                     },
-                    trailingSlot = {
-                        if (resultComponent.canCreateAlbum) {
-                            TextButton(onClick = resultComponent::saveAsAlbum) {
-                                Text(text = "Save as album")
-                            }
-                        }
-                    }
+                )
+            }
+            maxLineSpanItem {
+                ExtractorSearchTextField(
+                    textFieldState = sheetComponent.query,
+                    onDoneSubmit = sheetComponent::onSearch,
+                    textColor = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .focusRequester(sheetComponent.focusRequester)
+                        .fillMaxWidth(),
                 )
             }
             // search sheet
-            maxLineSpanItem(key = "search_sheet") {
-                ExtractorSearchSheet(
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp),
-                    component = sheetComponent,
-                )
-            }
             maxLineSpanItem(key = "result_marker") {
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(16.dp))
             }
             // search results -- content
             when (resultState) {
@@ -115,6 +129,15 @@ fun ExtractorSearchScreen(
                 }
 
                 is SearchResultState.Content -> {
+                    maxLineSpanItem {
+                        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                            Text(
+                                text = "Results",
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Spacer(Modifier.height(12.dp))
+                        }
+                    }
                     items(
                         items = resultState.images,
                         key = { it.mediaImageId.id }
@@ -142,28 +165,35 @@ fun ExtractorSearchScreen(
             }
         }
 
-        AnimatedVisibility(
-            visible = resultComponent.isScrollToTopVisible,
+        LupaSearchFloatingBar(
             modifier = Modifier
-                .layoutId(ViewIds.FAB),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            FloatingActionButton(
-                onClick = resultComponent::focusSearchField,
-                modifier = Modifier
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowUp,
-                    contentDescription = "Back to top"
-                )
+                .align(Alignment.BottomEnd)
+                .offset(
+                    x = -FloatingToolbarDefaults.ScreenOffset,
+                    y = -FloatingToolbarDefaults.ScreenOffset
+                ),
+            expanded = resultComponent.gridState.lazyGridState.isScrollingUp(),
+            onEvent = {
+                // TODO This should be somewhere else
+                when (it) {
+                    LupaSearchFloatingBarEvent.OnAdd -> resultComponent.saveAsAlbum()
+                    LupaSearchFloatingBarEvent.OnFilter -> showBottomSheet = true
+                    LupaSearchFloatingBarEvent.OnSearch -> resultComponent.focusSearchField()
+                    LupaSearchFloatingBarEvent.OnReset -> {
+                        sheetComponent.clearState()
+                        resultComponent.clearState()
+                        resultComponent.focusSearchField()
+                    }
+                }
             }
-        }
+        )
 
         AnimatedVisibility(
             visible = resultComponent.multiselectActionBarVisible,
             modifier = Modifier
-                .layoutId(ViewIds.ACTION_BAR),
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(16.dp),
             enter = fadeIn(),
             exit = fadeOut()
         ) {
@@ -175,60 +205,24 @@ fun ExtractorSearchScreen(
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
-                .layoutId(ViewIds.SNACKBAR)
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(horizontal = 2.dp)
         ) {
             ExtractorSnackbar(it)
         }
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = modalSheetState,
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ) {
+                LupaFilterSheet(
+                    component = sheetComponent
+                )
+            }
+        }
     }
-}
-
-private fun searchResultScreenConstraintSet() = ConstraintSet {
-    val topBar = createRefFor(ViewIds.TOP_BAR)
-    val mainContent = createRefFor(ViewIds.MAIN_CONTENT)
-    val snackbar = createRefFor(ViewIds.SNACKBAR)
-    val actionBar = createRefFor(ViewIds.ACTION_BAR)
-    val fab = createRefFor(ViewIds.FAB)
-
-    val bottomSheetGuideline = createGuidelineFromBottom(offset = 88.dp)
-
-    constrain(mainContent) {
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-        top.linkTo(parent.top)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(topBar) {
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-        top.linkTo(parent.top)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(snackbar) {
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-        bottom.linkTo(bottomSheetGuideline, margin = 16.dp)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(actionBar) {
-        start.linkTo(parent.start, margin = 16.dp)
-        end.linkTo(parent.end, margin = 16.dp)
-        bottom.linkTo(parent.bottom, margin = 16.dp)
-        width = Dimension.fillToConstraints
-    }
-
-    constrain(fab) {
-        end.linkTo(parent.end, margin = 32.dp)
-        bottom.linkTo(parent.bottom, margin = 32.dp)
-    }
-}
-
-private object ViewIds {
-    const val MAIN_CONTENT = "content"
-    const val TOP_BAR = "topBar"
-    const val SNACKBAR = "snack_bar"
-    const val ACTION_BAR = "search_multi_bar"
-    const val FAB = "fab_view"
 }

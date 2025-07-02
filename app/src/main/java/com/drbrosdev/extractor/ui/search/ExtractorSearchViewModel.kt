@@ -7,16 +7,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drbrosdev.extractor.R
-import com.drbrosdev.extractor.data.ExtractorDataStore
 import com.drbrosdev.extractor.domain.model.LupaImageMetadata
-import com.drbrosdev.extractor.domain.model.search.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.asAlbumName
+import com.drbrosdev.extractor.domain.model.search.ImageSearchParams
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.repository.payload.NewAlbum
-import com.drbrosdev.extractor.domain.usecase.extractor.TrackExtractionProgress
-import com.drbrosdev.extractor.domain.usecase.search.SearchCountPositiveDelta
 import com.drbrosdev.extractor.domain.usecase.search.SearchImages
-import com.drbrosdev.extractor.domain.usecase.suggestion.GenerateSuggestedKeywords
 import com.drbrosdev.extractor.framework.StringResourceProvider
 import com.drbrosdev.extractor.framework.logger.logEvent
 import com.drbrosdev.extractor.framework.navigation.Navigators
@@ -34,10 +30,6 @@ class ExtractorSearchViewModel(
     private val stateHandle: SavedStateHandle,
     private val albumRepository: AlbumRepository,
     private val imageSearch: SearchImages,
-    private val trackExtractionProgress: TrackExtractionProgress,
-    private val generateSuggestedKeywords: GenerateSuggestedKeywords,
-    private val searchCountPositiveDelta: SearchCountPositiveDelta,
-    private val datastore: ExtractorDataStore,
     private val navigators: Navigators,
     private val stringProvider: StringResourceProvider
 ) : ViewModel() {
