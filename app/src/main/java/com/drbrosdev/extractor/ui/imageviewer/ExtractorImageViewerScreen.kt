@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -53,10 +55,23 @@ fun ExtractorImageViewerScreen(
     }
     val systemBarsController = rememberSystemBarsController()
 
+    LaunchedEffect(showUi) {
+        if (showUi) {
+            systemBarsController.show()
+        } else {
+            systemBarsController.hide()
+        }
+    }
+
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Black),
+            .background(color = Color.Black)
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    showUi = !showUi
+                }
+            },
         constraintSet = imageDetailScreenConstraintSet()
     ) {
         HorizontalPager(
@@ -74,20 +89,12 @@ fun ExtractorImageViewerScreen(
                 zoomState.reset()
             }
 
-            LaunchedEffect(showUi) {
-                if (showUi) {
-                    systemBarsController.show()
-                } else {
-                    systemBarsController.hide()
-                }
-            }
-
             AsyncImage(
                 modifier = Modifier
                     .fillMaxSize()
                     .zoomable(
                         zoomState = zoomState,
-                        onTap = { showUi = !showUi }
+//                        onTap = { showUi = !showUi }
                     ),
                 model = images[it].asImageRequest(LocalContext.current),
                 contentDescription = "Image",

@@ -96,11 +96,7 @@ val viewModelModule = module {
         ExtractorSearchViewModel(
             imageSearch = get(),
             stateHandle = get(),
-            trackExtractionProgress = get(),
             albumRepository = get<DefaultAlbumRepository>(),
-            generateSuggestedKeywords = get(),
-            datastore = get(),
-            searchCountPositiveDelta = get(),
             stringProvider = get(),
             navigators = it.get()
         )

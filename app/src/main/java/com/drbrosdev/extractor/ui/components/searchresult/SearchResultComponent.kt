@@ -47,10 +47,6 @@ class SearchResultComponent(
         gridState.checkedKeys().isNotEmpty()
     }
 
-    val isScrollToTopVisible by derivedStateOf {
-        gridState.lazyGridState.firstVisibleItemIndex > 0
-    }
-
     val state = _searchTrigger
         .filter { it?.isNotBlank() ?: true }
         .map { runImageSearch(it) }
@@ -112,6 +108,12 @@ class SearchResultComponent(
         if (canCreateAlbum.not()) return
         val images = state.value.getImages()
         createAlbum(images)
+    }
+
+    fun clearState() {
+        coroutineScope.launch {
+            _searchTrigger.emit(null)
+        }
     }
 
     private suspend fun runImageSearch(params: ImageSearchParams?) =

@@ -44,6 +44,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.drbrosdev.extractor.R
+import com.drbrosdev.extractor.framework.ShowSystemBarsEffect
 import com.drbrosdev.extractor.ui.components.recommendsearch.RecommendedSearchesState
 import com.drbrosdev.extractor.ui.components.shared.ExtractorBentoItem
 import com.drbrosdev.extractor.ui.components.shared.ExtractorMultiselectActionBar
@@ -72,6 +73,8 @@ fun ExtractorOverviewScreen(
     overviewContentState: RecommendedSearchesState,
     suggestedSearchState: SuggestedSearchState
 ) = BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+
+    ShowSystemBarsEffect()
 
     ConstraintLayout(
         modifier = Modifier

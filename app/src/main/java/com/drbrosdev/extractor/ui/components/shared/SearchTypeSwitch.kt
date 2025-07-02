@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.drbrosdev.extractor.R
 import com.drbrosdev.extractor.domain.model.search.SearchType
-import com.drbrosdev.extractor.domain.model.search.asStringRes
+import com.drbrosdev.extractor.domain.model.search.stringRes
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
 
 @Composable
@@ -50,7 +50,7 @@ fun SearchTypeSwitch(
                     onClick = {
                         onSelectionChanged(item)
                     },
-                    label = { Text(text = stringResource(id = item.asStringRes())) },
+                    label = { Text(text = stringResource(id = item.stringRes())) },
                     leadingIcon = {},
                     enabled = enabled,
                     colors = FilterChipDefaults.filterChipColors(

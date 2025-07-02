@@ -60,7 +60,7 @@ data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : Nav
             }
         }
 
-        ExtractorSearchScreen(
+        LupaSearchScreen(
             sheetComponent = viewModel.searchSheetComponent,
             resultComponent = viewModel.searchResultComponent,
             snackbarHostState = viewModel.snackbarHostState,
@@ -77,7 +77,7 @@ data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : Nav
 private fun SearchScreenPreview() {
     ExtractorTheme(dynamicColor = false) {
         Surface {
-            ExtractorSearchScreen(
+            LupaSearchScreen(
                 sheetComponent = ExtractorSearchSheetComponent({}, SavedStateHandle()),
                 resultComponent = SearchResultComponent(
                     coroutineScope = CoroutineScope(Dispatchers.Default),

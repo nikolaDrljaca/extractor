@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.components.searchsheet
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Stable
@@ -13,8 +14,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.saveable
 import arrow.core.raise.nullable
 import com.drbrosdev.extractor.domain.model.DateRange
-import com.drbrosdev.extractor.domain.model.search.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.KeywordType
+import com.drbrosdev.extractor.domain.model.search.ImageSearchParams
 import com.drbrosdev.extractor.domain.model.search.SearchType
 import com.drbrosdev.extractor.util.EpochMillis
 import com.drbrosdev.extractor.util.toLocalDateTime
@@ -88,6 +89,13 @@ class ExtractorSearchSheetComponent(
     fun onDateRangeConfirm() {
         shouldShowDateRangePicker = false
         onSearchEvent(getSearchParamSnapshot())
+    }
+
+    fun clearState() {
+        query.setTextAndPlaceCursorAtEnd("")
+        keywordType = KeywordType.ALL
+        searchType = SearchType.FULL
+        dateRangePickerState.setSelection(null, null)
     }
 
     fun getSearchParamSnapshot() = ImageSearchParams(
