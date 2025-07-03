@@ -1,2 +1,2 @@
-json_key_file("/home/nikola/Documents/extractor-97168-2866df410cbe.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+json_key_file("/home/nikola/Documents/Extractor/extractor-97168-2866df410cbe.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
 package_name("com.drbrosdev.extractor") # e.g. com.krausefx.app
