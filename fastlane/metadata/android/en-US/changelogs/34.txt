@@ -1,0 +1,2 @@
+* new streamlined onboarding experience
+* performance improvements

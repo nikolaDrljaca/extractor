@@ -1,0 +1,49 @@
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# internal - internal
+# alpha - closed beta
+# beta - open beta
+# production - production
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Submit a new Beta Build to Play Store"
+  lane :beta do
+    # ask what to append to version name
+    #to_append = prompt(text: "Append to version name: ")
+
+    # run tests and create release bundle
+    gradle(task: "test")
+    gradle(task: "clean bundleRelease")
+
+    upload_to_play_store(track: 'alpha')
+  end
+
+  desc "Submit a new Beta build to Open Testing"
+  lane :open do
+      # run tests and create release bundle
+      gradle(task: "test")
+      gradle(task: "clean bundleRelease")
+
+      upload_to_play_store(track: 'beta')
+  end
+
+  desc "Display closed testing track information"
+  lane :info do
+   google_play_track_release_names(track: 'alpha')
+   google_play_track_version_codes(track: 'alpha')
+  end
+
+  #desc "Deploy a new version to the Google Play"
+  #lane :deploy do
+  #  gradle(task: "clean assembleRelease")
+    #upload_to_play_store
+  #end
+end

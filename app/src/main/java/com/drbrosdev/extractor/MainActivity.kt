@@ -1,91 +1,73 @@
 package com.drbrosdev.extractor
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
-import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import com.bumble.appyx.navigation.integration.NodeHost
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import com.drbrosdev.extractor.domain.usecase.settings.ProvideMainActivitySettings
+import com.drbrosdev.extractor.framework.ActivityProvider
+import com.drbrosdev.extractor.ui.root.Root
 import com.drbrosdev.extractor.ui.theme.ExtractorTheme
+import com.drbrosdev.extractor.util.setupInitialThemeLoad
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : ComponentNodeActivity() {
+class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModel()
+    private val activityProvider: ActivityProvider by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        setupInitialThemeLoad { viewModel.isDynamicTheme.value }
+
         setContent {
-            ExtractorTheme {
-                NodeHost(integrationPoint = appyxV2IntegrationPoint) {
-                    RootNode(it)
+            viewModel.isDynamicTheme
+                .collectAsStateWithLifecycle()
+                .value?.let {
+                    ExtractorTheme(dynamicColor = it) {
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            Root()
+                        }
+                    }
                 }
-            }
         }
     }
-}
 
-@Composable
-fun RequestPermissionScreen(
-    onRequestPermission: () -> Unit,
-    onOpenAppSettings: () -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(
-            12.dp,
-            alignment = Alignment.CenterVertically
-        ),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(onClick = {
-            onRequestPermission()
-        }) {
-            Text(text = "Request Image permission")
-        }
+    override fun onResume() {
+        super.onResume()
+        activityProvider.setActivity(this)
+    }
 
-        Button(onClick = onOpenAppSettings) {
-            Text(text = "Open App Settings")
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        (application as ExtractorApplication).databaseLogger.close()
     }
 }
 
-//TODO Move this under ActivityExt file
-fun Activity.openAppSettings() {
-    Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
-    ).also { startActivity(it) }
-}
-
-//TODO Move this to ContextExt file, under utils or extensions
-fun Context.checkAndRequestPermission(
-    permission: String,
-    launcher: ManagedActivityResultLauncher<String, Boolean>
-) {
-    val result = ContextCompat.checkSelfPermission(this, permission)
-    if (result != PackageManager.PERMISSION_GRANTED) {
-        launcher.launch(permission)
-    }
-}
-
-fun Context.findActivity(): Activity {
-    var context = this
-    while(context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-    error("No activity found.")
+class MainViewModel(
+    private val mainSettings: ProvideMainActivitySettings
+) : ViewModel() {
+    val isDynamicTheme = mainSettings()
+        .map { it.enableDynamicTheme }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            null
+        )
 }
