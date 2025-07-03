@@ -7,10 +7,10 @@ using [MLKit](https://developers.google.com/ml-kit/guides) models to allow keywo
 Helps sift through a giant library of images to find something specific without having to upload to
 external services such as Google Photos etc.
 
-While the current implementation uses MLKit models underneath(optimized for mobile devices), an
-analysis effort is ongoing for switching to more open source models. 
+While the current implementation uses MLKit models underneath(optimized for mobile devices),
+it might be possible to swap for open source models.
 
-# How To Run
+# Quick Start
 - Download and set up Android Studio 
   - Download: [https://developer.android.com/studio](https://developer.android.com/studio) 
   - Install: [https://developer.android.com/studio/install](https://developer.android.com/studio/install)
@@ -27,9 +27,17 @@ analysis effort is ongoing for switching to more open source models.
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="70"/>
 </a>
 
-## Technical Details
-Find all relevant technical details about the app under the `docs` folder. 
-The content there might not always be up-to-date, we'll try to make sure it is.
+Refer to the `docs` folder for details on app architecture, project structure and etc.
+
+# Usage
+
+The application will request permission to read on device images. After onboarding is finished
+a background process will start indexing all images to store their searchable information.
+
+After it is done, it is possible to search and filter to find results. Its also possible to tag images
+with any matter of info - when searching for these images will pop up. 
+
+Frequent searches can be saved as albums.
 
 ## License
 MIT License

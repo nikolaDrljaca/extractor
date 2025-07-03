@@ -16,8 +16,7 @@ Give the page a read as most this are applicable to this architecture as well.
 ## Architecture
 
 Overall, the application takes a mix of a layered and 'clean' architecture decisions, with some
-domain
-driven design.
+domain driven design.
 
 In a general overview, there are 4 layers:
 
@@ -33,13 +32,15 @@ The architecture design is flexible, and it tries to establish patterns to handl
 
 - Separation of Concerns: A local `Dao` is only concerned with handling CRUD operations on its
   related entity. It does not concern itself with that entity's relations to others in the system.
-  The layer is also not concerned about how its data is process downstream, or displayed in the UI.
+  The layer is also not concerned about how its data is processed downstream, or displayed in the
+  UI.
 - Encapsulation of Logic: Use Cases are created where they make sense, a piece of complex logic or
   logic that will be used in multiple places. It is hidden behind an interface contract to enforce
-  a signature and allow implementation swapping.
+  a signature and allow implementation swapping. An interface is used sparingly when actually
+  needed.
 - Atomic 'design patterns' for UI development. Jetpack Compose encourages breaking down complex UI
-  flows
-  and elements into smaller components. Distinguish between different levels of UI components and
+  flows and elements into smaller components. Distinguish between different levels of UI components
+  and
   compose them together to build complex screens.
 
 These are of course just examples for the terms.
@@ -48,7 +49,7 @@ Ideas behind each layer are explained in more detail below.
 ### Data Layer
 
 Responsible for handling local and remote data sources. Structures responsible for representing
-data in this layer are `Entities` and `Relations`. These are value objects, and their
+data in this layer are `Entities` (or `Record`) and `Relations`. These are value objects, and their
 respective `Daos`
 (or in some cases `DataSource`) objects are service objects responsible for mostly CRUD operations
 and mapping.
@@ -56,7 +57,8 @@ and mapping.
 Read more [here](https://publicobject.com/2019/06/10/value-objects-service-objects-and-glue/).
 
 For local data sources(specifically in our case the Room wrapper around an SQLite database), we have
-`Entity` classes representing the rows/columns managed by the database. In this case, we don't need
+`Entity` (or `Record`) classes representing the rows/columns managed by the database. In this case,
+we don't need
 additional mapping in this layer, as the data does not go out to an external source.
 
 Example: `ExtractionEntity`, `ImageEmbeddingsRelation`, `ExtractionDao`.
@@ -67,7 +69,7 @@ different compared to the standard `javax.persistence` APIs.
 In JPA, usually database relationships are modelled directly in the entity classes(Object relational
 Mapping).
 
-Whilst this brings conveniences and an (subjectively) easier mental model, there are a few issues
+While this brings convenience and an (subjectively) easier mental model, there are a few issues
 with this approach:
 
 - Object references: The classic circular trap with one-to-many relationships.
@@ -83,7 +85,7 @@ with this approach:
 
 So, for this application we use intermediate data classes to define and model explicitly the
 relationships
-between objects. Whilst this means we have to do more work to handle our data(there are no cascading
+between objects. While this means we have to do more work to handle our data(there are no cascading
 effects)
 it also means we are explicit in our code and intentions.
 
@@ -91,8 +93,7 @@ Take a look at `ImageEmbeddingRelation` and above link for more info.
 
 For remote data sources, as mentioned above, we might have `Entity` and `Dto` objects representing
 the what the data layer is concerned about versus the data coming in from the external source.
-Mappings
-may be present here.
+Mappings may be present here.
 
 There are currently no remote data sources in the application.
 
@@ -158,7 +159,7 @@ some domain model for processing. This is the place to deal with that.
 > type.
 > For these situations we don't create Use Cases as they would be redundant, just forwarding to
 > repository calls
-> and increasing complexity.
+> and increasing complexity and introducing more indirection.
 
 We also make use of product types to encapsulate "payloads" for repository and use case functions.
 This allows a sort of an open-closed principle where the interface contract cannot be changed, but
@@ -171,9 +172,8 @@ actual function input can by extending the payload type.
   implementations.
   It should be noted that every use case has a single responsibility in the scope of its logic.
 
-In `TextEmbeddingExtractor` as the name implies, the unit of logic is creation of text based
-embeddings
-from images. The interface defines the contract and there is an actual implementation next to it.
+In `ExtractLupaAnnotations` as the name implies, the unit of logic is creation of embeddings
+from images.
 
 Modeling logic this way allows the use of composition -> Use cases can be composed to create more
 complex
@@ -182,7 +182,8 @@ flows. For example: `Extractor` makes use of multiple other use cases to orchest
 > Note that the naming convention should always make use of a verb to indicate an action,
 > ex: `ValidateToken`.
 
-Note however that use cases should not be used in situations where they lead to a data/domain layer
+Note however that use cases should not be used in situations where they only lead to a data/domain
+layer
 CRUD call. In these situations it is more appropriate to use the Repository package.
 Use cases should be used where they make sense -> reusable units of logic.
 
@@ -243,8 +244,12 @@ Have a look at `ExtractorSearchView` and `Stateful.md`.
 
 A bit of an outlier layer in what is generally accepted/considered 'clean' architecture.
 
-The idea is to create configurations, repositories or any other concerns that come from external
-libraries such as `koin` etc.
+The idea behind the framework layer is two-fold:
 
-For now the layer encapsulates `koin` for Dependency Injection and the Android `MediaStore` that
-interacts with the system image query engine.
+1. Abstract external dependencies: If the application uses external libraries (such as `koin`) their
+   configurations should be done here.
+2. Abstract the android framework: Sometimes it is necessary for our domain layer to make usage of
+   this such as `WorkManager` or `NotificationService`. While it would be possible to model this
+   with event based interactions, the framework layer can provide dependency inversion so that the
+   domain can continue depending on itself while handing off actual implementations that reach the
+   `android(x)` packages here.
