@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.drbrosdev.extractor.domain.model.MediaImageUri
 import com.drbrosdev.extractor.domain.model.toUri
 import com.drbrosdev.extractor.domain.repository.AlbumRepository
 import com.drbrosdev.extractor.domain.service.ExtractorWorkerService
@@ -65,7 +66,7 @@ class ExtractorAlbumViewerViewModel(
                 name = album.name,
                 description =
                     "${album.keywordType.name.lowercase()} \u00B7 ${album.searchType.name.lowercase()} \u00B7 ${album.entries.size}",
-                heroImage = album.entries.first().uri
+                heroImage = album.entries.firstOrNull()?.uri ?: MediaImageUri.EMPTY
             ),
             entries = album.entries,
             shouldShowSelectBar = showSelectBar,

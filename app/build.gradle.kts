@@ -33,13 +33,13 @@ android {
     }
 
     namespace = "com.drbrosdev.extractor"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.drbrosdev.extractor"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 35
+        targetSdk = 36
+        versionCode = 36
         versionName = "25.07"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -90,23 +90,23 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.1")
+    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.2")
     implementation("androidx.activity:activity-compose:1.10.1")
-    implementation(platform("androidx.compose:compose-bom-alpha:2025.06.00"))
+    implementation(platform("androidx.compose:compose-bom-alpha:2025.08.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.foundation:foundation")
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.8.2")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.9.0")
     implementation("androidx.compose.material:material-icons-core-android:1.7.8")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.06.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.08.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
@@ -118,7 +118,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.1")
 
     //Coil
-    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.3.0")
 
     //ML Kit
     implementation("com.google.mlkit:image-labeling:17.0.9")
@@ -163,8 +163,8 @@ dependencies {
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 
-    implementation("io.arrow-kt:arrow-core:1.2.0")
-    implementation("io.arrow-kt:arrow-fx-coroutines:1.2.0")
+    implementation("io.arrow-kt:arrow-core:2.1.2")
+    implementation("io.arrow-kt:arrow-fx-coroutines:2.1.2")
 
     // in-app review
     implementation("com.google.android.play:review:2.0.2")
