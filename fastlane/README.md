@@ -47,6 +47,14 @@ Submit a new Beta build to Open Testing
 
 Display closed testing track information
 
+### android deploy
+
+```sh
+[bundle exec] fastlane android deploy
+```
+
+Deploy a new version to the Google Play
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

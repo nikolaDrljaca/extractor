@@ -2,8 +2,8 @@ package com.drbrosdev.extractor.ui.components.suggestsearch
 
 import com.drbrosdev.extractor.domain.model.ExtractionProgress
 import com.drbrosdev.extractor.domain.model.ExtractionStatus
-import com.drbrosdev.extractor.domain.model.search.SuggestedSearch
 import com.drbrosdev.extractor.domain.model.asStatus
+import com.drbrosdev.extractor.domain.model.search.SuggestedSearch
 import com.drbrosdev.extractor.domain.usecase.suggestion.CompileSearchSuggestions
 import com.drbrosdev.extractor.domain.usecase.suggestion.buildSuggestionScope
 import com.drbrosdev.extractor.framework.navigation.Navigators
@@ -46,7 +46,7 @@ class SuggestedSearchComponent(
         )
 
     private fun onSearch(suggestedSearch: SuggestedSearch) {
-        val args = SearchNavTargetArgs(
+        val args = SearchNavTargetArgs.Args(
             query = suggestedSearch.query,
             keywordType = suggestedSearch.keywordType,
             searchType = suggestedSearch.searchType,

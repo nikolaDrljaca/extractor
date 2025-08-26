@@ -31,5 +31,11 @@ class CleanupAlbum(
                 .toList()
             // delete album entries with these mediaImage ids
             albumRepository.deleteAlbumEntries(deletedMediaIds)
+            // delete the album if it is empty
+            albumRepository.findAlbumById(albumId)?.let {
+                if (it.entries.isEmpty()) {
+                    albumRepository.deleteAlbumById(albumId)
+                }
+            }
         }
 }

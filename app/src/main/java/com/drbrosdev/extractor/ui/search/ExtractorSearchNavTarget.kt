@@ -3,7 +3,6 @@ package com.drbrosdev.extractor.ui.search
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.SavedStateHandle
@@ -26,20 +25,18 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Parcelize
-data class ExtractorSearchNavTarget(val args: SearchNavTargetArgs? = null) : NavTarget {
+data class ExtractorSearchNavTarget(
+    val args: SearchNavTargetArgs = SearchNavTargetArgs.Empty
+) : NavTarget {
 
     @Composable
     override fun Content(navigators: Navigators) {
         val viewModel: ExtractorSearchViewModel = koinViewModel {
-            parametersOf(navigators)
+            parametersOf(navigators, args)
         }
 
         val keyboardController = LocalSoftwareKeyboardController.current
         val context = LocalContext.current
-
-        SideEffect {
-            viewModel.onInitWithSearchArgs(args?.toSearchParams())
-        }
 
         CollectFlow(viewModel.searchResultComponent.event) {
             when (it) {

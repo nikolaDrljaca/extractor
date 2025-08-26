@@ -4,6 +4,10 @@ import android.net.Uri
 import androidx.core.net.toUri
 
 @JvmInline
-value class MediaImageUri(val uri: String)
+value class MediaImageUri(val uri: String) {
+    companion object {
+        val EMPTY = MediaImageUri(Uri.EMPTY.toString())
+    }
+}
 
 fun MediaImageUri.toUri(): Uri = this.uri.toUri()

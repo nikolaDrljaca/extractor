@@ -98,7 +98,8 @@ val viewModelModule = module {
             stateHandle = get(),
             albumRepository = get<DefaultAlbumRepository>(),
             stringProvider = get(),
-            navigators = it.get()
+            navigators = it.get(),
+            args = it.get()
         )
     }
 
