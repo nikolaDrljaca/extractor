@@ -1,6 +1,7 @@
 package com.drbrosdev.extractor.ui.search
 
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.SavedStateHandle
@@ -101,7 +102,8 @@ class ExtractorSearchViewModel(
             albumRepository.createAlbum(album)
             val result = snackbarHostState.showSnackbar(
                 message = stringProvider.get(R.string.album_created),
-                actionLabel = stringProvider.get(R.string.snack_view)
+                actionLabel = stringProvider.get(R.string.snack_view),
+                duration = SnackbarDuration.Long
             )
             when (result) {
                 SnackbarResult.Dismissed -> Unit
