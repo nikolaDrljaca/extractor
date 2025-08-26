@@ -1,7 +1,6 @@
 package com.drbrosdev.extractor.usecase
 
 import com.drbrosdev.extractor.domain.usecase.token.TokenizeText
-import com.drbrosdev.extractor.util.memo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -11,16 +10,6 @@ import org.junit.Test
 class TokenizeTextTest {
 
     private val tokenizeText = TokenizeText(Dispatchers.Default)
-
-    @Test
-    fun `test memo function`() {
-        val computation: (String) -> Unit = memo { param ->
-            println("running with $param")
-        }
-        computation("1")
-        computation("2")
-        computation("1")
-    }
 
     @Test
     fun `test tokenization of sentences`() = runTest {

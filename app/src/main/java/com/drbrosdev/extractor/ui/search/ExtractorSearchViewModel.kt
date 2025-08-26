@@ -20,9 +20,11 @@ import com.drbrosdev.extractor.framework.navigation.Navigators
 import com.drbrosdev.extractor.ui.components.searchresult.SearchResultComponent
 import com.drbrosdev.extractor.ui.components.searchsheet.ExtractorSearchSheetComponent
 import com.drbrosdev.extractor.ui.yourspace.ExtractorYourSpaceNavTarget
-import com.drbrosdev.extractor.util.memo
 import dev.olshevski.navigation.reimagined.navigate
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -32,6 +34,7 @@ class ExtractorSearchViewModel(
     private val albumRepository: AlbumRepository,
     private val imageSearch: SearchImages,
     private val navigators: Navigators,
+    private val args: SearchNavTargetArgs,
     private val stringProvider: StringResourceProvider
 ) : ViewModel() {
 
@@ -49,28 +52,22 @@ class ExtractorSearchViewModel(
 
     val snackbarHostState = SnackbarHostState()
 
-    // memoize to run only once for one ImageSearchParams
-    private val searchUsingArgs: (ImageSearchParams) -> Unit = memo {
-        searchSheetComponent.query.setTextAndPlaceCursorAtEnd(it.query)
-        searchSheetComponent.keywordType = it.keywordType
-        searchSheetComponent.searchType = it.searchType
-        searchResultComponent.executeSearch(it)
-    }
+    private val initArgsJob = flowOf(args)
+        .onEach { handleSearchArgs(it) }
+        .launchIn(viewModelScope)
 
-    // memoize to run only once for a certain tag
-    private val requestSearchFieldFocus = memo("requestFocus") {
-        searchSheetComponent.requestFocus()
-    }
-
-    // Safe to call from side-effects -- memoized
-    fun onInitWithSearchArgs(params: ImageSearchParams?) {
-        if (params != null) {
-            searchUsingArgs(params)
-        } else {
-            // Pretty bad -- should take a better approach
-            viewModelScope.launch {
+    private fun handleSearchArgs(args: SearchNavTargetArgs) {
+        when (args) {
+            SearchNavTargetArgs.Empty -> viewModelScope.launch {
                 delay(500L)
-                requestSearchFieldFocus()
+                searchSheetComponent.requestFocus()
+            }
+            is SearchNavTargetArgs.Args -> {
+                val params = args.toSearchParams()
+                searchSheetComponent.query.setTextAndPlaceCursorAtEnd(params.query)
+                searchSheetComponent.keywordType = params.keywordType
+                searchSheetComponent.searchType = params.searchType
+                searchResultComponent.executeSearch(params)
             }
         }
     }
