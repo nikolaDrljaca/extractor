@@ -32,7 +32,8 @@ import com.drbrosdev.extractor.util.CombinedPreview
 @Composable
 fun AppImageInfoHeader(
     modifier: Modifier = Modifier,
-    model: LupaImageHeaderState
+    model: LupaImageHeaderState,
+    
 ) {
     Row(
         modifier = Modifier

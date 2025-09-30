@@ -22,7 +22,7 @@ value class EpochMillis(val value: Long)
 fun EpochMillis.toLocalDateTime(): LocalDateTime =
     LocalDateTime.ofInstant(Instant.ofEpochMilli(value), ZoneId.systemDefault())
 
-fun LocalDateTime?.asDisplayString(default: String): String {
+fun LocalDateTime?.asDisplayString(default: String = ""): String {
     val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
     return when {
         this == null -> default

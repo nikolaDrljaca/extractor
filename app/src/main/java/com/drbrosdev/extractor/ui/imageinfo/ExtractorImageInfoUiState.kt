@@ -2,7 +2,7 @@ package com.drbrosdev.extractor.ui.imageinfo
 
 import androidx.compose.runtime.Immutable
 import com.drbrosdev.extractor.domain.model.LupaImageMetadata
-import com.drbrosdev.extractor.util.asFormatDate
+import com.drbrosdev.extractor.util.asDisplayString
 
 @Immutable
 data class LupaImageInfoState(
@@ -48,7 +48,7 @@ data class LupaImageHeaderState(
         fun fromMetadata(metadata: LupaImageMetadata) = LupaImageHeaderState(
             mediaImageId = metadata.mediaImageId.id,
             uri = metadata.uri.uri,
-            dateAdded = metadata.dateAdded.asFormatDate()
+            dateAdded = metadata.dateAdded.asDisplayString("")
         )
     }
 }

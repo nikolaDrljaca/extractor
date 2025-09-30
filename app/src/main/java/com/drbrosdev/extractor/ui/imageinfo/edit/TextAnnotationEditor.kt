@@ -32,8 +32,10 @@ fun TextAnnotationEditor(
             text = stringResource(R.string.text_embeddings),
             style = MaterialTheme.typography.headlineSmall
         )
+
         MinimalTextField(
-            state = text
+            state = text,
+            placeholder = stringResource(R.string.no_text_is_found_in_the_image)
         )
     }
 }
