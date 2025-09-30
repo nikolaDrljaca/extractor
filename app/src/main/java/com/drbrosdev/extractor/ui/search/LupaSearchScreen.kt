@@ -216,8 +216,8 @@ fun LupaSearchScreen(
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = modalSheetState,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = MaterialTheme.colorScheme.surfaceBright,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             ) {
                 LupaFilterSheet(
                     component = sheetComponent
