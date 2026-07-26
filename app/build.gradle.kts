@@ -33,14 +33,14 @@ android {
     }
 
     namespace = "com.drbrosdev.extractor"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.drbrosdev.extractor"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 40
-        versionName = "26.06"
+        targetSdk = 37
+        versionCode = 41
+        versionName = "26.07"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
